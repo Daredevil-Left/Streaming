@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Control de Ventas</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.11.10/dayjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.11.10/plugin/relativeTime.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.11.10/locale/es.js"></script>
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+        .modal {
+            transition: opacity 0.3s ease;
+        }
+        .modal-content {
+            transition: transform 0.3s ease;
+        }
+        input[type=number]::-webkit-inner-spin-button,
+        input[type=number]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
+        .platform-btn img {
+            transition: transform 0.2s ease-in-out;
+        }
+        .platform-btn:hover img {
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <div id="app" class="container mx-auto p-4 sm:p-6 lg:p-8">
+
+        <!-- Header -->
+        <header class="mb-8 flex justify-between items-center">
+            <div class="text-left">
+                <h1 class="text-4xl font-bold text-gray-800">Control de Ventas</h1>
+                <p class="text-lg text-gray-500 mt-2">Gestiona tus suscripciones y ventas de forma sencilla.</p>
+            </div>
+            <div class="w-40 h-20 sm:w-48 sm:h-24 md:w-56 md:h-28 rounded-lg flex items-center justify-center overflow-hidden">
+                <img src="logo_nuevo.png" alt="Logo" class="max-w-full max-h-full object-contain" onerror="this.replaceWith(document.createElement('div')).textContent='Logo'">
+            </div>
+        </header>
+        
+        <div class="lg:flex lg:gap-8">
+            <!-- Columna Principal -->
+            <main class="flex-1">
+                <!-- Formulario para Añadir Venta -->
+                <div class="bg-white p-6 rounded-2xl shadow-lg mb-8 max-w-5xl mx-auto">
+                    <h2 class="text-2xl font-semibold text-gray-700 mb-6">Añadir Nueva Venta</h2>
+                    <form id="add-sale-form" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                        <div><label for="cliente" class="block text-sm font-medium text-gray-600 mb-2">Nombre del Cliente</label><input type="text" id="cliente" name="cliente" class="w-full px-4 py-2 border border-gray-300 rounded-lg" required></div>
+                        <div><label for="plataforma" class="block text-sm font-medium text-gray-600 mb-2">Plataforma</label><select id="plataforma" name="plataforma" class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white"><option>Netflix</option> <option>Spotify</option> <option>Disney+</option> <option>HBO Max</option> <option>Amazon Prime Video</option> <option>YouTube Premium</option> <option>Apple Music</option> <option>Apple TV+</option> <option>Crunchyroll</option> <option>Star+</option> <option>Vix+</option> <option>Paramount+</option> <option>MagisTV</option> <option>Otro</option></select></div>
+                        <div id="otro-plataforma-container" class="hidden"><label for="otro-plataforma" class="block text-sm font-medium text-gray-600 mb-2">Especificar Plataforma</label><input type="text" id="otro-plataforma" name="otro-plataforma" class="w-full px-4 py-2 border border-gray-300 rounded-lg"></div>
+                        <div><label for="precio" class="block text-sm font-medium text-gray-600 mb-2">Precio Pagado (S/)</label><input type="number" id="precio" name="precio" min="0" step="0.01" class="w-full px-4 py-2 border border-gray-300 rounded-lg" required></div>
+                        <div><label for="montoRenovar" class="block text-sm font-medium text-gray-600 mb-2">Monto a Renovar (S/)</label><input type="number" id="montoRenovar" name="montoRenovar" min="0" step="0.01" class="w-full px-4 py-2 border border-gray-300 rounded-lg"></div>
+                        <div><label for="inicioPlan" class="block text-sm font-medium text-gray-600 mb-2">Inicio del Plan</label><input type="date" id="inicioPlan" name="inicioPlan" class="w-full px-4 py-2 border border-gray-300 rounded-lg" required></div>
+                        <div><label for="finPlan" class="block text-sm font-medium text-gray-600 mb-2">Fin del Plan</label><input type="date" id="finPlan" name="finPlan" class="w-full px-4 py-2 border border-gray-300 rounded-lg" required></div>
+                        <div><label for="correo" class="block text-sm font-medium text-gray-600 mb-2">Correo</label><input type="email" id="correo" name="correo" class="w-full px-4 py-2 border border-gray-300 rounded-lg"></div>
+                        <div class="relative"><label for="contrasena" class="block text-sm font-medium text-gray-600 mb-2">Contraseña</label><input type="password" id="contrasena" name="contrasena" class="w-full px-4 py-2 border border-gray-300 rounded-lg"><button type="button" class="absolute inset-y-0 right-0 top-6 flex items-center px-3 text-gray-500" onclick="togglePasswordVisibility('contrasena', this)"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg></button></div>
+                        <div><label for="pin" class="block text-sm font-medium text-gray-600 mb-2">PIN</label><input type="text" id="pin" name="pin" class="w-full px-4 py-2 border border-gray-300 rounded-lg"></div>
+                        <div><label for="montoCuenta" class="block text-sm font-medium text-gray-600 mb-2">Monto en Cuenta (S/)</label><input type="number" id="montoCuenta" name="montoCuenta" min="0" step="0.01" class="w-full px-4 py-2 border border-gray-300 rounded-lg"></div>
+                        <div class="md:col-span-1 xl:col-span-2"><label for="notas" class="block text-sm font-medium text-gray-600 mb-2">Notas Adicionales</label><input type="text" id="notas" name="notas" class="w-full px-4 py-2 border border-gray-300 rounded-lg"></div>
+                        <div class="md:col-span-2 lg:col-span-3 xl:col-span-4 text-right self-end"><button type="submit" class="bg-indigo-600 text-white font-semibold px-6 py-3 rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-4 focus:ring-indigo-500 focus:ring-opacity-50 transition-transform transform hover:scale-105">Guardar Venta</button></div>
+                    </form>
+                </div>
+
+                <!-- Filtros y Búsqueda -->
+                <div class="bg-white p-4 rounded-2xl shadow-lg mb-8">
+                    <div class="relative flex-grow w-full mb-6"><input type="text" id="search-input" placeholder="Buscar por cliente, plataforma o correo..." class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"><svg class="w-5 h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg></div>
+                    <div id="platform-filters" class="flex flex-wrap justify-center gap-3 sm:gap-4"></div>
+                </div>
+
+                <!-- Lista de Ventas -->
+                <div id="sales-list" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6"></div>
+                <div id="loading-state" class="text-center py-10"><p class="text-gray-500">Cargando ventas...</p></div>
+                <div id="empty-state" class="hidden text-center py-20 bg-white rounded-2xl shadow-lg"><svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path vector-effect="non-scaling-stroke" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 13h6m-3-3v6m-9 1V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z" /></svg><h3 class="mt-2 text-xl font-medium text-gray-900">No hay ventas registradas</h3><p class="mt-1 text-sm text-gray-500">Comienza añadiendo una nueva venta.</p></div>
+            </main>
+
+            <!-- Panel Lateral Financiero -->
+            <aside class="lg:w-1/3 xl:w-1/4 mt-8 lg:mt-0">
+                <div class="bg-white p-6 rounded-2xl shadow-lg sticky top-8">
+                    <h2 class="text-2xl font-semibold text-gray-700 mb-6">Resumen Financiero</h2>
+                    <div class="space-y-4 mb-6">
+                        <div class="flex justify-between items-center p-4 bg-green-50 rounded-lg">
+                            <span class="font-medium text-green-800">Ingresos Totales:</span>
+                            <span id="total-ingresos" class="font-bold text-xl text-green-900">S/0.00</span>
+                        </div>
+                        <div class="flex justify-between items-center p-4 bg-red-50 rounded-lg">
+                            <span class="font-medium text-red-800">Egresos Totales:</span>
+                            <span id="total-egresos" class="font-bold text-xl text-red-900">S/0.00</span>
+                        </div>
+                        <div class="flex justify-between items-center p-4 bg-blue-50 rounded-lg border-t-2 border-blue-200">
+                            <span class="font-medium text-blue-800">Balance General:</span>
+                            <span id="balance-total" class="font-bold text-2xl text-blue-900">S/0.00</span>
+                        </div>
+                    </div>
+                    <div class="border-t pt-6">
+                        <h3 class="text-xl font-semibold text-gray-700 mb-4">Añadir Egreso</h3>
+                        <form id="add-expense-form" class="space-y-4">
+                            <div>
+                                <label for="expense-description" class="block text-sm font-medium text-gray-600 mb-2">Descripción</label>
+                                <input type="text" id="expense-description" name="expense-description" class="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="Ej: Pago de internet" required>
+                            </div>
+                             <div>
+                                <label for="expense-amount" class="block text-sm font-medium text-gray-600 mb-2">Monto (S/)</label>
+                                <input type="number" id="expense-amount" name="expense-amount" min="0" step="0.01" class="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="Ej: 50.00" required>
+                            </div>
+                            <button type="submit" class="w-full bg-red-500 text-white font-semibold py-2 rounded-lg hover:bg-red-600 transition">Añadir Gasto</button>
+                        </form>
+                    </div>
+                         <div id="expenses-list-container" class="border-t pt-6 mt-6">
+                         <h3 class="text-xl font-semibold text-gray-700 mb-4">Últimos Egresos</h3>
+                                     <div id="expenses-list" class="space-y-2 max-h-48 overflow-y-auto">
+                                         <!-- Expense items will be inserted here -->
+                                         <p class="text-sm text-gray-400">No hay egresos registrados.</p>
+                                     </div>
+                    </div>
+                </div>
+            </aside>
+        </div>
+
+    </div>
+
+    <!-- Modal para Editar Venta (sin cambios) -->
+    <div id="edit-modal" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden opacity-0">
+        <div class="modal-content bg-white w-full max-w-4xl rounded-2xl shadow-2xl p-6 transform scale-95">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-semibold text-gray-700">Editar Venta</h2>
+                <button id="close-modal" class="text-gray-400 hover:text-gray-600"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
+            </div>
+                <form id="edit-sale-form" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <input type="hidden" id="edit-sale-id" name="edit-sale-id">
+                 <div><label for="edit-cliente" class="block text-sm font-medium text-gray-600 mb-2">Nombre del Cliente</label><input type="text" id="edit-cliente" name="edit-cliente" class="w-full px-4 py-2 border border-gray-300 rounded-lg" required></div>
+                <div><label for="edit-plataforma" class="block text-sm font-medium text-gray-600 mb-2">Plataforma</label><select id="edit-plataforma" name="edit-plataforma" class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white"><option>Netflix</option><option>Spotify</option><option>Disney+</option><option>HBO Max</option><option>Amazon Prime Video</option><option>YouTube Premium</option><option>Apple Music</option><option>Apple TV+</option><option>Crunchyroll</option><option>Star+</option><option>Vix+</option><option>Paramount+</option><option>MagisTV</option><option>Otro</option></select></div>
+                 <div id="edit-otro-plataforma-container" class="hidden"><label for="edit-otro-plataforma" class="block text-sm font-medium text-gray-600 mb-2">Especificar Plataforma</label><input type="text" id="edit-otro-plataforma" name="edit-otro-plataforma" class="w-full px-4 py-2 border border-gray-300 rounded-lg"></div>
+                <div><label for="edit-precio" class="block text-sm font-medium text-gray-600 mb-2">Precio Pagado (S/)</label><input type="number" id="edit-precio" name="edit-precio" min="0" step="0.01" class="w-full px-4 py-2 border border-gray-300 rounded-lg" required></div>
+                 <div><label for="edit-montoRenovar" class="block text-sm font-medium text-gray-600 mb-2">Monto a Renovar (S/)</label><input type="number" id="edit-montoRenovar" name="edit-montoRenovar" min="0" step="0.01" class="w-full px-4 py-2 border border-gray-300 rounded-lg"></div>
+                <div><label for="edit-inicioPlan" class="block text-sm font-medium text-gray-600 mb-2">Inicio del Plan</label><input type="date" id="edit-inicioPlan" name="edit-inicioPlan" class="w-full px-4 py-2 border border-gray-300 rounded-lg" required></div>
+                <div><label for="edit-finPlan" class="block text-sm font-medium text-gray-600 mb-2">Fin del Plan</label><input type="date" id="edit-finPlan" name="edit-finPlan" class="w-full px-4 py-2 border border-gray-300 rounded-lg" required></div>
+                 <div><label for="edit-correo" class="block text-sm font-medium text-gray-600 mb-2">Correo</label><input type="email" id="edit-correo" name="edit-correo" class="w-full px-4 py-2 border border-gray-300 rounded-lg"></div>
+                <div class="relative"><label for="edit-contrasena" class="block text-sm font-medium text-gray-600 mb-2">Contraseña</label><input type="password" id="edit-contrasena" name="edit-contrasena" class="w-full px-4 py-2 border border-gray-300 rounded-lg"><button type="button" class="absolute inset-y-0 right-0 top-6 flex items-center px-3 text-gray-500" onclick="togglePasswordVisibility('edit-contrasena', this)"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg></button></div>
+                 <div><label for="edit-pin" class="block text-sm font-medium text-gray-600 mb-2">PIN</label><input type="text" id="edit-pin" name="edit-pin" class="w-full px-4 py-2 border border-gray-300 rounded-lg"></div>
+                 <div><label for="edit-montoCuenta" class="block text-sm font-medium text-gray-600 mb-2">Monto en Cuenta (S/)</label><input type="number" id="edit-montoCuenta" name="edit-montoCuenta" min="0" step="0.01" class="w-full px-4 py-2 border border-gray-300 rounded-lg"></div>
+                <div class="lg:col-span-2 md:col-span-2"><label for="edit-notas" class="block text-sm font-medium text-gray-600 mb-2">Notas Adicionales</label><input type="text" id="edit-notas" name="edit-notas" class="w-full px-4 py-2 border border-gray-300 rounded-lg"></div>
+                <div class="lg:col-span-3 md:col-span-2 flex justify-end gap-4 mt-4"><button type="button" id="cancel-edit" class="bg-gray-200 text-gray-700 font-semibold px-6 py-3 rounded-lg hover:bg-gray-300 transition">Cancelar</button><button type="submit" class="bg-indigo-600 text-white font-semibold px-6 py-3 rounded-lg hover:bg-indigo-700">Guardar Cambios</button></div>
+            </form>
+        </div>
+    </div>
+    
+     <!-- Custom Alert Modal (sin cambios) -->
+    <div id="custom-alert" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden opacity-0">
+        <div class="modal-content bg-white w-full max-w-sm rounded-2xl shadow-2xl p-6 text-center transform scale-95">
+            <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100 mb-4"><svg class="h-6 w-6 text-red-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" /></svg></div>
+            <h3 id="alert-title" class="text-lg font-medium leading-6 text-gray-900">Eliminar Venta</h3>
+            <p id="alert-message" class="text-sm text-gray-500 mt-2">¿Estás seguro? Esta acción no se puede deshacer.</p>
+            <div class="mt-5 sm:mt-6 sm:grid sm:grid-flow-row-dense sm:grid-cols-2 sm:gap-3"><button type="button" id="alert-confirm" class="inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 col-start-2">Confirmar</button><button type="button" id="alert-cancel" class="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 mt-0 col-start-1">Cancelar</button></div>
+        </div>
+    </div>
+
+    <script>
+        function togglePasswordVisibility(inputId, button) { const input = document.getElementById(inputId), icon = button.querySelector('svg'); if (input.type === "password") { input.type = "text"; icon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7 .946-3.11 3.563-5.522 6.837-6.141M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.581 10.41A7.48 7.48 0 0119.542 12c-1.274 4.057-5.064 7-9.542 7a10.046 10.046 0 01-3.132-.475M2.458 12c.946-3.11 3.563-5.522 6.837-6.141m1.581 2.318A4.5 4.5 0 0115 12a4.5 4.5 0 01-1.07 2.828M5 5l14 14" />`; } else { input.type = "password"; icon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />`; } }
+    </script>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, onSnapshot, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : { apiKey: "DEMO", authDomain: "DEMO", projectId: "DEMO" };
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+
+        // Demo mode detection: when firebaseConfig is the placeholder (apiKey==='DEMO')
+        // or appId is default, run in local demo mode (no Firestore required)
+        const demoMode = (firebaseConfig && firebaseConfig.apiKey === 'DEMO') || appId === 'default-app-id';
+
+        // LocalStorage keys
+        const LS_SALES_KEY = 'plataform_streaming_sales_v1';
+        const LS_EXPENSES_KEY = 'plataform_streaming_expenses_v1';
+
+        // Demo storage helpers
+        const loadDemoSales = () => {
+            try { return JSON.parse(localStorage.getItem(LS_SALES_KEY) || '[]'); } catch (e) { return []; }
+        };
+        const saveDemoSales = (arr) => { localStorage.setItem(LS_SALES_KEY, JSON.stringify(arr)); };
+        const loadDemoExpenses = () => {
+            try { return JSON.parse(localStorage.getItem(LS_EXPENSES_KEY) || '[]'); } catch (e) { return []; }
+        };
+        const saveDemoExpenses = (arr) => { localStorage.setItem(LS_EXPENSES_KEY, JSON.stringify(arr)); };
+
+        // Helper to generate an id similar to Firestore doc id
+        const generateId = () => Math.random().toString(36).slice(2, 10);
+        
+        dayjs.extend(dayjs_plugin_relativeTime);
+        dayjs.locale('es');
+
+        const logoMap = { 'Netflix': 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/Netflix_2015_logo.svg/2560px-Netflix_2015_logo.svg.png', 'Spotify': 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/19/Spotify_logo_without_text.svg/2048px-Spotify_logo_without_text.svg.png', 'Disney+': 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Disney%2B_logo.svg/2560px-Disney%2B_logo.svg.png', 'HBO Max': 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/Max_logo.svg/2560px-Max_logo.svg.png', 'Amazon Prime Video': 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f1/Prime_Video_logo.svg/2560px-Prime_Video_logo.svg.png', 'YouTube Premium': 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/YouTube_Premium_logo.svg/2560px-YouTube_Premium_logo.svg.png', 'Apple Music': 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Apple_Music_icon.svg/2048px-Apple_Music_icon.svg.png', 'Apple TV+': 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/Apple_TV_Plus_logo.svg/2560px-Apple_TV_Plus_logo.svg.png', 'Crunchyroll': 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Crunchyroll_Logo.svg/1280px-Crunchyroll_Logo.svg.png', 'Star+': 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Star%2B_logo.svg/2560px-Star%2B_logo.svg.png', 'Vix+': 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Vix_logo_2022.svg/2560px-Vix_logo_2022.svg.png', 'Paramount+': 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Paramount_Plus_logo.svg/2560px-Paramount_Plus_logo.svg.png', 'MagisTV': 'https://i.ibb.co/6yC6S2Z/magistv.png' };
+
+        let allSales = [];
+        let allExpenses = [];
+        let activePlatformFilter = 'Todos';
+        let currentSearchTerm = '';
+
+        const selectors = {
+            addSaleForm: document.getElementById('add-sale-form'),
+            salesList: document.getElementById('sales-list'),
+            searchInput: document.getElementById('search-input'),
+            loadingState: document.getElementById('loading-state'),
+            emptyState: document.getElementById('empty-state'),
+            editModal: document.getElementById('edit-modal'),
+            editForm: document.getElementById('edit-sale-form'),
+            closeModalBtn: document.getElementById('close-modal'),
+            cancelEditBtn: document.getElementById('cancel-edit'),
+            customAlert: document.getElementById('custom-alert'),
+            alertConfirmBtn: document.getElementById('alert-confirm'),
+            alertCancelBtn: document.getElementById('alert-cancel'),
+            plataformaSelect: document.getElementById('plataforma'),
+            otroPlataformaContainer: document.getElementById('otro-plataforma-container'),
+            otroPlataformaInput: document.getElementById('otro-plataforma'),
+            editPlataformaSelect: document.getElementById('edit-plataforma'),
+            editOtroPlataformaContainer: document.getElementById('edit-otro-plataforma-container'),
+            editOtroPlataformaInput: document.getElementById('edit-otro-plataforma'),
+            platformFilters: document.getElementById('platform-filters'),
+            totalIngresos: document.getElementById('total-ingresos'),
+            totalEgresos: document.getElementById('total-egresos'),
+            balanceTotal: document.getElementById('balance-total'),
+            addExpenseForm: document.getElementById('add-expense-form'),
+            expensesList: document.getElementById('expenses-list'),
+        };
+        
+        let confirmCallback = null;
+
+        const formatCurrency = (amount) => `S/${(amount || 0).toFixed(2)}`;
+
+        const getLogoHtml = (platformName, size = 'w-8 h-8') => { /* ... (sin cambios) */ const logoUrl = logoMap[platformName]; const initials = platformName ? platformName.substring(0, 2).toUpperCase() : '??'; const fallbackHtml = `<div class="${size} rounded-md bg-gray-200 flex items-center justify-center text-xs font-bold text-gray-600">${initials}</div>`; if (logoUrl) { return `<div class="${size}"><img src="${logoUrl}" alt="${platformName}" class="w-full h-full object-contain" onerror="this.parentElement.innerHTML = \`${fallbackHtml}\`"></div>`; } return fallbackHtml; };
+        const handlePlatformChange = (select, container, input) => { if (select.value === 'Otro') { container.classList.remove('hidden'); input.required = true; } else { container.classList.add('hidden'); input.required = false; input.value = ''; } };
+        const openModal = () => { selectors.editModal.classList.remove('hidden'); setTimeout(() => { selectors.editModal.classList.remove('opacity-0'); selectors.editModal.querySelector('.modal-content').classList.remove('scale-95'); }, 10); };
+        const closeModal = () => { selectors.editModal.classList.add('opacity-0'); selectors.editModal.querySelector('.modal-content').classList.add('scale-95'); setTimeout(() => selectors.editModal.classList.add('hidden'), 300); };
+        const showCustomConfirm = (title, message, onConfirm) => { document.getElementById('alert-title').textContent = title; document.getElementById('alert-message').textContent = message; confirmCallback = onConfirm; selectors.customAlert.classList.remove('hidden'); setTimeout(() => { selectors.customAlert.classList.remove('opacity-0'); selectors.customAlert.querySelector('.modal-content').classList.remove('scale-95'); }, 10); };
+        const hideCustomConfirm = () => { selectors.customAlert.classList.add('opacity-0'); selectors.customAlert.querySelector('.modal-content').classList.add('scale-95'); setTimeout(() => { selectors.customAlert.classList.add('hidden'); confirmCallback = null; }, 300); };
+
+        const updateFinancialSummary = () => {
+            const totalIngresos = allSales.reduce((sum, sale) => sum + (sale.precio || 0), 0);
+            const totalEgresos = allExpenses.reduce((sum, expense) => sum + (expense.amount || 0), 0);
+            const balance = totalIngresos - totalEgresos;
+
+            selectors.totalIngresos.textContent = formatCurrency(totalIngresos);
+            selectors.totalEgresos.textContent = formatCurrency(totalEgresos);
+            selectors.balanceTotal.textContent = formatCurrency(balance);
+            
+            selectors.balanceTotal.classList.toggle('text-red-900', balance < 0);
+            selectors.balanceTotal.classList.toggle('text-blue-900', balance >= 0);
+        };
+        
+        const applyFiltersAndRender = () => { /* ... (sin cambios) */ let filteredSales = [...allSales]; if (activePlatformFilter !== 'Todos') { filteredSales = filteredSales.filter(sale => sale.plataforma === activePlatformFilter); } if (currentSearchTerm) { const term = currentSearchTerm.toLowerCase(); filteredSales = filteredSales.filter(sale => sale.cliente.toLowerCase().includes(term) || sale.plataforma.toLowerCase().includes(term) || (sale.correo && sale.correo.toLowerCase().includes(term))); } renderSales(filteredSales); };
+        const renderPlatformFilters = () => { /* ... (sin cambios) */ selectors.platformFilters.innerHTML = ''; const platforms = ['Todos', ...Object.keys(logoMap)]; platforms.forEach(platform => { const btn = document.createElement('button'); btn.dataset.platform = platform; btn.className = `platform-btn p-2 rounded-lg border-2 transition-all duration-200 ${activePlatformFilter === platform ? 'border-indigo-500 bg-indigo-50' : 'border-transparent hover:bg-gray-100'}`; if (platform === 'Todos') { btn.innerHTML = `<div class="w-10 h-10 rounded-md bg-gray-200 flex items-center justify-center text-xs font-bold text-gray-600">Todos</div>`; } else { btn.innerHTML = getLogoHtml(platform, 'w-10 h-10'); } btn.addEventListener('click', () => { activePlatformFilter = platform; document.querySelectorAll('#platform-filters .platform-btn').forEach(b => { b.classList.remove('border-indigo-500', 'bg-indigo-50'); b.classList.add('border-transparent', 'hover:bg-gray-100'); }); btn.classList.add('border-indigo-500', 'bg-indigo-50'); btn.classList.remove('border-transparent', 'hover:bg-gray-100'); applyFiltersAndRender(); }); selectors.platformFilters.appendChild(btn); }); };
+        const renderSales = (sales) => {
+            selectors.salesList.innerHTML = '';
+            // if there are no sales in DB, show the empty state and return
+            if (allSales.length === 0) {
+                selectors.emptyState.classList.remove('hidden');
+                return;
+            }
+            selectors.emptyState.classList.add('hidden');
+
+            // if filtered result is empty but DB has entries, show a "no matches" message
+            if (sales.length === 0) {
+                selectors.salesList.innerHTML = `<p class="text-gray-500 md:col-span-2 xl:col-span-3 text-center">No se encontraron ventas que coincidan.</p>`;
+                return;
+            }
+
+            sales.forEach(sale => {
+                const now = dayjs();
+                const endDate = dayjs(sale.finPlan);
+                const diffDays = endDate.diff(now, 'day');
+                let status = { text: 'Activo', color: 'green' };
+                if (diffDays < 0) status = { text: 'Vencido', color: 'red' };
+                else if (diffDays <= 7) status = { text: 'Próximo a Vencer', color: 'yellow' };
+
+                const card = document.createElement('div');
+                card.className = `bg-white rounded-2xl shadow-lg p-5 flex flex-col justify-between border-l-4 border-${status.color}-500 transition-transform transform hover:-translate-y-1`;
+                card.innerHTML = `<div><div class="flex justify-between items-start"><div class="flex items-center gap-3">${getLogoHtml(sale.plataforma)}<h3 class="text-lg font-bold text-gray-800">${sale.cliente}</h3></div><span class="text-xs font-semibold py-1 px-2 uppercase rounded-full text-${status.color}-600 bg-${status.color}-200">${status.text}</span></div><div class="my-4 border-t border-gray-100"></div><div class="space-y-2 text-sm text-gray-700"><div class="flex justify-between"><span class="font-medium text-gray-500">Precio Pagado:</span><span class="font-bold text-gray-800">${formatCurrency(sale.precio)}</span></div><div class="flex justify-between"><span class="font-medium text-gray-500">Monto a Renovar:</span><span class="font-semibold text-gray-800">${formatCurrency(sale.montoRenovar)}</span></div><div class="flex justify-between"><span class="font-medium text-gray-500">Monto en Cuenta:</span><span class="font-semibold text-gray-800">${formatCurrency(sale.montoCuenta)}</span></div><div class="flex justify-between"><span class="font-medium text-gray-500">Vence:</span><span>${endDate.format('DD/MM/YYYY')} (${endDate.fromNow()})</span></div></div>${sale.notas ? `<p class="mt-3 text-xs text-gray-500 bg-gray-50 p-2 rounded-lg">Nota: ${sale.notas}</p>` : ''}</div><div class="flex justify-end gap-3 mt-5"><button class="edit-btn text-sm font-medium text-indigo-600 hover:text-indigo-800" data-id="${sale.id}">Editar</button><button class="delete-btn text-sm font-medium text-red-600 hover:text-red-800" data-id="${sale.id}">Eliminar</button></div>`;
+                selectors.salesList.appendChild(card);
+            });
+
+            selectors.salesList.querySelectorAll('.edit-btn').forEach(b => b.addEventListener('click', e => handleEdit(e.currentTarget.dataset.id)));
+            selectors.salesList.querySelectorAll('.delete-btn').forEach(b => b.addEventListener('click', e => handleDeleteSale(e.currentTarget.dataset.id)));
+        };
+        
+        const renderExpenses = () => {
+            selectors.expensesList.innerHTML = '';
+            if (allExpenses.length === 0) {
+                selectors.expensesList.innerHTML = '<p class="text-sm text-gray-400">No hay egresos registrados.</p>';
+                return;
+            }
+            allExpenses.forEach(expense => {
+                const item = document.createElement('div');
+                item.className = 'flex justify-between items-center text-sm p-2 rounded-md hover:bg-gray-50';
+                item.innerHTML = `
+                    <div class="flex-1 truncate pr-2">
+                        <p class="text-gray-700">${expense.description}</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="font-semibold text-red-600">${formatCurrency(expense.amount)}</span>
+                        <button class="delete-expense-btn text-gray-400 hover:text-red-600" data-id="${expense.id}">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm4 0a1 1 0 012 0v6a1 1 0 11-2 0V8z" clip-rule="evenodd"></path></svg>
+                        </button>
+                    </div>`;
+                selectors.expensesList.appendChild(item);
+            });
+            selectors.expensesList.querySelectorAll('.delete-expense-btn').forEach(b => b.addEventListener('click', e => handleDeleteExpense(e.currentTarget.dataset.id)));
+        };
+
+        const handleEdit = (id) => { /* ... (sin cambios) */ const sale = allSales.find(s => s.id === id); if(!sale) return; const f = selectors.editForm; f['edit-sale-id'].value = sale.id; f['edit-cliente'].value = sale.cliente; f['edit-precio'].value = sale.precio; f['edit-montoRenovar'].value = sale.montoRenovar || ''; f['edit-inicioPlan'].value = sale.inicioPlan; f['edit-finPlan'].value = sale.finPlan; f['edit-correo'].value = sale.correo || ''; f['edit-contrasena'].value = sale.contrasena || ''; f['edit-pin'].value = sale.pin || ''; f['edit-montoCuenta'].value = sale.montoCuenta || ''; f['edit-notas'].value = sale.notas || ''; const standardPlatforms = Array.from(f['edit-plataforma'].options).map(o => o.value); if (standardPlatforms.includes(sale.plataforma)) { f['edit-plataforma'].value = sale.plataforma; } else { f['edit-plataforma'].value = 'Otro'; selectors.editOtroPlataformaInput.value = sale.plataforma; } handlePlatformChange(selectors.editPlataformaSelect, selectors.editOtroPlataformaContainer, selectors.editOtroPlataformaInput); openModal(); };
+        const handleDeleteSale = (id) => showCustomConfirm('Eliminar Venta', '¿Estás seguro? No se puede deshacer.', async () => {
+            if (demoMode) {
+                allSales = allSales.filter(s => s.id !== id);
+                saveDemoSales(allSales);
+                applyFiltersAndRender();
+                updateFinancialSummary();
+                return;
+            }
+            const ref = doc(db, `artifacts/${appId}/public/data/sales`, id);
+            try { await deleteDoc(ref); } catch (e) { console.error(e); }
+        });
+        const handleDeleteExpense = (id) => showCustomConfirm('Eliminar Egreso', '¿Estás seguro de eliminar este gasto?', async () => {
+            if (demoMode) {
+                allExpenses = allExpenses.filter(s => s.id !== id);
+                saveDemoExpenses(allExpenses);
+                renderExpenses();
+                updateFinancialSummary();
+                return;
+            }
+            const ref = doc(db, `artifacts/${appId}/public/data/expenses`, id);
+            try { await deleteDoc(ref); } catch (e) { console.error(e); }
+        });
+
+        onAuthStateChanged(auth, async (user) => {
+            // If not authenticated and not demoMode, attempt to sign in
+            if (!user && !demoMode) {
+                try {
+                    if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) await signInWithCustomToken(auth, __initial_auth_token);
+                    else await signInAnonymously(auth);
+                } catch (e) { console.error(e); }
+                return;
+            }
+
+            if (demoMode) {
+                // Load data from localStorage
+                allSales = loadDemoSales();
+                allExpenses = loadDemoExpenses();
+                allSales.sort((a, b) => new Date(a.finPlan) - new Date(b.finPlan));
+                allExpenses.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                selectors.loadingState.classList.add('hidden');
+                if (allSales.length === 0) selectors.emptyState.classList.remove('hidden'); else selectors.emptyState.classList.add('hidden');
+                renderPlatformFilters();
+                applyFiltersAndRender();
+                renderExpenses();
+                updateFinancialSummary();
+            } else {
+                const salesRef = collection(db, `artifacts/${appId}/public/data/sales`);
+                onSnapshot(salesRef, (snapshot) => {
+                    allSales = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+                    allSales.sort((a, b) => new Date(a.finPlan) - new Date(b.finPlan));
+                    selectors.loadingState.classList.add('hidden');
+                    if (allSales.length === 0) selectors.emptyState.classList.remove('hidden'); else selectors.emptyState.classList.add('hidden');
+                    renderPlatformFilters();
+                    applyFiltersAndRender();
+                    updateFinancialSummary();
+                }, (e) => { console.error("Error al cargar ventas:", e); });
+
+                const expensesRef = collection(db, `artifacts/${appId}/public/data/expenses`);
+                onSnapshot(expensesRef, (snapshot) => {
+                    allExpenses = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+                    allExpenses.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                    renderExpenses();
+                    updateFinancialSummary();
+                }, (e) => { console.error("Error al cargar egresos:", e); });
+            }
+        });
+
+        selectors.addSaleForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const f = selectors.addSaleForm;
+            const newSale = {
+                id: demoMode ? generateId() : undefined,
+                cliente: f.cliente.value,
+                plataforma: f.plataforma.value === 'Otro' ? selectors.otroPlataformaInput.value : f.plataforma.value,
+                precio: parseFloat(f.precio.value),
+                montoRenovar: parseFloat(f.montoRenovar.value || 0),
+                inicioPlan: f.inicioPlan.value,
+                finPlan: f.finPlan.value,
+                correo: f.correo.value,
+                contrasena: f.contrasena.value,
+                pin: f.pin.value,
+                montoCuenta: parseFloat(f.montoCuenta.value || 0),
+                notas: f.notas.value,
+                createdAt: new Date().toISOString()
+            };
+            try {
+                if (demoMode) {
+                    allSales.push(newSale);
+                    saveDemoSales(allSales);
+                    f.reset();
+                    handlePlatformChange(selectors.plataformaSelect, selectors.otroPlataformaContainer, selectors.otroPlataformaInput);
+                    applyFiltersAndRender();
+                    updateFinancialSummary();
+                } else {
+                    const ref = collection(db, `artifacts/${appId}/public/data/sales`);
+                    await addDoc(ref, newSale);
+                    f.reset();
+                    handlePlatformChange(selectors.plataformaSelect, selectors.otroPlataformaContainer, selectors.otroPlataformaInput);
+                }
+            } catch (err) { console.error(err); }
+        });
+
+        selectors.editForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const f = selectors.editForm;
+            const id = f['edit-sale-id'].value;
+            const updated = {
+                cliente: f['edit-cliente'].value,
+                plataforma: f['edit-plataforma'].value === 'Otro' ? selectors.editOtroPlataformaInput.value : f['edit-plataforma'].value,
+                precio: parseFloat(f['edit-precio'].value),
+                montoRenovar: parseFloat(f['edit-montoRenovar'].value || 0),
+                inicioPlan: f['edit-inicioPlan'].value,
+                finPlan: f['edit-finPlan'].value,
+                correo: f['edit-correo'].value,
+                contrasena: f['edit-contrasena'].value,
+                pin: f['edit-pin'].value,
+                montoCuenta: parseFloat(f['edit-montoCuenta'].value || 0),
+                notas: f['edit-notas'].value,
+            };
+            try {
+                if (demoMode) {
+                    const idx = allSales.findIndex(s => s.id === id);
+                    if (idx !== -1) {
+                        allSales[idx] = { ...allSales[idx], ...updated };
+                        saveDemoSales(allSales);
+                        applyFiltersAndRender();
+                        updateFinancialSummary();
+                    }
+                    closeModal();
+                } else {
+                    const ref = doc(db, `artifacts/${appId}/public/data/sales`, id);
+                    await updateDoc(ref, updated);
+                    closeModal();
+                }
+            } catch (err) { console.error(err); }
+        });
+
+        selectors.addExpenseForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const f = selectors.addExpenseForm;
+            const description = f['expense-description'].value;
+            const amount = parseFloat(f['expense-amount'].value);
+            if (!description || isNaN(amount) || amount <= 0) return;
+            try {
+                if (demoMode) {
+                    const exp = { id: generateId(), description, amount, createdAt: new Date().toISOString() };
+                    allExpenses.push(exp);
+                    saveDemoExpenses(allExpenses);
+                    f.reset();
+                    renderExpenses();
+                    updateFinancialSummary();
+                } else {
+                    const ref = collection(db, `artifacts/${appId}/public/data/expenses`);
+                    await addDoc(ref, { description, amount, createdAt: new Date().toISOString() });
+                    f.reset();
+                }
+            } catch (err) { console.error("Error al añadir egreso:", err); }
+        });
+
+        selectors.searchInput.addEventListener('input', e => { currentSearchTerm = e.target.value; applyFiltersAndRender(); });
+        selectors.plataformaSelect.addEventListener('change', () => handlePlatformChange(selectors.plataformaSelect, selectors.otroPlataformaContainer, selectors.otroPlataformaInput));
+        selectors.editPlataformaSelect.addEventListener('change', () => handlePlatformChange(selectors.editPlataformaSelect, selectors.editOtroPlataformaContainer, selectors.editOtroPlataformaInput));
+        selectors.closeModalBtn.addEventListener('click', closeModal);
+        selectors.cancelEditBtn.addEventListener('click', closeModal);
+        selectors.alertConfirmBtn.addEventListener('click', () => { if (confirmCallback) confirmCallback(); hideCustomConfirm(); });
+        selectors.alertCancelBtn.addEventListener('click', hideCustomConfirm);
+    </script>
+</body>
+</html>
+
