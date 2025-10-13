@@ -315,6 +315,9 @@
                                 <button class="delete-btn p-1 text-red-600 hover:text-red-800 hover:bg-red-100 rounded-full transition" data-id="${sale.id}" title="Eliminar">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                                 </button>
+                                <button class="renew-btn p-1 text-green-600 hover:text-green-800 hover:bg-green-100 rounded-full transition" data-id="${sale.id}" title="Renovar">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h5M20 20v-5h-5M4 20h5v-5M20 4h-5v5"></path></svg>
+                                </button>
                             </div>
                             <!-- Fila expandible para móvil -->
                             <div class="md:hidden col-span-2 mt-2 pt-2 border-t flex justify-between items-center text-xs">
@@ -327,6 +330,7 @@
 
                     selectors.salesList.querySelectorAll('.edit-btn').forEach(b => b.addEventListener('click', e => handleEdit(e.currentTarget.dataset.id)));
                     selectors.salesList.querySelectorAll('.delete-btn').forEach(b => b.addEventListener('click', e => handleDeleteSale(e.currentTarget.dataset.id)));
+                    selectors.salesList.querySelectorAll('.renew-btn').forEach(b => b.addEventListener('click', e => handleRenew(e.currentTarget.dataset.id)));
                 };
                 const renderExpenses = () => { selectors.expensesList.innerHTML = ''; if (allExpenses.length === 0) { selectors.expensesList.innerHTML = '<p class="text-sm text-gray-400">No hay egresos registrados.</p>'; return; } allExpenses.forEach(expense => { const item = document.createElement('div'); item.className = 'flex justify-between items-center text-sm p-2 rounded-md hover:bg-gray-50'; item.innerHTML = `<div class="flex-1 truncate pr-2"><p class="text-gray-700">${expense.description}</p><p class="text-xs text-gray-500">${dayjs(expense.date).format('DD/MM/YYYY')}</p></div><div class="flex items-center gap-2"><span class="font-semibold text-red-600">${formatCurrency(expense.amount)}</span><button class="delete-expense-btn text-gray-400 hover:text-red-600" data-id="${expense.id}"><svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm4 0a1 1 0 012 0v6a1 1 0 11-2 0V8z" clip-rule="evenodd"></path></svg></button></div>`; selectors.expensesList.appendChild(item); }); selectors.expensesList.querySelectorAll('.delete-expense-btn').forEach(b => b.addEventListener('click', e => handleDeleteExpense(e.currentTarget.dataset.id))); };
                 const renderPlatformAccounts = () => {
@@ -375,6 +379,28 @@
                     }
                 };
                 const handleEdit = (id) => { const sale = allSales.find(s => s.id === id); if(!sale) return; const f = selectors.editForm; f['edit-sale-id'].value = sale.id; f['edit-cliente'].value = sale.cliente; f['edit-precio'].value = sale.precio; f['edit-inicioPlan'].value = sale.inicioPlan; f['edit-finPlan'].value = sale.finPlan; f['edit-correo'].value = sale.correo || ''; f['edit-contrasena'].value = sale.contrasena || ''; f['edit-pin'].value = sale.pin || ''; f['edit-notas'].value = sale.notas || ''; const standardPlatforms = Array.from(f['edit-plataforma'].options).map(o => o.value); if (standardPlatforms.includes(sale.plataforma)) { f['edit-plataforma'].value = sale.plataforma; } else { f['edit-plataforma'].value = 'Otro'; selectors.editOtroPlataformaInput.value = sale.plataforma; } handlePlatformChange(selectors.editPlataformaSelect, selectors.editOtroPlataformaContainer, selectors.editOtroPlataformaInput); openModal(); };
+                const handleRenew = async (id) => {
+                    const originalSale = allSales.find(s => s.id === id);
+                    if (!originalSale) {
+                        alert('Error: No se encontró la venta original.');
+                        return;
+                    }
+
+                    const duration = dayjs(originalSale.finPlan).diff(dayjs(originalSale.inicioPlan), 'day');
+
+                    const updatedData = {
+                        inicioPlan: dayjs().format('YYYY-MM-DD'),
+                        finPlan: dayjs().add(duration, 'day').format('YYYY-MM-DD')
+                    };
+
+                    try {
+                        await updateDoc(doc(db, "sales", id), updatedData);
+                        alert('Suscripción renovada con éxito.');
+                    } catch (error) {
+                        console.error("Error al renovar la suscripción:", error);
+                        alert('Hubo un error al renovar la suscripción. Por favor, inténtalo de nuevo.');
+                    }
+                };
                 const handleDeleteSale = (id) => showCustomConfirm('Eliminar Venta', '¿Estás seguro? No se puede deshacer.', async () => { try { await deleteDoc(doc(db, "sales", id)); } catch (e) { console.error(e); } });
                 const handleDeleteExpense = (id) => showCustomConfirm('Eliminar Egreso', '¿Estás seguro de eliminar este gasto?', async () => { try { await deleteDoc(doc(db, "expenses", id)); } catch (e) { console.error(e); } });
                 const handleDeleteAccount = (id) => showCustomConfirm('Eliminar Cuenta', '¿Estás seguro de eliminar esta cuenta?', async () => { try { await deleteDoc(doc(db, "platformAccounts", id)); } catch (e) { console.error(e); } });
