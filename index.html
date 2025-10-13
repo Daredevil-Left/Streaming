@@ -47,7 +47,7 @@
                 <h1 class="text-4xl font-bold text-gray-800">Control de Ventas</h1>
                 <p class="text-lg text-gray-500 mt-2">Gestiona tus suscripciones y ventas de forma sencilla.</p>
             </div>
-            <div class="w-40 h-20 sm:w-48 sm:h-24 md:w-56 md:h-28 rounded-lg flex items-center justify-center overflow-hidden">
+            <div class="w-48 h-24 sm:w-56 sm:h-28 md:w-64 md:h-32 rounded-lg flex items-center justify-center overflow-hidden">
                 <img src="logo_nuevo.png" alt="Logo" class="max-w-full max-h-full object-contain" onerror="this.replaceWith(document.createElement('div')).textContent='Logo'">
             </div>
         </header>
@@ -63,13 +63,17 @@
                         <div><label for="plataforma" class="block text-sm font-medium text-gray-600 mb-2">Plataforma</label><select id="plataforma" name="plataforma" class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white"><option>Netflix</option> <option>Spotify</option> <option>Disney+</option> <option>HBO Max</option> <option>Amazon Prime Video</option> <option>YouTube Premium</option> <option>Apple Music</option> <option>Apple TV+</option> <option>Crunchyroll</option> <option>Star+</option> <option>Vix+</option> <option>Paramount+</option> <option>MagisTV</option> <option>Otro</option></select></div>
                         <div id="otro-plataforma-container" class="hidden"><label for="otro-plataforma" class="block text-sm font-medium text-gray-600 mb-2">Especificar Plataforma</label><input type="text" id="otro-plataforma" name="otro-plataforma" class="w-full px-4 py-2 border border-gray-300 rounded-lg"></div>
                         <div><label for="precio" class="block text-sm font-medium text-gray-600 mb-2">Precio Pagado (S/)</label><input type="number" id="precio" name="precio" min="0" step="0.01" class="w-full px-4 py-2 border border-gray-300 rounded-lg" required></div>
-                        <div><label for="montoRenovar" class="block text-sm font-medium text-gray-600 mb-2">Monto a Renovar (S/)</label><input type="number" id="montoRenovar" name="montoRenovar" min="0" step="0.01" class="w-full px-4 py-2 border border-gray-300 rounded-lg"></div>
                         <div><label for="inicioPlan" class="block text-sm font-medium text-gray-600 mb-2">Inicio del Plan</label><input type="date" id="inicioPlan" name="inicioPlan" class="w-full px-4 py-2 border border-gray-300 rounded-lg" required></div>
-                        <div><label for="finPlan" class="block text-sm font-medium text-gray-600 mb-2">Fin del Plan</label><input type="date" id="finPlan" name="finPlan" class="w-full px-4 py-2 border border-gray-300 rounded-lg" required></div>
+                        <div>
+                            <div class="flex items-end gap-2 mb-2">
+                                <div class="flex-grow"><label for="diasPlan" class="block text-sm font-medium text-gray-600 mb-2">Nº Días</label><input type="number" id="diasPlan" name="diasPlan" class="w-full px-4 py-2 border border-gray-300 rounded-lg"></div>
+                                <button type="button" id="calculate-date-btn" class="bg-indigo-500 text-white font-semibold px-4 py-2 rounded-lg hover:bg-indigo-600 transition h-10">Calcular</button>
+                            </div>
+                            <div><label for="finPlan" class="block text-sm font-medium text-gray-600 mb-2">Fin del Plan</label><input type="date" id="finPlan" name="finPlan" class="w-full px-4 py-2 border border-gray-300 rounded-lg" required></div>
+                        </div>
                         <div><label for="correo" class="block text-sm font-medium text-gray-600 mb-2">Correo</label><input type="email" id="correo" name="correo" class="w-full px-4 py-2 border border-gray-300 rounded-lg"></div>
                         <div class="relative"><label for="contrasena" class="block text-sm font-medium text-gray-600 mb-2">Contraseña</label><input type="password" id="contrasena" name="contrasena" class="w-full px-4 py-2 border border-gray-300 rounded-lg"><button type="button" class="absolute inset-y-0 right-0 top-6 flex items-center px-3 text-gray-500" onclick="togglePasswordVisibility('contrasena', this)"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg></button></div>
                         <div><label for="pin" class="block text-sm font-medium text-gray-600 mb-2">PIN</label><input type="text" id="pin" name="pin" class="w-full px-4 py-2 border border-gray-300 rounded-lg"></div>
-                        <div><label for="montoCuenta" class="block text-sm font-medium text-gray-600 mb-2">Monto en Cuenta (S/)</label><input type="number" id="montoCuenta" name="montoCuenta" min="0" step="0.01" class="w-full px-4 py-2 border border-gray-300 rounded-lg"></div>
                         <div class="md:col-span-1 xl:col-span-2"><label for="notas" class="block text-sm font-medium text-gray-600 mb-2">Notas Adicionales</label><input type="text" id="notas" name="notas" class="w-full px-4 py-2 border border-gray-300 rounded-lg"></div>
                         <div class="md:col-span-2 lg:col-span-3 xl:col-span-4 text-right self-end"><button type="submit" class="bg-indigo-600 text-white font-semibold px-6 py-3 rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-4 focus:ring-indigo-500 focus:ring-opacity-50 transition-transform transform hover:scale-105">Guardar Venta</button></div>
                     </form>
@@ -106,25 +110,45 @@
                         </div>
                     </div>
                     <div class="border-t pt-6">
+                        <h3 class="text-xl font-semibold text-gray-700 mb-4">Añadir Ingreso Manual</h3>
+                        <form id="add-income-form" class="space-y-4">
+                            <div>
+                                <label for="income-description" class="block text-sm font-medium text-gray-600 mb-2">Concepto</label>
+                                <input type="text" id="income-description" name="income-description" class="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="Ej: Venta directa" required>
+                            </div>
+                            <div>
+                                <label for="income-amount" class="block text-sm font-medium text-gray-600 mb-2">Monto (S/)</label>
+                                <input type="number" id="income-amount" name="income-amount" min="0" step="0.01" class="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="Ej: 20.00" required>
+                            </div>
+                            <button type="submit" class="w-full bg-green-500 text-white font-semibold py-2 rounded-lg hover:bg-green-600 transition">Añadir Ingreso</button>
+                        </form>
+                    </div>
+                    <div id="incomes-list-container" class="border-t pt-6 mt-6">
+                        <h3 class="text-xl font-semibold text-gray-700 mb-4">Últimos Ingresos Manuales</h3>
+                        <div id="incomes-list" class="space-y-2 max-h-48 overflow-y-auto">
+                            <p class="text-sm text-gray-400">No hay ingresos manuales.</p>
+                        </div>
+                    </div>
+                    <div class="border-t pt-6 mt-6">
                         <h3 class="text-xl font-semibold text-gray-700 mb-4">Añadir Egreso</h3>
                         <form id="add-expense-form" class="space-y-4">
                             <div>
                                 <label for="expense-description" class="block text-sm font-medium text-gray-600 mb-2">Descripción</label>
                                 <input type="text" id="expense-description" name="expense-description" class="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="Ej: Pago de internet" required>
                             </div>
-                             <div>
+                            <div>
                                 <label for="expense-amount" class="block text-sm font-medium text-gray-600 mb-2">Monto (S/)</label>
                                 <input type="number" id="expense-amount" name="expense-amount" min="0" step="0.01" class="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="Ej: 50.00" required>
                             </div>
                             <button type="submit" class="w-full bg-red-500 text-white font-semibold py-2 rounded-lg hover:bg-red-600 transition">Añadir Gasto</button>
                         </form>
                     </div>
-                         <div id="expenses-list-container" class="border-t pt-6 mt-6">
-                         <h3 class="text-xl font-semibold text-gray-700 mb-4">Últimos Egresos</h3>
-                                     <div id="expenses-list" class="space-y-2 max-h-48 overflow-y-auto">
-                                         <!-- Expense items will be inserted here -->
-                                         <p class="text-sm text-gray-400">No hay egresos registrados.</p>
-                                     </div>
+                    <div id="expenses-list-container" class="border-t pt-6 mt-6">
+                        <h3 class="text-xl font-semibold text-gray-700 mb-4">Últimos Egresos</h3>
+                        <div id="expenses-list" class="space-y-2 max-h-48 overflow-y-auto">
+                            <!-- Expense items will be inserted here -->
+                            <p class="text-sm text-gray-400">No hay egresos registrados.</p>
+                        </div>
                     </div>
                 </div>
             </aside>
@@ -145,13 +169,17 @@
                 <div><label for="edit-plataforma" class="block text-sm font-medium text-gray-600 mb-2">Plataforma</label><select id="edit-plataforma" name="edit-plataforma" class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white"><option>Netflix</option><option>Spotify</option><option>Disney+</option><option>HBO Max</option><option>Amazon Prime Video</option><option>YouTube Premium</option><option>Apple Music</option><option>Apple TV+</option><option>Crunchyroll</option><option>Star+</option><option>Vix+</option><option>Paramount+</option><option>MagisTV</option><option>Otro</option></select></div>
                  <div id="edit-otro-plataforma-container" class="hidden"><label for="edit-otro-plataforma" class="block text-sm font-medium text-gray-600 mb-2">Especificar Plataforma</label><input type="text" id="edit-otro-plataforma" name="edit-otro-plataforma" class="w-full px-4 py-2 border border-gray-300 rounded-lg"></div>
                 <div><label for="edit-precio" class="block text-sm font-medium text-gray-600 mb-2">Precio Pagado (S/)</label><input type="number" id="edit-precio" name="edit-precio" min="0" step="0.01" class="w-full px-4 py-2 border border-gray-300 rounded-lg" required></div>
-                 <div><label for="edit-montoRenovar" class="block text-sm font-medium text-gray-600 mb-2">Monto a Renovar (S/)</label><input type="number" id="edit-montoRenovar" name="edit-montoRenovar" min="0" step="0.01" class="w-full px-4 py-2 border border-gray-300 rounded-lg"></div>
                 <div><label for="edit-inicioPlan" class="block text-sm font-medium text-gray-600 mb-2">Inicio del Plan</label><input type="date" id="edit-inicioPlan" name="edit-inicioPlan" class="w-full px-4 py-2 border border-gray-300 rounded-lg" required></div>
-                <div><label for="edit-finPlan" class="block text-sm font-medium text-gray-600 mb-2">Fin del Plan</label><input type="date" id="edit-finPlan" name="edit-finPlan" class="w-full px-4 py-2 border border-gray-300 rounded-lg" required></div>
+                <div>
+                    <div class="flex items-end gap-2 mb-2">
+                        <div class="flex-grow"><label for="edit-diasPlan" class="block text-sm font-medium text-gray-600 mb-2">Nº Días</label><input type="number" id="edit-diasPlan" name="edit-diasPlan" class="w-full px-4 py-2 border border-gray-300 rounded-lg"></div>
+                        <button type="button" id="edit-calculate-date-btn" class="bg-indigo-500 text-white font-semibold px-4 py-2 rounded-lg hover:bg-indigo-600 transition h-10">Calcular</button>
+                    </div>
+                    <div><label for="edit-finPlan" class="block text-sm font-medium text-gray-600 mb-2">Fin del Plan</label><input type="date" id="edit-finPlan" name="edit-finPlan" class="w-full px-4 py-2 border border-gray-300 rounded-lg" required></div>
+                </div>
                  <div><label for="edit-correo" class="block text-sm font-medium text-gray-600 mb-2">Correo</label><input type="email" id="edit-correo" name="edit-correo" class="w-full px-4 py-2 border border-gray-300 rounded-lg"></div>
                 <div class="relative"><label for="edit-contrasena" class="block text-sm font-medium text-gray-600 mb-2">Contraseña</label><input type="password" id="edit-contrasena" name="edit-contrasena" class="w-full px-4 py-2 border border-gray-300 rounded-lg"><button type="button" class="absolute inset-y-0 right-0 top-6 flex items-center px-3 text-gray-500" onclick="togglePasswordVisibility('edit-contrasena', this)"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg></button></div>
                  <div><label for="edit-pin" class="block text-sm font-medium text-gray-600 mb-2">PIN</label><input type="text" id="edit-pin" name="edit-pin" class="w-full px-4 py-2 border border-gray-300 rounded-lg"></div>
-                 <div><label for="edit-montoCuenta" class="block text-sm font-medium text-gray-600 mb-2">Monto en Cuenta (S/)</label><input type="number" id="edit-montoCuenta" name="edit-montoCuenta" min="0" step="0.01" class="w-full px-4 py-2 border border-gray-300 rounded-lg"></div>
                 <div class="lg:col-span-2 md:col-span-2"><label for="edit-notas" class="block text-sm font-medium text-gray-600 mb-2">Notas Adicionales</label><input type="text" id="edit-notas" name="edit-notas" class="w-full px-4 py-2 border border-gray-300 rounded-lg"></div>
                 <div class="lg:col-span-3 md:col-span-2 flex justify-end gap-4 mt-4"><button type="button" id="cancel-edit" class="bg-gray-200 text-gray-700 font-semibold px-6 py-3 rounded-lg hover:bg-gray-300 transition">Cancelar</button><button type="submit" class="bg-indigo-600 text-white font-semibold px-6 py-3 rounded-lg hover:bg-indigo-700">Guardar Cambios</button></div>
             </form>
@@ -191,6 +219,7 @@
         // LocalStorage keys
         const LS_SALES_KEY = 'plataform_streaming_sales_v1';
         const LS_EXPENSES_KEY = 'plataform_streaming_expenses_v1';
+        const LS_INCOMES_KEY = 'plataform_streaming_incomes_v1';
 
         // Demo storage helpers
         const loadDemoSales = () => {
@@ -201,6 +230,10 @@
             try { return JSON.parse(localStorage.getItem(LS_EXPENSES_KEY) || '[]'); } catch (e) { return []; }
         };
         const saveDemoExpenses = (arr) => { localStorage.setItem(LS_EXPENSES_KEY, JSON.stringify(arr)); };
+        const loadDemoIncomes = () => {
+            try { return JSON.parse(localStorage.getItem(LS_INCOMES_KEY) || '[]'); } catch (e) { return []; }
+        };
+        const saveDemoIncomes = (arr) => { localStorage.setItem(LS_INCOMES_KEY, JSON.stringify(arr)); };
 
         // Helper to generate an id similar to Firestore doc id
         const generateId = () => Math.random().toString(36).slice(2, 10);
@@ -208,10 +241,26 @@
         dayjs.extend(dayjs_plugin_relativeTime);
         dayjs.locale('es');
 
-        const logoMap = { 'Netflix': 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/Netflix_2015_logo.svg/2560px-Netflix_2015_logo.svg.png', 'Spotify': 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/19/Spotify_logo_without_text.svg/2048px-Spotify_logo_without_text.svg.png', 'Disney+': 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Disney%2B_logo.svg/2560px-Disney%2B_logo.svg.png', 'HBO Max': 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/Max_logo.svg/2560px-Max_logo.svg.png', 'Amazon Prime Video': 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f1/Prime_Video_logo.svg/2560px-Prime_Video_logo.svg.png', 'YouTube Premium': 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/YouTube_Premium_logo.svg/2560px-YouTube_Premium_logo.svg.png', 'Apple Music': 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Apple_Music_icon.svg/2048px-Apple_Music_icon.svg.png', 'Apple TV+': 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/Apple_TV_Plus_logo.svg/2560px-Apple_TV_Plus_logo.svg.png', 'Crunchyroll': 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Crunchyroll_Logo.svg/1280px-Crunchyroll_Logo.svg.png', 'Star+': 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Star%2B_logo.svg/2560px-Star%2B_logo.svg.png', 'Vix+': 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Vix_logo_2022.svg/2560px-Vix_logo_2022.svg.png', 'Paramount+': 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Paramount_Plus_logo.svg/2560px-Paramount_Plus_logo.svg.png', 'MagisTV': 'https://i.ibb.co/6yC6S2Z/magistv.png' };
+        const platformStyles = {
+            'Netflix': { color: 'text-red-600', fallback: 'bg-red-500' },
+            'Spotify': { color: 'text-green-500', fallback: 'bg-green-500' },
+            'Disney+': { color: 'text-blue-900', fallback: 'bg-blue-900' },
+            'HBO Max': { color: 'text-purple-600', fallback: 'bg-purple-600' },
+            'Amazon Prime Video': { color: 'text-blue-400', fallback: 'bg-blue-400' },
+            'YouTube Premium': { color: 'text-red-500', fallback: 'bg-red-500' },
+            'Apple Music': { color: 'text-pink-500', fallback: 'bg-pink-500' },
+            'Apple TV+': { color: 'text-gray-800', fallback: 'bg-gray-800' },
+            'Crunchyroll': { color: 'text-orange-500', fallback: 'bg-orange-500' },
+            'Star+': { color: 'text-gray-900', fallback: 'bg-gray-900' },
+            'Vix+': { color: 'text-yellow-400', fallback: 'bg-yellow-400' },
+            'Paramount+': { color: 'text-blue-800', fallback: 'bg-blue-800' },
+            'MagisTV': { color: 'text-blue-500', fallback: 'bg-blue-500' },
+            'Otro': { color: 'text-gray-500', fallback: 'bg-gray-500' }
+        };
 
         let allSales = [];
         let allExpenses = [];
+        let allIncomes = [];
         let activePlatformFilter = 'Todos';
         let currentSearchTerm = '';
 
@@ -240,13 +289,18 @@
             balanceTotal: document.getElementById('balance-total'),
             addExpenseForm: document.getElementById('add-expense-form'),
             expensesList: document.getElementById('expenses-list'),
+            addIncomeForm: document.getElementById('add-income-form'),
+            incomesList: document.getElementById('incomes-list'),
         };
         
         let confirmCallback = null;
 
         const formatCurrency = (amount) => `S/${(amount || 0).toFixed(2)}`;
 
-        const getLogoHtml = (platformName, size = 'w-8 h-8') => { /* ... (sin cambios) */ const logoUrl = logoMap[platformName]; const initials = platformName ? platformName.substring(0, 2).toUpperCase() : '??'; const fallbackHtml = `<div class="${size} rounded-md bg-gray-200 flex items-center justify-center text-xs font-bold text-gray-600">${initials}</div>`; if (logoUrl) { return `<div class="${size}"><img src="${logoUrl}" alt="${platformName}" class="w-full h-full object-contain" onerror="this.parentElement.innerHTML = \`${fallbackHtml}\`"></div>`; } return fallbackHtml; };
+        const getPlatformHtml = (platformName) => {
+            const style = platformStyles[platformName] || platformStyles['Otro'];
+            return `<span class="font-bold ${style.color}">${platformName}</span>`;
+        };
         const handlePlatformChange = (select, container, input) => { if (select.value === 'Otro') { container.classList.remove('hidden'); input.required = true; } else { container.classList.add('hidden'); input.required = false; input.value = ''; } };
         const openModal = () => { selectors.editModal.classList.remove('hidden'); setTimeout(() => { selectors.editModal.classList.remove('opacity-0'); selectors.editModal.querySelector('.modal-content').classList.remove('scale-95'); }, 10); };
         const closeModal = () => { selectors.editModal.classList.add('opacity-0'); selectors.editModal.querySelector('.modal-content').classList.add('scale-95'); setTimeout(() => selectors.editModal.classList.add('hidden'), 300); };
@@ -254,7 +308,9 @@
         const hideCustomConfirm = () => { selectors.customAlert.classList.add('opacity-0'); selectors.customAlert.querySelector('.modal-content').classList.add('scale-95'); setTimeout(() => { selectors.customAlert.classList.add('hidden'); confirmCallback = null; }, 300); };
 
         const updateFinancialSummary = () => {
-            const totalIngresos = allSales.reduce((sum, sale) => sum + (sale.precio || 0), 0);
+            const salesIncome = allSales.reduce((sum, sale) => sum + (sale.precio || 0), 0);
+            const manualIncome = allIncomes.reduce((sum, income) => sum + (income.amount || 0), 0);
+            const totalIngresos = salesIncome + manualIncome;
             const totalEgresos = allExpenses.reduce((sum, expense) => sum + (expense.amount || 0), 0);
             const balance = totalIngresos - totalEgresos;
 
@@ -267,7 +323,36 @@
         };
         
         const applyFiltersAndRender = () => { /* ... (sin cambios) */ let filteredSales = [...allSales]; if (activePlatformFilter !== 'Todos') { filteredSales = filteredSales.filter(sale => sale.plataforma === activePlatformFilter); } if (currentSearchTerm) { const term = currentSearchTerm.toLowerCase(); filteredSales = filteredSales.filter(sale => sale.cliente.toLowerCase().includes(term) || sale.plataforma.toLowerCase().includes(term) || (sale.correo && sale.correo.toLowerCase().includes(term))); } renderSales(filteredSales); };
-        const renderPlatformFilters = () => { /* ... (sin cambios) */ selectors.platformFilters.innerHTML = ''; const platforms = ['Todos', ...Object.keys(logoMap)]; platforms.forEach(platform => { const btn = document.createElement('button'); btn.dataset.platform = platform; btn.className = `platform-btn p-2 rounded-lg border-2 transition-all duration-200 ${activePlatformFilter === platform ? 'border-indigo-500 bg-indigo-50' : 'border-transparent hover:bg-gray-100'}`; if (platform === 'Todos') { btn.innerHTML = `<div class="w-10 h-10 rounded-md bg-gray-200 flex items-center justify-center text-xs font-bold text-gray-600">Todos</div>`; } else { btn.innerHTML = getLogoHtml(platform, 'w-10 h-10'); } btn.addEventListener('click', () => { activePlatformFilter = platform; document.querySelectorAll('#platform-filters .platform-btn').forEach(b => { b.classList.remove('border-indigo-500', 'bg-indigo-50'); b.classList.add('border-transparent', 'hover:bg-gray-100'); }); btn.classList.add('border-indigo-500', 'bg-indigo-50'); btn.classList.remove('border-transparent', 'hover:bg-gray-100'); applyFiltersAndRender(); }); selectors.platformFilters.appendChild(btn); }); };
+        const renderPlatformFilters = () => {
+            selectors.platformFilters.innerHTML = '';
+            const platforms = ['Todos', ...Object.keys(platformStyles)];
+            platforms.forEach(platform => {
+                const btn = document.createElement('button');
+                btn.dataset.platform = platform;
+                const style = platformStyles[platform] || platformStyles['Otro'];
+                const activeClasses = 'border-indigo-500 bg-indigo-50';
+                const inactiveClasses = 'border-transparent hover:bg-gray-100';
+                btn.className = `p-2 rounded-lg border-2 transition-all duration-200 font-semibold ${activePlatformFilter === platform ? activeClasses : inactiveClasses}`;
+
+                if (platform === 'Todos') {
+                    btn.textContent = 'Todos';
+                } else {
+                    btn.innerHTML = getPlatformHtml(platform);
+                }
+
+                btn.addEventListener('click', () => {
+                    activePlatformFilter = platform;
+                    document.querySelectorAll('#platform-filters button').forEach(b => {
+                        const bPlatform = b.dataset.platform;
+                        const bStyle = platformStyles[bPlatform] || platformStyles['Otro'];
+                        b.className = `p-2 rounded-lg border-2 transition-all duration-200 font-semibold ${inactiveClasses}`;
+                    });
+                    btn.className = `p-2 rounded-lg border-2 transition-all duration-200 font-semibold ${activeClasses}`;
+                    applyFiltersAndRender();
+                });
+                selectors.platformFilters.appendChild(btn);
+            });
+        };
         const renderSales = (sales) => {
             selectors.salesList.innerHTML = '';
             // if there are no sales in DB, show the empty state and return
@@ -293,7 +378,7 @@
 
                 const card = document.createElement('div');
                 card.className = `bg-white rounded-2xl shadow-lg p-5 flex flex-col justify-between border-l-4 border-${status.color}-500 transition-transform transform hover:-translate-y-1`;
-                card.innerHTML = `<div><div class="flex justify-between items-start"><div class="flex items-center gap-3">${getLogoHtml(sale.plataforma)}<h3 class="text-lg font-bold text-gray-800">${sale.cliente}</h3></div><span class="text-xs font-semibold py-1 px-2 uppercase rounded-full text-${status.color}-600 bg-${status.color}-200">${status.text}</span></div><div class="my-4 border-t border-gray-100"></div><div class="space-y-2 text-sm text-gray-700"><div class="flex justify-between"><span class="font-medium text-gray-500">Precio Pagado:</span><span class="font-bold text-gray-800">${formatCurrency(sale.precio)}</span></div><div class="flex justify-between"><span class="font-medium text-gray-500">Monto a Renovar:</span><span class="font-semibold text-gray-800">${formatCurrency(sale.montoRenovar)}</span></div><div class="flex justify-between"><span class="font-medium text-gray-500">Monto en Cuenta:</span><span class="font-semibold text-gray-800">${formatCurrency(sale.montoCuenta)}</span></div><div class="flex justify-between"><span class="font-medium text-gray-500">Vence:</span><span>${endDate.format('DD/MM/YYYY')} (${endDate.fromNow()})</span></div></div>${sale.notas ? `<p class="mt-3 text-xs text-gray-500 bg-gray-50 p-2 rounded-lg">Nota: ${sale.notas}</p>` : ''}</div><div class="flex justify-end gap-3 mt-5"><button class="edit-btn text-sm font-medium text-indigo-600 hover:text-indigo-800" data-id="${sale.id}">Editar</button><button class="delete-btn text-sm font-medium text-red-600 hover:text-red-800" data-id="${sale.id}">Eliminar</button></div>`;
+                card.innerHTML = `<div><div class="flex justify-between items-start"><div class="flex items-center gap-3"><h3 class="text-lg font-bold text-gray-800">${sale.cliente}</h3></div><span class="text-xs font-semibold py-1 px-2 uppercase rounded-full text-${status.color}-600 bg-${status.color}-200">${status.text}</span></div><div class="my-4 border-t border-gray-100"></div><div class="space-y-2 text-sm text-gray-700"><div class="flex justify-between"><span class="font-medium text-gray-500">Plataforma:</span>${getPlatformHtml(sale.plataforma)}</div><div class="flex justify-between"><span class="font-medium text-gray-500">Precio Pagado:</span><span class="font-bold text-gray-800">${formatCurrency(sale.precio)}</span></div><div class="flex justify-between"><span class="font-medium text-gray-500">Vence:</span><span>${endDate.format('DD/MM/YYYY')} (${endDate.fromNow()})</span></div></div>${sale.notas ? `<p class="mt-3 text-xs text-gray-500 bg-gray-50 p-2 rounded-lg">Nota: ${sale.notas}</p>` : ''}</div><div class="flex justify-end gap-3 mt-5"><button class="edit-btn text-sm font-medium text-indigo-600 hover:text-indigo-800" data-id="${sale.id}">Editar</button><button class="delete-btn text-sm font-medium text-red-600 hover:text-red-800" data-id="${sale.id}">Eliminar</button></div>`;
                 selectors.salesList.appendChild(card);
             });
 
@@ -325,7 +410,31 @@
             selectors.expensesList.querySelectorAll('.delete-expense-btn').forEach(b => b.addEventListener('click', e => handleDeleteExpense(e.currentTarget.dataset.id)));
         };
 
-        const handleEdit = (id) => { /* ... (sin cambios) */ const sale = allSales.find(s => s.id === id); if(!sale) return; const f = selectors.editForm; f['edit-sale-id'].value = sale.id; f['edit-cliente'].value = sale.cliente; f['edit-precio'].value = sale.precio; f['edit-montoRenovar'].value = sale.montoRenovar || ''; f['edit-inicioPlan'].value = sale.inicioPlan; f['edit-finPlan'].value = sale.finPlan; f['edit-correo'].value = sale.correo || ''; f['edit-contrasena'].value = sale.contrasena || ''; f['edit-pin'].value = sale.pin || ''; f['edit-montoCuenta'].value = sale.montoCuenta || ''; f['edit-notas'].value = sale.notas || ''; const standardPlatforms = Array.from(f['edit-plataforma'].options).map(o => o.value); if (standardPlatforms.includes(sale.plataforma)) { f['edit-plataforma'].value = sale.plataforma; } else { f['edit-plataforma'].value = 'Otro'; selectors.editOtroPlataformaInput.value = sale.plataforma; } handlePlatformChange(selectors.editPlataformaSelect, selectors.editOtroPlataformaContainer, selectors.editOtroPlataformaInput); openModal(); };
+        const renderIncomes = () => {
+            selectors.incomesList.innerHTML = '';
+            if (allIncomes.length === 0) {
+                selectors.incomesList.innerHTML = '<p class="text-sm text-gray-400">No hay ingresos manuales.</p>';
+                return;
+            }
+            allIncomes.forEach(income => {
+                const item = document.createElement('div');
+                item.className = 'flex justify-between items-center text-sm p-2 rounded-md hover:bg-gray-50';
+                item.innerHTML = `
+                    <div class="flex-1 truncate pr-2">
+                        <p class="text-gray-700">${income.description}</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="font-semibold text-green-600">${formatCurrency(income.amount)}</span>
+                        <button class="delete-income-btn text-gray-400 hover:text-red-600" data-id="${income.id}">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm4 0a1 1 0 012 0v6a1 1 0 11-2 0V8z" clip-rule="evenodd"></path></svg>
+                        </button>
+                    </div>`;
+                selectors.incomesList.appendChild(item);
+            });
+            selectors.incomesList.querySelectorAll('.delete-income-btn').forEach(b => b.addEventListener('click', e => handleDeleteIncome(e.currentTarget.dataset.id)));
+        };
+
+        const handleEdit = (id) => { /* ... (sin cambios) */ const sale = allSales.find(s => s.id === id); if(!sale) return; const f = selectors.editForm; f['edit-sale-id'].value = sale.id; f['edit-cliente'].value = sale.cliente; f['edit-precio'].value = sale.precio; f['edit-inicioPlan'].value = sale.inicioPlan; f['edit-finPlan'].value = sale.finPlan; f['edit-correo'].value = sale.correo || ''; f['edit-contrasena'].value = sale.contrasena || ''; f['edit-pin'].value = sale.pin || ''; f['edit-notas'].value = sale.notas || ''; const standardPlatforms = Array.from(f['edit-plataforma'].options).map(o => o.value); if (standardPlatforms.includes(sale.plataforma)) { f['edit-plataforma'].value = sale.plataforma; } else { f['edit-plataforma'].value = 'Otro'; selectors.editOtroPlataformaInput.value = sale.plataforma; } handlePlatformChange(selectors.editPlataformaSelect, selectors.editOtroPlataformaContainer, selectors.editOtroPlataformaInput); openModal(); };
         const handleDeleteSale = (id) => showCustomConfirm('Eliminar Venta', '¿Estás seguro? No se puede deshacer.', async () => {
             if (demoMode) {
                 allSales = allSales.filter(s => s.id !== id);
@@ -349,6 +458,18 @@
             try { await deleteDoc(ref); } catch (e) { console.error(e); }
         });
 
+        const handleDeleteIncome = (id) => showCustomConfirm('Eliminar Ingreso', '¿Estás seguro de eliminar este ingreso?', async () => {
+            if (demoMode) {
+                allIncomes = allIncomes.filter(i => i.id !== id);
+                saveDemoIncomes(allIncomes);
+                renderIncomes();
+                updateFinancialSummary();
+                return;
+            }
+            const ref = doc(db, `artifacts/${appId}/public/data/incomes`, id);
+            try { await deleteDoc(ref); } catch (e) { console.error(e); }
+        });
+
         onAuthStateChanged(auth, async (user) => {
             // If not authenticated and not demoMode, attempt to sign in
             if (!user && !demoMode) {
@@ -363,13 +484,16 @@
                 // Load data from localStorage
                 allSales = loadDemoSales();
                 allExpenses = loadDemoExpenses();
+                allIncomes = loadDemoIncomes();
                 allSales.sort((a, b) => new Date(a.finPlan) - new Date(b.finPlan));
                 allExpenses.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                allIncomes.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
                 selectors.loadingState.classList.add('hidden');
                 if (allSales.length === 0) selectors.emptyState.classList.remove('hidden'); else selectors.emptyState.classList.add('hidden');
                 renderPlatformFilters();
                 applyFiltersAndRender();
                 renderExpenses();
+                renderIncomes();
                 updateFinancialSummary();
             } else {
                 const salesRef = collection(db, `artifacts/${appId}/public/data/sales`);
@@ -390,6 +514,14 @@
                     renderExpenses();
                     updateFinancialSummary();
                 }, (e) => { console.error("Error al cargar egresos:", e); });
+
+                const incomesRef = collection(db, `artifacts/${appId}/public/data/incomes`);
+                onSnapshot(incomesRef, (snapshot) => {
+                    allIncomes = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+                    allIncomes.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                    renderIncomes();
+                    updateFinancialSummary();
+                }, (e) => { console.error("Error al cargar ingresos:", e); });
             }
         });
 
@@ -401,13 +533,11 @@
                 cliente: f.cliente.value,
                 plataforma: f.plataforma.value === 'Otro' ? selectors.otroPlataformaInput.value : f.plataforma.value,
                 precio: parseFloat(f.precio.value),
-                montoRenovar: parseFloat(f.montoRenovar.value || 0),
                 inicioPlan: f.inicioPlan.value,
                 finPlan: f.finPlan.value,
                 correo: f.correo.value,
                 contrasena: f.contrasena.value,
                 pin: f.pin.value,
-                montoCuenta: parseFloat(f.montoCuenta.value || 0),
                 notas: f.notas.value,
                 createdAt: new Date().toISOString()
             };
@@ -436,13 +566,11 @@
                 cliente: f['edit-cliente'].value,
                 plataforma: f['edit-plataforma'].value === 'Otro' ? selectors.editOtroPlataformaInput.value : f['edit-plataforma'].value,
                 precio: parseFloat(f['edit-precio'].value),
-                montoRenovar: parseFloat(f['edit-montoRenovar'].value || 0),
                 inicioPlan: f['edit-inicioPlan'].value,
                 finPlan: f['edit-finPlan'].value,
                 correo: f['edit-correo'].value,
                 contrasena: f['edit-contrasena'].value,
                 pin: f['edit-pin'].value,
-                montoCuenta: parseFloat(f['edit-montoCuenta'].value || 0),
                 notas: f['edit-notas'].value,
             };
             try {
@@ -485,6 +613,28 @@
             } catch (err) { console.error("Error al añadir egreso:", err); }
         });
 
+        selectors.addIncomeForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const f = selectors.addIncomeForm;
+            const description = f['income-description'].value;
+            const amount = parseFloat(f['income-amount'].value);
+            if (!description || isNaN(amount) || amount <= 0) return;
+            try {
+                if (demoMode) {
+                    const inc = { id: generateId(), description, amount, createdAt: new Date().toISOString() };
+                    allIncomes.push(inc);
+                    saveDemoIncomes(allIncomes);
+                    f.reset();
+                    renderIncomes();
+                    updateFinancialSummary();
+                } else {
+                    const ref = collection(db, `artifacts/${appId}/public/data/incomes`);
+                    await addDoc(ref, { description, amount, createdAt: new Date().toISOString() });
+                    f.reset();
+                }
+            } catch (err) { console.error("Error al añadir ingreso:", err); }
+        });
+
         selectors.searchInput.addEventListener('input', e => { currentSearchTerm = e.target.value; applyFiltersAndRender(); });
         selectors.plataformaSelect.addEventListener('change', () => handlePlatformChange(selectors.plataformaSelect, selectors.otroPlataformaContainer, selectors.otroPlataformaInput));
         selectors.editPlataformaSelect.addEventListener('change', () => handlePlatformChange(selectors.editPlataformaSelect, selectors.editOtroPlataformaContainer, selectors.editOtroPlataformaInput));
@@ -492,7 +642,87 @@
         selectors.cancelEditBtn.addEventListener('click', closeModal);
         selectors.alertConfirmBtn.addEventListener('click', () => { if (confirmCallback) confirmCallback(); hideCustomConfirm(); });
         selectors.alertCancelBtn.addEventListener('click', hideCustomConfirm);
+
+        // --- Real-time Collaboration Note ---
+        // The application uses Firebase's onSnapshot listener to achieve real-time data synchronization.
+        // When one user adds, edits, or deletes a sale, income, or expense, the changes are
+        // automatically reflected on the other user's screen without requiring a page reload.
+        // This is handled by the onSnapshot listeners in the onAuthStateChanged function.
+
+        const diasPlanInput = document.getElementById('diasPlan');
+        const inicioPlanInput = document.getElementById('inicioPlan');
+        const finPlanInput = document.getElementById('finPlan');
+        const calculateDateBtn = document.getElementById('calculate-date-btn');
+
+        const editDiasPlanInput = document.getElementById('edit-diasPlan');
+        const editInicioPlanInput = document.getElementById('edit-inicioPlan');
+        const editFinPlanInput = document.getElementById('edit-finPlan');
+        const editCalculateDateBtn = document.getElementById('edit-calculate-date-btn');
+
+        const calculateEndDate = (diasInput, inicioInput, finInput) => {
+            const dias = parseInt(diasInput.value, 10);
+            const inicio = inicioInput.value;
+            if (!isNaN(dias) && inicio) {
+                const fin = dayjs(inicio).add(dias, 'day').format('YYYY-MM-DD');
+                finInput.value = fin;
+            }
+        };
+
+        diasPlanInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                calculateEndDate(diasPlanInput, inicioPlanInput, finPlanInput);
+            }
+        });
+
+        calculateDateBtn.addEventListener('click', () => calculateEndDate(diasPlanInput, inicioPlanInput, finPlanInput));
+        inicioPlanInput.addEventListener('change', () => calculateEndDate(diasPlanInput, inicioPlanInput, finPlanInput));
+
+        editDiasPlanInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                calculateEndDate(editDiasPlanInput, editInicioPlanInput, editFinPlanInput);
+            }
+        });
+
+        editCalculateDateBtn.addEventListener('click', () => calculateEndDate(editDiasPlanInput, editInicioPlanInput, editFinPlanInput));
+        editInicioPlanInput.addEventListener('change', () => calculateEndDate(editDiasPlanInput, editInicioPlanInput, editFinPlanInput));
     </script>
+
+    <!--
+      IMPORTANTE: Configuración de Firebase
+      Pega aquí las credenciales de tu proyecto de Firebase para que la aplicación se conecte a tu base de datos.
+      Puedes encontrar estas credenciales en:
+      Consola de Firebase -> Configuración del proyecto (el ícono de engranaje) -> General -> Tus apps -> Configuración del SDK.
+    -->
+    <script>
+      // Configuración de Firebase con las credenciales del usuario
+      const __firebase_config = JSON.stringify({
+    // Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyCaYzhFY6keITDiN2Dn7kyEAnGPDt0hu2A",
+  authDomain: "streaming-d0fac.firebaseapp.com",
+  projectId: "streaming-d0fac",
+  storageBucket: "streaming-d0fac.firebasestorage.app",
+  messagingSenderId: "1017661259961",
+  appId: "1:1017661259961:web:9303ad97c753fe95379b68",
+  measurementId: "G-WZDCXCJPFV"
+};
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
+      });
+
+      // Este valor puede permanecer como está
+      const __app_id = 'default-app-id';
+    </script>
+
 </body>
 </html>
 
