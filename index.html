@@ -69,7 +69,13 @@
                 <div class="bg-white p-6 rounded-2xl shadow-lg mb-8 max-w-5xl mx-auto">
                     <h2 class="text-2xl font-semibold text-gray-700 mb-6">Añadir Nueva Venta</h2>
                     <form id="add-sale-form" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                        <div><label for="cliente" class="block text-sm font-medium text-gray-600 mb-2">Nombre del Cliente</label><input type="text" id="cliente" name="cliente" class="w-full px-4 py-2 border border-gray-300 rounded-lg" required></div>
+                        <div class="flex items-end gap-2">
+                            <div class="flex-grow">
+                                <label for="cliente-select" class="block text-sm font-medium text-gray-600 mb-2">Cliente</label>
+                                <select id="cliente-select" name="cliente" class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white" required></select>
+                            </div>
+                            <button type="button" id="add-new-client-btn" class="bg-gray-200 text-gray-700 font-semibold px-4 py-2 rounded-lg hover:bg-gray-300 transition h-10">+</button>
+                        </div>
                         <div><label for="plataforma" class="block text-sm font-medium text-gray-600 mb-2">Plataforma</label><select id="plataforma" name="plataforma" class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white"><option>Netflix</option> <option>Spotify</option> <option>Disney+</option> <option>HBO Max</option> <option>Amazon Prime Video</option> <option>YouTube Premium</option> <option>Apple Music</option> <option>Apple TV+</option> <option>Crunchyroll</option> <option>Star+</option> <option>Vix+</option> <option>Paramount+</option> <option>MagisTV</option> <option>Otro</option></select></div>
                         <div id="otro-plataforma-container" class="hidden"><label for="otro-plataforma" class="block text-sm font-medium text-gray-600 mb-2">Especificar Plataforma</label><input type="text" id="otro-plataforma" name="otro-plataforma" class="w-full px-4 py-2 border border-gray-300 rounded-lg"></div>
                         <div><label for="precio" class="block text-sm font-medium text-gray-600 mb-2">Precio Pagado (S/)</label><input type="number" id="precio" name="precio" min="0" step="0.01" class="w-full px-4 py-2 border border-gray-300 rounded-lg" required></div>
@@ -157,6 +163,34 @@
         </div>
     </div>
 
+    <!-- New Client Modal -->
+    <div id="new-client-modal" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden opacity-0">
+        <div class="modal-content bg-white w-full max-w-md rounded-2xl shadow-2xl p-6 transform scale-95">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-semibold text-gray-700">Añadir Nuevo Cliente</h2>
+                <button id="close-new-client-modal" class="text-gray-400 hover:text-gray-600">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+            <form id="new-client-form">
+                <div class="space-y-4">
+                    <div>
+                        <label for="new-client-name" class="block text-sm font-medium text-gray-600 mb-2">Nombre del Cliente</label>
+                        <input type="text" id="new-client-name" class="w-full px-4 py-2 border border-gray-300 rounded-lg" required>
+                    </div>
+                    <div>
+                        <label for="new-client-contact" class="block text-sm font-medium text-gray-600 mb-2">Contacto (Opcional)</label>
+                        <input type="text" id="new-client-contact" class="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="Ej: Teléfono, email, etc.">
+                    </div>
+                </div>
+                <div class="flex justify-end gap-4 mt-8">
+                    <button type="button" id="cancel-new-client" class="bg-gray-200 text-gray-700 font-semibold px-6 py-3 rounded-lg hover:bg-gray-300 transition">Cancelar</button>
+                    <button type="submit" class="bg-indigo-600 text-white font-semibold px-6 py-3 rounded-lg hover:bg-indigo-700">Guardar Cliente</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <div id="edit-modal" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden opacity-0">
         <div class="modal-content bg-white w-full max-w-4xl rounded-2xl shadow-2xl p-6 transform scale-95">
             <div class="flex justify-between items-center mb-6"><h2 class="text-2xl font-semibold text-gray-700">Editar Venta</h2><button id="close-modal" class="text-gray-400 hover:text-gray-600"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button></div>
@@ -227,9 +261,15 @@
                 dayjs.extend(dayjs_plugin_relativeTime);
                 dayjs.locale('es');
                 const platformStyles = { 'Netflix':{color:'text-red-600',fallback:'bg-red-500'},'Spotify':{color:'text-green-500',fallback:'bg-green-500'},'Disney+':{color:'text-blue-900',fallback:'bg-blue-900'},'HBO Max':{color:'text-purple-600',fallback:'bg-purple-600'},'Amazon Prime Video':{color:'text-blue-400',fallback:'bg-blue-400'},'YouTube Premium':{color:'text-red-500',fallback:'bg-red-500'},'Apple Music':{color:'text-pink-500',fallback:'bg-pink-500'},'Apple TV+':{color:'text-gray-800',fallback:'bg-gray-800'},'Crunchyroll':{color:'text-orange-500',fallback:'bg-orange-500'},'Star+':{color:'text-gray-900',fallback:'bg-gray-900'},'Vix+':{color:'text-yellow-400',fallback:'bg-yellow-400'},'Paramount+':{color:'text-blue-800',fallback:'bg-blue-800'},'MagisTV':{color:'text-blue-500',fallback:'bg-blue-500'},'Otro':{color:'text-gray-500',fallback:'bg-gray-500'}};
-                let allSales = [], allExpenses = [], allPlatformAccounts = [], activePlatformFilter = 'Todos', currentSearchTerm = '', activeAccountFilter = '';
+                let allSales = [], allExpenses = [], allPlatformAccounts = [], allClients = [], activePlatformFilter = 'Todos', currentSearchTerm = '', activeAccountFilter = '';
                 const selectors = {
                     addSaleForm: document.getElementById('add-sale-form'),
+                    clienteSelect: document.getElementById('cliente-select'),
+                    addNewClientBtn: document.getElementById('add-new-client-btn'),
+                    newClientModal: document.getElementById('new-client-modal'),
+                    newClientForm: document.getElementById('new-client-form'),
+                    closeNewClientModalBtn: document.getElementById('close-new-client-modal'),
+                    cancelNewClientBtn: document.getElementById('cancel-new-client'),
                     salesList: document.getElementById('sales-list'),
                     searchInput: document.getElementById('search-input'),
                     loadingState: document.getElementById('loading-state'),
@@ -263,12 +303,45 @@
                 const formatCurrency = (amount) => `S/${(amount||0).toFixed(2)}`;
                 const getPlatformHtml = (platformName) => { const style=platformStyles[platformName]||platformStyles['Otro']; return `<span class="font-bold ${style.color}">${platformName}</span>`};
                 const handlePlatformChange = (select, container, input) => { if (select.value==='Otro') { container.classList.remove('hidden'); input.required = true; } else { container.classList.add('hidden'); input.required = false; input.value = ''; }};
-                const openModal = () => { selectors.editModal.classList.remove('hidden'); setTimeout(() => { selectors.editModal.classList.remove('opacity-0'); selectors.editModal.querySelector('.modal-content').classList.remove('scale-95'); }, 10); };
-                const closeModal = () => { selectors.editModal.classList.add('opacity-0'); selectors.editModal.querySelector('.modal-content').classList.add('scale-95'); setTimeout(() => selectors.editModal.classList.add('hidden'), 300); };
+                const openModal = (modalElement) => { modalElement.classList.remove('hidden'); setTimeout(() => { modalElement.classList.remove('opacity-0'); modalElement.querySelector('.modal-content').classList.remove('scale-95'); }, 10); };
+                const closeModal = (modalElement) => { modalElement.classList.add('opacity-0'); modalElement.querySelector('.modal-content').classList.add('scale-95'); setTimeout(() => modalElement.classList.add('hidden'), 300); };
+                const renderClientOptions = () => {
+                    const currentVal = selectors.clienteSelect.value;
+                    selectors.clienteSelect.innerHTML = '<option value="">Seleccione un cliente</option>';
+                    allClients.forEach(client => {
+                        const option = document.createElement('option');
+                        option.value = client.id;
+                        option.textContent = client.nombre;
+                        selectors.clienteSelect.appendChild(option);
+                    });
+                    selectors.clienteSelect.value = currentVal;
+                };
                 const showCustomConfirm = (title, message, onConfirm) => { document.getElementById('alert-title').textContent = title; document.getElementById('alert-message').textContent = message; confirmCallback = onConfirm; selectors.customAlert.classList.remove('hidden'); setTimeout(() => { selectors.customAlert.classList.remove('opacity-0'); selectors.customAlert.querySelector('.modal-content').classList.remove('scale-95'); }, 10); };
                 const hideCustomConfirm = () => { selectors.customAlert.classList.add('opacity-0'); selectors.customAlert.querySelector('.modal-content').classList.add('scale-95'); setTimeout(() => { selectors.customAlert.classList.add('hidden'); confirmCallback = null; }, 300); };
                 const updateFinancialSummary = () => { const salesIncome = allSales.reduce((sum, sale) => sum + (sale.precio || 0), 0); const totalIngresos = salesIncome; const totalEgresos = allExpenses.reduce((sum, expense) => sum + (expense.amount || 0), 0); const balance = totalIngresos - totalEgresos; selectors.totalIngresos.textContent = formatCurrency(totalIngresos); selectors.totalEgresos.textContent = formatCurrency(totalEgresos); selectors.balanceTotal.textContent = formatCurrency(balance); selectors.balanceTotal.classList.toggle('text-red-900', balance < 0); selectors.balanceTotal.classList.toggle('text-blue-900', balance >= 0); };
-                const applyFiltersAndRender = () => { let filteredSales = [...allSales]; if (activePlatformFilter !== 'Todos') { filteredSales = filteredSales.filter(sale => sale.plataforma === activePlatformFilter); } if (currentSearchTerm) { const term = currentSearchTerm.toLowerCase(); filteredSales = filteredSales.filter(sale => sale.cliente.toLowerCase().includes(term) || sale.plataforma.toLowerCase().includes(term) || (sale.correo && sale.correo.toLowerCase().includes(term))); } if (activeAccountFilter) { const account = allPlatformAccounts.find(a => a.id === activeAccountFilter); if (account) { filteredSales = filteredSales.filter(sale => sale.correo === account.email && sale.contrasena === account.password); } } renderSales(filteredSales); };
+                const applyFiltersAndRender = () => {
+                    let filteredSales = [...allSales];
+                    if (activePlatformFilter !== 'Todos') {
+                        filteredSales = filteredSales.filter(sale => sale.plataforma === activePlatformFilter);
+                    }
+                    if (currentSearchTerm) {
+                        const term = currentSearchTerm.toLowerCase();
+                        filteredSales = filteredSales.filter(sale => {
+                            const client = allClients.find(c => c.id === sale.clientId);
+                            const clientName = client ? client.nombre.toLowerCase() : '';
+                            return clientName.includes(term) ||
+                                   sale.plataforma.toLowerCase().includes(term) ||
+                                   (sale.correo && sale.correo.toLowerCase().includes(term));
+                        });
+                    }
+                    if (activeAccountFilter) {
+                        const account = allPlatformAccounts.find(a => a.id === activeAccountFilter);
+                        if (account) {
+                            filteredSales = filteredSales.filter(sale => sale.correo === account.email && sale.contrasena === account.password);
+                        }
+                    }
+                    renderSales(filteredSales);
+                };
                 const renderPlatformFilters = () => { selectors.platformFilters.innerHTML=''; const platforms=['Todos', ...Object.keys(platformStyles)]; platforms.forEach(platform=>{ const btn=document.createElement('button'); btn.dataset.platform=platform; const activeClasses='border-indigo-500 bg-indigo-50'; const inactiveClasses='border-transparent hover:bg-gray-100'; btn.className=`p-2 rounded-lg border-2 transition-all duration-200 font-semibold ${activePlatformFilter===platform?activeClasses:inactiveClasses}`; if (platform==='Todos') { btn.textContent='Todos'; } else { btn.innerHTML=getPlatformHtml(platform); } btn.addEventListener('click', ()=>{ activePlatformFilter=platform; document.querySelectorAll('#platform-filters button').forEach(b=>{ b.className=`p-2 rounded-lg border-2 transition-all duration-200 font-semibold ${inactiveClasses}`; }); btn.className=`p-2 rounded-lg border-2 transition-all duration-200 font-semibold ${activeClasses}`; applyFiltersAndRender(); }); selectors.platformFilters.appendChild(btn); }); };
                 const renderSales = (sales) => {
                     selectors.salesList.innerHTML = '';
@@ -287,6 +360,9 @@
                     }
 
                     sales.forEach(sale => {
+                        const client = allClients.find(c => c.id === sale.clientId);
+                        const clientName = client ? client.nombre : 'Cliente no encontrado';
+
                         const now = dayjs();
                         const endDate = dayjs(sale.finPlan);
                         const diffDays = endDate.diff(now, 'day');
@@ -299,7 +375,7 @@
 
                         row.innerHTML = `
                             <div class="col-span-2 font-semibold text-gray-800">
-                                ${sale.cliente}
+                                ${clientName}
                                 <div class="font-normal text-xs text-gray-500 md:hidden mt-1">
                                     ${getPlatformHtml(sale.plataforma)} &middot; Vence: ${endDate.format('DD/MM/YYYY')}
                                 </div>
@@ -378,7 +454,7 @@
                         credentialsContainer.forEach(el => el.classList.remove('hidden'));
                     }
                 };
-                const handleEdit = (id) => { const sale = allSales.find(s => s.id === id); if(!sale) return; const f = selectors.editForm; f['edit-sale-id'].value = sale.id; f['edit-cliente'].value = sale.cliente; f['edit-precio'].value = sale.precio; f['edit-inicioPlan'].value = sale.inicioPlan; f['edit-finPlan'].value = sale.finPlan; f['edit-correo'].value = sale.correo || ''; f['edit-contrasena'].value = sale.contrasena || ''; f['edit-pin'].value = sale.pin || ''; f['edit-notas'].value = sale.notas || ''; const standardPlatforms = Array.from(f['edit-plataforma'].options).map(o => o.value); if (standardPlatforms.includes(sale.plataforma)) { f['edit-plataforma'].value = sale.plataforma; } else { f['edit-plataforma'].value = 'Otro'; selectors.editOtroPlataformaInput.value = sale.plataforma; } handlePlatformChange(selectors.editPlataformaSelect, selectors.editOtroPlataformaContainer, selectors.editOtroPlataformaInput); openModal(); };
+                const handleEdit = (id) => { const sale = allSales.find(s => s.id === id); if(!sale) return; const client = allClients.find(c => c.id === sale.clientId); const f = selectors.editForm; f['edit-sale-id'].value = sale.id; f['edit-cliente'].value = client ? client.nombre : 'Cliente no encontrado'; f['edit-cliente'].disabled = true; f['edit-precio'].value = sale.precio; f['edit-inicioPlan'].value = sale.inicioPlan; f['edit-finPlan'].value = sale.finPlan; f['edit-correo'].value = sale.correo || ''; f['edit-contrasena'].value = sale.contrasena || ''; f['edit-pin'].value = sale.pin || ''; f['edit-notas'].value = sale.notas || ''; const standardPlatforms = Array.from(f['edit-plataforma'].options).map(o => o.value); if (standardPlatforms.includes(sale.plataforma)) { f['edit-plataforma'].value = sale.plataforma; } else { f['edit-plataforma'].value = 'Otro'; selectors.editOtroPlataformaInput.value = sale.plataforma; } handlePlatformChange(selectors.editPlataformaSelect, selectors.editOtroPlataformaContainer, selectors.editOtroPlataformaInput); openModal(selectors.editModal); };
                 const handleRenew = async (id) => {
                     const originalSale = allSales.find(s => s.id === id);
                     if (!originalSale) {
@@ -407,9 +483,36 @@
                 onSnapshot(collection(db, "sales"), (snapshot) => { allSales = snapshot.docs.map(d => ({ id: d.id, ...d.data() })); allSales.sort((a, b) => new Date(a.finPlan) - new Date(b.finPlan)); selectors.loadingState.classList.add('hidden'); if (allSales.length === 0) selectors.emptyState.classList.remove('hidden'); else selectors.emptyState.classList.add('hidden'); renderPlatformFilters(); applyFiltersAndRender(); updateFinancialSummary(); }, (e) => { console.error("Error al cargar ventas:", e); });
                 onSnapshot(collection(db, "expenses"), (snapshot) => { allExpenses = snapshot.docs.map(d => ({ id: d.id, ...d.data() })); allExpenses.sort((a, b) => new Date(b.date) - new Date(a.date)); renderExpenses(); updateFinancialSummary(); }, (e) => { console.error("Error al cargar egresos:", e); });
                 onSnapshot(collection(db, "platformAccounts"), (snapshot) => { allPlatformAccounts = snapshot.docs.map(d => ({ id: d.id, ...d.data() })); renderPlatformAccounts(); populatePlatformAccountsDropdown(); }, (e) => { console.error("Error al cargar cuentas:", e); });
-                selectors.addSaleForm.addEventListener('submit', async (e) => { e.preventDefault(); const f = selectors.addSaleForm; const newSale = { cliente: f.cliente.value, plataforma: f.plataforma.value === 'Otro' ? selectors.otroPlataformaInput.value : f.plataforma.value, precio: parseFloat(f.precio.value), inicioPlan: f.inicioPlan.value, finPlan: f.finPlan.value, correo: f.correo.value, contrasena: f.contrasena.value, pin: f.pin.value, notas: f.notas.value, createdAt: new Date().toISOString() }; try { await addDoc(collection(db, "sales"), newSale); f.reset(); handlePlatformChange(selectors.plataformaSelect, selectors.otroPlataformaContainer, selectors.otroPlataformaInput); } catch (err) { console.error("Error al guardar venta:", err); alert("Error al guardar la venta. Revisa la consola (F12).") } });
-                selectors.editForm.addEventListener('submit', async (e) => { e.preventDefault(); const f = selectors.editForm; const id = f['edit-sale-id'].value; const updated = { cliente: f['edit-cliente'].value, plataforma: f['edit-plataforma'].value === 'Otro' ? selectors.editOtroPlataformaInput.value : f['edit-plataforma'].value, precio: parseFloat(f['edit-precio'].value), inicioPlan: f['edit-inicioPlan'].value, finPlan: f['edit-finPlan'].value, correo: f['edit-correo'].value, contrasena: f['edit-contrasena'].value, pin: f['edit-pin'].value, notas: f['edit-notas'].value, }; try { await updateDoc(doc(db, "sales", id), updated); closeModal(); } catch (err) { console.error(err); } });
+                onSnapshot(collection(db, "clients"), (snapshot) => { allClients = snapshot.docs.map(d => ({ id: d.id, ...d.data() })); allClients.sort((a, b) => a.nombre.localeCompare(b.nombre)); renderClientOptions(); applyFiltersAndRender(); }, (e) => { console.error("Error al cargar clientes:", e); });
+                selectors.addSaleForm.addEventListener('submit', async (e) => { e.preventDefault(); const f = selectors.addSaleForm; const newSale = { clientId: selectors.clienteSelect.value, plataforma: f.plataforma.value === 'Otro' ? selectors.otroPlataformaInput.value : f.plataforma.value, precio: parseFloat(f.precio.value), inicioPlan: f.inicioPlan.value, finPlan: f.finPlan.value, correo: f.correo.value, contrasena: f.contrasena.value, pin: f.pin.value, notas: f.notas.value, createdAt: new Date().toISOString() }; try { await addDoc(collection(db, "sales"), newSale); f.reset(); handlePlatformChange(selectors.plataformaSelect, selectors.otroPlataformaContainer, selectors.otroPlataformaInput); } catch (err) { console.error("Error al guardar venta:", err); alert("Error al guardar la venta. Revisa la consola (F12).") } });
+                selectors.editForm.addEventListener('submit', async (e) => { e.preventDefault(); const f = selectors.editForm; const id = f['edit-sale-id'].value; const updated = { plataforma: f['edit-plataforma'].value === 'Otro' ? selectors.editOtroPlataformaInput.value : f['edit-plataforma'].value, precio: parseFloat(f['edit-precio'].value), inicioPlan: f['edit-inicioPlan'].value, finPlan: f['edit-finPlan'].value, correo: f['edit-correo'].value, contrasena: f['edit-contrasena'].value, pin: f['edit-pin'].value, notas: f['edit-notas'].value, }; try { await updateDoc(doc(db, "sales", id), updated); closeModal(selectors.editModal); } catch (err) { console.error(err); } });
                 selectors.addExpenseForm.addEventListener('submit', async (e) => { e.preventDefault(); const f = selectors.addExpenseForm; const description = f['expense-description'].value; const amount = parseFloat(f['expense-amount'].value); const date = f['expense-date'].value; if (!description || !date || isNaN(amount) || amount <= 0) return; try { await addDoc(collection(db, "expenses"), { description, amount, date }); f.reset(); f['expense-date'].value = dayjs().format('YYYY-MM-DD'); } catch (err) { console.error("Error al añadir egreso:", err); } });
+
+                // New Client Logic
+                selectors.addNewClientBtn.addEventListener('click', () => openModal(selectors.newClientModal));
+                selectors.closeNewClientModalBtn.addEventListener('click', () => closeModal(selectors.newClientModal));
+                selectors.cancelNewClientBtn.addEventListener('click', () => closeModal(selectors.newClientModal));
+                selectors.newClientForm.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const f = selectors.newClientForm;
+                    const newClient = {
+                        nombre: f['new-client-name'].value,
+                        contacto: f['new-client-contact'].value,
+                        fechaRegistro: new Date().toISOString()
+                    };
+                    try {
+                        const docRef = await addDoc(collection(db, "clients"), newClient);
+                        f.reset();
+                        closeModal(selectors.newClientModal);
+                        // Select the new client in the dropdown
+                        setTimeout(() => {
+                            selectors.clienteSelect.value = docRef.id;
+                        }, 200);
+                    } catch (err) {
+                        console.error("Error al guardar cliente:", err);
+                        alert("Error al guardar el cliente. Revisa la consola (F12).")
+                    }
+                });
                 selectors.addAccountForm.addEventListener('submit', async (e) => { e.preventDefault(); const f = selectors.addAccountForm; const newAccount = { platform: f['account-platform'].value, email: f['account-email'].value, password: f['account-password'].value, }; try { await addDoc(collection(db, "platformAccounts"), newAccount); f.reset(); } catch (err) { console.error("Error al guardar cuenta:", err); } });
                 selectors.searchInput.addEventListener('input', e => { currentSearchTerm = e.target.value; applyFiltersAndRender(); });
                 selectors.accountFilter.addEventListener('change', e => { activeAccountFilter = e.target.value; applyFiltersAndRender(); });
