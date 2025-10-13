@@ -688,6 +688,29 @@
         editCalculateDateBtn.addEventListener('click', () => calculateEndDate(editDiasPlanInput, editInicioPlanInput, editFinPlanInput));
         editInicioPlanInput.addEventListener('change', () => calculateEndDate(editDiasPlanInput, editInicioPlanInput, editFinPlanInput));
     </script>
+
+    <!--
+      IMPORTANTE: Configuración de Firebase
+      Pega aquí las credenciales de tu proyecto de Firebase para que la aplicación se conecte a tu base de datos.
+      Puedes encontrar estas credenciales en:
+      Consola de Firebase -> Configuración del proyecto (el ícono de engranaje) -> General -> Tus apps -> Configuración del SDK.
+    -->
+    <script>
+      // Configuración de Firebase con las credenciales del usuario
+      const __firebase_config = JSON.stringify({
+        apiKey: "AIzaSyCaYzhFY6keITDiN2Dn7kyEAnGPDt0hu2A",
+        authDomain: "streaming-d0fac.firebaseapp.com",
+        projectId: "streaming-d0fac",
+        storageBucket: "streaming-d0fac.firebasestorage.app",
+        messagingSenderId: "1017661259961",
+        appId: "1:1017661259961:web:9303ad97c753fe95379b68",
+        measurementId: "G-WZDCXCJPFV"
+      });
+
+      // Este valor puede permanecer como está
+      const __app_id = 'default-app-id';
+    </script>
+
 </body>
 </html>
 
