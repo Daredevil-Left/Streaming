@@ -1,22 +1,5 @@
-// Importamos las herramientas de Firebase que necesitamos
-import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-
-// ==========================================================
-// ¡IMPORTANTE! Pega aquí tus credenciales de Firebase
-// ==========================================================
-const firebaseConfig = {
-    apiKey: "AIzaSyCaYzhFY6keITDiN2Dn7kyEAnGPDt0hu2A",
-    authDomain: "streaming-d0fac.firebaseapp.com",
-    projectId: "streaming-d0fac",
-    storageBucket: "streaming-d0fac.firebasestorage.app",
-    messagingSenderId: "1017661259961",
-    appId: "1:1017661259961:web:9303ad97c753fe95379b68"
-};
-
-// Conectamos con Firebase
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app); // Obtenemos el servicio de autenticación
+import { signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+import { auth } from "./firebase-config.js";
 
 // Apuntamos a los elementos del formulario HTML
 const loginForm = document.getElementById('login-form');
