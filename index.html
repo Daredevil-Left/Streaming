@@ -178,11 +178,15 @@
                 <div><label for="edit-precio" class="block text-sm font-medium text-gray-600 mb-2">Precio Pagado (S/)</label><input type="number" id="edit-precio" name="edit-precio" min="0" step="0.01" class="w-full px-4 py-2 border border-gray-300 rounded-lg" required></div>
                 <div><label for="edit-inicioPlan" class="block text-sm font-medium text-gray-600 mb-2">Inicio del Plan</label><input type="date" id="edit-inicioPlan" name="edit-inicioPlan" class="w-full px-4 py-2 border border-gray-300 rounded-lg" required></div>
                 <div>
-                    <div class="flex items-end gap-2 mb-2">
-                        <div class="flex-grow"><label for="edit-diasPlan" class="block text-sm font-medium text-gray-600 mb-2">Nº Días</label><input type="number" id="edit-diasPlan" name="edit-diasPlan" class="w-full px-4 py-2 border border-gray-300 rounded-lg"></div>
-                        <button type="button" id="edit-calculate-date-btn" class="bg-indigo-500 text-white font-semibold px-4 py-2 rounded-lg hover:bg-indigo-600 transition h-10">Calcular</button>
+                    <label for="edit-finPlan" class="block text-sm font-medium text-gray-600 mb-2">Fin del Plan</label>
+                    <input type="date" id="edit-finPlan" name="edit-finPlan" class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100" required>
+                    <div class="mt-2 p-3 bg-gray-50 rounded-lg border">
+                        <label for="renew-days" class="block text-sm font-medium text-gray-600 mb-1">Días a Renovar</label>
+                        <div class="flex items-center gap-2">
+                            <input type="number" id="renew-days" name="renew-days" class="w-full px-3 py-1.5 border border-gray-300 rounded-lg" placeholder="Ej: 30">
+                            <button type="button" id="renew-btn-modal" class="bg-green-500 text-white font-semibold px-4 py-1.5 rounded-lg hover:bg-green-600 transition whitespace-nowrap">Renovar</button>
+                        </div>
                     </div>
-                    <div><label for="edit-finPlan" class="block text-sm font-medium text-gray-600 mb-2">Fin del Plan</label><input type="date" id="edit-finPlan" name="edit-finPlan" class="w-full px-4 py-2 border border-gray-300 rounded-lg" required></div>
                 </div>
                 <div>
                     <label for="edit-platform-account" class="block text-sm font-medium text-gray-600 mb-2">Cuenta de Plataforma</label>
@@ -444,9 +448,6 @@
                                 <button class="delete-btn p-1 text-red-600 hover:text-red-800 hover:bg-red-100 rounded-full transition" data-id="${sale.id}" title="Eliminar">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                                 </button>
-                                <button class="renew-btn p-1 text-green-600 hover:text-green-800 hover:bg-green-100 rounded-full transition" data-id="${sale.id}" title="Renovar">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h5M20 20v-5h-5M4 20h5v-5M20 4h-5v5"></path></svg>
-                                </button>
                             </div>
                             <div class="md:hidden col-span-2 mt-2 pt-2 border-t flex justify-between items-center text-xs">
                                 <span class="font-semibold py-1 px-2 uppercase rounded-full text-${status.color}-600 bg-${status.color}-100">${status.text}</span>
@@ -632,7 +633,7 @@
                 onSnapshot(collection(db, "expenses"), (snapshot) => { allExpenses = snapshot.docs.map(d => ({ id: d.id, ...d.data() })); allExpenses.sort((a, b) => new Date(b.date) - new Date(a.date)); renderExpenses(); updateFinancialSummary(); }, (e) => { console.error("Error al cargar egresos:", e); });
                 onSnapshot(collection(db, "platformAccounts"), (snapshot) => { allPlatformAccounts = snapshot.docs.map(d => ({ id: d.id, ...d.data() })); renderPlatformAccounts(); populatePlatformAccountsDropdowns(); }, (e) => { console.error("Error al cargar cuentas:", e); });
                 selectors.addSaleForm.addEventListener('submit', async (e) => { e.preventDefault(); const f = selectors.addSaleForm; const newSale = { cliente: f.cliente.value, plataforma: f.plataforma.value === 'Otro' ? selectors.otroPlataformaInput.value : f.plataforma.value, precio: parseFloat(f.precio.value), inicioPlan: f.inicioPlan.value, finPlan: f.finPlan.value, correo: f.correo.value, contrasena: f.contrasena.value, pin: f.pin.value, notas: f.notas.value, createdAt: new Date().toISOString() }; try { await addDoc(collection(db, "sales"), newSale); f.reset(); handlePlatformChange(selectors.plataformaSelect, selectors.otroPlataformaContainer, selectors.otroPlataformaInput); } catch (err) { console.error("Error al guardar venta:", err); alert("Error al guardar la venta. Revisa la consola (F12).") } });
-                selectors.editForm.addEventListener('submit', async (e) => { e.preventDefault(); const f = selectors.editForm; const id = f['edit-sale-id'].value; const updated = { cliente: f['edit-cliente'].value, plataforma: f['edit-plataforma'].value === 'Otro' ? selectors.editOtroPlataformaInput.value : f['edit-plataforma'].value, precio: parseFloat(f['edit-precio'].value), inicioPlan: f['edit-inicioPlan'].value, finPlan: f['edit-finPlan'].value, correo: f['edit-correo'].value, contrasena: f['edit-contrasena'].value, pin: f['edit-pin'].value, notas: f['edit-notas'].value, }; try { await updateDoc(doc(db, "sales", id), updated); closeModal(); } catch (err) { console.error(err); } });
+                selectors.editForm.addEventListener('submit', async (e) => { e.preventDefault(); const f = selectors.editForm; const id = f['edit-sale-id'].value; const updated = { cliente: f['edit-cliente'].value, plataforma: f['edit-plataforma'].value === 'Otro' ? selectors.editOtroPlataformaInput.value : f['edit-plataforma'].value, precio: parseFloat(f['edit-precio'].value), inicioPlan: f['edit-inicioPlan'].value, finPlan: f['edit-finPlan'].value, correo: f['edit-correo'].value, contrasena: f['edit-contrasena'].value, pin: f['edit-pin'].value, notas: f['edit-notas'].value, }; try { await updateDoc(doc(db, "sales", id), updated); closeModal(); } catch (err) { console.error("Error al actualizar la venta:", err); alert("Error al actualizar la venta. Revisa la consola (F12).") } });
                 selectors.addExpenseForm.addEventListener('submit', async (e) => { e.preventDefault(); const f = selectors.addExpenseForm; const description = f['expense-description'].value; const amount = parseFloat(f['expense-amount'].value); const date = f['expense-date'].value; if (!description || !date || isNaN(amount) || amount <= 0) return; try { await addDoc(collection(db, "expenses"), { description, amount, date }); f.reset(); f['expense-date'].value = dayjs().format('YYYY-MM-DD'); } catch (err) { console.error("Error al añadir egreso:", err); } });
                 selectors.addAccountForm.addEventListener('submit', async (e) => { e.preventDefault(); const f = selectors.addAccountForm; const newAccount = { platform: f['account-platform'].value, email: f['account-email'].value, password: f['account-password'].value, }; try { await addDoc(collection(db, "platformAccounts"), newAccount); f.reset(); document.querySelectorAll('#account-platform-buttons button').forEach(b => b.classList.remove('bg-indigo-600', 'text-white', 'border-indigo-600')); } catch (err) { console.error("Error al guardar cuenta:", err); } });
                 selectors.searchInput.addEventListener('input', e => {
@@ -658,14 +659,19 @@
                 selectors.platformAccountSelect.addEventListener('change', () => handlePlatformAccountChange(selectors.platformAccountSelect, selectors.addSaleForm.correo, selectors.addSaleForm.contrasena, document.querySelectorAll('.manual-credentials')));
                 selectors.editPlatformAccountSelect.addEventListener('change', () => handlePlatformAccountChange(selectors.editPlatformAccountSelect, selectors.editForm['edit-correo'], selectors.editForm['edit-contrasena'], document.querySelectorAll('.edit-manual-credentials')));
                 const diasPlanInput = document.getElementById('diasPlan'); const inicioPlanInput = document.getElementById('inicioPlan'); const finPlanInput = document.getElementById('finPlan'); const calculateDateBtn = document.getElementById('calculate-date-btn');
-                const editDiasPlanInput = document.getElementById('edit-diasPlan'); const editInicioPlanInput = document.getElementById('edit-inicioPlan'); const editFinPlanInput = document.getElementById('edit-finPlan'); const editCalculateDateBtn = document.getElementById('edit-calculate-date-btn');
-                const calculateEndDate = (diasInput, inicioInput, finInput) => { const dias = parseInt(diasInput.value, 10); const inicio = inicioInput.value; if (!isNaN(dias) && inicio) { const fin = dayjs(inicio).add(dias, 'day').format('YYYY-MM-DD'); finInput.value = fin; } };
-                diasPlanInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); calculateEndDate(diasPlanInput, inicioPlanInput, finPlanInput); } });
-                calculateDateBtn.addEventListener('click', () => calculateEndDate(diasPlanInput, inicioPlanInput, finPlanInput));
-                inicioPlanInput.addEventListener('change', () => calculateEndDate(diasPlanInput, inicioPlanInput, finPlanInput));
-                editDiasPlanInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); calculateEndDate(editDiasPlanInput, editInicioPlanInput, editFinInput); } });
-                editCalculateDateBtn.addEventListener('click', () => calculateEndDate(editDiasPlanInput, editInicioPlanInput, editFinInput));
-                editInicioPlanInput.addEventListener('change', () => calculateEndDate(editDiasPlanInput, editInicioPlanInput, editFinInput));
+                const editFinPlanInput = document.getElementById('edit-finPlan');
+                const renewBtnModal = document.getElementById('renew-btn-modal');
+                const renewDaysInput = document.getElementById('renew-days');
+
+                renewBtnModal.addEventListener('click', () => {
+                    const daysToAdd = parseInt(renewDaysInput.value, 10);
+                    const currentEndDate = editFinPlanInput.value;
+                    if (!isNaN(daysToAdd) && currentEndDate) {
+                        const newEndDate = dayjs(currentEndDate).add(daysToAdd, 'day').format('YYYY-MM-DD');
+                        editFinPlanInput.value = newEndDate;
+                        renewDaysInput.value = ''; // Clear the input after use
+                    }
+                });
 
                 // Set default expense date
                 document.getElementById('expense-date').value = dayjs().format('YYYY-MM-DD');
