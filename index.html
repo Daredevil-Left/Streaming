@@ -24,26 +24,26 @@
 </head>
 <body class="antialiased">
 
-    <div id="app" class="container mx-auto p-4 sm:p-6 lg:p-8 hidden">
+    <div id="app" class="container mx-auto p-4 md:p-8 hidden">
 
-        <header class="mb-8 flex justify-between items-center">
-            <div class="text-left">
-                <h1 class="text-4xl font-bold text-gray-800">Control de Ventas</h1>
-                <p class="text-lg text-gray-500 mt-2">Gestiona tus suscripciones y ventas de forma sencilla.</p>
+        <header class="mb-8 flex flex-col sm:flex-row justify-between items-center gap-6">
+            <div class="text-center sm:text-left w-full">
+                <h1 class="text-3xl md:text-4xl font-bold text-gray-800">Control de Ventas</h1>
+                <p class="text-base md:text-lg text-gray-500 mt-2">Gestiona tus suscripciones y ventas de forma sencilla.</p>
             </div>
             <div class="flex items-center gap-4">
-                <div class="w-48 h-24 sm:w-56 sm:h-28 md:w-64 md:h-32 rounded-lg flex items-center justify-center overflow-hidden">
+                <div class="w-32 h-16 sm:w-48 sm:h-24 rounded-lg flex items-center justify-center overflow-hidden">
                     <img src="logo_nuevo.png" alt="Logo" class="max-w-full max-h-full object-contain" onerror="this.replaceWith(document.createElement('div')).textContent='Logo'">
                 </div>
-                <button id="logout-btn" class="bg-red-500 text-white font-semibold px-4 py-2 rounded-lg hover:bg-red-600 transition-colors">Cerrar Sesión</button>
+                <button id="logout-btn" class="bg-red-500 text-white font-semibold px-4 py-2 rounded-lg hover:bg-red-600 transition-colors whitespace-nowrap">Cerrar Sesión</button>
             </div>
         </header>
         
         <div class="lg:flex lg:gap-8">
             <main class="flex-1">
-                <div class="bg-white p-6 rounded-2xl shadow-lg mb-8 max-w-5xl mx-auto">
+                <div class="bg-white p-4 md:p-6 rounded-2xl shadow-lg mb-8 max-w-5xl mx-auto">
                     <div class="flex justify-between items-center cursor-pointer" id="toggle-accounts-section">
-                        <h2 class="text-2xl font-semibold text-gray-700">Gestionar Cuentas de Plataformas</h2>
+                        <h2 class="text-xl md:text-2xl font-semibold text-gray-700">Gestionar Cuentas de Plataformas</h2>
                         <svg id="toggle-accounts-icon" class="w-6 h-6 transition-transform transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                         </svg>
@@ -53,8 +53,7 @@
                             <div class="md:col-span-3">
                                 <label class="block text-sm font-medium text-gray-600 mb-2">Plataforma</label>
                                 <div id="account-platform-buttons" class="flex flex-wrap gap-2">
-                                    <!-- Platform buttons will be inserted here -->
-                                </div>
+                                    </div>
                                 <input type="hidden" id="account-platform" name="account-platform" required>
                             </div>
                             <div>
@@ -69,17 +68,16 @@
                                 </button>
                             </div>
                             <div class="md:col-span-3 text-right">
-                                <button type="submit" class="bg-blue-600 text-white font-semibold px-6 py-3 rounded-lg hover:bg-blue-700 transition">Añadir Cuenta</button>
+                                <button type="submit" class="bg-blue-600 w-full md:w-auto text-white font-semibold px-6 py-3 rounded-lg hover:bg-blue-700 transition">Añadir Cuenta</button>
                             </div>
                         </form>
                         <div id="accounts-list" class="space-y-3">
-                            <!-- Platform accounts will be rendered here -->
-                        </div>
+                            </div>
                     </div>
                 </div>
 
-                <div class="bg-white p-6 rounded-2xl shadow-lg mb-8 max-w-5xl mx-auto">
-                    <h2 class="text-2xl font-semibold text-gray-700 mb-6">Añadir Nueva Venta</h2>
+                <div class="bg-white p-4 md:p-6 rounded-2xl shadow-lg mb-8 max-w-5xl mx-auto">
+                    <h2 class="text-xl md:text-2xl font-semibold text-gray-700 mb-6">Añadir Nueva Venta</h2>
                     <form id="add-sale-form" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                         <div><label for="cliente" class="block text-sm font-medium text-gray-600 mb-2">Nombre del Cliente</label><input type="text" id="cliente" name="cliente" class="w-full px-4 py-2 border border-gray-300 rounded-lg" required></div>
                         <div><label for="plataforma" class="block text-sm font-medium text-gray-600 mb-2">Plataforma</label><select id="plataforma" name="plataforma" class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white"><option>Netflix</option> <option>Spotify</option> <option>Disney+</option> <option>HBO Max</option> <option>Amazon Prime Video</option> <option>YouTube Premium</option> <option>Apple Music</option> <option>Apple TV+</option> <option>Crunchyroll</option> <option>Star+</option> <option>Vix+</option> <option>Paramount+</option> <option>MagisTV</option> <option>Otro</option></select></div>
@@ -87,11 +85,11 @@
                         <div><label for="precio" class="block text-sm font-medium text-gray-600 mb-2">Precio Pagado (S/)</label><input type="number" id="precio" name="precio" min="0" step="0.01" class="w-full px-4 py-2 border border-gray-300 rounded-lg" required></div>
                         <div><label for="inicioPlan" class="block text-sm font-medium text-gray-600 mb-2">Inicio del Plan</label><input type="date" id="inicioPlan" name="inicioPlan" class="w-full px-4 py-2 border border-gray-300 rounded-lg" required></div>
                         <div>
-                            <div class="flex items-end gap-2 mb-2">
+                            <div class="flex items-end gap-2">
                                 <div class="flex-grow"><label for="diasPlan" class="block text-sm font-medium text-gray-600 mb-2">Nº Días</label><input type="number" id="diasPlan" name="diasPlan" class="w-full px-4 py-2 border border-gray-300 rounded-lg"></div>
                                 <button type="button" id="calculate-date-btn" class="bg-indigo-500 text-white font-semibold px-4 py-2 rounded-lg hover:bg-indigo-600 transition h-10">Calcular</button>
                             </div>
-                            <div><label for="finPlan" class="block text-sm font-medium text-gray-600 mb-2">Fin del Plan</label><input type="date" id="finPlan" name="finPlan" class="w-full px-4 py-2 border border-gray-300 rounded-lg" required></div>
+                            <div class="mt-2"><label for="finPlan" class="block text-sm font-medium text-gray-600 mb-2">Fin del Plan</label><input type="date" id="finPlan" name="finPlan" class="w-full px-4 py-2 border border-gray-300 rounded-lg" required></div>
                         </div>
                         <div>
                             <label for="platform-account" class="block text-sm font-medium text-gray-600 mb-2">Cuenta de Plataforma</label>
@@ -112,12 +110,12 @@
                         </div>
                         <div><label for="pin" class="block text-sm font-medium text-gray-600 mb-2">PIN</label><input type="text" id="pin" name="pin" class="w-full px-4 py-2 border border-gray-300 rounded-lg"></div>
                         <div class="md:col-span-1 xl:col-span-2"><label for="notas" class="block text-sm font-medium text-gray-600 mb-2">Notas Adicionales</label><input type="text" id="notas" name="notas" class="w-full px-4 py-2 border border-gray-300 rounded-lg"></div>
-                        <div class="md:col-span-2 lg:col-span-3 xl:col-span-4 text-right self-end"><button type="submit" class="bg-indigo-600 text-white font-semibold px-6 py-3 rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-4 focus:ring-indigo-500 focus:ring-opacity-50 transition-transform transform hover:scale-105">Guardar Venta</button></div>
+                        <div class="md:col-span-2 lg:col-span-3 xl:col-span-4 text-right self-end"><button type="submit" class="bg-indigo-600 w-full md:w-auto text-white font-semibold px-6 py-3 rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-4 focus:ring-indigo-500 focus:ring-opacity-50 transition-transform transform hover:scale-105">Guardar Venta</button></div>
                     </form>
                 </div>
 
                 <div class="bg-white p-4 rounded-2xl shadow-lg mb-8">
-                    <div class="grid md:grid-cols-2 gap-4 mb-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                         <div class="relative flex-grow w-full"><input type="text" id="search-input" placeholder="Buscar por cliente, plataforma o correo..." class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"><svg class="w-5 h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg></div>
                         <div>
                             <select id="account-filter" class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white">
@@ -144,15 +142,15 @@
             </main>
 
             <aside class="lg:w-1/3 xl:w-1/4 mt-8 lg:mt-0">
-                <div class="bg-white p-6 rounded-2xl shadow-lg sticky top-8">
-                    <h2 class="text-2xl font-semibold text-gray-700 mb-6">Resumen Financiero</h2>
+                <div class="bg-white p-4 md:p-6 rounded-2xl shadow-lg sticky top-8">
+                    <h2 class="text-xl md:text-2xl font-semibold text-gray-700 mb-6">Resumen Financiero</h2>
                     <div class="space-y-4 mb-6">
-                        <div class="flex justify-between items-center p-4 bg-green-50 rounded-lg"><span class="font-medium text-green-800">Ingresos Totales:</span><span id="total-ingresos" class="font-bold text-xl text-green-900">S/0.00</span></div>
-                        <div class="flex justify-between items-center p-4 bg-red-50 rounded-lg"><span class="font-medium text-red-800">Egresos Totales:</span><span id="total-egresos" class="font-bold text-xl text-red-900">S/0.00</span></div>
-                        <div class="flex justify-between items-center p-4 bg-blue-50 rounded-lg border-t-2 border-blue-200"><span class="font-medium text-blue-800">Balance General:</span><span id="balance-total" class="font-bold text-2xl text-blue-900">S/0.00</span></div>
+                        <div class="flex justify-between items-center p-4 bg-green-50 rounded-lg"><span class="font-medium text-green-800">Ingresos Totales:</span><span id="total-ingresos" class="font-bold text-lg md:text-xl text-green-900">S/0.00</span></div>
+                        <div class="flex justify-between items-center p-4 bg-red-50 rounded-lg"><span class="font-medium text-red-800">Egresos Totales:</span><span id="total-egresos" class="font-bold text-lg md:text-xl text-red-900">S/0.00</span></div>
+                        <div class="flex justify-between items-center p-4 bg-blue-50 rounded-lg border-t-2 border-blue-200"><span class="font-medium text-blue-800">Balance General:</span><span id="balance-total" class="font-bold text-xl md:text-2xl text-blue-900">S/0.00</span></div>
                     </div>
                     <div class="border-t pt-6 mt-6">
-                        <h3 class="text-xl font-semibold text-gray-700 mb-4">Añadir Egreso</h3>
+                        <h3 class="text-lg md:text-xl font-semibold text-gray-700 mb-4">Añadir Egreso</h3>
                         <form id="add-expense-form" class="space-y-4">
                             <div><label for="expense-description" class="block text-sm font-medium text-gray-600 mb-2">Descripción</label><input type="text" id="expense-description" name="expense-description" class="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="Ej: Pago de internet" required></div>
                             <div><label for="expense-amount" class="block text-sm font-medium text-gray-600 mb-2">Monto (S/)</label><input type="number" id="expense-amount" name="expense-amount" min="0" step="0.01" class="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="Ej: 50.00" required></div>
@@ -161,7 +159,7 @@
                         </form>
                     </div>
                     <div id="expenses-list-container" class="border-t pt-6 mt-6">
-                        <h3 class="text-xl font-semibold text-gray-700 mb-4">Últimos Egresos</h3>
+                        <h3 class="text-lg md:text-xl font-semibold text-gray-700 mb-4">Últimos Egresos</h3>
                         <div id="expenses-list" class="space-y-2 max-h-48 overflow-y-auto"><p class="text-sm text-gray-400">No hay egresos registrados.</p></div>
                     </div>
                 </div>
@@ -215,7 +213,6 @@
             <p class="text-gray-600 mb-8">Elige una opción según si la venta se concretó o fue un error.</p>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- Opción Archivar -->
                 <div class="border border-gray-200 rounded-lg p-6 hover:shadow-lg transition-shadow">
                     <h3 class="text-xl font-semibold text-gray-700 mb-2">Archivar</h3>
                     <p class="text-sm text-gray-500 mb-6">La venta fue real y el dinero se recibió, pero la suscripción ya terminó. La venta desaparecerá de la lista principal pero se contará en el resumen financiero.</p>
@@ -224,7 +221,6 @@
                     </button>
                 </div>
 
-                <!-- Opción Eliminar -->
                 <div class="border border-red-200 rounded-lg p-6 hover:shadow-lg transition-shadow">
                     <h3 class="text-xl font-semibold text-red-700 mb-2">Eliminar Permanentemente</h3>
                     <p class="text-sm text-gray-500 mb-6">Solo si registraste esta venta por error y nunca recibiste el dinero. Se borrará para siempre y no se contará en el resumen financiero.</p>
@@ -452,7 +448,6 @@
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h5M20 20v-5h-5M4 20h5v-5M20 4h-5v5"></path></svg>
                                 </button>
                             </div>
-                            <!-- Fila expandible para móvil -->
                             <div class="md:hidden col-span-2 mt-2 pt-2 border-t flex justify-between items-center text-xs">
                                 <span class="font-semibold py-1 px-2 uppercase rounded-full text-${status.color}-600 bg-${status.color}-100">${status.text}</span>
                                 <span class="font-bold text-gray-800 text-base">${formatCurrency(sale.precio)}</span>
@@ -475,19 +470,20 @@
 
                     allPlatformAccounts.forEach(account => {
                         const item = document.createElement('div');
-                        item.className = 'flex justify-between items-center text-sm p-3 rounded-md bg-gray-50';
+                        // MODIFICADO: Clases para apilar en móvil y poner en fila en desktop
+                        item.className = 'flex flex-col md:flex-row justify-between items-start md:items-center text-sm p-3 rounded-md bg-gray-50 gap-2';
                         item.dataset.accountId = account.id;
                         item.innerHTML = `
-                            <div class="flex-1 grid grid-cols-3 gap-4 items-center">
+                            <div class="flex-1 w-full grid grid-cols-1 md:grid-cols-3 gap-2 md:gap-4 items-center">
                                 <p class="text-gray-800 font-semibold">${account.platform}</p>
                                 <div class="credentials-container">
-                                    <p class="text-gray-600">${account.email}</p>
+                                    <p class="text-gray-600 break-all">${account.email}</p>
                                 </div>
                                 <div class="credentials-container">
-                                    <p class="text-gray-600 truncate">${account.password}</p>
+                                    <p class="text-gray-600 break-all truncate">${account.password}</p>
                                 </div>
                             </div>
-                            <div class="flex items-center">
+                            <div class="flex items-center self-end md:self-center">
                                 <button class="toggle-visibility-btn text-gray-400 hover:text-gray-600 ml-2" title="Mostrar/Ocultar">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
                                 </button>
@@ -515,8 +511,8 @@
                             const credentialContainers = row.querySelectorAll('.credentials-container');
                             const isHidden = btn.dataset.isHidden === 'true';
 
-                            credentialContainers[0].innerHTML = isHidden ? `<p class="text-gray-600">${account.email}</p>` : `<p class="text-gray-400 font-mono">••••••••</p>`;
-                            credentialContainers[1].innerHTML = isHidden ? `<p class="text-gray-600 truncate">${account.password}</p>` : `<p class="text-gray-400 font-mono">••••••••</p>`;
+                            credentialContainers[0].innerHTML = isHidden ? `<p class="text-gray-600 break-all">${account.email}</p>` : `<p class="text-gray-400 font-mono">••••••••</p>`;
+                            credentialContainers[1].innerHTML = isHidden ? `<p class="text-gray-600 break-all truncate">${account.password}</p>` : `<p class="text-gray-400 font-mono">••••••••</p>`;
 
                             btn.dataset.isHidden = !isHidden;
 
@@ -667,9 +663,9 @@
                 diasPlanInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); calculateEndDate(diasPlanInput, inicioPlanInput, finPlanInput); } });
                 calculateDateBtn.addEventListener('click', () => calculateEndDate(diasPlanInput, inicioPlanInput, finPlanInput));
                 inicioPlanInput.addEventListener('change', () => calculateEndDate(diasPlanInput, inicioPlanInput, finPlanInput));
-                editDiasPlanInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); calculateEndDate(editDiasPlanInput, editInicioPlanInput, editFinPlanInput); } });
-                editCalculateDateBtn.addEventListener('click', () => calculateEndDate(editDiasPlanInput, editInicioPlanInput, editFinPlanInput));
-                editInicioPlanInput.addEventListener('change', () => calculateEndDate(editDiasPlanInput, editInicioPlanInput, editFinPlanInput));
+                editDiasPlanInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); calculateEndDate(editDiasPlanInput, editInicioPlanInput, editFinInput); } });
+                editCalculateDateBtn.addEventListener('click', () => calculateEndDate(editDiasPlanInput, editInicioPlanInput, editFinInput));
+                editInicioPlanInput.addEventListener('change', () => calculateEndDate(editDiasPlanInput, editInicioPlanInput, editFinInput));
 
                 // Set default expense date
                 document.getElementById('expense-date').value = dayjs().format('YYYY-MM-DD');
