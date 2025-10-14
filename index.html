@@ -271,9 +271,6 @@
                     editForm: document.getElementById('edit-sale-form'),
                     closeModalBtn: document.getElementById('close-modal'),
                     cancelEditBtn: document.getElementById('cancel-edit'),
-                    customAlert: document.getElementById('custom-alert'),
-                    alertConfirmBtn: document.getElementById('alert-confirm'),
-                    alertCancelBtn: document.getElementById('alert-cancel'),
                     plataformaSelect: document.getElementById('plataforma'),
                     otroPlataformaContainer: document.getElementById('otro-plataforma-container'),
                     otroPlataformaInput: document.getElementById('otro-plataforma'),
@@ -293,7 +290,6 @@
                     accountFilter: document.getElementById('account-filter'),
                     accountPlatformButtons: document.getElementById('account-platform-buttons'),
                 };
-                let confirmCallback = null;
                 const formatCurrency = (amount) => `S/${(amount||0).toFixed(2)}`;
                 const getPlatformHtml = (platformName) => { const style=platformStyles[platformName]||platformStyles['Otro']; return `<span class="font-bold ${style.color}">${platformName}</span>`};
                 const handlePlatformChange = (select, container, input) => { if (select.value==='Otro') { container.classList.remove('hidden'); input.required = true; } else { container.classList.add('hidden'); input.required = false; input.value = ''; }};
@@ -609,8 +605,16 @@
                     }
                 };
                 const handleDeleteSale = (id) => showArchiveDeleteModal(id);
-                const handleDeleteExpense = (id) => showCustomConfirm('Eliminar Egreso', '¿Estás seguro de eliminar este gasto?', async () => { try { await deleteDoc(doc(db, "expenses", id)); } catch (e) { console.error(e); } });
-                const handleDeleteAccount = (id) => showCustomConfirm('Eliminar Cuenta', '¿Estás seguro de eliminar esta cuenta?', async () => { try { await deleteDoc(doc(db, "platformAccounts", id)); } catch (e) { console.error(e); } });
+                const handleDeleteExpense = (id) => {
+                    if (confirm('¿Estás seguro de eliminar este gasto?')) {
+                        deleteDoc(doc(db, "expenses", id)).catch(e => console.error(e));
+                    }
+                };
+                const handleDeleteAccount = (id) => {
+                    if (confirm('¿Estás seguro de eliminar esta cuenta?')) {
+                        deleteDoc(doc(db, "platformAccounts", id)).catch(e => console.error(e));
+                    }
+                };
                 onSnapshot(collection(db, "sales"), (snapshot) => {
                     allSales = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
                     const activeSales = allSales.filter(sale => sale.estado !== 'ARCHIVADO');
@@ -654,8 +658,6 @@
                 });
                 selectors.closeModalBtn.addEventListener('click', closeModal);
                 selectors.cancelEditBtn.addEventListener('click', closeModal);
-                selectors.alertConfirmBtn.addEventListener('click', () => { if (confirmCallback) confirmCallback(); hideCustomConfirm(); });
-                selectors.alertCancelBtn.addEventListener('click', hideCustomConfirm);
                 selectors.platformAccountSelect.addEventListener('change', () => handlePlatformAccountChange(selectors.platformAccountSelect, selectors.addSaleForm.correo, selectors.addSaleForm.contrasena, document.querySelectorAll('.manual-credentials')));
                 selectors.editPlatformAccountSelect.addEventListener('change', () => handlePlatformAccountChange(selectors.editPlatformAccountSelect, selectors.editForm['edit-correo'], selectors.editForm['edit-contrasena'], document.querySelectorAll('.edit-manual-credentials')));
                 const diasPlanInput = document.getElementById('diasPlan'); const inicioPlanInput = document.getElementById('inicioPlan'); const finPlanInput = document.getElementById('finPlan'); const calculateDateBtn = document.getElementById('calculate-date-btn');
