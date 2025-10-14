@@ -318,12 +318,23 @@
                     }
 
                     sales.forEach(sale => {
-                        const now = dayjs();
-                        const endDate = dayjs(sale.finPlan);
-                        const diffDays = endDate.diff(now, 'day');
-                        let status = { text: 'Activo', color: 'green' };
-                        if (diffDays < 0) status = { text: 'Vencido', color: 'red' };
-                        else if (diffDays <= 7) status = { text: 'Próximo a Vencer', color: 'yellow' };
+                        const today = dayjs().startOf('day');
+                        const expirationDate = dayjs(sale.finPlan).startOf('day');
+                        const diffDays = expirationDate.diff(today, 'day');
+
+                        let status;
+                        if (diffDays < 0) {
+                            status = { text: 'Vencido', color: 'orange' };
+                        } else if (diffDays === 0) {
+                            status = { text: 'Vence hoy', color: 'red' };
+                        } else if (diffDays <= 7) {
+                            status = { text: 'Próximo a Vencer', color: 'yellow' };
+                        } else {
+                            status = { text: 'Activo', color: 'green' };
+                        }
+
+                        const endDateForDisplay = dayjs(sale.finPlan);
+                        const endDateForRelative = dayjs(sale.finPlan).endOf('day');
 
                         const row = document.createElement('div');
                         row.className = `grid grid-cols-2 md:grid-cols-7 gap-4 items-center p-3 rounded-lg hover:bg-gray-50 transition-colors duration-200 border-b text-sm`;
@@ -332,11 +343,11 @@
                             <div class="col-span-2 font-semibold text-gray-800">
                                 ${sale.cliente}
                                 <div class="font-normal text-xs text-gray-500 md:hidden mt-1">
-                                    ${getPlatformHtml(sale.plataforma)} &middot; Vence: ${endDate.format('DD/MM/YYYY')}
+                                    ${getPlatformHtml(sale.plataforma)} &middot; Vence: ${endDateForDisplay.format('DD/MM/YYYY')}
                                 </div>
                             </div>
                             <div class="hidden md:block">${getPlatformHtml(sale.plataforma)}</div>
-                            <div class="hidden md:block">${endDate.format('DD/MM/YYYY')} <span class="text-xs text-gray-500">(${endDate.fromNow()})</span></div>
+                            <div class="hidden md:block">${endDateForDisplay.format('DD/MM/YYYY')} <span class="text-xs text-gray-500">(${endDateForRelative.fromNow()})</span></div>
                             <div class="hidden md:block"><span class="text-xs font-semibold py-1 px-2 uppercase rounded-full text-${status.color}-600 bg-${status.color}-100">${status.text}</span></div>
                             <div class="hidden md:block font-bold text-gray-800">${formatCurrency(sale.precio)}</div>
                             <div class="flex justify-end gap-3 items-center">
