@@ -41,32 +41,39 @@
         <div class="lg:flex lg:gap-8">
             <main class="flex-1">
                 <div class="bg-white p-6 rounded-2xl shadow-lg mb-8 max-w-5xl mx-auto">
-                    <h2 class="text-2xl font-semibold text-gray-700 mb-6">Gestionar Cuentas de Plataformas</h2>
-                    <form id="add-account-form" class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-                        <div class="md:col-span-3">
-                            <label class="block text-sm font-medium text-gray-600 mb-2">Plataforma</label>
-                            <div id="account-platform-buttons" class="flex flex-wrap gap-2">
-                                <!-- Platform buttons will be inserted here -->
+                    <div class="flex justify-between items-center cursor-pointer" id="toggle-accounts-section">
+                        <h2 class="text-2xl font-semibold text-gray-700">Gestionar Cuentas de Plataformas</h2>
+                        <svg id="toggle-accounts-icon" class="w-6 h-6 transition-transform transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </div>
+                    <div id="collapsible-accounts-content" class="hidden mt-6">
+                        <form id="add-account-form" class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                            <div class="md:col-span-3">
+                                <label class="block text-sm font-medium text-gray-600 mb-2">Plataforma</label>
+                                <div id="account-platform-buttons" class="flex flex-wrap gap-2">
+                                    <!-- Platform buttons will be inserted here -->
+                                </div>
+                                <input type="hidden" id="account-platform" name="account-platform" required>
                             </div>
-                            <input type="hidden" id="account-platform" name="account-platform" required>
+                            <div>
+                                <label for="account-email" class="block text-sm font-medium text-gray-600 mb-2">Correo</label>
+                                <input type="email" id="account-email" name="account-email" class="w-full px-4 py-2 border border-gray-300 rounded-lg" required>
+                            </div>
+                            <div class="relative">
+                                <label for="account-password" class="block text-sm font-medium text-gray-600 mb-2">Contraseña</label>
+                                <input type="password" id="account-password" name="account-password" class="w-full px-4 py-2 border border-gray-300 rounded-lg" required>
+                                <button type="button" class="absolute inset-y-0 right-0 top-6 flex items-center px-3 text-gray-500" onclick="togglePasswordVisibility('account-password', this)">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+                                </button>
+                            </div>
+                            <div class="md:col-span-3 text-right">
+                                <button type="submit" class="bg-blue-600 text-white font-semibold px-6 py-3 rounded-lg hover:bg-blue-700 transition">Añadir Cuenta</button>
+                            </div>
+                        </form>
+                        <div id="accounts-list" class="space-y-3">
+                            <!-- Platform accounts will be rendered here -->
                         </div>
-                        <div>
-                            <label for="account-email" class="block text-sm font-medium text-gray-600 mb-2">Correo</label>
-                            <input type="email" id="account-email" name="account-email" class="w-full px-4 py-2 border border-gray-300 rounded-lg" required>
-                        </div>
-                        <div class="relative">
-                            <label for="account-password" class="block text-sm font-medium text-gray-600 mb-2">Contraseña</label>
-                            <input type="password" id="account-password" name="account-password" class="w-full px-4 py-2 border border-gray-300 rounded-lg" required>
-                            <button type="button" class="absolute inset-y-0 right-0 top-6 flex items-center px-3 text-gray-500" onclick="togglePasswordVisibility('account-password', this)">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
-                            </button>
-                        </div>
-                        <div class="md:col-span-3 text-right">
-                            <button type="submit" class="bg-blue-600 text-white font-semibold px-6 py-3 rounded-lg hover:bg-blue-700 transition">Añadir Cuenta</button>
-                        </div>
-                    </form>
-                    <div id="accounts-list" class="space-y-3">
-                        <!-- Platform accounts will be rendered here -->
                     </div>
                 </div>
 
@@ -513,6 +520,22 @@
 
                 // Set default expense date
                 document.getElementById('expense-date').value = dayjs().format('YYYY-MM-DD');
+
+                // Collapsible section logic
+                const toggleButton = document.getElementById('toggle-accounts-section');
+                const toggleIcon = document.getElementById('toggle-accounts-icon');
+                const collapsibleContent = document.getElementById('collapsible-accounts-content');
+
+                toggleButton.addEventListener('click', () => {
+                    const isHidden = collapsibleContent.classList.contains('hidden');
+                    if (isHidden) {
+                        collapsibleContent.classList.remove('hidden');
+                        toggleIcon.classList.add('rotate-180');
+                    } else {
+                        collapsibleContent.classList.add('hidden');
+                        toggleIcon.classList.remove('rotate-180');
+                    }
+                });
             } else {
                 // ❌ Si no hay nadie conectado, lo expulsamos a la página de login
                 window.location.href = 'login.html';
