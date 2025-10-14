@@ -43,9 +43,12 @@
                 <div class="bg-white p-6 rounded-2xl shadow-lg mb-8 max-w-5xl mx-auto">
                     <h2 class="text-2xl font-semibold text-gray-700 mb-6">Gestionar Cuentas de Plataformas</h2>
                     <form id="add-account-form" class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-                        <div>
-                            <label for="account-platform" class="block text-sm font-medium text-gray-600 mb-2">Plataforma</label>
-                            <input type="text" id="account-platform" name="account-platform" class="w-full px-4 py-2 border border-gray-300 rounded-lg" required>
+                        <div class="md:col-span-3">
+                            <label class="block text-sm font-medium text-gray-600 mb-2">Plataforma</label>
+                            <div id="account-platform-buttons" class="flex flex-wrap gap-2">
+                                <!-- Platform buttons will be inserted here -->
+                            </div>
+                            <input type="hidden" id="account-platform" name="account-platform" required>
                         </div>
                         <div>
                             <label for="account-email" class="block text-sm font-medium text-gray-600 mb-2">Correo</label>
@@ -259,6 +262,7 @@
                     platformAccountSelect: document.getElementById('platform-account'),
                     editPlatformAccountSelect: document.getElementById('edit-platform-account'),
                     accountFilter: document.getElementById('account-filter'),
+                    accountPlatformButtons: document.getElementById('account-platform-buttons'),
                 };
                 let confirmCallback = null;
                 const formatCurrency = (amount) => `S/${(amount||0).toFixed(2)}`;
@@ -271,6 +275,25 @@
                 const updateFinancialSummary = () => { const salesIncome = allSales.reduce((sum, sale) => sum + (sale.precio || 0), 0); const totalIngresos = salesIncome; const totalEgresos = allExpenses.reduce((sum, expense) => sum + (expense.amount || 0), 0); const balance = totalIngresos - totalEgresos; selectors.totalIngresos.textContent = formatCurrency(totalIngresos); selectors.totalEgresos.textContent = formatCurrency(totalEgresos); selectors.balanceTotal.textContent = formatCurrency(balance); selectors.balanceTotal.classList.toggle('text-red-900', balance < 0); selectors.balanceTotal.classList.toggle('text-blue-900', balance >= 0); };
                 const applyFiltersAndRender = () => { let filteredSales = [...allSales]; if (activePlatformFilter !== 'Todos') { filteredSales = filteredSales.filter(sale => sale.plataforma === activePlatformFilter); } if (currentSearchTerm) { const term = currentSearchTerm.toLowerCase(); filteredSales = filteredSales.filter(sale => sale.cliente.toLowerCase().includes(term) || sale.plataforma.toLowerCase().includes(term) || (sale.correo && sale.correo.toLowerCase().includes(term))); } if (activeAccountFilter) { const account = allPlatformAccounts.find(a => a.id === activeAccountFilter); if (account) { filteredSales = filteredSales.filter(sale => sale.correo === account.email && sale.contrasena === account.password); } } renderSales(filteredSales); };
                 const renderPlatformFilters = () => { selectors.platformFilters.innerHTML=''; const platforms=['Todos', ...Object.keys(platformStyles)]; platforms.forEach(platform=>{ const btn=document.createElement('button'); btn.dataset.platform=platform; const activeClasses='border-indigo-500 bg-indigo-50'; const inactiveClasses='border-transparent hover:bg-gray-100'; btn.className=`p-2 rounded-lg border-2 transition-all duration-200 font-semibold ${activePlatformFilter===platform?activeClasses:inactiveClasses}`; if (platform==='Todos') { btn.textContent='Todos'; } else { btn.innerHTML=getPlatformHtml(platform); } btn.addEventListener('click', ()=>{ activePlatformFilter=platform; document.querySelectorAll('#platform-filters button').forEach(b=>{ b.className=`p-2 rounded-lg border-2 transition-all duration-200 font-semibold ${inactiveClasses}`; }); btn.className=`p-2 rounded-lg border-2 transition-all duration-200 font-semibold ${activeClasses}`; applyFiltersAndRender(); }); selectors.platformFilters.appendChild(btn); }); };
+                const renderAccountPlatformButtons = () => {
+                    const platformNames = Object.keys(platformStyles).filter(p => p !== 'Otro');
+                    selectors.accountPlatformButtons.innerHTML = '';
+                    platformNames.forEach(name => {
+                        const btn = document.createElement('button');
+                        btn.type = 'button';
+                        btn.textContent = name;
+                        btn.dataset.platformName = name;
+                        btn.className = 'px-3 py-1.5 border border-gray-300 rounded-md text-sm font-medium hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500';
+                        btn.addEventListener('click', () => {
+                            // Update hidden input
+                            selectors.addAccountForm['account-platform'].value = name;
+                            // Update button styles
+                            document.querySelectorAll('#account-platform-buttons button').forEach(b => b.classList.remove('bg-indigo-600', 'text-white', 'border-indigo-600'));
+                            btn.classList.add('bg-indigo-600', 'text-white', 'border-indigo-600');
+                        });
+                        selectors.accountPlatformButtons.appendChild(btn);
+                    });
+                };
                 const renderSales = (sales) => {
                     selectors.salesList.innerHTML = '';
                     const parentContainer = document.querySelector('.bg-white.rounded-2xl.shadow-lg.p-4');
@@ -340,30 +363,80 @@
                         selectors.accountsList.innerHTML = '<p class="text-sm text-gray-400">No hay cuentas de plataforma registradas.</p>';
                         return;
                     }
+
                     allPlatformAccounts.forEach(account => {
                         const item = document.createElement('div');
                         item.className = 'flex justify-between items-center text-sm p-3 rounded-md bg-gray-50';
+                        item.dataset.accountId = account.id;
                         item.innerHTML = `
                             <div class="flex-1 grid grid-cols-3 gap-4 items-center">
                                 <p class="text-gray-800 font-semibold">${account.platform}</p>
-                                <p class="text-gray-600">${account.email}</p>
-                                <p class="text-gray-600 truncate">${account.password}</p>
+                                <div class="credentials-container">
+                                    <p class="text-gray-600">${account.email}</p>
+                                </div>
+                                <div class="credentials-container">
+                                    <p class="text-gray-600 truncate">${account.password}</p>
+                                </div>
                             </div>
-                            <button class="delete-account-btn text-gray-400 hover:text-red-600 ml-4" data-id="${account.id}">
-                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm4 0a1 1 0 012 0v6a1 1 0 11-2 0V8z" clip-rule="evenodd"></path></svg>
-                            </button>
+                            <div class="flex items-center">
+                                <button class="toggle-visibility-btn text-gray-400 hover:text-gray-600 ml-2" title="Mostrar/Ocultar">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+                                </button>
+                                <button class="delete-account-btn text-gray-400 hover:text-red-600 ml-2" data-id="${account.id}">
+                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm4 0a1 1 0 012 0v6a1 1 0 11-2 0V8z" clip-rule="evenodd"></path></svg>
+                                </button>
+                            </div>
                         `;
                         selectors.accountsList.appendChild(item);
                     });
-                    selectors.accountsList.querySelectorAll('.delete-account-btn').forEach(b => b.addEventListener('click', e => handleDeleteAccount(e.currentTarget.dataset.id)));
+
+                    selectors.accountsList.querySelectorAll('.delete-account-btn').forEach(b => b.addEventListener('click', e => {
+                        e.stopPropagation();
+                        handleDeleteAccount(e.currentTarget.dataset.id);
+                    }));
+
+                    selectors.accountsList.querySelectorAll('.toggle-visibility-btn').forEach(btn => {
+                        btn.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            const row = e.currentTarget.closest('.flex');
+                            const accountId = row.dataset.accountId;
+                            const account = allPlatformAccounts.find(a => a.id === accountId);
+                            if (!account) return;
+
+                            const credentialContainers = row.querySelectorAll('.credentials-container');
+                            const isHidden = btn.dataset.isHidden === 'true';
+
+                            credentialContainers[0].innerHTML = isHidden ? `<p class="text-gray-600">${account.email}</p>` : `<p class="text-gray-400 font-mono">••••••••</p>`;
+                            credentialContainers[1].innerHTML = isHidden ? `<p class="text-gray-600 truncate">${account.password}</p>` : `<p class="text-gray-400 font-mono">••••••••</p>`;
+
+                            btn.dataset.isHidden = !isHidden;
+
+                            const icon = btn.querySelector('svg');
+                            icon.innerHTML = isHidden ?
+                                `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />` :
+                                `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7 .946-3.11 3.563-5.522 6.837-6.141M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.581 10.41A7.48 7.48 0 0119.542 12c-1.274 4.057-5.064 7-9.542 7a10.046 10.046 0 01-3.132-.475M2.458 12c.946-3.11 3.563-5.522 6.837-6.141m1.581 2.318A4.5 4.5 0 0115 12a4.5 4.5 0 01-1.07 2.828M5 5l14 14" />`;
+                        });
+                    });
                 };
 
-                const populatePlatformAccountsDropdown = () => {
+                const populatePlatformAccountsDropdowns = (platform = null) => {
+                    let accountsToDisplay = allPlatformAccounts;
+                    if (platform && platform !== 'Otro') {
+                        accountsToDisplay = allPlatformAccounts.filter(acc => acc.platform === platform);
+                    }
+
                     const createOption = (account) => `<option value="${account.id}">${account.platform} - ${account.email}</option>`;
-                    const options = allPlatformAccounts.map(createOption).join('');
+                    const options = accountsToDisplay.map(createOption).join('');
+
+                    // For the "Add Sale" form
                     selectors.platformAccountSelect.innerHTML = `<option value="">Sin cuenta / Ingresar manualmente</option>${options}`;
-                    selectors.editPlatformAccountSelect.innerHTML = `<option value="">Sin cuenta / Ingresar manualmente</option>${options}`;
-                    selectors.accountFilter.innerHTML = `<option value="">Filtrar por cuenta...</option>${options}`;
+
+                    // For the "Edit Sale" form - we might need to show all for existing sales
+                    const allOptions = allPlatformAccounts.map(createOption).join('');
+                    selectors.editPlatformAccountSelect.innerHTML = `<option value="">Sin cuenta / Ingresar manualmente</option>${allOptions}`;
+
+                    // For the general filter, always show all
+                    selectors.accountFilter.innerHTML = `<option value="">Filtrar por cuenta...</option>${allOptions}`;
                 };
 
                 const handlePlatformAccountChange = (select, emailInput, passwordInput, credentialsContainer) => {
@@ -405,17 +478,23 @@
                 const handleDeleteSale = (id) => showCustomConfirm('Eliminar Venta', '¿Estás seguro? No se puede deshacer.', async () => { try { await deleteDoc(doc(db, "sales", id)); } catch (e) { console.error(e); } });
                 const handleDeleteExpense = (id) => showCustomConfirm('Eliminar Egreso', '¿Estás seguro de eliminar este gasto?', async () => { try { await deleteDoc(doc(db, "expenses", id)); } catch (e) { console.error(e); } });
                 const handleDeleteAccount = (id) => showCustomConfirm('Eliminar Cuenta', '¿Estás seguro de eliminar esta cuenta?', async () => { try { await deleteDoc(doc(db, "platformAccounts", id)); } catch (e) { console.error(e); } });
-                onSnapshot(collection(db, "sales"), (snapshot) => { allSales = snapshot.docs.map(d => ({ id: d.id, ...d.data() })); allSales.sort((a, b) => new Date(a.finPlan) - new Date(b.finPlan)); selectors.loadingState.classList.add('hidden'); if (allSales.length === 0) selectors.emptyState.classList.remove('hidden'); else selectors.emptyState.classList.add('hidden'); renderPlatformFilters(); applyFiltersAndRender(); updateFinancialSummary(); }, (e) => { console.error("Error al cargar ventas:", e); });
+                onSnapshot(collection(db, "sales"), (snapshot) => { allSales = snapshot.docs.map(d => ({ id: d.id, ...d.data() })); allSales.sort((a, b) => new Date(a.finPlan) - new Date(b.finPlan)); selectors.loadingState.classList.add('hidden'); if (allSales.length === 0) selectors.emptyState.classList.remove('hidden'); else selectors.emptyState.classList.add('hidden'); renderPlatformFilters(); renderAccountPlatformButtons(); applyFiltersAndRender(); updateFinancialSummary(); }, (e) => { console.error("Error al cargar ventas:", e); });
                 onSnapshot(collection(db, "expenses"), (snapshot) => { allExpenses = snapshot.docs.map(d => ({ id: d.id, ...d.data() })); allExpenses.sort((a, b) => new Date(b.date) - new Date(a.date)); renderExpenses(); updateFinancialSummary(); }, (e) => { console.error("Error al cargar egresos:", e); });
-                onSnapshot(collection(db, "platformAccounts"), (snapshot) => { allPlatformAccounts = snapshot.docs.map(d => ({ id: d.id, ...d.data() })); renderPlatformAccounts(); populatePlatformAccountsDropdown(); }, (e) => { console.error("Error al cargar cuentas:", e); });
+                onSnapshot(collection(db, "platformAccounts"), (snapshot) => { allPlatformAccounts = snapshot.docs.map(d => ({ id: d.id, ...d.data() })); renderPlatformAccounts(); populatePlatformAccountsDropdowns(); }, (e) => { console.error("Error al cargar cuentas:", e); });
                 selectors.addSaleForm.addEventListener('submit', async (e) => { e.preventDefault(); const f = selectors.addSaleForm; const newSale = { cliente: f.cliente.value, plataforma: f.plataforma.value === 'Otro' ? selectors.otroPlataformaInput.value : f.plataforma.value, precio: parseFloat(f.precio.value), inicioPlan: f.inicioPlan.value, finPlan: f.finPlan.value, correo: f.correo.value, contrasena: f.contrasena.value, pin: f.pin.value, notas: f.notas.value, createdAt: new Date().toISOString() }; try { await addDoc(collection(db, "sales"), newSale); f.reset(); handlePlatformChange(selectors.plataformaSelect, selectors.otroPlataformaContainer, selectors.otroPlataformaInput); } catch (err) { console.error("Error al guardar venta:", err); alert("Error al guardar la venta. Revisa la consola (F12).") } });
                 selectors.editForm.addEventListener('submit', async (e) => { e.preventDefault(); const f = selectors.editForm; const id = f['edit-sale-id'].value; const updated = { cliente: f['edit-cliente'].value, plataforma: f['edit-plataforma'].value === 'Otro' ? selectors.editOtroPlataformaInput.value : f['edit-plataforma'].value, precio: parseFloat(f['edit-precio'].value), inicioPlan: f['edit-inicioPlan'].value, finPlan: f['edit-finPlan'].value, correo: f['edit-correo'].value, contrasena: f['edit-contrasena'].value, pin: f['edit-pin'].value, notas: f['edit-notas'].value, }; try { await updateDoc(doc(db, "sales", id), updated); closeModal(); } catch (err) { console.error(err); } });
                 selectors.addExpenseForm.addEventListener('submit', async (e) => { e.preventDefault(); const f = selectors.addExpenseForm; const description = f['expense-description'].value; const amount = parseFloat(f['expense-amount'].value); const date = f['expense-date'].value; if (!description || !date || isNaN(amount) || amount <= 0) return; try { await addDoc(collection(db, "expenses"), { description, amount, date }); f.reset(); f['expense-date'].value = dayjs().format('YYYY-MM-DD'); } catch (err) { console.error("Error al añadir egreso:", err); } });
-                selectors.addAccountForm.addEventListener('submit', async (e) => { e.preventDefault(); const f = selectors.addAccountForm; const newAccount = { platform: f['account-platform'].value, email: f['account-email'].value, password: f['account-password'].value, }; try { await addDoc(collection(db, "platformAccounts"), newAccount); f.reset(); } catch (err) { console.error("Error al guardar cuenta:", err); } });
+                selectors.addAccountForm.addEventListener('submit', async (e) => { e.preventDefault(); const f = selectors.addAccountForm; const newAccount = { platform: f['account-platform'].value, email: f['account-email'].value, password: f['account-password'].value, }; try { await addDoc(collection(db, "platformAccounts"), newAccount); f.reset(); document.querySelectorAll('#account-platform-buttons button').forEach(b => b.classList.remove('bg-indigo-600', 'text-white', 'border-indigo-600')); } catch (err) { console.error("Error al guardar cuenta:", err); } });
                 selectors.searchInput.addEventListener('input', e => { currentSearchTerm = e.target.value; applyFiltersAndRender(); });
                 selectors.accountFilter.addEventListener('change', e => { activeAccountFilter = e.target.value; applyFiltersAndRender(); });
-                selectors.plataformaSelect.addEventListener('change', () => handlePlatformChange(selectors.plataformaSelect, selectors.otroPlataformaContainer, selectors.otroPlataformaInput));
-                selectors.editPlataformaSelect.addEventListener('change', () => handlePlatformChange(selectors.editPlataformaSelect, selectors.editOtroPlataformaContainer, selectors.editOtroPlataformaInput));
+                selectors.plataformaSelect.addEventListener('change', () => {
+                    handlePlatformChange(selectors.plataformaSelect, selectors.otroPlataformaContainer, selectors.otroPlataformaInput);
+                    populatePlatformAccountsDropdowns(selectors.plataformaSelect.value);
+                });
+                selectors.editPlataformaSelect.addEventListener('change', () => {
+                    handlePlatformChange(selectors.editPlataformaSelect, selectors.editOtroPlataformaContainer, selectors.editOtroPlataformaInput);
+                    // We don't filter the edit form dropdown to avoid issues with existing data
+                });
                 selectors.closeModalBtn.addEventListener('click', closeModal);
                 selectors.cancelEditBtn.addEventListener('click', closeModal);
                 selectors.alertConfirmBtn.addEventListener('click', () => { if (confirmCallback) confirmCallback(); hideCustomConfirm(); });
