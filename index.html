@@ -179,14 +179,7 @@
                 <div><label for="edit-inicioPlan" class="block text-sm font-medium text-gray-600 mb-2">Inicio del Plan</label><input type="date" id="edit-inicioPlan" name="edit-inicioPlan" class="w-full px-4 py-2 border border-gray-300 rounded-lg" required></div>
                 <div>
                     <label for="edit-finPlan" class="block text-sm font-medium text-gray-600 mb-2">Fin del Plan</label>
-                    <input type="date" id="edit-finPlan" name="edit-finPlan" class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100" required>
-                    <div class="mt-2 p-3 bg-gray-50 rounded-lg border">
-                        <label for="renew-days" class="block text-sm font-medium text-gray-600 mb-1">Días a Renovar</label>
-                        <div class="flex items-center gap-2">
-                            <input type="number" id="renew-days" name="renew-days" class="w-full px-3 py-1.5 border border-gray-300 rounded-lg" placeholder="Ej: 30">
-                            <button type="button" id="renew-btn-modal" class="bg-green-500 text-white font-semibold px-4 py-1.5 rounded-lg hover:bg-green-600 transition whitespace-nowrap">Renovar</button>
-                        </div>
-                    </div>
+                    <input type="date" id="edit-finPlan" name="edit-finPlan" class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white" required>
                 </div>
                 <div>
                     <label for="edit-platform-account" class="block text-sm font-medium text-gray-600 mb-2">Cuenta de Plataforma</label>
@@ -631,11 +624,23 @@
                         return;
                     }
 
+                    const today = dayjs();
+                    const currentEndDate = dayjs(originalSale.finPlan);
+
+                    let newEndDate;
+                    if (currentEndDate.isAfter(today)) {
+                        // Caso A: Suscripción activa - sumar a la fecha de fin existente
+                        newEndDate = currentEndDate.add(renewalDays, 'day');
+                    } else {
+                        // Caso B: Suscripción vencida - sumar a la fecha de hoy
+                        newEndDate = today.add(renewalDays, 'day');
+                    }
+
                     const newSale = {
                         ...originalSale, // Copiar datos originales
                         precio: renewalAmount,
-                        inicioPlan: dayjs().format('YYYY-MM-DD'),
-                        finPlan: dayjs().add(renewalDays, 'day').format('YYYY-MM-DD'),
+                        inicioPlan: dayjs().format('YYYY-MM-DD'), // El inicio es hoy
+                        finPlan: newEndDate.format('YYYY-MM-DD'),
                         estado: 'ACTIVO', // Asegurarse de que el estado sea activo
                         createdAt: new Date().toISOString()
                     };
@@ -738,18 +743,7 @@
                 selectors.editPlatformAccountSelect.addEventListener('change', () => handlePlatformAccountChange(selectors.editPlatformAccountSelect, selectors.editForm['edit-correo'], selectors.editForm['edit-contrasena'], document.querySelectorAll('.edit-manual-credentials')));
                 const diasPlanInput = document.getElementById('diasPlan'); const inicioPlanInput = document.getElementById('inicioPlan'); const finPlanInput = document.getElementById('finPlan'); const calculateDateBtn = document.getElementById('calculate-date-btn');
                 const editFinPlanInput = document.getElementById('edit-finPlan');
-                const renewBtnModal = document.getElementById('renew-btn-modal');
-                const renewDaysInput = document.getElementById('renew-days');
 
-                renewBtnModal.addEventListener('click', () => {
-                    const daysToAdd = parseInt(renewDaysInput.value, 10);
-                    const currentEndDate = editFinPlanInput.value;
-                    if (!isNaN(daysToAdd) && currentEndDate) {
-                        const newEndDate = dayjs(currentEndDate).add(daysToAdd, 'day').format('YYYY-MM-DD');
-                        editFinPlanInput.value = newEndDate;
-                        renewDaysInput.value = ''; // Clear the input after use
-                    }
-                });
 
                 calculateDateBtn.addEventListener('click', () => {
                     const days = parseInt(diasPlanInput.value, 10);
