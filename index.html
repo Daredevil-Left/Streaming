@@ -673,6 +673,15 @@
                     }
                 });
 
+                calculateDateBtn.addEventListener('click', () => {
+                    const days = parseInt(diasPlanInput.value, 10);
+                    const startDate = inicioPlanInput.value;
+                    if (!isNaN(days) && startDate) {
+                        const newEndDate = dayjs(startDate).add(days, 'day').format('YYYY-MM-DD');
+                        finPlanInput.value = newEndDate;
+                    }
+                });
+
                 // Set default expense date
                 document.getElementById('expense-date').value = dayjs().format('YYYY-MM-DD');
 
