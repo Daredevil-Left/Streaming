@@ -239,6 +239,28 @@
             </div>
         </div>
     </div>
+    <div id="renewal-modal" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden opacity-0">
+        <div class="modal-content bg-white w-full max-w-md rounded-2xl shadow-2xl p-6 transform scale-95">
+            <h2 class="text-2xl font-semibold text-gray-700 mb-6">Renovar Suscripción</h2>
+            <form id="renewal-form">
+                <input type="hidden" id="renewal-sale-id">
+                <div class="space-y-4">
+                    <div>
+                        <label for="renewal-days" class="block text-sm font-medium text-gray-600 mb-2">Días a renovar</label>
+                        <input type="number" id="renewal-days" class="w-full px-4 py-2 border border-gray-300 rounded-lg" required>
+                    </div>
+                    <div>
+                        <label for="renewal-amount" class="block text-sm font-medium text-gray-600 mb-2">Monto de renovación (S/)</label>
+                        <input type="number" id="renewal-amount" step="0.01" class="w-full px-4 py-2 border border-gray-300 rounded-lg" required>
+                    </div>
+                </div>
+                <div class="flex justify-end gap-4 mt-8">
+                    <button type="button" id="cancel-renewal-btn" class="bg-gray-200 text-gray-700 font-semibold px-6 py-3 rounded-lg hover:bg-gray-300 transition">Cancelar</button>
+                    <button type="submit" class="bg-green-600 text-white font-semibold px-6 py-3 rounded-lg hover:bg-green-700 transition">Confirmar Renovación</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
     <script>
         function togglePasswordVisibility(inputId, button) { const input = document.getElementById(inputId), icon = button.querySelector('svg'); if (input.type === "password") { input.type = "text"; icon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7 .946-3.11 3.563-5.522 6.837-6.141M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.581 10.41A7.48 7.48 0 0119.542 12c-1.274 4.057-5.064 7-9.542 7a10.046 10.046 0 01-3.132-.475M2.458 12c.946-3.11 3.563-5.522 6.837-6.141m1.581 2.318A4.5 4.5 0 0115 12a4.5 4.5 0 01-1.07 2.828M5 5l14 14" />`; } else { input.type = "password"; icon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />`; } }
@@ -445,6 +467,9 @@
                                 <button class="edit-btn p-1 text-indigo-600 hover:text-indigo-800 hover:bg-indigo-100 rounded-full transition" data-id="${sale.id}" title="Editar">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L16.732 3.732z"></path></svg>
                                 </button>
+                                <button class="renew-btn p-1 text-green-600 hover:text-green-800 hover:bg-green-100 rounded-full transition" data-id="${sale.id}" title="Renovar">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h5M20 20v-5h-5M4 20h5v-5M20 4h-5v5"></path></svg>
+                                </button>
                                 <button class="delete-btn p-1 text-red-600 hover:text-red-800 hover:bg-red-100 rounded-full transition" data-id="${sale.id}" title="Eliminar">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                                 </button>
@@ -459,7 +484,7 @@
 
                     selectors.salesList.querySelectorAll('.edit-btn').forEach(b => b.addEventListener('click', e => handleEdit(e.currentTarget.dataset.id)));
                     selectors.salesList.querySelectorAll('.delete-btn').forEach(b => b.addEventListener('click', e => handleDeleteSale(e.currentTarget.dataset.id)));
-                    selectors.salesList.querySelectorAll('.renew-btn').forEach(b => b.addEventListener('click', e => handleRenew(e.currentTarget.dataset.id)));
+                    selectors.salesList.querySelectorAll('.renew-btn').forEach(b => b.addEventListener('click', e => openRenewalModal(e.currentTarget.dataset.id)));
                 };
                 const renderExpenses = () => { selectors.expensesList.innerHTML = ''; if (allExpenses.length === 0) { selectors.expensesList.innerHTML = '<p class="text-sm text-gray-400">No hay egresos registrados.</p>'; return; } allExpenses.forEach(expense => { const item = document.createElement('div'); item.className = 'flex justify-between items-center text-sm p-2 rounded-md hover:bg-gray-50'; item.innerHTML = `<div class="flex-1 truncate pr-2"><p class="text-gray-700">${expense.description}</p><p class="text-xs text-gray-500">${dayjs(expense.date).format('DD/MM/YYYY')}</p></div><div class="flex items-center gap-2"><span class="font-semibold text-red-600">${formatCurrency(expense.amount)}</span><button class="delete-expense-btn text-gray-400 hover:text-red-600" data-id="${expense.id}"><svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm4 0a1 1 0 012 0v6a1 1 0 11-2 0V8z" clip-rule="evenodd"></path></svg></button></div>`; selectors.expensesList.appendChild(item); }); selectors.expensesList.querySelectorAll('.delete-expense-btn').forEach(b => b.addEventListener('click', e => handleDeleteExpense(e.currentTarget.dataset.id))); };
                 const renderPlatformAccounts = () => {
@@ -559,6 +584,34 @@
                     }
                 };
                 const handleEdit = (id) => { const sale = allSales.find(s => s.id === id); if(!sale) return; const f = selectors.editForm; f['edit-sale-id'].value = sale.id; f['edit-cliente'].value = sale.cliente; f['edit-precio'].value = sale.precio; f['edit-inicioPlan'].value = sale.inicioPlan; f['edit-finPlan'].value = sale.finPlan; f['edit-correo'].value = sale.correo || ''; f['edit-contrasena'].value = sale.contrasena || ''; f['edit-pin'].value = sale.pin || ''; f['edit-notas'].value = sale.notas || ''; const standardPlatforms = Array.from(f['edit-plataforma'].options).map(o => o.value); if (standardPlatforms.includes(sale.plataforma)) { f['edit-plataforma'].value = sale.plataforma; } else { f['edit-plataforma'].value = 'Otro'; selectors.editOtroPlataformaInput.value = sale.plataforma; } handlePlatformChange(selectors.editPlataformaSelect, selectors.editOtroPlataformaContainer, selectors.editOtroPlataformaInput); openModal(); };
+                const openRenewalModal = (saleId) => {
+                    const sale = allSales.find(s => s.id === saleId);
+                    if (!sale) return;
+
+                    const modal = document.getElementById('renewal-modal');
+                    const form = document.getElementById('renewal-form');
+
+                    form['renewal-sale-id'].value = sale.id;
+                    form['renewal-amount'].value = sale.precio.toFixed(2);
+                    form['renewal-days'].value = 30; // Default a 30 días
+
+                    modal.classList.remove('hidden');
+                    setTimeout(() => {
+                        modal.classList.remove('opacity-0');
+                        modal.querySelector('.modal-content').classList.remove('scale-95');
+                    }, 10);
+                };
+
+                const closeRenewalModal = () => {
+                    const modal = document.getElementById('renewal-modal');
+                    modal.classList.add('opacity-0');
+                    modal.querySelector('.modal-content').classList.add('scale-95');
+                    setTimeout(() => {
+                        modal.classList.add('hidden');
+                        document.getElementById('renewal-form').reset();
+                    }, 300);
+                };
+
                 const handleRenew = async (id) => {
                     const originalSale = allSales.find(s => s.id === id);
                     if (!originalSale) {
@@ -566,19 +619,36 @@
                         return;
                     }
 
-                    const duration = dayjs(originalSale.finPlan).diff(dayjs(originalSale.inicioPlan), 'day');
+                    // Archivar la venta original
+                    await updateDoc(doc(db, "sales", id), { estado: 'ARCHIVADO' });
 
-                    const updatedData = {
+                    // Crear una nueva venta
+                    const renewalDays = parseInt(document.getElementById('renewal-days').value, 10);
+                    const renewalAmount = parseFloat(document.getElementById('renewal-amount').value);
+
+                    if (isNaN(renewalDays) || isNaN(renewalAmount) || renewalDays <= 0) {
+                        alert('Por favor, ingresa un número de días y un monto válidos.');
+                        return;
+                    }
+
+                    const newSale = {
+                        ...originalSale, // Copiar datos originales
+                        precio: renewalAmount,
                         inicioPlan: dayjs().format('YYYY-MM-DD'),
-                        finPlan: dayjs().add(duration, 'day').format('YYYY-MM-DD')
+                        finPlan: dayjs().add(renewalDays, 'day').format('YYYY-MM-DD'),
+                        estado: 'ACTIVO', // Asegurarse de que el estado sea activo
+                        createdAt: new Date().toISOString()
                     };
+                    delete newSale.id; // Eliminar el ID para que Firestore genere uno nuevo
 
                     try {
-                        await updateDoc(doc(db, "sales", id), updatedData);
-                        alert('Suscripción renovada con éxito.');
+                        await addDoc(collection(db, "sales"), newSale);
+                        closeRenewalModal();
                     } catch (error) {
-                        console.error("Error al renovar la suscripción:", error);
-                        alert('Hubo un error al renovar la suscripción. Por favor, inténtalo de nuevo.');
+                        console.error("Error al crear la nueva venta de renovación:", error);
+                        // Opcional: Revertir el archivado si la creación falla
+                        await updateDoc(doc(db, "sales", id), { estado: 'ACTIVO' });
+                        alert('Hubo un error al procesar la renovación.');
                     }
                 };
                 const handlePermanentDeleteAction = async (id) => {
@@ -656,6 +726,14 @@
                 });
                 selectors.closeModalBtn.addEventListener('click', closeModal);
                 selectors.cancelEditBtn.addEventListener('click', closeModal);
+
+                document.getElementById('renewal-form').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    const saleId = document.getElementById('renewal-sale-id').value;
+                    handleRenew(saleId);
+                });
+
+                document.getElementById('cancel-renewal-btn').addEventListener('click', closeRenewalModal);
                 selectors.platformAccountSelect.addEventListener('change', () => handlePlatformAccountChange(selectors.platformAccountSelect, selectors.addSaleForm.correo, selectors.addSaleForm.contrasena, document.querySelectorAll('.manual-credentials')));
                 selectors.editPlatformAccountSelect.addEventListener('change', () => handlePlatformAccountChange(selectors.editPlatformAccountSelect, selectors.editForm['edit-correo'], selectors.editForm['edit-contrasena'], document.querySelectorAll('.edit-manual-credentials')));
                 const diasPlanInput = document.getElementById('diasPlan'); const inicioPlanInput = document.getElementById('inicioPlan'); const finPlanInput = document.getElementById('finPlan'); const calculateDateBtn = document.getElementById('calculate-date-btn');
