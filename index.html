@@ -115,11 +115,20 @@
                 </div>
 
                 <div class="bg-white p-4 rounded-2xl shadow-lg mb-8">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                        <div class="relative flex-grow w-full"><input type="text" id="search-input" placeholder="Buscar por cliente, plataforma o correo..." class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"><svg class="w-5 h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg></div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                        <div class="relative flex-grow w-full md:col-span-1"><input type="text" id="search-input" placeholder="Buscar por cliente, plataforma o correo..." class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"><svg class="w-5 h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg></div>
                         <div>
                             <select id="account-filter" class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white">
                                 <option value="">Filtrar por cuenta...</option>
+                            </select>
+                        </div>
+                        <div>
+                            <select id="status-filter" class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white">
+                                <option value="">Filtrar por estado...</option>
+                                <option value="Activo">Activo</option>
+                                <option value="Próximo a Vencer">Próximo a Vencer</option>
+                                <option value="Vence hoy">Vence hoy</option>
+                                <option value="Vencido">Vencido</option>
                             </select>
                         </div>
                     </div>
@@ -276,7 +285,7 @@
                 dayjs.extend(dayjs_plugin_relativeTime);
                 dayjs.locale('es');
                 const platformStyles = { 'Netflix':{color:'text-red-600',fallback:'bg-red-500'},'Spotify':{color:'text-green-500',fallback:'bg-green-500'},'Disney+':{color:'text-blue-900',fallback:'bg-blue-900'},'HBO Max':{color:'text-purple-600',fallback:'bg-purple-600'},'Amazon Prime Video':{color:'text-blue-400',fallback:'bg-blue-400'},'YouTube Premium':{color:'text-red-500',fallback:'bg-red-500'},'Apple Music':{color:'text-pink-500',fallback:'bg-pink-500'},'Apple TV+':{color:'text-gray-800',fallback:'bg-gray-800'},'Crunchyroll':{color:'text-orange-500',fallback:'bg-orange-500'},'Star+':{color:'text-gray-900',fallback:'bg-gray-900'},'Vix+':{color:'text-yellow-400',fallback:'bg-yellow-400'},'Paramount+':{color:'text-blue-800',fallback:'bg-blue-800'},'MagisTV':{color:'text-blue-500',fallback:'bg-blue-500'},'Otro':{color:'text-gray-500',fallback:'bg-gray-500'}};
-                let allSales = [], allExpenses = [], allPlatformAccounts = [], activePlatformFilter = 'Todos', currentSearchTerm = '', activeAccountFilter = '';
+                let allSales = [], allExpenses = [], allPlatformAccounts = [], activePlatformFilter = 'Todos', currentSearchTerm = '', activeAccountFilter = '', activeStatusFilter = '';
                 const selectors = {
                     addSaleForm: document.getElementById('add-sale-form'),
                     salesList: document.getElementById('sales-list'),
@@ -304,7 +313,18 @@
                     platformAccountSelect: document.getElementById('platform-account'),
                     editPlatformAccountSelect: document.getElementById('edit-platform-account'),
                     accountFilter: document.getElementById('account-filter'),
+                    statusFilter: document.getElementById('status-filter'),
                     accountPlatformButtons: document.getElementById('account-platform-buttons'),
+                };
+                const getSaleStatus = (finPlan) => {
+                    const today = dayjs().startOf('day');
+                    const expirationDate = dayjs(finPlan).startOf('day');
+                    const diffDays = expirationDate.diff(today, 'day');
+
+                    if (diffDays < 0) return 'Vencido';
+                    if (diffDays === 0) return 'Vence hoy';
+                    if (diffDays <= 7) return 'Próximo a Vencer';
+                    return 'Activo';
                 };
                 const formatCurrency = (amount) => `S/${(amount||0).toFixed(2)}`;
                 const getPlatformHtml = (platformName) => { const style=platformStyles[platformName]||platformStyles['Otro']; return `<span class="font-bold ${style.color}">${platformName}</span>`};
@@ -359,6 +379,9 @@
                         if (account) {
                             filteredSales = filteredSales.filter(sale => sale.correo === account.email && sale.contrasena === account.password);
                         }
+                    }
+                    if (activeStatusFilter) {
+                        filteredSales = filteredSales.filter(sale => getSaleStatus(sale.finPlan) === activeStatusFilter);
                     }
                     renderSales(filteredSales);
                 };
@@ -424,20 +447,13 @@
                     }
 
                     sales.forEach(sale => {
-                        const today = dayjs().startOf('day');
-                        const expirationDate = dayjs(sale.finPlan).startOf('day');
-                        const diffDays = expirationDate.diff(today, 'day');
-
-                        let status;
-                        if (diffDays < 0) {
-                            status = { text: 'Vencido', color: 'orange' };
-                        } else if (diffDays === 0) {
-                            status = { text: 'Vence hoy', color: 'red' };
-                        } else if (diffDays <= 7) {
-                            status = { text: 'Próximo a Vencer', color: 'yellow' };
-                        } else {
-                            status = { text: 'Activo', color: 'green' };
-                        }
+                        const statusText = getSaleStatus(sale.finPlan);
+                        const statusInfo = {
+                            'Vencido': { color: 'orange' },
+                            'Vence hoy': { color: 'red' },
+                            'Próximo a Vencer': { color: 'yellow' },
+                            'Activo': { color: 'green' }
+                        }[statusText];
 
                         const endDateForDisplay = dayjs(sale.finPlan);
                         const endDateForRelative = dayjs(sale.finPlan).endOf('day');
@@ -454,7 +470,7 @@
                             </div>
                             <div class="hidden md:block">${getPlatformHtml(sale.plataforma)}</div>
                             <div class="hidden md:block">${endDateForDisplay.format('DD/MM/YYYY')} <span class="text-xs text-gray-500">(${endDateForRelative.fromNow()})</span></div>
-                            <div class="hidden md:block"><span class="text-xs font-semibold py-1 px-2 uppercase rounded-full text-${status.color}-600 bg-${status.color}-100">${status.text}</span></div>
+                            <div class="hidden md:block"><span class="text-xs font-semibold py-1 px-2 uppercase rounded-full text-${statusInfo.color}-600 bg-${statusInfo.color}-100">${statusText}</span></div>
                             <div class="hidden md:block font-bold text-gray-800">${formatCurrency(sale.precio)}</div>
                             <div class="flex justify-end gap-3 items-center">
                                 <button class="edit-btn p-1 text-indigo-600 hover:text-indigo-800 hover:bg-indigo-100 rounded-full transition" data-id="${sale.id}" title="Editar">
@@ -468,7 +484,7 @@
                                 </button>
                             </div>
                             <div class="md:hidden col-span-2 mt-2 pt-2 border-t flex justify-between items-center text-xs">
-                                <span class="font-semibold py-1 px-2 uppercase rounded-full text-${status.color}-600 bg-${status.color}-100">${status.text}</span>
+                                <span class="font-semibold py-1 px-2 uppercase rounded-full text-${statusInfo.color}-600 bg-${statusInfo.color}-100">${statusText}</span>
                                 <span class="font-bold text-gray-800 text-base">${formatCurrency(sale.precio)}</span>
                             </div>
                         `;
@@ -718,6 +734,11 @@
                 });
                 selectors.accountFilter.addEventListener('change', e => {
                     activeAccountFilter = e.target.value;
+                    const activeSales = allSales.filter(sale => sale.estado !== 'ARCHIVADO');
+                    applyFiltersAndRender(activeSales);
+                });
+                selectors.statusFilter.addEventListener('change', e => {
+                    activeStatusFilter = e.target.value;
                     const activeSales = allSales.filter(sale => sale.estado !== 'ARCHIVADO');
                     applyFiltersAndRender(activeSales);
                 });
