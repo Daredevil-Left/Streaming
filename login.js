@@ -19,7 +19,7 @@ loginForm.addEventListener('submit', async (e) => {
         await signInWithEmailAndPassword(auth, email, password);
         
         // Si tiene éxito, nos redirige a la página principal
-        window.location.href = 'index.html';
+        window.location.href = 'index.html?loggedin=true';
 
     } catch (error) {
         // Si falla (contraseña incorrecta, etc.), mostramos un mensaje
