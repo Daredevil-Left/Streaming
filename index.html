@@ -21,12 +21,18 @@
         .platform-btn img { transition: transform 0.2s ease-in-out; }
         .platform-btn:hover img { transform: scale(1.1); }
         .sidebar-text {
-            opacity: 0;
+            display: none; /* Oculto por defecto */
             transition: opacity 0.3s ease-in-out;
             white-space: nowrap;
+            opacity: 0;
         }
         #sidebar:hover .sidebar-text {
+            display: inline-block; /* Mostrar en hover */
             opacity: 1;
+        }
+        /* Nuevo: Centrar íconos cuando el sidebar está colapsado */
+        #sidebar:not(:hover) nav a, #sidebar:not(:hover) #logout-btn {
+            justify-content: center;
         }
         .toast {
             transition: opacity 0.5s, transform 0.5s;
@@ -42,21 +48,21 @@
                 <img src="logo_nuevo.png" alt="Logo" class="h-10 w-10 object-contain">
             </div>
             <nav class="flex-1 px-2 py-4 space-y-2">
-                <a href="#" id="nav-cuentas" class="flex items-center py-2.5 px-4 rounded-md hover:bg-gray-700">
+                <a href="#" id="nav-cuentas" class="flex items-center py-2.5 px-2 rounded-md hover:bg-gray-700">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
                     <span class="ml-4 sidebar-text">Cuentas</span>
                 </a>
-                <a href="#" id="nav-ventas" class="flex items-center py-2.5 px-4 rounded-md hover:bg-gray-700">
+                <a href="#" id="nav-ventas" class="flex items-center py-2.5 px-2 rounded-md hover:bg-gray-700">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
                     <span class="ml-4 sidebar-text">Ventas</span>
                 </a>
-                <a href="#" id="nav-finanzas" class="flex items-center py-2.5 px-4 rounded-md hover:bg-gray-700">
+                <a href="#" id="nav-finanzas" class="flex items-center py-2.5 px-2 rounded-md hover:bg-gray-700">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"></path></svg>
                     <span class="ml-4 sidebar-text">Finanzas</span>
                 </a>
             </nav>
             <div class="px-2 py-4">
-                <button id="logout-btn" class="w-full flex items-center py-2.5 px-4 rounded-md bg-red-500 hover:bg-red-600">
+                <button id="logout-btn" class="w-full flex items-center py-2.5 px-2 rounded-md bg-red-500 hover:bg-red-600">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
                     <span class="ml-4 sidebar-text">Cerrar Sesión</span>
                 </button>
