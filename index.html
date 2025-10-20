@@ -37,26 +37,29 @@
 
     <div id="app" class="flex h-screen bg-gray-100 hidden">
         <!-- Sidebar -->
-        <div id="sidebar" class="w-16 hover:w-64 bg-gray-800 text-white flex flex-col transition-all duration-300 ease-in-out overflow-hidden">
-            <div class="flex items-center justify-center h-20 border-b border-gray-700">
-                <img src="logo_nuevo.png" alt="Logo" class="h-10 w-10 object-contain">
+        <div id="sidebar" class="fixed inset-y-0 left-0 w-64 bg-white text-gray-800 flex flex-col transition-transform duration-300 ease-in-out -translate-x-full md:relative md:translate-x-0 md:w-16 hover:w-64 shadow-lg z-20">
+            <div class="flex items-center justify-between h-20 px-4 border-b border-gray-200">
+                <img src="logo_nuevo.png" alt="Logo" class="h-10 w-10 object-contain ml-2">
+                <button id="close-sidebar-btn" class="text-gray-500 hover:text-gray-600 md:hidden">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
             </div>
             <nav class="flex-1 px-2 py-4 space-y-2">
-                <a href="#" id="nav-cuentas" class="flex items-center py-2.5 px-4 rounded-md hover:bg-gray-700">
+                <a href="#" id="nav-cuentas" class="flex items-center py-2.5 px-4 rounded-md hover:bg-gray-100 text-gray-600 hover:text-gray-900">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
                     <span class="ml-4 sidebar-text">Cuentas</span>
                 </a>
-                <a href="#" id="nav-ventas" class="flex items-center py-2.5 px-4 rounded-md hover:bg-gray-700">
+                <a href="#" id="nav-ventas" class="flex items-center py-2.5 px-4 rounded-md hover:bg-gray-100 text-gray-600 hover:text-gray-900">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
                     <span class="ml-4 sidebar-text">Ventas</span>
                 </a>
-                <a href="#" id="nav-finanzas" class="flex items-center py-2.5 px-4 rounded-md hover:bg-gray-700">
+                <a href="#" id="nav-finanzas" class="flex items-center py-2.5 px-4 rounded-md hover:bg-gray-100 text-gray-600 hover:text-gray-900">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"></path></svg>
                     <span class="ml-4 sidebar-text">Finanzas</span>
                 </a>
             </nav>
-            <div class="px-2 py-4">
-                <button id="logout-btn" class="w-full flex items-center py-2.5 px-4 rounded-md bg-red-500 hover:bg-red-600">
+            <div class="px-2 py-4 border-t border-gray-200">
+                <button id="logout-btn" class="w-full flex items-center py-2.5 px-4 rounded-md text-red-500 hover:bg-red-50">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
                     <span class="ml-4 sidebar-text">Cerrar Sesión</span>
                 </button>
@@ -65,9 +68,16 @@
 
         <!-- Main Content -->
         <div class="flex-1 flex flex-col overflow-hidden">
+            <div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-10 hidden md:hidden"></div>
             <header class="bg-white shadow-md">
                 <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8 flex justify-between items-center">
+                    <button id="mobile-menu-btn" class="text-gray-500 hover:text-gray-600 focus:outline-none focus:text-gray-600 md:hidden">
+                        <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
+                    </button>
                     <h1 id="main-header" class="text-2xl font-bold text-gray-800">Cuentas</h1>
+                    <div class="w-6 md:hidden"></div> <!-- Spacer to help center title -->
                 </div>
             </header>
             <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 p-4 md:p-8">
@@ -854,13 +864,38 @@
                         mainHeader.textContent = navLinks[navId];
 
                         // Update active styles for nav links
-                        document.querySelectorAll('nav a').forEach(link => link.classList.remove('bg-gray-700'));
-                        document.getElementById(navId).classList.add('bg-gray-700');
+                        document.querySelectorAll('nav a').forEach(link => {
+                            link.classList.remove('bg-gray-100', 'text-gray-900', 'font-semibold');
+                            link.classList.add('text-gray-600');
+                        });
+                        const activeLink = document.getElementById(navId);
+                        activeLink.classList.add('bg-gray-100', 'text-gray-900', 'font-semibold');
+                        activeLink.classList.remove('text-gray-600');
                     });
                 });
 
                 // Set default view
                 document.getElementById('nav-cuentas').click();
+
+                // Mobile sidebar logic
+                const sidebar = document.getElementById('sidebar');
+                const overlay = document.getElementById('sidebar-overlay');
+                const openBtn = document.getElementById('mobile-menu-btn');
+                const closeBtn = document.getElementById('close-sidebar-btn');
+
+                const openSidebar = () => {
+                    sidebar.classList.remove('-translate-x-full');
+                    overlay.classList.remove('hidden');
+                };
+
+                const closeSidebar = () => {
+                    sidebar.classList.add('-translate-x-full');
+                    overlay.classList.add('hidden');
+                };
+
+                openBtn.addEventListener('click', openSidebar);
+                closeBtn.addEventListener('click', closeSidebar);
+                overlay.addEventListener('click', closeSidebar);
 
             } else {
                 // ❌ Si no hay nadie conectado, lo expulsamos a la página de login
