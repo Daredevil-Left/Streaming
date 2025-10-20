@@ -20,159 +20,219 @@
         input[type=number] { -moz-appearance: textfield; }
         .platform-btn img { transition: transform 0.2s ease-in-out; }
         .platform-btn:hover img { transform: scale(1.1); }
+
+        #sidebar:hover nav span, #sidebar:hover #logout-btn span {
+            opacity: 1;
+            transition-delay: 0.1s;
+        }
+        #sidebar:hover nav button {
+            width: 100%;
+            justify-content: flex-start;
+            padding-left: 1.25rem;
+            padding-right: 1.25rem;
+        }
+        #sidebar:hover #logout-btn {
+            justify-content: flex-start;
+            padding-left: 1.25rem;
+            padding-right: 1.25rem;
+        }
+        #sidebar nav ul {
+            width: 100%;
+            padding-left: 1rem;
+            padding-right: 1rem;
+        }
+
+        #welcome-toast {
+            transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out;
+        }
     </style>
 </head>
-<body class="antialiased">
+<body class="antialiased bg-gray-100">
 
-    <div id="app" class="container mx-auto p-4 md:p-8 hidden">
-
-        <header class="mb-8 flex flex-col sm:flex-row justify-between items-center gap-6">
-            <div class="text-center sm:text-left w-full">
-                <h1 class="text-3xl md:text-4xl font-bold text-gray-800">Control de Ventas</h1>
-                <p class="text-base md:text-lg text-gray-500 mt-2">Gestiona tus suscripciones y ventas de forma sencilla.</p>
+    <div id="sidebar" class="fixed top-0 left-0 h-full bg-white shadow-lg z-30 transition-all duration-300 w-20 hover:w-64 overflow-hidden group">
+        <div class="flex flex-col h-full">
+            <div class="h-24 flex items-center justify-center flex-shrink-0">
+                <img src="logo_nuevo.png" alt="Logo" class="h-12 w-auto transition-all duration-300">
             </div>
-            <div class="flex items-center gap-4">
-                <div class="w-32 h-16 sm:w-48 sm:h-24 rounded-lg flex items-center justify-center overflow-hidden">
-                    <img src="logo_nuevo.png" alt="Logo" class="max-w-full max-h-full object-contain" onerror="this.replaceWith(document.createElement('div')).textContent='Logo'">
+            <nav class="flex-grow">
+                <ul class="flex flex-col items-center space-y-4 py-4">
+                    <li>
+                        <button id="nav-cuentas" class="flex items-center h-12 w-12 group-hover:w-full justify-center group-hover:justify-start group-hover:pl-5 text-gray-600 hover:bg-gray-100 rounded-lg transition-all" title="Cuentas">
+                             <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                             <span class="ml-4 text-lg font-semibold whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 delay-100">Cuentas</span>
+                        </button>
+                    </li>
+                    <li>
+                        <button id="nav-ventas" class="flex items-center h-12 w-12 group-hover:w-full justify-center group-hover:justify-start group-hover:pl-5 text-gray-600 hover:bg-gray-100 rounded-lg transition-all" title="Ventas">
+                             <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                             <span class="ml-4 text-lg font-semibold whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 delay-100">Ventas</span>
+                        </button>
+                    </li>
+                    <li>
+                        <button id="nav-finanzas" class="flex items-center h-12 w-12 group-hover:w-full justify-center group-hover:justify-start group-hover:pl-5 text-gray-600 hover:bg-gray-100 rounded-lg transition-all" title="Finanzas">
+                             <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"></path></svg>
+                             <span class="ml-4 text-lg font-semibold whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 delay-100">Finanzas</span>
+                        </button>
+                    </li>
+                </ul>
+            </nav>
+            <div class="flex-shrink-0 p-4">
+                <button id="logout-btn" class="w-full flex items-center h-12 justify-center group-hover:justify-start group-hover:pl-5 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-all">
+                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+                    <span class="ml-4 text-lg font-semibold whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 delay-100">Salir</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="main-content" class="transition-all duration-300 ml-20">
+        <div id="app" class="container mx-auto p-4 md:p-8 hidden">
+
+            <div id="welcome-toast" class="fixed top-5 right-5 bg-green-500 text-white py-3 px-6 rounded-lg shadow-lg opacity-0 transform translate-y-full">
+                Bienvenido a NineStreaming. Renzo y Charitsa
+            </div>
+
+            <header class="mb-8 flex flex-col sm:flex-row justify-between items-center gap-6">
+                <div class="text-center sm:text-left w-full">
+                    <h1 id="main-header-title" class="text-3xl md:text-4xl font-bold text-gray-800">Cuentas</h1>
                 </div>
-                <button id="logout-btn" class="bg-red-500 text-white font-semibold px-4 py-2 rounded-lg hover:bg-red-600 transition-colors whitespace-nowrap">Cerrar Sesión</button>
-            </div>
-        </header>
-        
-        <div class="lg:flex lg:gap-8">
-            <main class="flex-1">
-                <div class="bg-white p-4 md:p-6 rounded-2xl shadow-lg mb-8 max-w-5xl mx-auto">
-                    <div class="flex justify-between items-center cursor-pointer" id="toggle-accounts-section">
-                        <h2 class="text-xl md:text-2xl font-semibold text-gray-700">Gestionar Cuentas de Plataformas</h2>
-                        <svg id="toggle-accounts-icon" class="w-6 h-6 transition-transform transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                        </svg>
+            </header>
+
+            <main>
+                <div id="cuentas-view">
+                    <div class="bg-white p-4 md:p-6 rounded-2xl shadow-lg mb-8 max-w-5xl mx-auto">
+                        <div class="flex justify-between items-center cursor-pointer" id="toggle-accounts-section">
+                            <h2 class="text-xl md:text-2xl font-semibold text-gray-700">Gestionar Cuentas de Plataformas</h2>
+                            <svg id="toggle-accounts-icon" class="w-6 h-6 transition-transform transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </div>
+                        <div id="collapsible-accounts-content" class="hidden mt-6">
+                            <form id="add-account-form" class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                                <div class="md:col-span-3">
+                                    <label class="block text-sm font-medium text-gray-600 mb-2">Plataforma</label>
+                                    <div id="account-platform-buttons" class="flex flex-wrap gap-2"></div>
+                                    <input type="hidden" id="account-platform" name="account-platform" required>
+                                </div>
+                                <div>
+                                    <label for="account-email" class="block text-sm font-medium text-gray-600 mb-2">Correo</label>
+                                    <input type="email" id="account-email" name="account-email" class="w-full px-4 py-2 border border-gray-300 rounded-lg" required>
+                                </div>
+                                <div class="relative">
+                                    <label for="account-password" class="block text-sm font-medium text-gray-600 mb-2">Contraseña</label>
+                                    <input type="password" id="account-password" name="account-password" class="w-full px-4 py-2 border border-gray-300 rounded-lg" required>
+                                    <button type="button" class="absolute inset-y-0 right-0 top-6 flex items-center px-3 text-gray-500" onclick="togglePasswordVisibility('account-password', this)">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+                                    </button>
+                                </div>
+                                <div class="md:col-span-3 text-right">
+                                    <button type="submit" class="bg-blue-600 w-full md:w-auto text-white font-semibold px-6 py-3 rounded-lg hover:bg-blue-700 transition">Añadir Cuenta</button>
+                                </div>
+                            </form>
+                            <div id="accounts-list" class="space-y-3"></div>
+                        </div>
                     </div>
-                    <div id="collapsible-accounts-content" class="hidden mt-6">
-                        <form id="add-account-form" class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-                            <div class="md:col-span-3">
-                                <label class="block text-sm font-medium text-gray-600 mb-2">Plataforma</label>
-                                <div id="account-platform-buttons" class="flex flex-wrap gap-2">
-                                    </div>
-                                <input type="hidden" id="account-platform" name="account-platform" required>
+                </div>
+
+                <div id="ventas-view" class="hidden">
+                    <div class="bg-white p-4 md:p-6 rounded-2xl shadow-lg mb-8 max-w-5xl mx-auto">
+                        <h2 class="text-xl md:text-2xl font-semibold text-gray-700 mb-6">Añadir Nueva Venta</h2>
+                        <form id="add-sale-form" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                            <div><label for="cliente" class="block text-sm font-medium text-gray-600 mb-2">Nombre del Cliente</label><input type="text" id="cliente" name="cliente" class="w-full px-4 py-2 border border-gray-300 rounded-lg" required></div>
+                            <div><label for="plataforma" class="block text-sm font-medium text-gray-600 mb-2">Plataforma</label><select id="plataforma" name="plataforma" class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white"><option>Netflix</option> <option>Spotify</option> <option>Disney+</option> <option>HBO Max</option> <option>Amazon Prime Video</option> <option>YouTube Premium</option> <option>Apple Music</option> <option>Apple TV+</option> <option>Crunchyroll</option> <option>Canva</option> <option>IPTV Premium</option> <option>Vix+</option> <option>Paramount+</option> <option>Otro</option></select></div>
+                            <div id="otro-plataforma-container" class="hidden"><label for="otro-plataforma" class="block text-sm font-medium text-gray-600 mb-2">Especificar Plataforma</label><input type="text" id="otro-plataforma" name="otro-plataforma" class="w-full px-4 py-2 border border-gray-300 rounded-lg"></div>
+                            <div><label for="precio" class="block text-sm font-medium text-gray-600 mb-2">Precio Pagado (S/)</label><input type="number" id="precio" name="precio" min="0" step="0.01" class="w-full px-4 py-2 border border-gray-300 rounded-lg" required></div>
+                            <div><label for="inicioPlan" class="block text-sm font-medium text-gray-600 mb-2">Inicio del Plan</label><input type="date" id="inicioPlan" name="inicioPlan" class="w-full px-4 py-2 border border-gray-300 rounded-lg" required></div>
+                            <div>
+                                <div class="flex items-end gap-2">
+                                    <div class="flex-grow"><label for="diasPlan" class="block text-sm font-medium text-gray-600 mb-2">Nº Días</label><input type="number" id="diasPlan" name="diasPlan" class="w-full px-4 py-2 border border-gray-300 rounded-lg"></div>
+                                    <button type="button" id="calculate-date-btn" class="bg-indigo-500 text-white font-semibold px-4 py-2 rounded-lg hover:bg-indigo-600 transition h-10">Calcular</button>
+                                </div>
+                                <div class="mt-2"><label for="finPlan" class="block text-sm font-medium text-gray-600 mb-2">Fin del Plan</label><input type="date" id="finPlan" name="finPlan" class="w-full px-4 py-2 border border-gray-300 rounded-lg" required></div>
                             </div>
                             <div>
-                                <label for="account-email" class="block text-sm font-medium text-gray-600 mb-2">Correo</label>
-                                <input type="email" id="account-email" name="account-email" class="w-full px-4 py-2 border border-gray-300 rounded-lg" required>
+                                <label for="platform-account" class="block text-sm font-medium text-gray-600 mb-2">Cuenta de Plataforma</label>
+                                <select id="platform-account" name="platform-account" class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white">
+                                    <option value="">Sin cuenta / Ingresar manualmente</option>
+                                </select>
                             </div>
-                            <div class="relative">
-                                <label for="account-password" class="block text-sm font-medium text-gray-600 mb-2">Contraseña</label>
-                                <input type="password" id="account-password" name="account-password" class="w-full px-4 py-2 border border-gray-300 rounded-lg" required>
-                                <button type="button" class="absolute inset-y-0 right-0 top-6 flex items-center px-3 text-gray-500" onclick="togglePasswordVisibility('account-password', this)">
+                            <div class="manual-credentials">
+                                <label for="correo" class="block text-sm font-medium text-gray-600 mb-2">Correo</label>
+                                <input type="email" id="correo" name="correo" class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+                            </div>
+                            <div class="manual-credentials relative">
+                                <label for="contrasena" class="block text-sm font-medium text-gray-600 mb-2">Contraseña</label>
+                                <input type="password" id="contrasena" name="contrasena" class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+                                <button type="button" class="absolute inset-y-0 right-0 top-6 flex items-center px-3 text-gray-500" onclick="togglePasswordVisibility('contrasena', this)">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
                                 </button>
                             </div>
-                            <div class="md:col-span-3 text-right">
-                                <button type="submit" class="bg-blue-600 w-full md:w-auto text-white font-semibold px-6 py-3 rounded-lg hover:bg-blue-700 transition">Añadir Cuenta</button>
-                            </div>
+                            <div><label for="pin" class="block text-sm font-medium text-gray-600 mb-2">PIN</label><input type="text" id="pin" name="pin" class="w-full px-4 py-2 border border-gray-300 rounded-lg"></div>
+                            <div class="md:col-span-1 xl:col-span-2"><label for="notas" class="block text-sm font-medium text-gray-600 mb-2">Notas Adicionales</label><input type="text" id="notas" name="notas" class="w-full px-4 py-2 border border-gray-300 rounded-lg"></div>
+                            <div class="md:col-span-2 lg:col-span-3 xl:col-span-4 text-right self-end"><button type="submit" class="bg-indigo-600 w-full md:w-auto text-white font-semibold px-6 py-3 rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-4 focus:ring-indigo-500 focus:ring-opacity-50 transition-transform transform hover:scale-105">Guardar Venta</button></div>
                         </form>
-                        <div id="accounts-list" class="space-y-3">
+                    </div>
+
+                    <div class="bg-white p-4 rounded-2xl shadow-lg mb-8">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                            <div class="relative flex-grow w-full md:col-span-1"><input type="text" id="search-input" placeholder="Buscar por cliente, plataforma o correo..." class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"><svg class="w-5 h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg></div>
+                            <div>
+                                <select id="account-filter" class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white">
+                                    <option value="">Filtrar por cuenta...</option>
+                                </select>
                             </div>
-                    </div>
-                </div>
-
-                <div class="bg-white p-4 md:p-6 rounded-2xl shadow-lg mb-8 max-w-5xl mx-auto">
-                    <h2 class="text-xl md:text-2xl font-semibold text-gray-700 mb-6">Añadir Nueva Venta</h2>
-                    <form id="add-sale-form" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                        <div><label for="cliente" class="block text-sm font-medium text-gray-600 mb-2">Nombre del Cliente</label><input type="text" id="cliente" name="cliente" class="w-full px-4 py-2 border border-gray-300 rounded-lg" required></div>
-                        <div><label for="plataforma" class="block text-sm font-medium text-gray-600 mb-2">Plataforma</label><select id="plataforma" name="plataforma" class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white"><option>Netflix</option> <option>Spotify</option> <option>Disney+</option> <option>HBO Max</option> <option>Amazon Prime Video</option> <option>YouTube Premium</option> <option>Apple Music</option> <option>Apple TV+</option> <option>Crunchyroll</option> <option>Canva</option> <option>IPTV Premium</option> <option>Vix+</option> <option>Paramount+</option> <option>Otro</option></select></div>
-                        <div id="otro-plataforma-container" class="hidden"><label for="otro-plataforma" class="block text-sm font-medium text-gray-600 mb-2">Especificar Plataforma</label><input type="text" id="otro-plataforma" name="otro-plataforma" class="w-full px-4 py-2 border border-gray-300 rounded-lg"></div>
-                        <div><label for="precio" class="block text-sm font-medium text-gray-600 mb-2">Precio Pagado (S/)</label><input type="number" id="precio" name="precio" min="0" step="0.01" class="w-full px-4 py-2 border border-gray-300 rounded-lg" required></div>
-                        <div><label for="inicioPlan" class="block text-sm font-medium text-gray-600 mb-2">Inicio del Plan</label><input type="date" id="inicioPlan" name="inicioPlan" class="w-full px-4 py-2 border border-gray-300 rounded-lg" required></div>
-                        <div>
-                            <div class="flex items-end gap-2">
-                                <div class="flex-grow"><label for="diasPlan" class="block text-sm font-medium text-gray-600 mb-2">Nº Días</label><input type="number" id="diasPlan" name="diasPlan" class="w-full px-4 py-2 border border-gray-300 rounded-lg"></div>
-                                <button type="button" id="calculate-date-btn" class="bg-indigo-500 text-white font-semibold px-4 py-2 rounded-lg hover:bg-indigo-600 transition h-10">Calcular</button>
+                            <div>
+                                <select id="status-filter" class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white">
+                                    <option value="">Filtrar por estado...</option>
+                                    <option value="Activo">Activo</option>
+                                    <option value="Próximo a Vencer">Próximo a Vencer</option>
+                                    <option value="Vence hoy">Vence hoy</option>
+                                    <option value="Vencido">Vencido</option>
+                                </select>
                             </div>
-                            <div class="mt-2"><label for="finPlan" class="block text-sm font-medium text-gray-600 mb-2">Fin del Plan</label><input type="date" id="finPlan" name="finPlan" class="w-full px-4 py-2 border border-gray-300 rounded-lg" required></div>
                         </div>
-                        <div>
-                            <label for="platform-account" class="block text-sm font-medium text-gray-600 mb-2">Cuenta de Plataforma</label>
-                            <select id="platform-account" name="platform-account" class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white">
-                                <option value="">Sin cuenta / Ingresar manualmente</option>
-                            </select>
+                        <div id="platform-filters" class="flex flex-wrap justify-center gap-3 sm:gap-4"></div>
+                    </div>
+
+                    <div class="bg-white rounded-2xl shadow-lg p-4">
+                        <div class="hidden md:grid grid-cols-7 gap-4 font-semibold text-gray-600 border-b pb-3 mb-3 text-sm">
+                            <div class="col-span-2">Cliente</div>
+                            <div>Plataforma</div>
+                            <div>Vencimiento</div>
+                            <div>Estado</div>
+                            <div>Precio</div>
+                            <div class="text-right">Acciones</div>
                         </div>
-                        <div class="manual-credentials">
-                            <label for="correo" class="block text-sm font-medium text-gray-600 mb-2">Correo</label>
-                            <input type="email" id="correo" name="correo" class="w-full px-4 py-2 border border-gray-300 rounded-lg">
-                        </div>
-                        <div class="manual-credentials relative">
-                            <label for="contrasena" class="block text-sm font-medium text-gray-600 mb-2">Contraseña</label>
-                            <input type="password" id="contrasena" name="contrasena" class="w-full px-4 py-2 border border-gray-300 rounded-lg">
-                            <button type="button" class="absolute inset-y-0 right-0 top-6 flex items-center px-3 text-gray-500" onclick="togglePasswordVisibility('contrasena', this)">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
-                            </button>
-                        </div>
-                        <div><label for="pin" class="block text-sm font-medium text-gray-600 mb-2">PIN</label><input type="text" id="pin" name="pin" class="w-full px-4 py-2 border border-gray-300 rounded-lg"></div>
-                        <div class="md:col-span-1 xl:col-span-2"><label for="notas" class="block text-sm font-medium text-gray-600 mb-2">Notas Adicionales</label><input type="text" id="notas" name="notas" class="w-full px-4 py-2 border border-gray-300 rounded-lg"></div>
-                        <div class="md:col-span-2 lg:col-span-3 xl:col-span-4 text-right self-end"><button type="submit" class="bg-indigo-600 w-full md:w-auto text-white font-semibold px-6 py-3 rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-4 focus:ring-indigo-500 focus:ring-opacity-50 transition-transform transform hover:scale-105">Guardar Venta</button></div>
-                    </form>
+                        <div id="sales-list" class="space-y-2"></div>
+                    </div>
+                    <div id="loading-state" class="text-center py-10"><p class="text-gray-500">Cargando ventas...</p></div>
+                    <div id="empty-state" class="hidden text-center py-20 bg-white rounded-2xl shadow-lg"><svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path vector-effect="non-scaling-stroke" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 13h6m-3-3v6m-9 1V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z" /></svg><h3 class="mt-2 text-xl font-medium text-gray-900">No hay ventas registradas</h3><p class="mt-1 text-sm text-gray-500">Comienza añadiendo una nueva venta.</p></div>
                 </div>
 
-                <div class="bg-white p-4 rounded-2xl shadow-lg mb-8">
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                        <div class="relative flex-grow w-full md:col-span-1"><input type="text" id="search-input" placeholder="Buscar por cliente, plataforma o correo..." class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"><svg class="w-5 h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg></div>
-                        <div>
-                            <select id="account-filter" class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white">
-                                <option value="">Filtrar por cuenta...</option>
-                            </select>
+                <div id="finanzas-view" class="hidden">
+                     <div class="bg-white p-4 md:p-6 rounded-2xl shadow-lg">
+                        <h2 class="text-xl md:text-2xl font-semibold text-gray-700 mb-6">Resumen Financiero</h2>
+                        <div class="space-y-4 mb-6">
+                            <div class="flex justify-between items-center p-4 bg-green-50 rounded-lg"><span class="font-medium text-green-800">Ingresos Totales:</span><span id="total-ingresos" class="font-bold text-lg md:text-xl text-green-900">S/0.00</span></div>
+                            <div class="flex justify-between items-center p-4 bg-red-50 rounded-lg"><span class="font-medium text-red-800">Egresos Totales:</span><span id="total-egresos" class="font-bold text-lg md:text-xl text-red-900">S/0.00</span></div>
+                            <div class="flex justify-between items-center p-4 bg-blue-50 rounded-lg border-t-2 border-blue-200"><span class="font-medium text-blue-800">Balance General:</span><span id="balance-total" class="font-bold text-xl md:text-2xl text-blue-900">S/0.00</span></div>
                         </div>
-                        <div>
-                            <select id="status-filter" class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white">
-                                <option value="">Filtrar por estado...</option>
-                                <option value="Activo">Activo</option>
-                                <option value="Próximo a Vencer">Próximo a Vencer</option>
-                                <option value="Vence hoy">Vence hoy</option>
-                                <option value="Vencido">Vencido</option>
-                            </select>
+                        <div class="border-t pt-6 mt-6">
+                            <h3 class="text-lg md:text-xl font-semibold text-gray-700 mb-4">Añadir Egreso</h3>
+                            <form id="add-expense-form" class="space-y-4">
+                                <div><label for="expense-description" class="block text-sm font-medium text-gray-600 mb-2">Descripción</label><input type="text" id="expense-description" name="expense-description" class="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="Ej: Pago de internet" required></div>
+                                <div><label for="expense-amount" class="block text-sm font-medium text-gray-600 mb-2">Monto (S/)</label><input type="number" id="expense-amount" name="expense-amount" min="0" step="0.01" class="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="Ej: 50.00" required></div>
+                                <div><label for="expense-date" class="block text-sm font-medium text-gray-600 mb-2">Fecha</label><input type="date" id="expense-date" name="expense-date" class="w-full px-4 py-2 border border-gray-300 rounded-lg" required></div>
+                                <button type="submit" class="w-full bg-red-500 text-white font-semibold py-2 rounded-lg hover:bg-red-600 transition">Añadir Gasto</button>
+                            </form>
+                        </div>
+                        <div id="expenses-list-container" class="border-t pt-6 mt-6">
+                            <h3 class="text-lg md:text-xl font-semibold text-gray-700 mb-4">Últimos Egresos</h3>
+                            <div id="expenses-list" class="space-y-2 max-h-48 overflow-y-auto"><p class="text-sm text-gray-400">No hay egresos registrados.</p></div>
                         </div>
                     </div>
-                    <div id="platform-filters" class="flex flex-wrap justify-center gap-3 sm:gap-4"></div>
                 </div>
-
-                <div class="bg-white rounded-2xl shadow-lg p-4">
-                    <div class="hidden md:grid grid-cols-7 gap-4 font-semibold text-gray-600 border-b pb-3 mb-3 text-sm">
-                        <div class="col-span-2">Cliente</div>
-                        <div>Plataforma</div>
-                        <div>Vencimiento</div>
-                        <div>Estado</div>
-                        <div>Precio</div>
-                        <div class="text-right">Acciones</div>
-                    </div>
-                    <div id="sales-list" class="space-y-2"></div>
-                </div>
-                <div id="loading-state" class="text-center py-10"><p class="text-gray-500">Cargando ventas...</p></div>
-                <div id="empty-state" class="hidden text-center py-20 bg-white rounded-2xl shadow-lg"><svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path vector-effect="non-scaling-stroke" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 13h6m-3-3v6m-9 1V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z" /></svg><h3 class="mt-2 text-xl font-medium text-gray-900">No hay ventas registradas</h3><p class="mt-1 text-sm text-gray-500">Comienza añadiendo una nueva venta.</p></div>
             </main>
-
-            <aside class="lg:w-1/3 xl:w-1/4 mt-8 lg:mt-0">
-                <div class="bg-white p-4 md:p-6 rounded-2xl shadow-lg sticky top-8">
-                    <h2 class="text-xl md:text-2xl font-semibold text-gray-700 mb-6">Resumen Financiero</h2>
-                    <div class="space-y-4 mb-6">
-                        <div class="flex justify-between items-center p-4 bg-green-50 rounded-lg"><span class="font-medium text-green-800">Ingresos Totales:</span><span id="total-ingresos" class="font-bold text-lg md:text-xl text-green-900">S/0.00</span></div>
-                        <div class="flex justify-between items-center p-4 bg-red-50 rounded-lg"><span class="font-medium text-red-800">Egresos Totales:</span><span id="total-egresos" class="font-bold text-lg md:text-xl text-red-900">S/0.00</span></div>
-                        <div class="flex justify-between items-center p-4 bg-blue-50 rounded-lg border-t-2 border-blue-200"><span class="font-medium text-blue-800">Balance General:</span><span id="balance-total" class="font-bold text-xl md:text-2xl text-blue-900">S/0.00</span></div>
-                    </div>
-                    <div class="border-t pt-6 mt-6">
-                        <h3 class="text-lg md:text-xl font-semibold text-gray-700 mb-4">Añadir Egreso</h3>
-                        <form id="add-expense-form" class="space-y-4">
-                            <div><label for="expense-description" class="block text-sm font-medium text-gray-600 mb-2">Descripción</label><input type="text" id="expense-description" name="expense-description" class="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="Ej: Pago de internet" required></div>
-                            <div><label for="expense-amount" class="block text-sm font-medium text-gray-600 mb-2">Monto (S/)</label><input type="number" id="expense-amount" name="expense-amount" min="0" step="0.01" class="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="Ej: 50.00" required></div>
-                            <div><label for="expense-date" class="block text-sm font-medium text-gray-600 mb-2">Fecha</label><input type="date" id="expense-date" name="expense-date" class="w-full px-4 py-2 border border-gray-300 rounded-lg" required></div>
-                            <button type="submit" class="w-full bg-red-500 text-white font-semibold py-2 rounded-lg hover:bg-red-600 transition">Añadir Gasto</button>
-                        </form>
-                    </div>
-                    <div id="expenses-list-container" class="border-t pt-6 mt-6">
-                        <h3 class="text-lg md:text-xl font-semibold text-gray-700 mb-4">Últimos Egresos</h3>
-                        <div id="expenses-list" class="space-y-2 max-h-48 overflow-y-auto"><p class="text-sm text-gray-400">No hay egresos registrados.</p></div>
-                    </div>
-                </div>
-            </aside>
         </div>
     </div>
 
@@ -281,6 +341,17 @@
             if (user) {
                 document.getElementById('app').classList.remove('hidden');
                 document.getElementById('logout-btn').addEventListener('click', () => { signOut(auth).catch((error) => console.error("Error al cerrar sesión", error)); });
+
+                const welcomeToast = document.getElementById('welcome-toast');
+                setTimeout(() => {
+                    welcomeToast.classList.remove('opacity-0', 'translate-y-full');
+                    welcomeToast.classList.add('opacity-100', 'translate-y-0');
+                }, 500);
+
+                setTimeout(() => {
+                    welcomeToast.classList.remove('opacity-100', 'translate-y-0');
+                    welcomeToast.classList.add('opacity-0', 'translate-y-full');
+                }, 5000);
 
                 dayjs.extend(dayjs_plugin_relativeTime);
                 dayjs.locale('es');
@@ -793,6 +864,39 @@
                         toggleIcon.classList.remove('rotate-180');
                     }
                 });
+
+                // Sidebar navigation logic
+                const navButtons = {
+                    cuentas: document.getElementById('nav-cuentas'),
+                    ventas: document.getElementById('nav-ventas'),
+                    finanzas: document.getElementById('nav-finanzas'),
+                };
+
+                const views = {
+                    cuentas: document.getElementById('cuentas-view'),
+                    ventas: document.getElementById('ventas-view'),
+                    finanzas: document.getElementById('finanzas-view'),
+                };
+
+                const mainHeaderTitle = document.getElementById('main-header-title');
+
+                const switchView = (viewName) => {
+                    Object.values(views).forEach(view => view.classList.add('hidden'));
+                    views[viewName].classList.remove('hidden');
+
+                    Object.values(navButtons).forEach(button => button.classList.remove('bg-gray-200'));
+                    navButtons[viewName].classList.add('bg-gray-200');
+
+                    mainHeaderTitle.textContent = viewName.charAt(0).toUpperCase() + viewName.slice(1);
+                };
+
+                navButtons.cuentas.addEventListener('click', () => switchView('cuentas'));
+                navButtons.ventas.addEventListener('click', () => switchView('ventas'));
+                navButtons.finanzas.addEventListener('click', () => switchView('finanzas'));
+
+                // Initialize with the 'Cuentas' view
+                switchView('cuentas');
+
             } else {
                 // ❌ Si no hay nadie conectado, lo expulsamos a la página de login
                 window.location.href = 'login.html';
