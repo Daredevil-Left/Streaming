@@ -153,40 +153,97 @@
                 </div>
 
                 <!-- Cuentas View -->
-                <div id="cuentas-view" class="view">
-                    <div class="bg-white p-4 md:p-6 rounded-2xl shadow-lg mb-8 max-w-5xl mx-auto">
-                        <div class="flex justify-between items-center cursor-pointer" id="toggle-accounts-section">
-                            <h2 class="text-xl md:text-2xl font-semibold text-gray-700">Gestionar Cuentas de Plataformas</h2>
-                            <svg id="toggle-accounts-icon" class="w-6 h-6 transition-transform transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                            </svg>
-                        </div>
-                        <div id="collapsible-accounts-content" class="hidden mt-6">
-                            <form id="add-account-form" class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-                                <div class="md:col-span-3">
-                                    <label class="block text-sm font-medium text-gray-600 mb-2">Plataforma</label>
-                                    <div id="account-platform-buttons" class="flex flex-wrap gap-2"></div>
-                                    <input type="hidden" id="account-platform" name="account-platform" required>
-                                </div>
-                                <div>
-                                    <label for="account-email" class="block text-sm font-medium text-gray-600 mb-2">Correo</label>
-                                    <input type="email" id="account-email" name="account-email" class="w-full px-4 py-2 border border-gray-300 rounded-lg" required>
-                                </div>
-                                <div class="relative">
-                                    <label for="account-password" class="block text-sm font-medium text-gray-600 mb-2">Contraseña</label>
-                                    <input type="password" id="account-password" name="account-password" class="w-full px-4 py-2 border border-gray-300 rounded-lg" required>
-                                    <button type="button" class="absolute inset-y-0 right-0 top-6 flex items-center px-3 text-gray-500" onclick="togglePasswordVisibility('account-password', this)">
-                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
-                                    </button>
-                                </div>
-                                <div class="md:col-span-3 text-right">
-                                    <button type="submit" class="bg-blue-600 w-full md:w-auto text-white font-semibold px-6 py-3 rounded-lg hover:bg-blue-700 transition">Añadir Cuenta</button>
-                                </div>
-                            </form>
-                            <div id="accounts-list" class="space-y-3"></div>
-                        </div>
-                    </div>
+<div id="cuentas-view" class="view">
+    <!-- Botón para añadir nueva cuenta madre -->
+    <div class="max-w-7xl mx-auto mb-6">
+        <button id="add-mother-account-btn" class="bg-blue-600 text-white font-semibold px-6 py-3 rounded-lg hover:bg-blue-700 transition flex items-center">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+            Añadir Cuenta Madre
+        </button>
+    </div>
+
+    <!-- Contenedor para la lista de Cuentas Madre (Acordeón) -->
+    <div id="mother-accounts-accordion" class="max-w-7xl mx-auto space-y-4">
+        <!-- Las cuentas madre se cargarán aquí dinámicamente -->
+    </div>
+</div>
+
+<!-- Modal para Añadir/Editar Cuenta Madre -->
+<div id="mother-account-modal" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden opacity-0">
+    <div class="modal-content bg-white w-full max-w-lg rounded-2xl shadow-2xl p-6 transform scale-95">
+        <div class="flex justify-between items-center mb-6">
+            <h2 id="mother-account-modal-title" class="text-2xl font-semibold text-gray-700">Añadir Cuenta Madre</h2>
+            <button id="close-mother-account-modal" class="text-gray-400 hover:text-gray-600">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+        </div>
+        <form id="mother-account-form" class="space-y-4">
+            <input type="hidden" id="mother-account-id">
+            <div>
+                <label class="block text-sm font-medium text-gray-600 mb-2">Plataforma</label>
+                <div id="mother-account-platform-buttons" class="flex flex-wrap gap-2">
+                    <!-- Botones de plataforma se generan aquí -->
                 </div>
+                <input type="hidden" id="mother-account-platform" required>
+            </div>
+            <div>
+                <label for="mother-account-email" class="block text-sm font-medium text-gray-600 mb-2">Correo</label>
+                <input type="email" id="mother-account-email" class="w-full px-4 py-2 border border-gray-300 rounded-lg" required>
+            </div>
+            <div class="relative">
+                <label for="mother-account-password" class="block text-sm font-medium text-gray-600 mb-2">Contraseña</label>
+                <input type="password" id="mother-account-password" class="w-full px-4 py-2 border border-gray-300 rounded-lg" required>
+                <button type="button" class="absolute inset-y-0 right-0 top-6 flex items-center px-3 text-gray-500" onclick="togglePasswordVisibility('mother-account-password', this)">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+                </button>
+            </div>
+            <div>
+                <label for="mother-account-payment-date" class="block text-sm font-medium text-gray-600 mb-2">Fecha de Pago Propia</label>
+                <input type="date" id="mother-account-payment-date" class="w-full px-4 py-2 border border-gray-300 rounded-lg" required>
+            </div>
+            <div class="flex justify-end gap-4 mt-6">
+                <button type="button" id="cancel-mother-account" class="bg-gray-200 text-gray-700 font-semibold px-6 py-3 rounded-lg hover:bg-gray-300 transition">Cancelar</button>
+                <button type="submit" class="bg-blue-600 text-white font-semibold px-6 py-3 rounded-lg hover:bg-blue-700">Guardar Cuenta</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Modal para Añadir/Editar Perfil -->
+<div id="profile-modal" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden opacity-0">
+    <div class="modal-content bg-white w-full max-w-md rounded-2xl shadow-2xl p-6 transform scale-95">
+        <div class="flex justify-between items-center mb-6">
+            <h2 id="profile-modal-title" class="text-2xl font-semibold text-gray-700">Añadir Perfil</h2>
+            <button id="close-profile-modal" class="text-gray-400 hover:text-gray-600">
+                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+        </div>
+        <form id="profile-form" class="space-y-4">
+            <input type="hidden" id="profile-id">
+            <input type="hidden" id="profile-mother-account-id">
+            <div>
+                <label for="profile-name" class="block text-sm font-medium text-gray-600 mb-2">Nombre del Perfil</label>
+                <input type="text" id="profile-name" class="w-full px-4 py-2 border border-gray-300 rounded-lg" required>
+            </div>
+            <div>
+                <label for="profile-pin" class="block text-sm font-medium text-gray-600 mb-2">PIN (4 dígitos)</label>
+                <input type="text" id="profile-pin" pattern="\\d{4}" maxlength="4" class="w-full px-4 py-2 border border-gray-300 rounded-lg" required>
+            </div>
+            <div>
+                <label for="profile-status" class="block text-sm font-medium text-gray-600 mb-2">Estado</label>
+                <select id="profile-status" class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white" required>
+                    <option value="Disponible">Disponible</option>
+                    <option value="Ocupado">Ocupado</option>
+                    <option value="Mantenimiento">Mantenimiento</option>
+                </select>
+            </div>
+            <div class="flex justify-end gap-4 mt-6">
+                <button type="button" id="cancel-profile" class="bg-gray-200 text-gray-700 font-semibold px-6 py-3 rounded-lg hover:bg-gray-300 transition">Cancelar</button>
+                <button type="submit" class="bg-blue-600 text-white font-semibold px-6 py-3 rounded-lg hover:bg-blue-700">Guardar Perfil</button>
+            </div>
+        </form>
+    </div>
+</div>
 
                 <!-- Ventas View -->
                 <div id="ventas-view" class="view hidden">
@@ -400,7 +457,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, onSnapshot, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, onSnapshot, doc, updateDoc, deleteDoc, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         const firebaseConfig = { apiKey: "AIzaSyCaYzhFY6keITDiN2Dn7kyEAnGPDt0hu2A", authDomain: "streaming-d0fac.firebaseapp.com", projectId: "streaming-d0fac", storageBucket: "streaming-d0fac.firebasestorage.app", messagingSenderId: "1017661259961", appId: "1:1017661259961:web:9303ad97c753fe95379b68" };
         const app = initializeApp(firebaseConfig);
@@ -415,8 +472,9 @@
                 dayjs.extend(dayjs_plugin_relativeTime);
                 dayjs.locale('es');
                 const platformStyles = { 'Netflix':{color:'text-red-600',fallback:'bg-red-500'},'Spotify':{color:'text-green-500',fallback:'bg-green-500'},'Disney+':{color:'text-blue-900',fallback:'bg-blue-900'},'HBO Max':{color:'text-purple-600',fallback:'bg-purple-600'},'Amazon Prime Video':{color:'text-blue-400',fallback:'bg-blue-400'},'YouTube Premium':{color:'text-red-500',fallback:'bg-red-500'},'Apple Music':{color:'text-pink-500',fallback:'bg-pink-500'},'Apple TV+':{color:'text-gray-800',fallback:'bg-gray-800'},'Crunchyroll':{color:'text-orange-500',fallback:'bg-orange-500'},'Canva':{color:'text-purple-500',fallback:'bg-purple-500'},'IPTV Premium':{color:'text-teal-500',fallback:'bg-teal-500'},'Vix+':{color:'text-yellow-400',fallback:'bg-yellow-400'},'Paramount+':{color:'text-blue-800',fallback:'bg-blue-800'},'Otro':{color:'text-gray-500',fallback:'bg-gray-500'}};
-                let allSales = [], allExpenses = [], allPlatformAccounts = [], activePlatformFilter = 'Todos', currentSearchTerm = '', activeAccountFilter = '', activeStatusFilter = '';
+                let allSales = [], allExpenses = [], allMotherAccounts = [], activePlatformFilter = 'Todos', currentSearchTerm = '', activeAccountFilter = '', activeStatusFilter = '';
                 const selectors = {
+                    // Ventas
                     addSaleForm: document.getElementById('add-sale-form'),
                     salesList: document.getElementById('sales-list'),
                     searchInput: document.getElementById('search-input'),
@@ -433,19 +491,34 @@
                     editOtroPlataformaContainer: document.getElementById('edit-otro-plataforma-container'),
                     editOtroPlataformaInput: document.getElementById('edit-otro-plataforma'),
                     platformFilters: document.getElementById('platform-filters'),
+                    platformAccountSelect: document.getElementById('platform-account'),
+                    editPlatformAccountSelect: document.getElementById('edit-platform-account'),
+                    accountFilter: document.getElementById('account-filter'),
+                    statusFilter: document.getElementById('status-filter'),
+
+                    // Finanzas
                     totalIngresos: document.getElementById('total-ingresos'),
                     totalEgresos: document.getElementById('total-egresos'),
                     balanceTotal: document.getElementById('balance-total'),
                     addExpenseForm: document.getElementById('add-expense-form'),
                     expensesList: document.getElementById('expenses-list'),
-                    addAccountForm: document.getElementById('add-account-form'),
-                    accountsList: document.getElementById('accounts-list'),
-                    platformAccountSelect: document.getElementById('platform-account'),
-                    editPlatformAccountSelect: document.getElementById('edit-platform-account'),
-                    accountFilter: document.getElementById('account-filter'),
-                    statusFilter: document.getElementById('status-filter'),
-                    accountPlatformButtons: document.getElementById('account-platform-buttons'),
-                    // Dashboard selectors
+
+                    // Cuentas (Nuevo)
+                    motherAccountsAccordion: document.getElementById('mother-accounts-accordion'),
+                    addMotherAccountBtn: document.getElementById('add-mother-account-btn'),
+                    motherAccountModal: document.getElementById('mother-account-modal'),
+                    motherAccountForm: document.getElementById('mother-account-form'),
+                    motherAccountModalTitle: document.getElementById('mother-account-modal-title'),
+                    closeMotherAccountModal: document.getElementById('close-mother-account-modal'),
+                    cancelMotherAccountBtn: document.getElementById('cancel-mother-account'),
+                    motherAccountPlatformButtons: document.getElementById('mother-account-platform-buttons'),
+                    profileModal: document.getElementById('profile-modal'),
+                    profileForm: document.getElementById('profile-form'),
+                    profileModalTitle: document.getElementById('profile-modal-title'),
+                    closeProfileModal: document.getElementById('close-profile-modal'),
+                    cancelProfileBtn: document.getElementById('cancel-profile'),
+
+                    // Dashboard
                     kpiSalesToday: document.getElementById('kpi-sales-today'),
                     kpiSalesMonth: document.getElementById('kpi-sales-month'),
                     kpiActiveClients: document.getElementById('kpi-active-clients'),
@@ -454,369 +527,158 @@
                     summaryEgresos: document.getElementById('summary-egresos'),
                     summaryBalance: document.getElementById('summary-balance'),
                 };
-                const getSaleStatus = (finPlan) => {
-                    const today = dayjs().startOf('day');
-                    const expirationDate = dayjs(finPlan).startOf('day');
-                    const diffDays = expirationDate.diff(today, 'day');
-
-                    if (diffDays < 0) return 'Vencido';
-                    if (diffDays === 0) return 'Vence hoy';
-                    if (diffDays <= 7) return 'Próximo a Vencer';
-                    return 'Activo';
-                };
+                const getSaleStatus = (finPlan) => { const today = dayjs().startOf('day'); const expirationDate = dayjs(finPlan).startOf('day'); const diffDays = expirationDate.diff(today, 'day'); if (diffDays < 0) return 'Vencido'; if (diffDays === 0) return 'Vence hoy'; if (diffDays <= 7) return 'Próximo a Vencer'; return 'Activo'; };
                 const formatCurrency = (amount) => `S/${(amount||0).toFixed(2)}`;
                 const getPlatformHtml = (platformName) => { const style=platformStyles[platformName]||platformStyles['Otro']; return `<span class="font-bold ${style.color}">${platformName}</span>`};
                 const handlePlatformChange = (select, container, input) => { if (select.value==='Otro') { container.classList.remove('hidden'); input.required = true; } else { container.classList.add('hidden'); input.required = false; input.value = ''; }};
                 const openModal = () => { selectors.editModal.classList.remove('hidden'); setTimeout(() => { selectors.editModal.classList.remove('opacity-0'); selectors.editModal.querySelector('.modal-content').classList.remove('scale-95'); }, 10); };
                 const closeModal = () => { selectors.editModal.classList.add('opacity-0'); selectors.editModal.querySelector('.modal-content').classList.add('scale-95'); setTimeout(() => selectors.editModal.classList.add('hidden'), 300); };
-
-                const showConfirmationModal = (title, message, onConfirm) => {
-                    const modal = document.getElementById('confirmation-modal');
-                    document.getElementById('confirmation-title').textContent = title;
-                    document.getElementById('confirmation-message').textContent = message;
-
-                    const confirmBtn = document.getElementById('confirm-action-btn');
-                    const cancelBtn = document.getElementById('cancel-confirmation-btn');
-
-                    const confirmHandler = () => {
-                        onConfirm();
-                        hideConfirmationModal();
-                    };
-
-                    const cancelHandler = () => {
-                        hideConfirmationModal();
-                    };
-
-                    confirmBtn.onclick = confirmHandler;
-                    cancelBtn.onclick = cancelHandler;
-
-                    modal.classList.remove('hidden');
-                    setTimeout(() => {
-                        modal.classList.remove('opacity-0');
-                        modal.querySelector('.modal-content').classList.remove('scale-95');
-                    }, 10);
-                };
-
-                const hideConfirmationModal = () => {
-                    const modal = document.getElementById('confirmation-modal');
-                    modal.classList.add('opacity-0');
-                    modal.querySelector('.modal-content').classList.add('scale-95');
-                    setTimeout(() => {
-                        modal.classList.add('hidden');
-                        document.getElementById('confirm-action-btn').onclick = null;
-                        document.getElementById('cancel-confirmation-btn').onclick = null;
-                    }, 300);
-                };
-
-                const showArchiveDeleteModal = (saleId) => {
-                    const modal = document.getElementById('archive-delete-modal');
-                    const archiveBtn = document.getElementById('archive-btn');
-                    const deleteBtn = document.getElementById('delete-permanently-btn');
-                    const cancelBtn = document.getElementById('cancel-action-btn');
-
-                    const archiveHandler = () => handleArchiveAction(saleId);
-                    const deleteHandler = () => handlePermanentDeleteAction(saleId);
-                    const cancelHandler = () => hideArchiveDeleteModal();
-
-                    archiveBtn.onclick = archiveHandler;
-                    deleteBtn.onclick = deleteHandler;
-                    cancelBtn.onclick = cancelHandler;
-
-                    modal.classList.remove('hidden');
-                    setTimeout(() => {
-                        modal.classList.remove('opacity-0');
-                        modal.querySelector('.modal-content').classList.remove('scale-95');
-                    }, 10);
-                };
-
-                const hideArchiveDeleteModal = () => {
-                    const modal = document.getElementById('archive-delete-modal');
-                    modal.classList.add('opacity-0');
-                    modal.querySelector('.modal-content').classList.add('scale-95');
-                    setTimeout(() => {
-                        modal.classList.add('hidden');
-                        // Clean up event listeners
-                        document.getElementById('archive-btn').onclick = null;
-                        document.getElementById('delete-permanently-btn').onclick = null;
-                        document.getElementById('cancel-action-btn').onclick = null;
-                    }, 300);
-                };
+                const showConfirmationModal = (title, message, onConfirm) => { const modal = document.getElementById('confirmation-modal'); document.getElementById('confirmation-title').textContent = title; document.getElementById('confirmation-message').textContent = message; const confirmBtn = document.getElementById('confirm-action-btn'); const cancelBtn = document.getElementById('cancel-confirmation-btn'); const confirmHandler = () => { onConfirm(); hideConfirmationModal(); }; const cancelHandler = () => { hideConfirmationModal(); }; confirmBtn.onclick = confirmHandler; cancelBtn.onclick = cancelHandler; modal.classList.remove('hidden'); setTimeout(() => { modal.classList.remove('opacity-0'); modal.querySelector('.modal-content').classList.remove('scale-95'); }, 10); };
+                const hideConfirmationModal = () => { const modal = document.getElementById('confirmation-modal'); modal.classList.add('opacity-0'); modal.querySelector('.modal-content').classList.add('scale-95'); setTimeout(() => { modal.classList.add('hidden'); document.getElementById('confirm-action-btn').onclick = null; document.getElementById('cancel-confirmation-btn').onclick = null; }, 300); };
+                const showArchiveDeleteModal = (saleId) => { const modal = document.getElementById('archive-delete-modal'); const archiveBtn = document.getElementById('archive-btn'); const deleteBtn = document.getElementById('delete-permanently-btn'); const cancelBtn = document.getElementById('cancel-action-btn'); const archiveHandler = () => handleArchiveAction(saleId); const deleteHandler = () => handlePermanentDeleteAction(saleId); const cancelHandler = () => hideArchiveDeleteModal(); archiveBtn.onclick = archiveHandler; deleteBtn.onclick = deleteHandler; cancelBtn.onclick = cancelHandler; modal.classList.remove('hidden'); setTimeout(() => { modal.classList.remove('opacity-0'); modal.querySelector('.modal-content').classList.remove('scale-95'); }, 10); };
+                const hideArchiveDeleteModal = () => { const modal = document.getElementById('archive-delete-modal'); modal.classList.add('opacity-0'); modal.querySelector('.modal-content').classList.add('scale-95'); setTimeout(() => { modal.classList.add('hidden'); document.getElementById('archive-btn').onclick = null; document.getElementById('delete-permanently-btn').onclick = null; document.getElementById('cancel-action-btn').onclick = null; }, 300); };
                 const updateFinancialSummary = () => { const salesIncome = allSales.reduce((sum, sale) => sum + (sale.precio || 0), 0); const totalIngresos = salesIncome; const totalEgresos = allExpenses.reduce((sum, expense) => sum + (expense.amount || 0), 0); const balance = totalIngresos - totalEgresos; selectors.totalIngresos.textContent = formatCurrency(totalIngresos); selectors.totalEgresos.textContent = formatCurrency(totalEgresos); selectors.balanceTotal.textContent = formatCurrency(balance); selectors.balanceTotal.classList.toggle('text-red-900', balance < 0); selectors.balanceTotal.classList.toggle('text-blue-900', balance >= 0); };
+                const loadDashboardData = () => { const today = dayjs().startOf('day'); const startOfMonth = dayjs().startOf('month'); const activeSales = allSales.filter(sale => sale.estado !== 'ARCHIVADO'); const salesToday = allSales.filter(sale => dayjs(sale.inicioPlan).isSame(today, 'day')).reduce((sum, sale) => sum + sale.precio, 0); selectors.kpiSalesToday.textContent = formatCurrency(salesToday); const salesMonth = allSales.filter(sale => dayjs(sale.inicioPlan).isAfter(startOfMonth) || dayjs(sale.inicioPlan).isSame(startOfMonth)).reduce((sum, sale) => sum + sale.precio, 0); selectors.kpiSalesMonth.textContent = formatCurrency(salesMonth); const activeClients = activeSales.length; selectors.kpiActiveClients.textContent = activeClients; const upcomingExpirations = activeSales.filter(sale => { const expirationDate = dayjs(sale.finPlan).startOf('day'); const diffDays = expirationDate.diff(today, 'day'); return diffDays >= 0 && diffDays <= 5; }).sort((a, b) => new Date(a.finPlan) - new Date(b.finPlan)); selectors.alertsSection.innerHTML = ''; if (upcomingExpirations.length > 0) { upcomingExpirations.forEach(sale => { const alertEl = document.createElement('div'); alertEl.className = 'flex justify-between items-center p-3 bg-yellow-50 rounded-lg'; alertEl.innerHTML = `<div><p class="font-semibold text-yellow-800">${sale.cliente}</p><p class="text-sm text-yellow-600">${getPlatformHtml(sale.plataforma)}</p></div><div class="text-right"><p class="font-bold text-sm text-yellow-900">Vence en ${dayjs(sale.finPlan).fromNow(true)}</p><p class="text-xs text-yellow-700">${dayjs(sale.finPlan).format('DD MMM')}</p></div>`; selectors.alertsSection.appendChild(alertEl); }); } else { selectors.alertsSection.innerHTML = '<p class="text-gray-500">No hay vencimientos próximos.</p>'; } const totalIngresos = allSales.reduce((sum, sale) => sum + (sale.precio || 0), 0); const totalEgresos = allExpenses.reduce((sum, expense) => sum + (expense.amount || 0), 0); const balance = totalIngresos - totalEgresos; selectors.summaryIngresos.textContent = formatCurrency(totalIngresos); selectors.summaryEgresos.textContent = formatCurrency(totalEgresos); selectors.summaryBalance.textContent = formatCurrency(balance); selectors.summaryBalance.classList.toggle('text-red-900', balance < 0); selectors.summaryBalance.classList.toggle('text-blue-900', balance >= 0); };
+                const applyFiltersAndRender = (salesToRender) => { let filteredSales = [...salesToRender]; if (activePlatformFilter !== 'Todos') { filteredSales = filteredSales.filter(sale => sale.plataforma === activePlatformFilter); } if (currentSearchTerm) { const term = currentSearchTerm.toLowerCase(); filteredSales = filteredSales.filter(sale => sale.cliente.toLowerCase().includes(term) || sale.plataforma.toLowerCase().includes(term) || (sale.correo && sale.correo.toLowerCase().includes(term))); } if (activeAccountFilter) { const account = allMotherAccounts.find(a => a.id === activeAccountFilter); if (account) { filteredSales = filteredSales.filter(sale => sale.correo === account.email); } } if (activeStatusFilter) { filteredSales = filteredSales.filter(sale => getSaleStatus(sale.finPlan) === activeStatusFilter); } renderSales(filteredSales); };
+                const renderPlatformFilters = () => { selectors.platformFilters.innerHTML = ''; const platforms = ['Todos', ...Object.keys(platformStyles)]; platforms.forEach(platform => { const btn = document.createElement('button'); btn.dataset.platform = platform; const activeClasses = 'border-indigo-500 bg-indigo-50'; const inactiveClasses = 'border-transparent hover:bg-gray-100'; btn.className = `p-2 rounded-lg border-2 transition-all duration-200 font-semibold ${activePlatformFilter === platform ? activeClasses : inactiveClasses}`; if (platform === 'Todos') { btn.textContent = 'Todos'; } else { btn.innerHTML = getPlatformHtml(platform); } btn.addEventListener('click', () => { activePlatformFilter = platform; document.querySelectorAll('#platform-filters button').forEach(b => { b.className = `p-2 rounded-lg border-2 transition-all duration-200 font-semibold ${inactiveClasses}`; }); btn.className = `p-2 rounded-lg border-2 transition-all duration-200 font-semibold ${activeClasses}`; const activeSales = allSales.filter(sale => sale.estado !== 'ARCHIVADO'); applyFiltersAndRender(activeSales); }); selectors.platformFilters.appendChild(btn); }); };
+                const renderSales = (sales) => { selectors.salesList.innerHTML = ''; const parentContainer = document.querySelector('.bg-white.rounded-2xl.shadow-lg.p-4'); if (allSales.length === 0) { selectors.emptyState.classList.remove('hidden'); parentContainer.classList.add('hidden'); return; } selectors.emptyState.classList.add('hidden'); parentContainer.classList.remove('hidden'); if (sales.length === 0) { selectors.salesList.innerHTML = `<p class="text-gray-500 text-center col-span-7 py-4">No se encontraron ventas que coincidan.</p>`; return; } sales.forEach(sale => { const statusText = getSaleStatus(sale.finPlan); const statusInfo = { 'Vencido': { color: 'orange' }, 'Vence hoy': { color: 'red' }, 'Próximo a Vencer': { color: 'yellow' }, 'Activo': { color: 'green' } }[statusText]; const endDateForDisplay = dayjs(sale.finPlan); const endDateForRelative = dayjs(sale.finPlan).endOf('day'); const row = document.createElement('div'); row.className = `grid grid-cols-2 md:grid-cols-7 gap-4 items-center p-3 rounded-lg hover:bg-gray-50 transition-colors duration-200 border-b text-sm`; row.innerHTML = `<div class="col-span-2 font-semibold text-gray-800">${sale.cliente}<div class="font-normal text-xs text-gray-500 md:hidden mt-1">${getPlatformHtml(sale.plataforma)} &middot; Vence: ${endDateForDisplay.format('DD/MM/YYYY')}</div></div><div class="hidden md:block">${getPlatformHtml(sale.plataforma)}</div><div class="hidden md:block">${endDateForDisplay.format('DD/MM/YYYY')} <span class="text-xs text-gray-500">(${endDateForRelative.fromNow()})</span></div><div class="hidden md:block"><span class="text-xs font-semibold py-1 px-2 uppercase rounded-full text-${statusInfo.color}-600 bg-${statusInfo.color}-100">${statusText}</span></div><div class="hidden md:block font-bold text-gray-800">${formatCurrency(sale.precio)}</div><div class="flex justify-end gap-3 items-center"><button class="edit-btn p-1 text-indigo-600 hover:text-indigo-800 hover:bg-indigo-100 rounded-full transition" data-id="${sale.id}" title="Editar"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L16.732 3.732z"></path></svg></button><button class="renew-btn p-1 text-green-600 hover:text-green-800 hover:bg-green-100 rounded-full transition" data-id="${sale.id}" title="Renovar"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h5M20 20v-5h-5M4 20h5v-5M20 4h-5v5"></path></svg></button><button class="delete-btn p-1 text-red-600 hover:text-red-800 hover:bg-red-100 rounded-full transition" data-id="${sale.id}" title="Eliminar"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button></div><div class="md:hidden col-span-2 mt-2 pt-2 border-t flex justify-between items-center text-xs"><span class="font-semibold py-1 px-2 uppercase rounded-full text-${statusInfo.color}-600 bg-${statusInfo.color}-100">${statusText}</span><span class="font-bold text-gray-800 text-base">${formatCurrency(sale.precio)}</span></div>`; selectors.salesList.appendChild(row); }); selectors.salesList.querySelectorAll('.edit-btn').forEach(b => b.addEventListener('click', e => handleEdit(e.currentTarget.dataset.id))); selectors.salesList.querySelectorAll('.delete-btn').forEach(b => b.addEventListener('click', e => handleDeleteSale(e.currentTarget.dataset.id))); selectors.salesList.querySelectorAll('.renew-btn').forEach(b => b.addEventListener('click', e => openRenewalModal(e.currentTarget.dataset.id))); };
+                const renderExpenses = () => { selectors.expensesList.innerHTML = ''; if (allExpenses.length === 0) { selectors.expensesList.innerHTML = '<p class="text-sm text-gray-400">No hay egresos registrados.</p>'; return; } allExpenses.forEach(expense => { const item = document.createElement('div'); item.className = 'flex justify-between items-center text-sm p-2 rounded-md hover:bg-gray-50'; item.innerHTML = `<div class="flex-1 truncate pr-2"><p class="text-gray-700">${expense.description}</p><p class="text-xs text-gray-500">${dayjs(expense.date).format('DD/MM/YYYY')}</p></div><div class="flex items-center gap-2"><span class="font-semibold text-red-600">${formatCurrency(expense.amount)}</span><button class="delete-expense-btn text-gray-400 hover:text-red-600" data-id="${expense.id}"><svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm4 0a1 1 0 012 0v6a1 1 0 11-2 0V8z" clip-rule="evenodd"></path></svg></button></div>`; selectors.expensesList.appendChild(item); }); selectors.expensesList.querySelectorAll('.delete-expense-btn').forEach(b => b.addEventListener('click', e => handleDeleteExpense(e.currentTarget.dataset.id))); };
 
-                const loadDashboardData = () => {
-                    const today = dayjs().startOf('day');
-                    const startOfMonth = dayjs().startOf('month');
-                    const activeSales = allSales.filter(sale => sale.estado !== 'ARCHIVADO');
+                // --- Lógica de Cuentas (NUEVA) ---
+                const openMotherAccountModal = (account = null) => {
+                    const f = selectors.motherAccountForm;
+                    f.reset();
+                    f['mother-account-id'].value = account ? account.id : '';
+                    selectors.motherAccountModalTitle.textContent = account ? 'Editar Cuenta Madre' : 'Añadir Cuenta Madre';
 
-                    // 1. KPI: Ventas de Hoy
-                    const salesToday = allSales.filter(sale => dayjs(sale.inicioPlan).isSame(today, 'day'))
-                                               .reduce((sum, sale) => sum + sale.precio, 0);
-                    selectors.kpiSalesToday.textContent = formatCurrency(salesToday);
-
-                    // 2. KPI: Ventas del Mes
-                    const salesMonth = allSales.filter(sale => dayjs(sale.inicioPlan).isAfter(startOfMonth) || dayjs(sale.inicioPlan).isSame(startOfMonth))
-                                             .reduce((sum, sale) => sum + sale.precio, 0);
-                    selectors.kpiSalesMonth.textContent = formatCurrency(salesMonth);
-
-                    // 3. KPI: Clientes Activos
-                    const activeClients = activeSales.length;
-                    selectors.kpiActiveClients.textContent = activeClients;
-
-                    // 4. Alertas: Próximos Vencimientos
-                    const upcomingExpirations = activeSales.filter(sale => {
-                        const expirationDate = dayjs(sale.finPlan).startOf('day');
-                        const diffDays = expirationDate.diff(today, 'day');
-                        return diffDays >= 0 && diffDays <= 5;
-                    }).sort((a, b) => new Date(a.finPlan) - new Date(b.finPlan));
-
-                    selectors.alertsSection.innerHTML = '';
-                    if (upcomingExpirations.length > 0) {
-                        upcomingExpirations.forEach(sale => {
-                            const alertEl = document.createElement('div');
-                            alertEl.className = 'flex justify-between items-center p-3 bg-yellow-50 rounded-lg';
-                            alertEl.innerHTML = `
-                                <div>
-                                    <p class="font-semibold text-yellow-800">${sale.cliente}</p>
-                                    <p class="text-sm text-yellow-600">${getPlatformHtml(sale.plataforma)}</p>
-                                </div>
-                                <div class="text-right">
-                                    <p class="font-bold text-sm text-yellow-900">Vence en ${dayjs(sale.finPlan).fromNow(true)}</p>
-                                    <p class="text-xs text-yellow-700">${dayjs(sale.finPlan).format('DD MMM')}</p>
-                                </div>`;
-                            selectors.alertsSection.appendChild(alertEl);
-                        });
-                    } else {
-                        selectors.alertsSection.innerHTML = '<p class="text-gray-500">No hay vencimientos próximos.</p>';
-                    }
-
-                    // 5. Resumen Financiero
-                    const totalIngresos = allSales.reduce((sum, sale) => sum + (sale.precio || 0), 0);
-                    const totalEgresos = allExpenses.reduce((sum, expense) => sum + (expense.amount || 0), 0);
-                    const balance = totalIngresos - totalEgresos;
-                    selectors.summaryIngresos.textContent = formatCurrency(totalIngresos);
-                    selectors.summaryEgresos.textContent = formatCurrency(totalEgresos);
-                    selectors.summaryBalance.textContent = formatCurrency(balance);
-                    selectors.summaryBalance.classList.toggle('text-red-900', balance < 0);
-                    selectors.summaryBalance.classList.toggle('text-blue-900', balance >= 0);
-                };
-
-                const applyFiltersAndRender = (salesToRender) => {
-                    let filteredSales = [...salesToRender];
-                    if (activePlatformFilter !== 'Todos') {
-                        filteredSales = filteredSales.filter(sale => sale.plataforma === activePlatformFilter);
-                    }
-                    if (currentSearchTerm) {
-                        const term = currentSearchTerm.toLowerCase();
-                        filteredSales = filteredSales.filter(sale => sale.cliente.toLowerCase().includes(term) || sale.plataforma.toLowerCase().includes(term) || (sale.correo && sale.correo.toLowerCase().includes(term)));
-                    }
-                    if (activeAccountFilter) {
-                        const account = allPlatformAccounts.find(a => a.id === activeAccountFilter);
-                        if (account) {
-                            filteredSales = filteredSales.filter(sale => sale.correo === account.email && sale.contrasena === account.password);
-                        }
-                    }
-                    if (activeStatusFilter) {
-                        filteredSales = filteredSales.filter(sale => getSaleStatus(sale.finPlan) === activeStatusFilter);
-                    }
-                    renderSales(filteredSales);
-                };
-                const renderPlatformFilters = () => {
-                    selectors.platformFilters.innerHTML = '';
-                    const platforms = ['Todos', ...Object.keys(platformStyles)];
-                    platforms.forEach(platform => {
-                        const btn = document.createElement('button');
-                        btn.dataset.platform = platform;
-                        const activeClasses = 'border-indigo-500 bg-indigo-50';
-                        const inactiveClasses = 'border-transparent hover:bg-gray-100';
-                        btn.className = `p-2 rounded-lg border-2 transition-all duration-200 font-semibold ${activePlatformFilter === platform ? activeClasses : inactiveClasses}`;
-                        if (platform === 'Todos') {
-                            btn.textContent = 'Todos';
-                        } else {
-                            btn.innerHTML = getPlatformHtml(platform);
-                        }
-                        btn.addEventListener('click', () => {
-                            activePlatformFilter = platform;
-                            document.querySelectorAll('#platform-filters button').forEach(b => {
-                                b.className = `p-2 rounded-lg border-2 transition-all duration-200 font-semibold ${inactiveClasses}`;
-                            });
-                            btn.className = `p-2 rounded-lg border-2 transition-all duration-200 font-semibold ${activeClasses}`;
-                            const activeSales = allSales.filter(sale => sale.estado !== 'ARCHIVADO');
-                            applyFiltersAndRender(activeSales);
-                        });
-                        selectors.platformFilters.appendChild(btn);
-                    });
-                };
-                const renderAccountPlatformButtons = () => {
+                    // Renderiza y maneja los botones de plataforma
                     const platformNames = Object.keys(platformStyles).filter(p => p !== 'Otro');
-                    selectors.accountPlatformButtons.innerHTML = '';
+                    selectors.motherAccountPlatformButtons.innerHTML = '';
                     platformNames.forEach(name => {
                         const btn = document.createElement('button');
                         btn.type = 'button';
                         btn.textContent = name;
                         btn.dataset.platformName = name;
                         btn.className = 'px-3 py-1.5 border border-gray-300 rounded-md text-sm font-medium hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500';
+                        if (account && account.plataforma === name) {
+                            btn.classList.add('bg-blue-600', 'text-white', 'border-blue-600');
+                        }
                         btn.addEventListener('click', () => {
-                            // Update hidden input
-                            selectors.addAccountForm['account-platform'].value = name;
-                            // Update button styles
-                            document.querySelectorAll('#account-platform-buttons button').forEach(b => b.classList.remove('bg-indigo-600', 'text-white', 'border-indigo-600'));
-                            btn.classList.add('bg-indigo-600', 'text-white', 'border-indigo-600');
+                            f['mother-account-platform'].value = name;
+                            document.querySelectorAll('#mother-account-platform-buttons button').forEach(b => b.classList.remove('bg-blue-600', 'text-white', 'border-blue-600'));
+                            btn.classList.add('bg-blue-600', 'text-white', 'border-blue-600');
                         });
-                        selectors.accountPlatformButtons.appendChild(btn);
+                        selectors.motherAccountPlatformButtons.appendChild(btn);
                     });
+
+                    if (account) {
+                        f['mother-account-platform'].value = account.plataforma;
+                        f['mother-account-email'].value = account.email;
+                        f['mother-account-password'].value = account.password;
+                        f['mother-account-payment-date'].value = account.fecha_pago_propia;
+                    }
+
+                    selectors.motherAccountModal.classList.remove('hidden');
+                    setTimeout(() => { selectors.motherAccountModal.classList.remove('opacity-0'); selectors.motherAccountModal.querySelector('.modal-content').classList.remove('scale-95'); }, 10);
                 };
-                const renderSales = (sales) => {
-                    selectors.salesList.innerHTML = '';
-                    const parentContainer = document.querySelector('.bg-white.rounded-2xl.shadow-lg.p-4');
-                    if (allSales.length === 0) {
-                        selectors.emptyState.classList.remove('hidden');
-                        parentContainer.classList.add('hidden'); // Ocultar el contenedor de la lista si no hay ventas
+                const closeMotherAccountModal = () => { selectors.motherAccountModal.classList.add('opacity-0'); selectors.motherAccountModal.querySelector('.modal-content').classList.add('scale-95'); setTimeout(() => selectors.motherAccountModal.classList.add('hidden'), 300); };
+
+                const openProfileModal = (motherAccountId, profile = null) => {
+                    const f = selectors.profileForm;
+                    f.reset();
+                    f['profile-mother-account-id'].value = motherAccountId;
+                    f['profile-id'].value = profile ? profile.id : '';
+                    selectors.profileModalTitle.textContent = profile ? 'Editar Perfil' : 'Añadir Perfil';
+                    if (profile) {
+                        f['profile-name'].value = profile.nombre_perfil;
+                        f['profile-pin'].value = profile.pin;
+                        f['profile-status'].value = profile.estado;
+                    } else {
+                        f['profile-status'].value = 'Disponible'; // Default status
+                    }
+                    selectors.profileModal.classList.remove('hidden');
+                    setTimeout(() => { selectors.profileModal.classList.remove('opacity-0'); selectors.profileModal.querySelector('.modal-content').classList.remove('scale-95'); }, 10);
+                };
+                const closeProfileModal = () => { selectors.profileModal.classList.add('opacity-0'); selectors.profileModal.querySelector('.modal-content').classList.add('scale-95'); setTimeout(() => selectors.profileModal.classList.add('hidden'), 300); };
+
+                const renderMotherAccounts = (accounts) => {
+                    selectors.motherAccountsAccordion.innerHTML = '';
+                    if (accounts.length === 0) {
+                        selectors.motherAccountsAccordion.innerHTML = '<p class="text-center text-gray-500">No hay cuentas madre registradas. ¡Añade una para empezar!</p>';
                         return;
                     }
-                    selectors.emptyState.classList.add('hidden');
-                    parentContainer.classList.remove('hidden');
-
-                    if (sales.length === 0) {
-                        selectors.salesList.innerHTML = `<p class="text-gray-500 text-center col-span-7 py-4">No se encontraron ventas que coincidan.</p>`;
-                        return;
-                    }
-
-                    sales.forEach(sale => {
-                        const statusText = getSaleStatus(sale.finPlan);
-                        const statusInfo = {
-                            'Vencido': { color: 'orange' },
-                            'Vence hoy': { color: 'red' },
-                            'Próximo a Vencer': { color: 'yellow' },
-                            'Activo': { color: 'green' }
-                        }[statusText];
-
-                        const endDateForDisplay = dayjs(sale.finPlan);
-                        const endDateForRelative = dayjs(sale.finPlan).endOf('day');
-
-                        const row = document.createElement('div');
-                        row.className = `grid grid-cols-2 md:grid-cols-7 gap-4 items-center p-3 rounded-lg hover:bg-gray-50 transition-colors duration-200 border-b text-sm`;
-
-                        row.innerHTML = `
-                            <div class="col-span-2 font-semibold text-gray-800">
-                                ${sale.cliente}
-                                <div class="font-normal text-xs text-gray-500 md:hidden mt-1">
-                                    ${getPlatformHtml(sale.plataforma)} &middot; Vence: ${endDateForDisplay.format('DD/MM/YYYY')}
+                    accounts.forEach(account => {
+                        const div = document.createElement('div');
+                        div.className = 'bg-white rounded-2xl shadow-lg';
+                        div.innerHTML = `
+                            <div class="accordion-header flex justify-between items-center p-4 cursor-pointer">
+                                <div class="flex-1 grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
+                                    <span class="font-bold text-lg ${platformStyles[account.plataforma]?.color || 'text-gray-800'}">${account.plataforma}</span>
+                                    <span class="text-gray-600">${account.email}</span>
+                                    <span class="text-sm text-gray-500">Próximo pago: <span class="font-semibold text-gray-700">${dayjs(account.fecha_pago_propia).format('DD/MM/YYYY')}</span></span>
+                                </div>
+                                <div class="flex items-center gap-2 ml-4">
+                                    <button class="edit-mother-account-btn p-2 text-indigo-600 hover:bg-indigo-100 rounded-full" data-id="${account.id}"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L16.732 3.732z"></path></svg></button>
+                                    <button class="delete-mother-account-btn p-2 text-red-600 hover:bg-red-100 rounded-full" data-id="${account.id}"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button>
+                                    <svg class="w-6 h-6 transition-transform transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                                 </div>
                             </div>
-                            <div class="hidden md:block">${getPlatformHtml(sale.plataforma)}</div>
-                            <div class="hidden md:block">${endDateForDisplay.format('DD/MM/YYYY')} <span class="text-xs text-gray-500">(${endDateForRelative.fromNow()})</span></div>
-                            <div class="hidden md:block"><span class="text-xs font-semibold py-1 px-2 uppercase rounded-full text-${statusInfo.color}-600 bg-${statusInfo.color}-100">${statusText}</span></div>
-                            <div class="hidden md:block font-bold text-gray-800">${formatCurrency(sale.precio)}</div>
-                            <div class="flex justify-end gap-3 items-center">
-                                <button class="edit-btn p-1 text-indigo-600 hover:text-indigo-800 hover:bg-indigo-100 rounded-full transition" data-id="${sale.id}" title="Editar">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L16.732 3.732z"></path></svg>
-                                </button>
-                                <button class="renew-btn p-1 text-green-600 hover:text-green-800 hover:bg-green-100 rounded-full transition" data-id="${sale.id}" title="Renovar">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h5M20 20v-5h-5M4 20h5v-5M20 4h-5v5"></path></svg>
-                                </button>
-                                <button class="delete-btn p-1 text-red-600 hover:text-red-800 hover:bg-red-100 rounded-full transition" data-id="${sale.id}" title="Eliminar">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                                </button>
-                            </div>
-                            <div class="md:hidden col-span-2 mt-2 pt-2 border-t flex justify-between items-center text-xs">
-                                <span class="font-semibold py-1 px-2 uppercase rounded-full text-${statusInfo.color}-600 bg-${statusInfo.color}-100">${statusText}</span>
-                                <span class="font-bold text-gray-800 text-base">${formatCurrency(sale.precio)}</span>
+                            <div class="accordion-content border-t border-gray-200 p-4 hidden">
+                                <div class="flex justify-between items-center mb-4">
+                                    <h4 class="font-semibold text-gray-600">Perfiles</h4>
+                                    <button class="add-profile-btn bg-green-500 text-white font-semibold px-4 py-2 rounded-lg hover:bg-green-600 text-sm" data-mother-id="${account.id}">+ Añadir Perfil</button>
+                                </div>
+                                <div class="profiles-list space-y-2">
+                                    ${account.profiles && account.profiles.length > 0 ? account.profiles.map(p => {
+                                        const statusColors = { 'Disponible': 'bg-green-500', 'Ocupado': 'bg-red-500', 'Mantenimiento': 'bg-orange-500' };
+                                        return `<div class="grid grid-cols-4 gap-4 items-center p-2 rounded-md bg-gray-50">
+                                                    <span class="font-medium col-span-1">${p.nombre_perfil}</span>
+                                                    <span class="text-gray-600 col-span-1">PIN: ${p.pin}</span>
+                                                    <div class="flex items-center gap-2 col-span-1">
+                                                        <span class="h-3 w-3 rounded-full ${statusColors[p.estado]}"></span>
+                                                        <span>${p.estado}</span>
+                                                    </div>
+                                                    <div class="flex justify-end gap-2 col-span-1">
+                                                        <button class="edit-profile-btn p-1 text-indigo-500 hover:bg-indigo-100 rounded-full" data-mother-id="${account.id}" data-profile-id="${p.id}"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L16.732 3.732z"></path></svg></button>
+                                                        <button class="delete-profile-btn p-1 text-red-500 hover:bg-red-100 rounded-full" data-mother-id="${account.id}" data-profile-id="${p.id}"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button>
+                                                    </div>
+                                                </div>`;
+                                    }).join('') : '<p class="text-sm text-gray-500">No hay perfiles en esta cuenta.</p>'}
+                                </div>
                             </div>
                         `;
-                        selectors.salesList.appendChild(row);
+                        selectors.motherAccountsAccordion.appendChild(div);
                     });
 
-                    selectors.salesList.querySelectorAll('.edit-btn').forEach(b => b.addEventListener('click', e => handleEdit(e.currentTarget.dataset.id)));
-                    selectors.salesList.querySelectorAll('.delete-btn').forEach(b => b.addEventListener('click', e => handleDeleteSale(e.currentTarget.dataset.id)));
-                    selectors.salesList.querySelectorAll('.renew-btn').forEach(b => b.addEventListener('click', e => openRenewalModal(e.currentTarget.dataset.id)));
-                };
-                const renderExpenses = () => { selectors.expensesList.innerHTML = ''; if (allExpenses.length === 0) { selectors.expensesList.innerHTML = '<p class="text-sm text-gray-400">No hay egresos registrados.</p>'; return; } allExpenses.forEach(expense => { const item = document.createElement('div'); item.className = 'flex justify-between items-center text-sm p-2 rounded-md hover:bg-gray-50'; item.innerHTML = `<div class="flex-1 truncate pr-2"><p class="text-gray-700">${expense.description}</p><p class="text-xs text-gray-500">${dayjs(expense.date).format('DD/MM/YYYY')}</p></div><div class="flex items-center gap-2"><span class="font-semibold text-red-600">${formatCurrency(expense.amount)}</span><button class="delete-expense-btn text-gray-400 hover:text-red-600" data-id="${expense.id}"><svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm4 0a1 1 0 012 0v6a1 1 0 11-2 0V8z" clip-rule="evenodd"></path></svg></button></div>`; selectors.expensesList.appendChild(item); }); selectors.expensesList.querySelectorAll('.delete-expense-btn').forEach(b => b.addEventListener('click', e => handleDeleteExpense(e.currentTarget.dataset.id))); };
-                const renderPlatformAccounts = () => {
-                    selectors.accountsList.innerHTML = '';
-                    if (allPlatformAccounts.length === 0) {
-                        selectors.accountsList.innerHTML = '<p class="text-sm text-gray-400">No hay cuentas de plataforma registradas.</p>';
-                        return;
-                    }
-
-                    allPlatformAccounts.forEach(account => {
-                        const item = document.createElement('div');
-                        // MODIFICADO: Clases para apilar en móvil y poner en fila en desktop
-                        item.className = 'flex flex-col md:flex-row justify-between items-start md:items-center text-sm p-3 rounded-md bg-gray-50 gap-2';
-                        item.dataset.accountId = account.id;
-                        item.innerHTML = `
-                            <div class="flex-1 w-full grid grid-cols-1 md:grid-cols-3 gap-2 md:gap-4 items-center">
-                                <p class="text-gray-800 font-semibold">${account.platform}</p>
-                                <div class="credentials-container">
-                                    <p class="text-gray-600 break-all">${account.email}</p>
-                                </div>
-                                <div class="credentials-container">
-                                    <p class="text-gray-600 break-all truncate">${account.password}</p>
-                                </div>
-                            </div>
-                            <div class="flex items-center self-end md:self-center">
-                                <button class="toggle-visibility-btn text-gray-400 hover:text-gray-600 ml-2" title="Mostrar/Ocultar">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
-                                </button>
-                                <button class="delete-account-btn text-gray-400 hover:text-red-600 ml-2" data-id="${account.id}">
-                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm4 0a1 1 0 012 0v6a1 1 0 11-2 0V8z" clip-rule="evenodd"></path></svg>
-                                </button>
-                            </div>
-                        `;
-                        selectors.accountsList.appendChild(item);
-                    });
-
-                    selectors.accountsList.querySelectorAll('.delete-account-btn').forEach(b => b.addEventListener('click', e => {
-                        e.stopPropagation();
-                        handleDeleteAccount(e.currentTarget.dataset.id);
-                    }));
-
-                    selectors.accountsList.querySelectorAll('.toggle-visibility-btn').forEach(btn => {
-                        btn.addEventListener('click', (e) => {
-                            e.stopPropagation();
-                            const row = e.currentTarget.closest('.flex');
-                            const accountId = row.dataset.accountId;
-                            const account = allPlatformAccounts.find(a => a.id === accountId);
-                            if (!account) return;
-
-                            const credentialContainers = row.querySelectorAll('.credentials-container');
-                            const isHidden = btn.dataset.isHidden === 'true';
-
-                            credentialContainers[0].innerHTML = isHidden ? `<p class="text-gray-600 break-all">${account.email}</p>` : `<p class="text-gray-400 font-mono">••••••••</p>`;
-                            credentialContainers[1].innerHTML = isHidden ? `<p class="text-gray-600 break-all truncate">${account.password}</p>` : `<p class="text-gray-400 font-mono">••••••••</p>`;
-
-                            btn.dataset.isHidden = !isHidden;
-
-                            const icon = btn.querySelector('svg');
-                            icon.innerHTML = isHidden ?
-                                `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />` :
-                                `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7 .946-3.11 3.563-5.522 6.837-6.141M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.581 10.41A7.48 7.48 0 0119.542 12c-1.274 4.057-5.064 7-9.542 7a10.046 10.046 0 01-3.132-.475M2.458 12c.946-3.11 3.563-5.522 6.837-6.141m1.581 2.318A4.5 4.5 0 0115 12a4.5 4.5 0 01-1.07 2.828M5 5l14 14" />`;
+                    // Add event listeners for accordion toggling and buttons
+                    document.querySelectorAll('.accordion-header').forEach(header => {
+                        header.addEventListener('click', () => {
+                            const content = header.nextElementSibling;
+                            const icon = header.querySelector('svg:last-child');
+                            content.classList.toggle('hidden');
+                            icon.classList.toggle('rotate-180');
                         });
                     });
+                     document.querySelectorAll('.edit-mother-account-btn').forEach(btn => btn.addEventListener('click', (e) => { e.stopPropagation(); const account = allMotherAccounts.find(a => a.id === e.currentTarget.dataset.id); openMotherAccountModal(account); }));
+                    document.querySelectorAll('.delete-mother-account-btn').forEach(btn => btn.addEventListener('click', (e) => { e.stopPropagation(); handleDeleteMotherAccount(e.currentTarget.dataset.id); }));
+                    document.querySelectorAll('.add-profile-btn').forEach(btn => btn.addEventListener('click', (e) => { e.stopPropagation(); openProfileModal(e.currentTarget.dataset.motherId); }));
+                    document.querySelectorAll('.edit-profile-btn').forEach(btn => btn.addEventListener('click', (e) => { e.stopPropagation(); const motherAccount = allMotherAccounts.find(a => a.id === e.currentTarget.dataset.motherId); const profile = motherAccount.profiles.find(p => p.id === e.currentTarget.dataset.profileId); openProfileModal(motherAccount.id, profile); }));
+                    document.querySelectorAll('.delete-profile-btn').forEach(btn => btn.addEventListener('click', (e) => { e.stopPropagation(); handleDeleteProfile(e.currentTarget.dataset.motherId, e.currentTarget.dataset.profileId); }));
                 };
 
-                const populatePlatformAccountsDropdowns = (platform = null) => {
-                    let accountsToDisplay = allPlatformAccounts;
-                    if (platform && platform !== 'Otro') {
-                        accountsToDisplay = allPlatformAccounts.filter(acc => acc.platform === platform);
-                    }
+                // --- Fin Lógica de Cuentas ---
 
-                    const createOption = (account) => `<option value="${account.id}">${account.platform} - ${account.email}</option>`;
-                    const options = accountsToDisplay.map(createOption).join('');
-
-                    // For the "Add Sale" form
+                const populatePlatformAccountsDropdowns = () => {
+                    const createOption = (account) => `<option value="${account.id}">${account.plataforma} - ${account.email}</option>`;
+                    const options = allMotherAccounts.map(createOption).join('');
                     selectors.platformAccountSelect.innerHTML = `<option value="">Sin cuenta / Ingresar manualmente</option>${options}`;
-
-                    // For the "Edit Sale" form - we might need to show all for existing sales
-                    const allOptions = allPlatformAccounts.map(createOption).join('');
-                    selectors.editPlatformAccountSelect.innerHTML = `<option value="">Sin cuenta / Ingresar manualmente</option>${allOptions}`;
-
-                    // For the general filter, always show all
-                    selectors.accountFilter.innerHTML = `<option value="">Filtrar por cuenta...</option>${allOptions}`;
+                    selectors.editPlatformAccountSelect.innerHTML = `<option value="">Sin cuenta / Ingresar manualmente</option>${options}`;
+                    selectors.accountFilter.innerHTML = `<option value="">Filtrar por cuenta...</option>${options}`;
                 };
 
                 const handlePlatformAccountChange = (select, emailInput, passwordInput, credentialsContainer) => {
                     const accountId = select.value;
-                    const account = allPlatformAccounts.find(a => a.id === accountId);
+                    const account = allMotherAccounts.find(a => a.id === accountId);
                     if (account) {
                         emailInput.value = account.email;
                         passwordInput.value = account.password;
@@ -828,260 +690,129 @@
                     }
                 };
                 const handleEdit = (id) => { const sale = allSales.find(s => s.id === id); if(!sale) return; const f = selectors.editForm; f['edit-sale-id'].value = sale.id; f['edit-cliente'].value = sale.cliente; f['edit-precio'].value = sale.precio; f['edit-inicioPlan'].value = sale.inicioPlan; f['edit-finPlan'].value = sale.finPlan; f['edit-correo'].value = sale.correo || ''; f['edit-contrasena'].value = sale.contrasena || ''; f['edit-pin'].value = sale.pin || ''; f['edit-notas'].value = sale.notas || ''; const standardPlatforms = Array.from(f['edit-plataforma'].options).map(o => o.value); if (standardPlatforms.includes(sale.plataforma)) { f['edit-plataforma'].value = sale.plataforma; } else { f['edit-plataforma'].value = 'Otro'; selectors.editOtroPlataformaInput.value = sale.plataforma; } handlePlatformChange(selectors.editPlataformaSelect, selectors.editOtroPlataformaContainer, selectors.editOtroPlataformaInput); openModal(); };
-                const openRenewalModal = (saleId) => {
-                    const sale = allSales.find(s => s.id === saleId);
-                    if (!sale) return;
-
-                    const modal = document.getElementById('renewal-modal');
-                    const form = document.getElementById('renewal-form');
-
-                    form['renewal-sale-id'].value = sale.id;
-                    form['renewal-amount'].value = sale.precio.toFixed(2);
-                    form['renewal-days'].value = 30; // Default a 30 días
-
-                    modal.classList.remove('hidden');
-                    setTimeout(() => {
-                        modal.classList.remove('opacity-0');
-                        modal.querySelector('.modal-content').classList.remove('scale-95');
-                    }, 10);
-                };
-
-                const closeRenewalModal = () => {
-                    const modal = document.getElementById('renewal-modal');
-                    modal.classList.add('opacity-0');
-                    modal.querySelector('.modal-content').classList.add('scale-95');
-                    setTimeout(() => {
-                        modal.classList.add('hidden');
-                        document.getElementById('renewal-form').reset();
-                    }, 300);
-                };
-
-                const handleRenew = async (id) => {
-                    const originalSale = allSales.find(s => s.id === id);
-                    if (!originalSale) {
-                        alert('Error: No se encontró la venta original.');
-                        return;
-                    }
-
-                    // Archivar la venta original
-                    await updateDoc(doc(db, "sales", id), { estado: 'ARCHIVADO' });
-
-                    // Crear una nueva venta
-                    const renewalDays = parseInt(document.getElementById('renewal-days').value, 10);
-                    const renewalAmount = parseFloat(document.getElementById('renewal-amount').value);
-
-                    if (isNaN(renewalDays) || isNaN(renewalAmount) || renewalDays <= 0) {
-                        alert('Por favor, ingresa un número de días y un monto válidos.');
-                        return;
-                    }
-
-                    const today = dayjs();
-                    const currentEndDate = dayjs(originalSale.finPlan);
-
-                    let newEndDate;
-                    if (currentEndDate.isAfter(today)) {
-                        // Caso A: Suscripción activa - sumar a la fecha de fin existente
-                        newEndDate = currentEndDate.add(renewalDays, 'day');
-                    } else {
-                        // Caso B: Suscripción vencida - sumar a la fecha de hoy
-                        newEndDate = today.add(renewalDays, 'day');
-                    }
-
-                    const newSale = {
-                        ...originalSale, // Copiar datos originales
-                        precio: renewalAmount,
-                        inicioPlan: dayjs().format('YYYY-MM-DD'), // El inicio es hoy
-                        finPlan: newEndDate.format('YYYY-MM-DD'),
-                        estado: 'ACTIVO', // Asegurarse de que el estado sea activo
-                        createdAt: new Date().toISOString()
-                    };
-                    delete newSale.id; // Eliminar el ID para que Firestore genere uno nuevo
-
-                    try {
-                        await addDoc(collection(db, "sales"), newSale);
-                        closeRenewalModal();
-                    } catch (error) {
-                        console.error("Error al crear la nueva venta de renovación:", error);
-                        // Opcional: Revertir el archivado si la creación falla
-                        await updateDoc(doc(db, "sales", id), { estado: 'ACTIVO' });
-                        alert('Hubo un error al procesar la renovación.');
-                    }
-                };
-                const handlePermanentDeleteAction = async (id) => {
-                    try {
-                        await deleteDoc(doc(db, "sales", id));
-                        hideArchiveDeleteModal();
-                    } catch (e) {
-                        console.error("Error deleting sale: ", e);
-                        alert('Error al eliminar la venta.');
-                        hideArchiveDeleteModal();
-                    }
-                };
-
-                const handleArchiveAction = async (id) => {
-                    try {
-                        await updateDoc(doc(db, "sales", id), { estado: 'ARCHIVADO' });
-                        hideArchiveDeleteModal();
-                    } catch (e) {
-                        console.error("Error archiving sale: ", e);
-                        alert('Error al archivar la venta.');
-                        hideArchiveDeleteModal();
-                    }
-                };
+                const openRenewalModal = (saleId) => { const sale = allSales.find(s => s.id === saleId); if (!sale) return; const modal = document.getElementById('renewal-modal'); const form = document.getElementById('renewal-form'); form['renewal-sale-id'].value = sale.id; form['renewal-amount'].value = sale.precio.toFixed(2); form['renewal-days'].value = 30; modal.classList.remove('hidden'); setTimeout(() => { modal.classList.remove('opacity-0'); modal.querySelector('.modal-content').classList.remove('scale-95'); }, 10); };
+                const closeRenewalModal = () => { const modal = document.getElementById('renewal-modal'); modal.classList.add('opacity-0'); modal.querySelector('.modal-content').classList.add('scale-95'); setTimeout(() => { modal.classList.add('hidden'); document.getElementById('renewal-form').reset(); }, 300); };
+                const handleRenew = async (id) => { const originalSale = allSales.find(s => s.id === id); if (!originalSale) { alert('Error: No se encontró la venta original.'); return; } await updateDoc(doc(db, "sales", id), { estado: 'ARCHIVADO' }); const renewalDays = parseInt(document.getElementById('renewal-days').value, 10); const renewalAmount = parseFloat(document.getElementById('renewal-amount').value); if (isNaN(renewalDays) || isNaN(renewalAmount) || renewalDays <= 0) { alert('Por favor, ingresa un número de días y un monto válidos.'); return; } const today = dayjs(); const currentEndDate = dayjs(originalSale.finPlan); let newEndDate; if (currentEndDate.isAfter(today)) { newEndDate = currentEndDate.add(renewalDays, 'day'); } else { newEndDate = today.add(renewalDays, 'day'); } const newSale = { ...originalSale, precio: renewalAmount, inicioPlan: dayjs().format('YYYY-MM-DD'), finPlan: newEndDate.format('YYYY-MM-DD'), estado: 'ACTIVO', createdAt: new Date().toISOString() }; delete newSale.id; try { await addDoc(collection(db, "sales"), newSale); closeRenewalModal(); } catch (error) { console.error("Error al crear la nueva venta de renovación:", error); await updateDoc(doc(db, "sales", id), { estado: 'ACTIVO' }); alert('Hubo un error al procesar la renovación.'); } };
+                const handlePermanentDeleteAction = async (id) => { try { await deleteDoc(doc(db, "sales", id)); hideArchiveDeleteModal(); } catch (e) { console.error("Error deleting sale: ", e); alert('Error al eliminar la venta.'); hideArchiveDeleteModal(); } };
+                const handleArchiveAction = async (id) => { try { await updateDoc(doc(db, "sales", id), { estado: 'ARCHIVADO' }); hideArchiveDeleteModal(); } catch (e) { console.error("Error archiving sale: ", e); alert('Error al archivar la venta.'); hideArchiveDeleteModal(); } };
                 const handleDeleteSale = (id) => showArchiveDeleteModal(id);
-                const handleDeleteExpense = (id) => {
-                    showConfirmationModal(
-                        'Eliminar Gasto',
-                        '¿Estás seguro de que quieres eliminar este gasto? Esta acción no se puede deshacer.',
-                        () => {
-                            deleteDoc(doc(db, "expenses", id)).catch(e => console.error(e));
-                        }
-                    );
-                };
-                const handleDeleteAccount = (id) => {
-                    showConfirmationModal(
-                        'Eliminar Cuenta',
-                        '¿Estás seguro de que quieres eliminar esta cuenta de plataforma? Esto no afectará a las ventas ya registradas.',
-                        () => {
-                            deleteDoc(doc(db, "platformAccounts", id)).catch(e => console.error(e));
-                        }
-                    );
-                };
-                onSnapshot(collection(db, "sales"), (snapshot) => {
-                    allSales = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
-                    const activeSales = allSales.filter(sale => sale.estado !== 'ARCHIVADO');
-                    activeSales.sort((a, b) => new Date(a.finPlan) - new Date(b.finPlan));
-                    selectors.loadingState.classList.add('hidden');
-                    if (activeSales.length === 0) {
-                        selectors.emptyState.classList.remove('hidden');
-                    } else {
-                        selectors.emptyState.classList.add('hidden');
+                const handleDeleteExpense = (id) => { showConfirmationModal('Eliminar Gasto', '¿Estás seguro de que quieres eliminar este gasto? Esta acción no se puede deshacer.', () => { deleteDoc(doc(db, "expenses", id)).catch(e => console.error(e)); }); };
+
+                const handleMotherAccountFormSubmit = async (e) => {
+                    e.preventDefault();
+                    const f = selectors.motherAccountForm;
+                    const id = f['mother-account-id'].value;
+                    const paymentDate = f['mother-account-payment-date'].value;
+
+                    if (dayjs(paymentDate).isBefore(dayjs().startOf('day'))) {
+                        alert('La fecha de pago propia no puede ser una fecha en el pasado.');
+                        return;
                     }
-                    renderPlatformFilters();
-                    renderAccountPlatformButtons();
-                    applyFiltersAndRender(activeSales); // Pass the filtered list
-                    updateFinancialSummary(); // This will still use allSales to include archived in totals
-                    loadDashboardData();
-                }, (e) => {
-                    console.error("Error al cargar ventas:", e);
-                });
+
+                    const accountData = {
+                        plataforma: f['mother-account-platform'].value,
+                        email: f['mother-account-email'].value,
+                        password: f['mother-account-password'].value,
+                        fecha_pago_propia: paymentDate
+                    };
+
+                    try {
+                        if (id) { // Editing
+                            await updateDoc(doc(db, "CuentasMadre", id), accountData);
+                        } else { // Creating
+                            await addDoc(collection(db, "CuentasMadre"), accountData);
+                        }
+                        closeMotherAccountModal();
+                    } catch (err) { console.error("Error guardando cuenta madre:", err); alert("Error al guardar la cuenta."); }
+                };
+
+                const handleProfileFormSubmit = async (e) => {
+                    e.preventDefault();
+                    const f = selectors.profileForm;
+                    const motherId = f['profile-mother-account-id'].value;
+                    const profileId = f['profile-id'].value;
+                    const pin = f['profile-pin'].value;
+
+                    if (!/^\d{4}$/.test(pin)) {
+                        alert('El PIN debe contener exactamente 4 dígitos numéricos.');
+                        return;
+                    }
+
+                    const profileData = {
+                        nombre_perfil: f['profile-name'].value,
+                        pin: pin,
+                        estado: f['profile-status'].value
+                    };
+
+                    try {
+                        const profileCollectionRef = collection(db, "CuentasMadre", motherId, "Perfiles");
+                        if (profileId) { // Editing
+                            await updateDoc(doc(profileCollectionRef, profileId), profileData);
+                        } else { // Creating
+                            await addDoc(profileCollectionRef, profileData);
+                        }
+                        closeProfileModal();
+                    } catch (err) { console.error("Error guardando perfil:", err); alert("Error al guardar el perfil."); }
+                };
+
+                const handleDeleteMotherAccount = (id) => { showConfirmationModal('Eliminar Cuenta Madre', '¿Seguro? Se eliminarán también TODOS los perfiles asociados. Esta acción es irreversible.', () => { deleteDoc(doc(db, "CuentasMadre", id)).catch(e => console.error(e)); }); };
+                const handleDeleteProfile = (motherId, profileId) => { showConfirmationModal('Eliminar Perfil', '¿Estás seguro de eliminar este perfil?', () => { deleteDoc(doc(db, "CuentasMadre", motherId, "Perfiles", profileId)).catch(e => console.error(e)); }); };
+
+                onSnapshot(collection(db, "sales"), (snapshot) => { allSales = snapshot.docs.map(d => ({ id: d.id, ...d.data() })); const activeSales = allSales.filter(sale => sale.estado !== 'ARCHIVADO'); activeSales.sort((a, b) => new Date(a.finPlan) - new Date(b.finPlan)); selectors.loadingState.classList.add('hidden'); if (activeSales.length === 0) { selectors.emptyState.classList.remove('hidden'); } else { selectors.emptyState.classList.add('hidden'); } renderPlatformFilters(); applyFiltersAndRender(activeSales); updateFinancialSummary(); loadDashboardData(); }, (e) => { console.error("Error al cargar ventas:", e); });
                 onSnapshot(collection(db, "expenses"), (snapshot) => { allExpenses = snapshot.docs.map(d => ({ id: d.id, ...d.data() })); allExpenses.sort((a, b) => new Date(b.date) - new Date(a.date)); renderExpenses(); updateFinancialSummary(); loadDashboardData(); }, (e) => { console.error("Error al cargar egresos:", e); });
-                onSnapshot(collection(db, "platformAccounts"), (snapshot) => { allPlatformAccounts = snapshot.docs.map(d => ({ id: d.id, ...d.data() })); renderPlatformAccounts(); populatePlatformAccountsDropdowns(); }, (e) => { console.error("Error al cargar cuentas:", e); });
+
+                onSnapshot(collection(db, "CuentasMadre"), (snapshot) => {
+                    const accountsPromises = snapshot.docs.map(async (motherDoc) => {
+                        const motherAccount = { id: motherDoc.id, ...motherDoc.data() };
+                        const profilesSnapshot = await getDocs(collection(db, "CuentasMadre", motherDoc.id, "Perfiles"));
+                        motherAccount.profiles = profilesSnapshot.docs.map(profileDoc => ({ id: profileDoc.id, ...profileDoc.data() }));
+                        return motherAccount;
+                    });
+                    Promise.all(accountsPromises).then(accounts => {
+                        allMotherAccounts = accounts;
+                        renderMotherAccounts(allMotherAccounts);
+                        populatePlatformAccountsDropdowns();
+                    });
+                }, (e) => { console.error("Error al cargar cuentas madre:", e); });
+
                 selectors.addSaleForm.addEventListener('submit', async (e) => { e.preventDefault(); const f = selectors.addSaleForm; const newSale = { cliente: f.cliente.value, plataforma: f.plataforma.value === 'Otro' ? selectors.otroPlataformaInput.value : f.plataforma.value, precio: parseFloat(f.precio.value), inicioPlan: f.inicioPlan.value, finPlan: f.finPlan.value, correo: f.correo.value, contrasena: f.contrasena.value, pin: f.pin.value, notas: f.notas.value, createdAt: new Date().toISOString() }; try { await addDoc(collection(db, "sales"), newSale); f.reset(); handlePlatformChange(selectors.plataformaSelect, selectors.otroPlataformaContainer, selectors.otroPlataformaInput); } catch (err) { console.error("Error al guardar venta:", err); alert("Error al guardar la venta. Revisa la consola (F12).") } });
                 selectors.editForm.addEventListener('submit', async (e) => { e.preventDefault(); const f = selectors.editForm; const id = f['edit-sale-id'].value; const updated = { cliente: f['edit-cliente'].value, plataforma: f['edit-plataforma'].value === 'Otro' ? selectors.editOtroPlataformaInput.value : f['edit-plataforma'].value, precio: parseFloat(f['edit-precio'].value), inicioPlan: f['edit-inicioPlan'].value, finPlan: f['edit-finPlan'].value, correo: f['edit-correo'].value, contrasena: f['edit-contrasena'].value, pin: f['edit-pin'].value, notas: f['edit-notas'].value, }; try { await updateDoc(doc(db, "sales", id), updated); closeModal(); } catch (err) { console.error("Error al actualizar la venta:", err); alert("Error al actualizar la venta. Revisa la consola (F12).") } });
                 selectors.addExpenseForm.addEventListener('submit', async (e) => { e.preventDefault(); const f = selectors.addExpenseForm; const description = f['expense-description'].value; const amount = parseFloat(f['expense-amount'].value); const date = f['expense-date'].value; if (!description || !date || isNaN(amount) || amount <= 0) return; try { await addDoc(collection(db, "expenses"), { description, amount, date }); f.reset(); f['expense-date'].value = dayjs().format('YYYY-MM-DD'); } catch (err) { console.error("Error al añadir egreso:", err); } });
-                selectors.addAccountForm.addEventListener('submit', async (e) => { e.preventDefault(); const f = selectors.addAccountForm; const newAccount = { platform: f['account-platform'].value, email: f['account-email'].value, password: f['account-password'].value, }; try { await addDoc(collection(db, "platformAccounts"), newAccount); f.reset(); document.querySelectorAll('#account-platform-buttons button').forEach(b => b.classList.remove('bg-indigo-600', 'text-white', 'border-indigo-600')); } catch (err) { console.error("Error al guardar cuenta:", err); } });
-                selectors.searchInput.addEventListener('input', e => {
-                    currentSearchTerm = e.target.value;
-                    const activeSales = allSales.filter(sale => sale.estado !== 'ARCHIVADO');
-                    applyFiltersAndRender(activeSales);
-                });
-                selectors.accountFilter.addEventListener('change', e => {
-                    activeAccountFilter = e.target.value;
-                    const activeSales = allSales.filter(sale => sale.estado !== 'ARCHIVADO');
-                    applyFiltersAndRender(activeSales);
-                });
-                selectors.statusFilter.addEventListener('change', e => {
-                    activeStatusFilter = e.target.value;
-                    const activeSales = allSales.filter(sale => sale.estado !== 'ARCHIVADO');
-                    applyFiltersAndRender(activeSales);
-                });
-                selectors.plataformaSelect.addEventListener('change', () => {
-                    handlePlatformChange(selectors.plataformaSelect, selectors.otroPlataformaContainer, selectors.otroPlataformaInput);
-                    populatePlatformAccountsDropdowns(selectors.plataformaSelect.value);
-                });
-                selectors.editPlataformaSelect.addEventListener('change', () => {
-                    handlePlatformChange(selectors.editPlataformaSelect, selectors.editOtroPlataformaContainer, selectors.editOtroPlataformaInput);
-                    // We don't filter the edit form dropdown to avoid issues with existing data
-                });
+
+                // --- Event Listeners Nuevos para Cuentas ---
+                selectors.addMotherAccountBtn.addEventListener('click', () => openMotherAccountModal());
+                selectors.closeMotherAccountModal.addEventListener('click', closeMotherAccountModal);
+                selectors.cancelMotherAccountBtn.addEventListener('click', closeMotherAccountModal);
+                selectors.motherAccountForm.addEventListener('submit', handleMotherAccountFormSubmit);
+                selectors.closeProfileModal.addEventListener('click', closeProfileModal);
+                selectors.cancelProfileBtn.addEventListener('click', closeProfileModal);
+                selectors.profileForm.addEventListener('submit', handleProfileFormSubmit);
+
+                selectors.searchInput.addEventListener('input', e => { currentSearchTerm = e.target.value; const activeSales = allSales.filter(sale => sale.estado !== 'ARCHIVADO'); applyFiltersAndRender(activeSales); });
+                selectors.accountFilter.addEventListener('change', e => { activeAccountFilter = e.target.value; const activeSales = allSales.filter(sale => sale.estado !== 'ARCHIVADO'); applyFiltersAndRender(activeSales); });
+                selectors.statusFilter.addEventListener('change', e => { activeStatusFilter = e.target.value; const activeSales = allSales.filter(sale => sale.estado !== 'ARCHIVADO'); applyFiltersAndRender(activeSales); });
+                selectors.plataformaSelect.addEventListener('change', () => { handlePlatformChange(selectors.plataformaSelect, selectors.otroPlataformaContainer, selectors.otroPlataformaInput); populatePlatformAccountsDropdowns(); });
+                selectors.editPlataformaSelect.addEventListener('change', () => { handlePlatformChange(selectors.editPlataformaSelect, selectors.editOtroPlataformaContainer, selectors.editOtroPlataformaInput); });
                 selectors.closeModalBtn.addEventListener('click', closeModal);
                 selectors.cancelEditBtn.addEventListener('click', closeModal);
-
-                document.getElementById('renewal-form').addEventListener('submit', (e) => {
-                    e.preventDefault();
-                    const saleId = document.getElementById('renewal-sale-id').value;
-                    handleRenew(saleId);
-                });
-
+                document.getElementById('renewal-form').addEventListener('submit', (e) => { e.preventDefault(); const saleId = document.getElementById('renewal-sale-id').value; handleRenew(saleId); });
                 document.getElementById('cancel-renewal-btn').addEventListener('click', closeRenewalModal);
                 selectors.platformAccountSelect.addEventListener('change', () => handlePlatformAccountChange(selectors.platformAccountSelect, selectors.addSaleForm.correo, selectors.addSaleForm.contrasena, document.querySelectorAll('.manual-credentials')));
                 selectors.editPlatformAccountSelect.addEventListener('change', () => handlePlatformAccountChange(selectors.editPlatformAccountSelect, selectors.editForm['edit-correo'], selectors.editForm['edit-contrasena'], document.querySelectorAll('.edit-manual-credentials')));
                 const diasPlanInput = document.getElementById('diasPlan'); const inicioPlanInput = document.getElementById('inicioPlan'); const finPlanInput = document.getElementById('finPlan'); const calculateDateBtn = document.getElementById('calculate-date-btn');
-                const editFinPlanInput = document.getElementById('edit-finPlan');
-
-
-                calculateDateBtn.addEventListener('click', () => {
-                    const days = parseInt(diasPlanInput.value, 10);
-                    const startDate = inicioPlanInput.value;
-                    if (!isNaN(days) && startDate) {
-                        const newEndDate = dayjs(startDate).add(days, 'day').format('YYYY-MM-DD');
-                        finPlanInput.value = newEndDate;
-                    }
-                });
-
-                // Set default expense date
+                calculateDateBtn.addEventListener('click', () => { const days = parseInt(diasPlanInput.value, 10); const startDate = inicioPlanInput.value; if (!isNaN(days) && startDate) { const newEndDate = dayjs(startDate).add(days, 'day').format('YYYY-MM-DD'); finPlanInput.value = newEndDate; } });
                 document.getElementById('expense-date').value = dayjs().format('YYYY-MM-DD');
 
-                // Collapsible section logic
-                const toggleButton = document.getElementById('toggle-accounts-section');
-                const toggleIcon = document.getElementById('toggle-accounts-icon');
-                const collapsibleContent = document.getElementById('collapsible-accounts-content');
-
-                toggleButton.addEventListener('click', () => {
-                    const isHidden = collapsibleContent.classList.contains('hidden');
-                    if (isHidden) {
-                        collapsibleContent.classList.remove('hidden');
-                        toggleIcon.classList.add('rotate-180');
-                    } else {
-                        collapsibleContent.classList.add('hidden');
-                        toggleIcon.classList.remove('rotate-180');
-                    }
-                });
-
                 // Navigation logic
-                const navLinks = {
-                    'nav-dashboard': 'Dashboard',
-                    'nav-cuentas': 'Cuentas',
-                    'nav-ventas': 'Ventas',
-                    'nav-finanzas': 'Finanzas'
-                };
+                const navLinks = { 'nav-dashboard': 'Dashboard', 'nav-cuentas': 'Cuentas', 'nav-ventas': 'Ventas', 'nav-finanzas': 'Finanzas' };
                 const views = document.querySelectorAll('.view');
                 const mainHeader = document.getElementById('main-header');
-
-                Object.keys(navLinks).forEach(navId => {
-                    document.getElementById(navId).addEventListener('click', (e) => {
-                        e.preventDefault();
-                        const viewId = `${navLinks[navId].toLowerCase()}-view`;
-
-                        views.forEach(view => {
-                            if (view.id === viewId) {
-                                view.classList.remove('hidden');
-                            } else {
-                                view.classList.add('hidden');
-                            }
-                        });
-
-                        mainHeader.textContent = navLinks[navId];
-
-                        // Update active styles for nav links
-                        document.querySelectorAll('nav a').forEach(link => link.classList.remove('bg-gray-700'));
-                        document.getElementById(navId).classList.add('bg-gray-700');
-                    });
-                });
-
-                // Set default view
+                Object.keys(navLinks).forEach(navId => { document.getElementById(navId).addEventListener('click', (e) => { e.preventDefault(); const viewId = `${navLinks[navId].toLowerCase()}-view`; views.forEach(view => { if (view.id === viewId) { view.classList.remove('hidden'); } else { view.classList.add('hidden'); } }); mainHeader.textContent = navLinks[navId]; document.querySelectorAll('nav a').forEach(link => link.classList.remove('bg-gray-700')); document.getElementById(navId).classList.add('bg-gray-700'); }); });
                 document.getElementById('nav-dashboard').click();
-
-                // Quick Access button listeners
-                document.getElementById('quick-add-sale').addEventListener('click', () => {
-                    document.getElementById('nav-ventas').click();
-                });
-                document.getElementById('quick-add-expense').addEventListener('click', () => {
-                    document.getElementById('nav-finanzas').click();
-                });
+                document.getElementById('quick-add-sale').addEventListener('click', () => { document.getElementById('nav-ventas').click(); });
+                document.getElementById('quick-add-expense').addEventListener('click', () => { document.getElementById('nav-finanzas').click(); });
 
             } else {
-                // ❌ Si no hay nadie conectado, lo expulsamos a la página de login
                 window.location.href = 'login.html';
             }
         });
