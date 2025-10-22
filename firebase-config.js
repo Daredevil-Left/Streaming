@@ -17,13 +17,14 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 
 // Initialize App Check
-const appCheck = initializeAppCheck(app, {
-  provider: new ReCaptchaV3Provider('53938c3d-b843-4742-9583-9cc3873d668b'),
-
-  // Optional argument. If true, the SDK automatically refreshes App Check
-  // tokens as needed.
-  isTokenAutoRefreshEnabled: true
-});
+try {
+    const appCheck = initializeAppCheck(app, {
+      provider: new ReCaptchaV3Provider('53938c3d-b843-4742-9583-9cc3873d668b'),
+      isTokenAutoRefreshEnabled: true
+    });
+} catch (error) {
+    console.error("Error initializing App Check:", error);
+}
 
 export const auth = getAuth(app);
 export const db = getFirestore(app);
