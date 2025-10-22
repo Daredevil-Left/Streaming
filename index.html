@@ -138,6 +138,9 @@
                                         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 12H6"></path></svg>
                                         Añadir Egreso
                                     </button>
+                                    <button id="migrate-data-btn" class="w-full flex items-center justify-center bg-yellow-500 text-white font-semibold px-4 py-3 rounded-lg hover:bg-yellow-600 transition">
+                                        Migrar Datos Cuentas
+                                    </button>
                                 </div>
                             </div>
                             <div class="bg-white p-6 rounded-2xl shadow-lg">
@@ -175,12 +178,16 @@
                                 <div class="relative">
                                     <label for="account-password" class="block text-sm font-medium text-gray-600 mb-2">Contraseña</label>
                                     <input type="password" id="account-password" name="account-password" class="w-full px-4 py-2 border border-gray-300 rounded-lg" required>
-                                    <button type="button" class="absolute inset-y-0 right-0 top-6 flex items-center px-3 text-gray-500" onclick="togglePasswordVisibility('account-password', this)">
+                                    <button type="button" class="absolute inset-y-0 right-0 top-6 flex items-center px-3 text-gray-500" id="toggle-password-visibility">
                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
                                     </button>
                                 </div>
+                                <div>
+                                    <label for="fecha-pago-propia" class="block text-sm font-medium text-gray-600 mb-2">Fecha de Pago Propia</label>
+                                    <input type="date" id="fecha-pago-propia" name="fecha-pago-propia" class="w-full px-4 py-2 border border-gray-300 rounded-lg" required>
+                                </div>
                                 <div class="md:col-span-3 text-right">
-                                    <button type="submit" class="bg-blue-600 w-full md:w-auto text-white font-semibold px-6 py-3 rounded-lg hover:bg-blue-700 transition">Añadir Cuenta</button>
+                                    <button type="submit" class="bg-blue-600 w-full md:w-auto text-white font-semibold px-6 py-3 rounded-lg hover:bg-blue-700 transition">Añadir Cuenta Madre</button>
                                 </div>
                             </form>
                             <div id="accounts-list" class="space-y-3"></div>
@@ -394,13 +401,24 @@
         </div>
     </div>
 
-    <script>
-        function togglePasswordVisibility(inputId, button) { const input = document.getElementById(inputId), icon = button.querySelector('svg'); if (input.type === "password") { input.type = "text"; icon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7 .946-3.11 3.563-5.522 6.837-6.141M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.581 10.41A7.48 7.48 0 0119.542 12c-1.274 4.057-5.064 7-9.542 7a10.046 10.046 0 01-3.132-.475M2.458 12c.946-3.11 3.563-5.522 6.837-6.141m1.581 2.318A4.5 4.5 0 0115 12a4.5 4.5 0 01-1.07 2.828M5 5l14 14" />`; } else { input.type = "password"; icon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />`; } }
-    </script>
+    <!-- Generic Modal for CRUD operations -->
+    <div id="crud-modal" class="modal fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 z-50 hidden opacity-0">
+        <div class="modal-content bg-white w-full max-w-lg rounded-2xl shadow-2xl p-6 transform scale-95">
+            <div class="flex justify-between items-center mb-6">
+                <h2 id="crud-modal-title" class="text-2xl font-semibold text-gray-700"></h2>
+                <button id="close-crud-modal-btn" class="text-gray-400 hover:text-gray-600">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+            <form id="crud-form">
+                <!-- Dynamic content will be injected here -->
+            </form>
+        </div>
+    </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, onSnapshot, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, onSnapshot, doc, updateDoc, deleteDoc, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         const firebaseConfig = { apiKey: "AIzaSyCaYzhFY6keITDiN2Dn7kyEAnGPDt0hu2A", authDomain: "streaming-d0fac.firebaseapp.com", projectId: "streaming-d0fac", storageBucket: "streaming-d0fac.firebasestorage.app", messagingSenderId: "1017661259961", appId: "1:1017661259961:web:9303ad97c753fe95379b68" };
         const app = initializeApp(firebaseConfig);
@@ -734,65 +752,311 @@
                 const renderPlatformAccounts = () => {
                     selectors.accountsList.innerHTML = '';
                     if (allPlatformAccounts.length === 0) {
-                        selectors.accountsList.innerHTML = '<p class="text-sm text-gray-400">No hay cuentas de plataforma registradas.</p>';
+                        selectors.accountsList.innerHTML = '<p class="text-sm text-gray-400">No hay cuentas madre registradas.</p>';
                         return;
                     }
 
                     allPlatformAccounts.forEach(account => {
-                        const item = document.createElement('div');
-                        // MODIFICADO: Clases para apilar en móvil y poner en fila en desktop
-                        item.className = 'flex flex-col md:flex-row justify-between items-start md:items-center text-sm p-3 rounded-md bg-gray-50 gap-2';
-                        item.dataset.accountId = account.id;
-                        item.innerHTML = `
-                            <div class="flex-1 w-full grid grid-cols-1 md:grid-cols-3 gap-2 md:gap-4 items-center">
-                                <p class="text-gray-800 font-semibold">${account.platform}</p>
-                                <div class="credentials-container">
-                                    <p class="text-gray-600 break-all">${account.email}</p>
+                        const accountEl = document.createElement('div');
+                        accountEl.className = 'bg-white rounded-lg shadow-md mb-3';
+                        accountEl.dataset.accountId = account.id;
+
+                        const platformColor = platformStyles[account.platform]?.fallback || 'bg-gray-500';
+
+                        accountEl.innerHTML = `
+                            <div class="accordion-header cursor-pointer p-4 flex justify-between items-center border-l-4 ${platformColor} rounded-l-md">
+                                <div class="flex items-center gap-4">
+                                    <svg class="accordion-arrow w-5 h-5 transition-transform transform text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                                    <div>
+                                        <p class="font-bold text-lg text-gray-800">${account.platform}</p>
+                                        <p class="text-sm text-gray-500">${account.email}</p>
+                                    </div>
                                 </div>
-                                <div class="credentials-container">
-                                    <p class="text-gray-600 break-all truncate">${account.password}</p>
+                                <div class="flex items-center gap-4">
+                                     <div class="text-right">
+                                        <p class="text-xs text-gray-500">Fecha de Pago</p>
+                                        <p class="font-semibold text-gray-700">${account.fecha_pago_propia ? dayjs(account.fecha_pago_propia).format('DD/MM/YYYY') : 'No establecida'}</p>
+                                    </div>
+                                    <div class="relative">
+                                        <button class="options-menu-btn p-2 rounded-full hover:bg-gray-100">
+                                            <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"></path></svg>
+                                        </button>
+                                        <div class="options-menu absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10 hidden">
+                                            <a href="#" class="add-profile-btn block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Añadir Perfil</a>
+                                            <a href="#" class="edit-account-btn block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Editar Cuenta Madre</a>
+                                            <a href="#" class="delete-account-btn block px-4 py-2 text-sm text-red-600 hover:bg-red-50">Eliminar Cuenta Madre</a>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="flex items-center self-end md:self-center">
-                                <button class="toggle-visibility-btn text-gray-400 hover:text-gray-600 ml-2" title="Mostrar/Ocultar">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
-                                </button>
-                                <button class="delete-account-btn text-gray-400 hover:text-red-600 ml-2" data-id="${account.id}">
-                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm4 0a1 1 0 012 0v6a1 1 0 11-2 0V8z" clip-rule="evenodd"></path></svg>
-                                </button>
+                            <div class="accordion-content hidden p-4 border-t border-gray-200 bg-gray-50">
+                                <!-- Profile content will be loaded here -->
+                                <p class="text-center text-gray-500">Cargando perfiles...</p>
                             </div>
                         `;
-                        selectors.accountsList.appendChild(item);
+                        selectors.accountsList.appendChild(accountEl);
                     });
 
-                    selectors.accountsList.querySelectorAll('.delete-account-btn').forEach(b => b.addEventListener('click', e => {
-                        e.stopPropagation();
-                        handleDeleteAccount(e.currentTarget.dataset.id);
-                    }));
+                    // Event Listeners for Accordion and Menus
+                    document.querySelectorAll('.accordion-header').forEach(header => {
+                        header.addEventListener('click', (e) => {
+                            if (e.target.closest('.options-menu-btn')) return; // Don't toggle if menu button is clicked
 
-                    selectors.accountsList.querySelectorAll('.toggle-visibility-btn').forEach(btn => {
-                        btn.addEventListener('click', (e) => {
+                            const content = header.nextElementSibling;
+                            const arrow = header.querySelector('.accordion-arrow');
+                            const accountId = header.closest('[data-account-id]').dataset.accountId;
+
+                            const isHidden = content.classList.contains('hidden');
+
+                            if (isHidden) {
+                                content.classList.remove('hidden');
+                                arrow.classList.add('rotate-90');
+                                loadAndRenderProfiles(accountId, content);
+                            } else {
+                                content.classList.add('hidden');
+                                arrow.classList.remove('rotate-90');
+                                content.innerHTML = '<p class="text-center text-gray-500">Cargando perfiles...</p>'; // Reset content on close
+                            }
+                        });
+                    });
+
+                    document.querySelectorAll('.options-menu-btn').forEach(button => {
+                        button.addEventListener('click', (e) => {
                             e.stopPropagation();
-                            const row = e.currentTarget.closest('.flex');
-                            const accountId = row.dataset.accountId;
-                            const account = allPlatformAccounts.find(a => a.id === accountId);
-                            if (!account) return;
+                            const menu = button.nextElementSibling;
+                            // Close other menus
+                            document.querySelectorAll('.options-menu').forEach(m => {
+                                if (m !== menu) m.classList.add('hidden');
+                            });
+                            menu.classList.toggle('hidden');
+                        });
+                    });
 
-                            const credentialContainers = row.querySelectorAll('.credentials-container');
-                            const isHidden = btn.dataset.isHidden === 'true';
+                    // Close menus if clicking outside
+                    window.addEventListener('click', (e) => {
+                        if (!e.target.closest('.options-menu-btn')) {
+                            document.querySelectorAll('.options-menu').forEach(menu => menu.classList.add('hidden'));
+                        }
+                    });
 
-                            credentialContainers[0].innerHTML = isHidden ? `<p class="text-gray-600 break-all">${account.email}</p>` : `<p class="text-gray-400 font-mono">••••••••</p>`;
-                            credentialContainers[1].innerHTML = isHidden ? `<p class="text-gray-600 break-all truncate">${account.password}</p>` : `<p class="text-gray-400 font-mono">••••••••</p>`;
+                    selectors.accountsList.querySelectorAll('.delete-account-btn').forEach(b => {
+                        const accountId = b.closest('[data-account-id]').dataset.accountId;
+                        b.addEventListener('click', e => {
+                            e.preventDefault();
+                            handleDeleteAccount(accountId);
+                        });
+                    });
 
-                            btn.dataset.isHidden = !isHidden;
+                    selectors.accountsList.querySelectorAll('.edit-account-btn').forEach(b => {
+                        const accountId = b.closest('[data-account-id]').dataset.accountId;
+                        b.addEventListener('click', e => {
+                            e.preventDefault();
+                            handleEditAccount(accountId);
+                        });
+                    });
 
-                            const icon = btn.querySelector('svg');
-                            icon.innerHTML = isHidden ?
-                                `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />` :
-                                `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7 .946-3.11 3.563-5.522 6.837-6.141M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.581 10.41A7.48 7.48 0 0119.542 12c-1.274 4.057-5.064 7-9.542 7a10.046 10.046 0 01-3.132-.475M2.458 12c.946-3.11 3.563-5.522 6.837-6.141m1.581 2.318A4.5 4.5 0 0115 12a4.5 4.5 0 01-1.07 2.828M5 5l14 14" />`;
+                     selectors.accountsList.querySelectorAll('.add-profile-btn').forEach(b => {
+                        const accountId = b.closest('[data-account-id]').dataset.accountId;
+                        b.addEventListener('click', e => {
+                            e.preventDefault();
+                            handleAddProfile(accountId);
                         });
                     });
                 };
+
+                const loadAndRenderProfiles = async (accountId, container) => {
+                    try {
+                        const profilesSnapshot = await getDocs(collection(db, "CuentasMadre", accountId, "Perfiles"));
+                        const profiles = profilesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                        renderProfiles(profiles, accountId, container);
+                    } catch (error) {
+                        console.error("Error loading profiles:", error);
+                        container.innerHTML = '<p class="text-center text-red-500">Error al cargar los perfiles.</p>';
+                    }
+                };
+
+                const renderProfiles = (profiles, accountId, container) => {
+                    container.innerHTML = ''; // Clear loading text
+
+                    const addProfileBtnContainer = document.createElement('div');
+                    addProfileBtnContainer.className = 'mb-4 text-right';
+                    addProfileBtnContainer.innerHTML = `<button class="add-profile-btn bg-green-500 text-white font-semibold px-4 py-2 rounded-lg hover:bg-green-600 transition" data-account-id="${accountId}">Añadir Perfil</button>`;
+                    container.appendChild(addProfileBtnContainer);
+
+                    if (profiles.length === 0) {
+                        container.innerHTML += '<p class="text-center text-gray-500">No hay perfiles registrados para esta cuenta.</p>';
+                        return;
+                    }
+
+                    const profileList = document.createElement('div');
+                    profileList.className = 'space-y-3';
+
+                    profiles.forEach(profile => {
+                        const statusColors = { 'Disponible': 'bg-green-500', 'Ocupado': 'bg-red-500', 'Mantenimiento': 'bg-orange-500' };
+                        const statusColor = statusColors[profile.estado] || 'bg-gray-400';
+                        const profileEl = document.createElement('div');
+                        profileEl.className = 'flex justify-between items-center p-3 bg-white rounded-md shadow-sm';
+                        profileEl.innerHTML = `
+                            <div class="flex items-center gap-3">
+                                <span class="h-3 w-3 rounded-full ${statusColor}" title="${profile.estado}"></span>
+                                <div>
+                                    <p class="font-semibold text-gray-700">${profile.nombre_perfil}</p>
+                                    <p class="text-xs text-gray-500">PIN: ${profile.pin}</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <button class="edit-profile-btn p-1 text-blue-600 hover:text-blue-800" data-profile-id="${profile.id}" data-account-id="${accountId}"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L16.732 3.732z"></path></svg></button>
+                                <button class="delete-profile-btn p-1 text-red-600 hover:text-red-800" data-profile-id="${profile.id}" data-account-id="${accountId}"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button>
+                            </div>`;
+                        profileList.appendChild(profileEl);
+                    });
+                    container.appendChild(profileList);
+
+                    container.querySelectorAll('.add-profile-btn').forEach(b => b.addEventListener('click', e => handleAddProfile(e.currentTarget.dataset.accountId)));
+                    container.querySelectorAll('.edit-profile-btn').forEach(b => b.addEventListener('click', e => handleEditProfile(e.currentTarget.dataset.accountId, e.currentTarget.dataset.profileId)));
+                    container.querySelectorAll('.delete-profile-btn').forEach(b => b.addEventListener('click', e => handleDeleteProfile(e.currentTarget.dataset.accountId, e.currentTarget.dataset.profileId)));
+                };
+
+                const openCrudModal = (title, formHtml, onSubmit) => {
+                    const modal = document.getElementById('crud-modal');
+                    document.getElementById('crud-modal-title').textContent = title;
+                    const form = document.getElementById('crud-form');
+                    form.innerHTML = formHtml;
+                    form.onsubmit = (e) => {
+                        e.preventDefault();
+                        onSubmit(new FormData(form));
+                    };
+                    modal.classList.remove('hidden');
+                    setTimeout(() => {
+                        modal.classList.remove('opacity-0');
+                        modal.querySelector('.modal-content').classList.remove('scale-95');
+                    }, 10);
+                };
+
+                const closeCrudModal = () => {
+                    const modal = document.getElementById('crud-modal');
+                    modal.classList.add('opacity-0');
+                    modal.querySelector('.modal-content').classList.add('scale-95');
+                    setTimeout(() => {
+                        modal.classList.add('hidden');
+                        document.getElementById('crud-form').innerHTML = '';
+                    }, 300);
+                };
+                document.getElementById('close-crud-modal-btn').addEventListener('click', closeCrudModal);
+
+                const handleAddProfile = (accountId) => {
+                    const formHtml = `
+                        <input type="hidden" name="accountId" value="${accountId}">
+                        <div class="space-y-4">
+                            <div><label for="nombre_perfil" class="block text-sm font-medium text-gray-600 mb-2">Nombre del Perfil</label><input type="text" name="nombre_perfil" class="w-full px-4 py-2 border border-gray-300 rounded-lg" required></div>
+                            <div><label for="pin" class="block text-sm font-medium text-gray-600 mb-2">PIN</label><input type="text" name="pin" class="w-full px-4 py-2 border border-gray-300 rounded-lg" required maxlength="4"></div>
+                        </div>
+                        <div class="flex justify-end gap-4 mt-8">
+                            <button type="button" class="bg-gray-200 text-gray-700 font-semibold px-6 py-3 rounded-lg hover:bg-gray-300" onclick="document.getElementById('close-crud-modal-btn').click()">Cancelar</button>
+                            <button type="submit" class="bg-blue-600 text-white font-semibold px-6 py-3 rounded-lg hover:bg-blue-700">Guardar Perfil</button>
+                        </div>`;
+                    const handleSubmit = async (formData) => {
+                        const newProfile = {
+                            nombre_perfil: formData.get('nombre_perfil'),
+                            pin: formData.get('pin'),
+                            estado: 'Disponible',
+                            fecha_vencimiento_cliente: null,
+                        };
+                        try {
+                            await addDoc(collection(db, "CuentasMadre", accountId, "Perfiles"), newProfile);
+                            closeCrudModal();
+                            renderPlatformAccounts();
+                        } catch (e) { console.error(e); }
+                    };
+                    openCrudModal('Añadir Nuevo Perfil', formHtml, handleSubmit);
+                };
+
+                const handleEditAccount = async (accountId) => {
+                    const account = allPlatformAccounts.find(acc => acc.id === accountId);
+                    if (!account) return;
+
+                    const formHtml = `
+                        <input type="hidden" name="accountId" value="${accountId}">
+                        <div class="space-y-4">
+                            <div><label class="block text-sm font-medium text-gray-600 mb-2">Plataforma</label><p class="px-4 py-2 bg-gray-100 rounded-lg">${account.platform}</p></div>
+                            <div><label for="email" class="block text-sm font-medium text-gray-600 mb-2">Correo</label><input type="email" name="email" class="w-full px-4 py-2 border border-gray-300 rounded-lg" value="${account.email}" required></div>
+                            <div><label for="password" class="block text-sm font-medium text-gray-600 mb-2">Contraseña</label><input type="text" name="password" class="w-full px-4 py-2 border border-gray-300 rounded-lg" value="${account.password}" required></div>
+                            <div><label for="fecha_pago_propia" class="block text-sm font-medium text-gray-600 mb-2">Fecha de Pago Propia</label><input type="date" name="fecha_pago_propia" class="w-full px-4 py-2 border border-gray-300 rounded-lg" value="${account.fecha_pago_propia || ''}" required></div>
+                        </div>
+                        <div class="flex justify-end gap-4 mt-8">
+                            <button type="button" class="bg-gray-200 text-gray-700 font-semibold px-6 py-3 rounded-lg hover:bg-gray-300" onclick="document.getElementById('close-crud-modal-btn').click()">Cancelar</button>
+                            <button type="submit" class="bg-blue-600 text-white font-semibold px-6 py-3 rounded-lg hover:bg-blue-700">Guardar Cambios</button>
+                        </div>`;
+
+                    const handleSubmit = async (formData) => {
+                        const updatedData = {
+                            email: formData.get('email'),
+                            password: formData.get('password'),
+                            fecha_pago_propia: formData.get('fecha_pago_propia'),
+                        };
+                        try {
+                            await updateDoc(doc(db, "CuentasMadre", accountId), updatedData);
+                            closeCrudModal();
+                        } catch (e) { console.error("Error updating account:", e); }
+                    };
+
+                    openCrudModal(`Editar ${account.platform}`, formHtml, handleSubmit);
+                };
+
+                const handleEditProfile = async (accountId, profileId) => {
+                    try {
+                        const profileDoc = await getDoc(doc(db, "CuentasMadre", accountId, "Perfiles", profileId));
+                        if (!profileDoc.exists()) return;
+                        const profile = profileDoc.data();
+
+                        const formHtml = `
+                            <div class="space-y-4">
+                                <div><label for="nombre_perfil" class="block text-sm font-medium text-gray-600 mb-2">Nombre del Perfil</label><input type="text" name="nombre_perfil" class="w-full px-4 py-2 border border-gray-300 rounded-lg" value="${profile.nombre_perfil}" required></div>
+                                <div><label for="pin" class="block text-sm font-medium text-gray-600 mb-2">PIN</label><input type="text" name="pin" class="w-full px-4 py-2 border border-gray-300 rounded-lg" value="${profile.pin}" required maxlength="4"></div>
+                                <div>
+                                    <label for="estado" class="block text-sm font-medium text-gray-600 mb-2">Estado</label>
+                                    <select name="estado" class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white">
+                                        <option value="Disponible" ${profile.estado === 'Disponible' ? 'selected' : ''}>Disponible</option>
+                                        <option value="Ocupado" ${profile.estado === 'Ocupado' ? 'selected' : ''}>Ocupado</option>
+                                        <option value="Mantenimiento" ${profile.estado === 'Mantenimiento' ? 'selected' : ''}>Mantenimiento</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="flex justify-end gap-4 mt-8">
+                                <button type="button" class="bg-gray-200 text-gray-700 font-semibold px-6 py-3 rounded-lg hover:bg-gray-300" onclick="document.getElementById('close-crud-modal-btn').click()">Cancelar</button>
+                                <button type="submit" class="bg-blue-600 text-white font-semibold px-6 py-3 rounded-lg hover:bg-blue-700">Guardar Cambios</button>
+                            </div>`;
+
+                        const handleSubmit = async (formData) => {
+                            const updatedData = {
+                                nombre_perfil: formData.get('nombre_perfil'),
+                                pin: formData.get('pin'),
+                                estado: formData.get('estado'),
+                            };
+                            try {
+                                await updateDoc(doc(db, "CuentasMadre", accountId, "Perfiles", profileId), updatedData);
+                                closeCrudModal();
+                            } catch (e) { console.error("Error updating profile:", e); }
+                        };
+
+                        openCrudModal('Editar Perfil', formHtml, handleSubmit);
+                    } catch (e) { console.error("Error fetching profile for edit:", e); }
+                };
+
+                const handleDeleteProfile = (accountId, profileId) => {
+                    showConfirmationModal(
+                        'Eliminar Perfil',
+                        '¿Estás seguro de que quieres eliminar este perfil? Esta acción es permanente.',
+                        async () => {
+                            try {
+                                await deleteDoc(doc(db, "CuentasMadre", accountId, "Perfiles", profileId));
+                            } catch (e) {
+                                console.error("Error deleting profile:", e);
+                            }
+                        }
+                    );
+                };
+
 
                 const populatePlatformAccountsDropdowns = (platform = null) => {
                     let accountsToDisplay = allPlatformAccounts;
@@ -943,10 +1207,51 @@
                         'Eliminar Cuenta',
                         '¿Estás seguro de que quieres eliminar esta cuenta de plataforma? Esto no afectará a las ventas ya registradas.',
                         () => {
-                            deleteDoc(doc(db, "platformAccounts", id)).catch(e => console.error(e));
+                            deleteDoc(doc(db, "CuentasMadre", id)).catch(e => console.error(e));
                         }
                     );
                 };
+
+                // Migration Script Logic
+                const migrateBtn = document.getElementById('migrate-data-btn');
+                if (migrateBtn) {
+                    migrateBtn.addEventListener('click', async () => {
+                        if (!confirm('¿Estás seguro de que deseas ejecutar el script de migración? Esta acción es irreversible y solo debe hacerse una vez.')) {
+                            return;
+                        }
+
+                        console.log("Iniciando migración de datos para CuentasMadre...");
+                        try {
+                            const querySnapshot = await getDocs(collection(db, "CuentasMadre"));
+                            let updatedCount = 0;
+                            const updates = [];
+
+                            querySnapshot.forEach((docSnap) => {
+                                const data = docSnap.data();
+                                if (data.fecha_pago_propia === undefined) {
+                                    updates.push(updateDoc(doc(db, "CuentasMadre", docSnap.id), { fecha_pago_propia: null }));
+                                    updatedCount++;
+                                }
+                            });
+
+                            if (updates.length > 0) {
+                                await Promise.all(updates);
+                                alert(`Migración completada. ${updatedCount} cuentas han sido actualizadas.`);
+                                console.log(`${updatedCount} documentos actualizados.`);
+                            } else {
+                                alert('No se necesitaron actualizaciones.');
+                            }
+                            migrateBtn.disabled = true;
+                            migrateBtn.textContent = 'Migración Completa';
+                            migrateBtn.classList.add('bg-gray-400', 'cursor-not-allowed');
+
+                        } catch (error) {
+                            console.error("Error durante la migración:", error);
+                            alert("Ocurrió un error durante la migración.");
+                        }
+                    });
+                }
+
                 onSnapshot(collection(db, "sales"), (snapshot) => {
                     allSales = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
                     const activeSales = allSales.filter(sale => sale.estado !== 'ARCHIVADO');
@@ -959,18 +1264,51 @@
                     }
                     renderPlatformFilters();
                     renderAccountPlatformButtons();
-                    applyFiltersAndRender(activeSales); // Pass the filtered list
-                    updateFinancialSummary(); // This will still use allSales to include archived in totals
+                    applyFiltersAndRender(activeSales);
+                    updateFinancialSummary();
                     loadDashboardData();
                 }, (e) => {
                     console.error("Error al cargar ventas:", e);
                 });
                 onSnapshot(collection(db, "expenses"), (snapshot) => { allExpenses = snapshot.docs.map(d => ({ id: d.id, ...d.data() })); allExpenses.sort((a, b) => new Date(b.date) - new Date(a.date)); renderExpenses(); updateFinancialSummary(); loadDashboardData(); }, (e) => { console.error("Error al cargar egresos:", e); });
-                onSnapshot(collection(db, "platformAccounts"), (snapshot) => { allPlatformAccounts = snapshot.docs.map(d => ({ id: d.id, ...d.data() })); renderPlatformAccounts(); populatePlatformAccountsDropdowns(); }, (e) => { console.error("Error al cargar cuentas:", e); });
+                onSnapshot(collection(db, "CuentasMadre"), (snapshot) => { allPlatformAccounts = snapshot.docs.map(d => ({ id: d.id, ...d.data() })); renderPlatformAccounts(); populatePlatformAccountsDropdowns(); }, (e) => { console.error("Error al cargar cuentas:", e); });
                 selectors.addSaleForm.addEventListener('submit', async (e) => { e.preventDefault(); const f = selectors.addSaleForm; const newSale = { cliente: f.cliente.value, plataforma: f.plataforma.value === 'Otro' ? selectors.otroPlataformaInput.value : f.plataforma.value, precio: parseFloat(f.precio.value), inicioPlan: f.inicioPlan.value, finPlan: f.finPlan.value, correo: f.correo.value, contrasena: f.contrasena.value, pin: f.pin.value, notas: f.notas.value, createdAt: new Date().toISOString() }; try { await addDoc(collection(db, "sales"), newSale); f.reset(); handlePlatformChange(selectors.plataformaSelect, selectors.otroPlataformaContainer, selectors.otroPlataformaInput); } catch (err) { console.error("Error al guardar venta:", err); alert("Error al guardar la venta. Revisa la consola (F12).") } });
                 selectors.editForm.addEventListener('submit', async (e) => { e.preventDefault(); const f = selectors.editForm; const id = f['edit-sale-id'].value; const updated = { cliente: f['edit-cliente'].value, plataforma: f['edit-plataforma'].value === 'Otro' ? selectors.editOtroPlataformaInput.value : f['edit-plataforma'].value, precio: parseFloat(f['edit-precio'].value), inicioPlan: f['edit-inicioPlan'].value, finPlan: f['edit-finPlan'].value, correo: f['edit-correo'].value, contrasena: f['edit-contrasena'].value, pin: f['edit-pin'].value, notas: f['edit-notas'].value, }; try { await updateDoc(doc(db, "sales", id), updated); closeModal(); } catch (err) { console.error("Error al actualizar la venta:", err); alert("Error al actualizar la venta. Revisa la consola (F12).") } });
                 selectors.addExpenseForm.addEventListener('submit', async (e) => { e.preventDefault(); const f = selectors.addExpenseForm; const description = f['expense-description'].value; const amount = parseFloat(f['expense-amount'].value); const date = f['expense-date'].value; if (!description || !date || isNaN(amount) || amount <= 0) return; try { await addDoc(collection(db, "expenses"), { description, amount, date }); f.reset(); f['expense-date'].value = dayjs().format('YYYY-MM-DD'); } catch (err) { console.error("Error al añadir egreso:", err); } });
-                selectors.addAccountForm.addEventListener('submit', async (e) => { e.preventDefault(); const f = selectors.addAccountForm; const newAccount = { platform: f['account-platform'].value, email: f['account-email'].value, password: f['account-password'].value, }; try { await addDoc(collection(db, "platformAccounts"), newAccount); f.reset(); document.querySelectorAll('#account-platform-buttons button').forEach(b => b.classList.remove('bg-indigo-600', 'text-white', 'border-indigo-600')); } catch (err) { console.error("Error al guardar cuenta:", err); } });
+                selectors.addAccountForm.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const f = selectors.addAccountForm;
+                    const newAccount = {
+                        platform: f['account-platform'].value,
+                        email: f['account-email'].value,
+                        password: f['account-password'].value,
+                        fecha_pago_propia: f['fecha-pago-propia'].value,
+                    };
+                    try {
+                        await addDoc(collection(db, "CuentasMadre"), newAccount);
+                        f.reset();
+                        document.querySelectorAll('#account-platform-buttons button').forEach(b => b.classList.remove('bg-indigo-600', 'text-white', 'border-indigo-600'));
+                    } catch (err) {
+                        console.error("Error al guardar cuenta:", err);
+                    }
+                });
+
+                const togglePasswordVisibility = (button, input) => {
+                    const icon = button.querySelector('svg');
+                    if (input.type === "password") {
+                        input.type = "text";
+                        icon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7 .946-3.11 3.563-5.522 6.837-6.141M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.581 10.41A7.48 7.48 0 0119.542 12c-1.274 4.057-5.064 7-9.542 7a10.046 10.046 0 01-3.132-.475M2.458 12c.946-3.11 3.563-5.522 6.837-6.141m1.581 2.318A4.5 4.5 0 0115 12a4.5 4.5 0 01-1.07 2.828M5 5l14 14" />`;
+                    } else {
+                        input.type = "password";
+                        icon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />`;
+                    }
+                };
+
+                document.getElementById('toggle-password-visibility').addEventListener('click', function() {
+                    const passwordInput = document.getElementById('account-password');
+                    togglePasswordVisibility(this, passwordInput);
+                });
+
                 selectors.searchInput.addEventListener('input', e => {
                     currentSearchTerm = e.target.value;
                     const activeSales = allSales.filter(sale => sale.estado !== 'ARCHIVADO');
