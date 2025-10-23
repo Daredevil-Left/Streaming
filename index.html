@@ -896,9 +896,18 @@
                     const platformStyle = platformStyles[platform] || platformStyles['Otro'];
 
                     const listItems = accounts.map(account => {
-                        const fechaPagoHtml = account.fechaPago
-                            ? `<small class="text-gray-500 mt-1 block">Próx. Pago: ${dayjs(account.fechaPago).format('DD/MM/YYYY')}</small>`
-                            : '';
+                        let fechaPagoHtml = '';
+                        if (account.fechaPago) {
+                            const fechaPago = dayjs(account.fechaPago);
+                            const hoy = dayjs().startOf('day');
+                            const diffDays = fechaPago.diff(hoy, 'day');
+
+                            const statusClasses = diffDays <= 5
+                                ? 'bg-red-100 text-red-800'
+                                : 'bg-green-100 text-green-800';
+
+                            fechaPagoHtml = `<div class="mt-1"><span class="px-2 py-1 text-xs font-semibold rounded-lg ${statusClasses}">Próx. Pago: ${fechaPago.format('DD/MM/YYYY')}</span></div>`;
+                        }
 
                         const enlaceBtnHtml = account.enlace
                             ? `<a href="${account.enlace}" target="_blank" class="p-1 text-blue-600 hover:text-blue-800 hover:bg-blue-100 rounded-full transition" title="Abrir enlace">
