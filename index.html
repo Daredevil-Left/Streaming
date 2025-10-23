@@ -458,850 +458,856 @@
         const db = getFirestore(app);
         const auth = getAuth(app);
         
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                document.getElementById('app').classList.remove('hidden');
-                document.getElementById('logout-btn').addEventListener('click', () => { signOut(auth).catch((error) => console.error("Error al cerrar sesión", error)); });
+        function startApp() {
+            document.getElementById('app').classList.remove('hidden');
+            document.getElementById('logout-btn').addEventListener('click', () => { signOut(auth).catch((error) => console.error("Error al cerrar sesión", error)); });
 
-                dayjs.extend(dayjs_plugin_relativeTime);
-                dayjs.locale('es');
-                const platformStyles = {
-                    'Netflix': { color: 'text-red-600', bg: '#E50914' },
-                    'Spotify': { color: 'text-green-500', bg: '#1DB954' },
-                    'Disney+': { color: 'text-blue-900', bg: '#01153E' },
-                    'HBO Max': { color: 'text-purple-600', bg: '#8A2BE2' },
-                    'Amazon Prime Video': { color: 'text-blue-400', bg: '#00A8E1' },
-                    'YouTube Premium': { color: 'text-red-500', bg: '#FF0000' },
-                    'Apple Music': { color: 'text-pink-500', bg: '#FA243C' },
-                    'Apple TV+': { color: 'text-gray-800', bg: '#000000' },
-                    'Crunchyroll': { color: 'text-orange-500', bg: '#F47521' },
-                    'Canva': { color: 'text-purple-500', bg: '#8D44AD' },
-                    'IPTV Premium': { color: 'text-teal-500', bg: '#00AEEF' },
-                    'Vix+': { color: 'text-yellow-400', bg: '#F8C100' },
-                    'Paramount+': { color: 'text-blue-800', bg: '#0064FF' },
-                    'Otro': { color: 'text-gray-500', bg: '#6B7280' }
-                };
-                let allSales = [], allExpenses = [], allPlatformAccounts = [], activePlatformFilter = 'Todos', currentSearchTerm = '', activeAccountFilter = '', activeStatusFilter = '';
-                const selectors = {
-                    addSaleForm: document.getElementById('add-sale-form'),
-                    salesList: document.getElementById('sales-list'),
-                    searchInput: document.getElementById('search-input'),
-                    loadingState: document.getElementById('loading-state'),
-                    emptyState: document.getElementById('empty-state'),
-                    editModal: document.getElementById('edit-modal'),
-                    editForm: document.getElementById('edit-sale-form'),
-                    closeModalBtn: document.getElementById('close-modal'),
-                    cancelEditBtn: document.getElementById('cancel-edit'),
-                    plataformaSelect: document.getElementById('plataforma'),
-                    otroPlataformaContainer: document.getElementById('otro-plataforma-container'),
-                    otroPlataformaInput: document.getElementById('otro-plataforma'),
-                    editPlataformaSelect: document.getElementById('edit-plataforma'),
-                    editOtroPlataformaContainer: document.getElementById('edit-otro-plataforma-container'),
-                    editOtroPlataformaInput: document.getElementById('edit-otro-plataforma'),
-                    platformFilters: document.getElementById('platform-filters'),
-                    totalIngresos: document.getElementById('total-ingresos'),
-                    totalEgresos: document.getElementById('total-egresos'),
-                    balanceTotal: document.getElementById('balance-total'),
-                    addExpenseForm: document.getElementById('add-expense-form'),
-                    expensesList: document.getElementById('expenses-list'),
-                    addAccountForm: document.getElementById('add-account-form'),
-                    accountsList: document.getElementById('contenedor-cuentas-agrupadas'),
-                    platformAccountSelect: document.getElementById('platform-account'),
-                    editPlatformAccountSelect: document.getElementById('edit-platform-account'),
-                    accountFilter: document.getElementById('account-filter'),
-                    statusFilter: document.getElementById('status-filter'),
-                    accountPlatformButtons: document.getElementById('account-platform-buttons'),
-                    editAccountModal: document.getElementById('edit-account-modal'),
-                    editAccountForm: document.getElementById('edit-account-form'),
-                    closeEditAccountModalBtn: document.getElementById('close-edit-account-modal'),
-                    cancelEditAccountBtn: document.getElementById('cancel-edit-account'),
-                    // Dashboard selectors
-                    kpiSalesToday: document.getElementById('kpi-sales-today'),
-                    kpiSalesMonth: document.getElementById('kpi-sales-month'),
-                    kpiActiveClients: document.getElementById('kpi-active-clients'),
-                    alertsSection: document.getElementById('alerts-section'),
-                    summaryIngresos: document.getElementById('summary-ingresos'),
-                    summaryEgresos: document.getElementById('summary-egresos'),
-                    summaryBalance: document.getElementById('summary-balance'),
-                };
-                const getSaleStatus = (finPlan) => {
-                    if (dayjs().isAfter(dayjs(finPlan).endOf('day'))) {
-                        return 'Vencido';
-                    }
+            dayjs.extend(dayjs_plugin_relativeTime);
+            dayjs.locale('es');
+            const platformStyles = {
+                'Netflix': { color: 'text-red-600', bg: '#E50914' },
+                'Spotify': { color: 'text-green-500', bg: '#1DB954' },
+                'Disney+': { color: 'text-blue-900', bg: '#01153E' },
+                'HBO Max': { color: 'text-purple-600', bg: '#8A2BE2' },
+                'Amazon Prime Video': { color: 'text-blue-400', bg: '#00A8E1' },
+                'YouTube Premium': { color: 'text-red-500', bg: '#FF0000' },
+                'Apple Music': { color: 'text-pink-500', bg: '#FA243C' },
+                'Apple TV+': { color: 'text-gray-800', bg: '#000000' },
+                'Crunchyroll': { color: 'text-orange-500', bg: '#F47521' },
+                'Canva': { color: 'text-purple-500', bg: '#8D44AD' },
+                'IPTV Premium': { color: 'text-teal-500', bg: '#00AEEF' },
+                'Vix+': { color: 'text-yellow-400', bg: '#F8C100' },
+                'Paramount+': { color: 'text-blue-800', bg: '#0064FF' },
+                'Otro': { color: 'text-gray-500', bg: '#6B7280' }
+            };
+            let allSales = [], allExpenses = [], allPlatformAccounts = [], activePlatformFilter = 'Todos', currentSearchTerm = '', activeAccountFilter = '', activeStatusFilter = '';
+            const selectors = {
+                addSaleForm: document.getElementById('add-sale-form'),
+                salesList: document.getElementById('sales-list'),
+                searchInput: document.getElementById('search-input'),
+                loadingState: document.getElementById('loading-state'),
+                emptyState: document.getElementById('empty-state'),
+                editModal: document.getElementById('edit-modal'),
+                editForm: document.getElementById('edit-sale-form'),
+                closeModalBtn: document.getElementById('close-modal'),
+                cancelEditBtn: document.getElementById('cancel-edit'),
+                plataformaSelect: document.getElementById('plataforma'),
+                otroPlataformaContainer: document.getElementById('otro-plataforma-container'),
+                otroPlataformaInput: document.getElementById('otro-plataforma'),
+                editPlataformaSelect: document.getElementById('edit-plataforma'),
+                editOtroPlataformaContainer: document.getElementById('edit-otro-plataforma-container'),
+                editOtroPlataformaInput: document.getElementById('edit-otro-plataforma'),
+                platformFilters: document.getElementById('platform-filters'),
+                totalIngresos: document.getElementById('total-ingresos'),
+                totalEgresos: document.getElementById('total-egresos'),
+                balanceTotal: document.getElementById('balance-total'),
+                addExpenseForm: document.getElementById('add-expense-form'),
+                expensesList: document.getElementById('expenses-list'),
+                addAccountForm: document.getElementById('add-account-form'),
+                accountsList: document.getElementById('contenedor-cuentas-agrupadas'),
+                platformAccountSelect: document.getElementById('platform-account'),
+                editPlatformAccountSelect: document.getElementById('edit-platform-account'),
+                accountFilter: document.getElementById('account-filter'),
+                statusFilter: document.getElementById('status-filter'),
+                accountPlatformButtons: document.getElementById('account-platform-buttons'),
+                editAccountModal: document.getElementById('edit-account-modal'),
+                editAccountForm: document.getElementById('edit-account-form'),
+                closeEditAccountModalBtn: document.getElementById('close-edit-account-modal'),
+                cancelEditAccountBtn: document.getElementById('cancel-edit-account'),
+                // Dashboard selectors
+                kpiSalesToday: document.getElementById('kpi-sales-today'),
+                kpiSalesMonth: document.getElementById('kpi-sales-month'),
+                kpiActiveClients: document.getElementById('kpi-active-clients'),
+                alertsSection: document.getElementById('alerts-section'),
+                summaryIngresos: document.getElementById('summary-ingresos'),
+                summaryEgresos: document.getElementById('summary-egresos'),
+                summaryBalance: document.getElementById('summary-balance'),
+            };
+            const getSaleStatus = (finPlan) => {
+                if (dayjs().isAfter(dayjs(finPlan).endOf('day'))) {
+                    return 'Vencido';
+                }
 
-                    const today = dayjs().startOf('day');
-                    const expirationDate = dayjs(finPlan).startOf('day');
+                const today = dayjs().startOf('day');
+                const expirationDate = dayjs(finPlan).startOf('day');
+                const diffDays = expirationDate.diff(today, 'day');
+
+                if (diffDays === 0) return 'Vence hoy';
+                if (diffDays <= 7) return 'Próximo a Vencer';
+                return 'Activo';
+            };
+            const formatCurrency = (amount) => `S/${(amount||0).toFixed(2)}`;
+            const getPlatformHtml = (platformName) => { const style=platformStyles[platformName]||platformStyles['Otro']; return `<span class="font-bold ${style.color}">${platformName}</span>`};
+            const handlePlatformChange = (select, container, input) => { if (select.value==='Otro') { container.classList.remove('hidden'); input.required = true; } else { container.classList.add('hidden'); input.required = false; input.value = ''; }};
+            const openModal = () => { selectors.editModal.classList.remove('hidden'); setTimeout(() => { selectors.editModal.classList.remove('opacity-0'); selectors.editModal.querySelector('.modal-content').classList.remove('scale-95'); }, 10); };
+            const closeModal = () => { selectors.editModal.classList.add('opacity-0'); selectors.editModal.querySelector('.modal-content').classList.add('scale-95'); setTimeout(() => selectors.editModal.classList.add('hidden'), 300); };
+
+            const showConfirmationModal = (title, message, onConfirm) => {
+                const modal = document.getElementById('confirmation-modal');
+                document.getElementById('confirmation-title').textContent = title;
+                document.getElementById('confirmation-message').textContent = message;
+
+                const confirmBtn = document.getElementById('confirm-action-btn');
+                const cancelBtn = document.getElementById('cancel-confirmation-btn');
+
+                const confirmHandler = () => {
+                    onConfirm();
+                    hideConfirmationModal();
+                };
+
+                const cancelHandler = () => {
+                    hideConfirmationModal();
+                };
+
+                confirmBtn.onclick = confirmHandler;
+                cancelBtn.onclick = cancelHandler;
+
+                modal.classList.remove('hidden');
+                setTimeout(() => {
+                    modal.classList.remove('opacity-0');
+                    modal.querySelector('.modal-content').classList.remove('scale-95');
+                }, 10);
+            };
+
+            const hideConfirmationModal = () => {
+                const modal = document.getElementById('confirmation-modal');
+                modal.classList.add('opacity-0');
+                modal.querySelector('.modal-content').classList.add('scale-95');
+                setTimeout(() => {
+                    modal.classList.add('hidden');
+                    document.getElementById('confirm-action-btn').onclick = null;
+                    document.getElementById('cancel-confirmation-btn').onclick = null;
+                }, 300);
+            };
+
+            const showArchiveDeleteModal = (saleId) => {
+                const modal = document.getElementById('archive-delete-modal');
+                const archiveBtn = document.getElementById('archive-btn');
+                const deleteBtn = document.getElementById('delete-permanently-btn');
+                const cancelBtn = document.getElementById('cancel-action-btn');
+
+                const archiveHandler = () => handleArchiveAction(saleId);
+                const deleteHandler = () => handlePermanentDeleteAction(saleId);
+                const cancelHandler = () => hideArchiveDeleteModal();
+
+                archiveBtn.onclick = archiveHandler;
+                deleteBtn.onclick = deleteHandler;
+                cancelBtn.onclick = cancelHandler;
+
+                modal.classList.remove('hidden');
+                setTimeout(() => {
+                    modal.classList.remove('opacity-0');
+                    modal.querySelector('.modal-content').classList.remove('scale-95');
+                }, 10);
+            };
+
+            const hideArchiveDeleteModal = () => {
+                const modal = document.getElementById('archive-delete-modal');
+                modal.classList.add('opacity-0');
+                modal.querySelector('.modal-content').classList.add('scale-95');
+                setTimeout(() => {
+                    modal.classList.add('hidden');
+                    // Clean up event listeners
+                    document.getElementById('archive-btn').onclick = null;
+                    document.getElementById('delete-permanently-btn').onclick = null;
+                    document.getElementById('cancel-action-btn').onclick = null;
+                }, 300);
+            };
+            const updateFinancialSummary = () => { const salesIncome = allSales.reduce((sum, sale) => sum + (sale.precio || 0), 0); const totalIngresos = salesIncome; const totalEgresos = allExpenses.reduce((sum, expense) => sum + (expense.amount || 0), 0); const balance = totalIngresos - totalEgresos; selectors.totalIngresos.textContent = formatCurrency(totalIngresos); selectors.totalEgresos.textContent = formatCurrency(totalEgresos); selectors.balanceTotal.textContent = formatCurrency(balance); selectors.balanceTotal.classList.toggle('text-red-900', balance < 0); selectors.balanceTotal.classList.toggle('text-blue-900', balance >= 0); };
+
+            const loadDashboardData = () => {
+                const today = dayjs().startOf('day');
+                const startOfMonth = dayjs().startOf('month');
+                const activeSales = allSales.filter(sale => sale.estado !== 'ARCHIVADO');
+
+                // 1. KPI: Ventas de Hoy
+                const salesToday = allSales.filter(sale => dayjs(sale.inicioPlan).isSame(today, 'day'))
+                                           .reduce((sum, sale) => sum + sale.precio, 0);
+                selectors.kpiSalesToday.textContent = formatCurrency(salesToday);
+
+                // 2. KPI: Ventas del Mes
+                const salesMonth = allSales.filter(sale => dayjs(sale.inicioPlan).isAfter(startOfMonth) || dayjs(sale.inicioPlan).isSame(startOfMonth))
+                                         .reduce((sum, sale) => sum + sale.precio, 0);
+                selectors.kpiSalesMonth.textContent = formatCurrency(salesMonth);
+
+                // 3. KPI: Clientes Activos
+                const activeClients = activeSales.length;
+                selectors.kpiActiveClients.textContent = activeClients;
+
+                // 4. Alertas de Vencimiento
+                const expirationAlerts = activeSales.filter(sale => {
+                    const status = getSaleStatus(sale.finPlan);
+                    return status === 'Vencido' || status === 'Vence hoy' || status === 'Próximo a Vencer';
+                }).filter(sale => {
+                    const expirationDate = dayjs(sale.finPlan).startOf('day');
                     const diffDays = expirationDate.diff(today, 'day');
+                    return diffDays <= 3; // Incluye vencidas y hasta 3 días próximos
+                }).sort((a, b) => new Date(a.finPlan) - new Date(b.finPlan));
 
-                    if (diffDays === 0) return 'Vence hoy';
-                    if (diffDays <= 7) return 'Próximo a Vencer';
-                    return 'Activo';
-                };
-                const formatCurrency = (amount) => `S/${(amount||0).toFixed(2)}`;
-                const getPlatformHtml = (platformName) => { const style=platformStyles[platformName]||platformStyles['Otro']; return `<span class="font-bold ${style.color}">${platformName}</span>`};
-                const handlePlatformChange = (select, container, input) => { if (select.value==='Otro') { container.classList.remove('hidden'); input.required = true; } else { container.classList.add('hidden'); input.required = false; input.value = ''; }};
-                const openModal = () => { selectors.editModal.classList.remove('hidden'); setTimeout(() => { selectors.editModal.classList.remove('opacity-0'); selectors.editModal.querySelector('.modal-content').classList.remove('scale-95'); }, 10); };
-                const closeModal = () => { selectors.editModal.classList.add('opacity-0'); selectors.editModal.querySelector('.modal-content').classList.add('scale-95'); setTimeout(() => selectors.editModal.classList.add('hidden'), 300); };
-
-                const showConfirmationModal = (title, message, onConfirm) => {
-                    const modal = document.getElementById('confirmation-modal');
-                    document.getElementById('confirmation-title').textContent = title;
-                    document.getElementById('confirmation-message').textContent = message;
-
-                    const confirmBtn = document.getElementById('confirm-action-btn');
-                    const cancelBtn = document.getElementById('cancel-confirmation-btn');
-
-                    const confirmHandler = () => {
-                        onConfirm();
-                        hideConfirmationModal();
-                    };
-
-                    const cancelHandler = () => {
-                        hideConfirmationModal();
-                    };
-
-                    confirmBtn.onclick = confirmHandler;
-                    cancelBtn.onclick = cancelHandler;
-
-                    modal.classList.remove('hidden');
-                    setTimeout(() => {
-                        modal.classList.remove('opacity-0');
-                        modal.querySelector('.modal-content').classList.remove('scale-95');
-                    }, 10);
-                };
-
-                const hideConfirmationModal = () => {
-                    const modal = document.getElementById('confirmation-modal');
-                    modal.classList.add('opacity-0');
-                    modal.querySelector('.modal-content').classList.add('scale-95');
-                    setTimeout(() => {
-                        modal.classList.add('hidden');
-                        document.getElementById('confirm-action-btn').onclick = null;
-                        document.getElementById('cancel-confirmation-btn').onclick = null;
-                    }, 300);
-                };
-
-                const showArchiveDeleteModal = (saleId) => {
-                    const modal = document.getElementById('archive-delete-modal');
-                    const archiveBtn = document.getElementById('archive-btn');
-                    const deleteBtn = document.getElementById('delete-permanently-btn');
-                    const cancelBtn = document.getElementById('cancel-action-btn');
-
-                    const archiveHandler = () => handleArchiveAction(saleId);
-                    const deleteHandler = () => handlePermanentDeleteAction(saleId);
-                    const cancelHandler = () => hideArchiveDeleteModal();
-
-                    archiveBtn.onclick = archiveHandler;
-                    deleteBtn.onclick = deleteHandler;
-                    cancelBtn.onclick = cancelHandler;
-
-                    modal.classList.remove('hidden');
-                    setTimeout(() => {
-                        modal.classList.remove('opacity-0');
-                        modal.querySelector('.modal-content').classList.remove('scale-95');
-                    }, 10);
-                };
-
-                const hideArchiveDeleteModal = () => {
-                    const modal = document.getElementById('archive-delete-modal');
-                    modal.classList.add('opacity-0');
-                    modal.querySelector('.modal-content').classList.add('scale-95');
-                    setTimeout(() => {
-                        modal.classList.add('hidden');
-                        // Clean up event listeners
-                        document.getElementById('archive-btn').onclick = null;
-                        document.getElementById('delete-permanently-btn').onclick = null;
-                        document.getElementById('cancel-action-btn').onclick = null;
-                    }, 300);
-                };
-                const updateFinancialSummary = () => { const salesIncome = allSales.reduce((sum, sale) => sum + (sale.precio || 0), 0); const totalIngresos = salesIncome; const totalEgresos = allExpenses.reduce((sum, expense) => sum + (expense.amount || 0), 0); const balance = totalIngresos - totalEgresos; selectors.totalIngresos.textContent = formatCurrency(totalIngresos); selectors.totalEgresos.textContent = formatCurrency(totalEgresos); selectors.balanceTotal.textContent = formatCurrency(balance); selectors.balanceTotal.classList.toggle('text-red-900', balance < 0); selectors.balanceTotal.classList.toggle('text-blue-900', balance >= 0); };
-
-                const loadDashboardData = () => {
-                    const today = dayjs().startOf('day');
-                    const startOfMonth = dayjs().startOf('month');
-                    const activeSales = allSales.filter(sale => sale.estado !== 'ARCHIVADO');
-
-                    // 1. KPI: Ventas de Hoy
-                    const salesToday = allSales.filter(sale => dayjs(sale.inicioPlan).isSame(today, 'day'))
-                                               .reduce((sum, sale) => sum + sale.precio, 0);
-                    selectors.kpiSalesToday.textContent = formatCurrency(salesToday);
-
-                    // 2. KPI: Ventas del Mes
-                    const salesMonth = allSales.filter(sale => dayjs(sale.inicioPlan).isAfter(startOfMonth) || dayjs(sale.inicioPlan).isSame(startOfMonth))
-                                             .reduce((sum, sale) => sum + sale.precio, 0);
-                    selectors.kpiSalesMonth.textContent = formatCurrency(salesMonth);
-
-                    // 3. KPI: Clientes Activos
-                    const activeClients = activeSales.length;
-                    selectors.kpiActiveClients.textContent = activeClients;
-
-                    // 4. Alertas de Vencimiento
-                    const expirationAlerts = activeSales.filter(sale => {
+                selectors.alertsSection.innerHTML = '';
+                if (expirationAlerts.length > 0) {
+                    selectors.alertsSection.className = 'grid grid-cols-1 md:grid-cols-2 gap-4';
+                    expirationAlerts.forEach(sale => {
                         const status = getSaleStatus(sale.finPlan);
-                        return status === 'Vencido' || status === 'Vence hoy' || status === 'Próximo a Vencer';
-                    }).filter(sale => {
-                        const expirationDate = dayjs(sale.finPlan).startOf('day');
-                        const diffDays = expirationDate.diff(today, 'day');
-                        return diffDays <= 3; // Incluye vencidas y hasta 3 días próximos
-                    }).sort((a, b) => new Date(a.finPlan) - new Date(b.finPlan));
+                        const borderColor = status === 'Vencido' ? 'border-red-500' : 'border-yellow-500';
+                        const card = document.createElement('div');
+                        card.className = `bg-white p-4 rounded-lg shadow-md border-l-4 ${borderColor} flex flex-col justify-between`;
 
-                    selectors.alertsSection.innerHTML = '';
-                    if (expirationAlerts.length > 0) {
-                        selectors.alertsSection.className = 'grid grid-cols-1 md:grid-cols-2 gap-4';
-                        expirationAlerts.forEach(sale => {
-                            const status = getSaleStatus(sale.finPlan);
-                            const borderColor = status === 'Vencido' ? 'border-red-500' : 'border-yellow-500';
-                            const card = document.createElement('div');
-                            card.className = `bg-white p-4 rounded-lg shadow-md border-l-4 ${borderColor} flex flex-col justify-between`;
+                        let statusText, statusColor;
+                        if (status === 'Vencido') {
+                            statusText = 'Venció ' + dayjs(sale.finPlan).fromNow();
+                            statusColor = 'text-red-600';
+                        } else if (status === 'Vence hoy') {
+                            statusText = 'Vence hoy';
+                            statusColor = 'text-yellow-700';
+                        } else {
+                            statusText = 'Vence ' + dayjs(sale.finPlan).endOf('day').fromNow();
+                            statusColor = 'text-yellow-600';
+                        }
 
-                            let statusText, statusColor;
-                            if (status === 'Vencido') {
-                                statusText = 'Venció ' + dayjs(sale.finPlan).fromNow();
-                                statusColor = 'text-red-600';
-                            } else if (status === 'Vence hoy') {
-                                statusText = 'Vence hoy';
-                                statusColor = 'text-yellow-700';
-                            } else {
-                                statusText = 'Vence ' + dayjs(sale.finPlan).endOf('day').fromNow();
-                                statusColor = 'text-yellow-600';
-                            }
-
-                            card.innerHTML = `
-                                <div>
-                                    <div class="flex justify-between items-start">
-                                        <div>
-                                            <p class="font-bold text-gray-800">${sale.cliente}</p>
-                                            <p class="text-sm text-gray-500">${getPlatformHtml(sale.plataforma)}</p>
-                                        </div>
-                                        <div class="text-right">
-                                            <p class="font-semibold text-sm ${statusColor}">${statusText}</p>
-                                            <p class="text-xs text-gray-500">${dayjs(sale.finPlan).format('DD [de] MMMM')}</p>
-                                        </div>
+                        card.innerHTML = `
+                            <div>
+                                <div class="flex justify-between items-start">
+                                    <div>
+                                        <p class="font-bold text-gray-800">${sale.cliente}</p>
+                                        <p class="text-sm text-gray-500">${getPlatformHtml(sale.plataforma)}</p>
+                                    </div>
+                                    <div class="text-right">
+                                        <p class="font-semibold text-sm ${statusColor}">${statusText}</p>
+                                        <p class="text-xs text-gray-500">${dayjs(sale.finPlan).format('DD [de] MMMM')}</p>
                                     </div>
                                 </div>
-                                <div class="mt-4 flex justify-end">
-                                    <button class="copy-alert-btn bg-gray-200 hover:bg-gray-300 text-gray-700 text-xs font-semibold py-1 px-3 rounded-md transition-colors" data-sale-id="${sale.id}">
-                                        Copiar Aviso
+                            </div>
+                            <div class="mt-4 flex justify-end">
+                                <button class="copy-alert-btn bg-gray-200 hover:bg-gray-300 text-gray-700 text-xs font-semibold py-1 px-3 rounded-md transition-colors" data-sale-id="${sale.id}">
+                                    Copiar Aviso
+                                </button>
+                            </div>
+                        `;
+                        selectors.alertsSection.appendChild(card);
+                    });
+                } else {
+                    selectors.alertsSection.className = 'space-y-3';
+                    selectors.alertsSection.innerHTML = '<p class="text-gray-500">No hay alertas de vencimiento.</p>';
+                }
+
+                // 5. Resumen Financiero
+                const totalIngresos = allSales.reduce((sum, sale) => sum + (sale.precio || 0), 0);
+                const totalEgresos = allExpenses.reduce((sum, expense) => sum + (expense.amount || 0), 0);
+                const balance = totalIngresos - totalEgresos;
+                selectors.summaryIngresos.textContent = formatCurrency(totalIngresos);
+                selectors.summaryEgresos.textContent = formatCurrency(totalEgresos);
+                selectors.summaryBalance.textContent = formatCurrency(balance);
+                selectors.summaryBalance.classList.toggle('text-red-900', balance < 0);
+                selectors.summaryBalance.classList.toggle('text-blue-900', balance >= 0);
+
+                // Attach event listeners for copy buttons after rendering
+                selectors.alertsSection.querySelectorAll('.copy-alert-btn').forEach(btn => {
+                    btn.addEventListener('click', handleCopyAlert);
+                });
+            };
+
+            const handleCopyAlert = (event) => {
+                const button = event.currentTarget;
+                const saleId = button.dataset.saleId;
+                const sale = allSales.find(s => s.id === saleId);
+                if (!sale) return;
+
+                const status = getSaleStatus(sale.finPlan);
+                let message = '';
+
+                if (status === 'Vencido') {
+                    message = `Buenas tardes 👋🏻, se le informa que su cuenta de "${sale.plataforma}" ya venció. Si desea renovar me avisa, por favor, para evitar el corte del servicio. Gracias por su preferencia 💯`;
+                } else if (status === 'Vence hoy') {
+                    message = `Buenas tardes 👋🏻, se le informa que su cuenta de "${sale.plataforma}" vence el día de hoy a la medianoche ‼. Si desea renovar me avisa, por favor. Gracias por su preferencia 💯`;
+                } else { // Próximo a Vencer
+                    const daysLeft = dayjs(sale.finPlan).endOf('day').diff(dayjs(), 'day');
+                    const dayText = daysLeft === 0 ? 'mañana' : `en ${daysLeft + 1} días`;
+                    message = `Buenas tardes 👋🏻, se le informa que su cuenta de "${sale.plataforma}" vence ${dayText}. Si desea renovar me avisa, por favor. Gracias por su preferencia 💯`;
+                }
+
+                navigator.clipboard.writeText(message).then(() => {
+                    const originalText = button.textContent;
+                    button.textContent = '¡Copiado!';
+                    button.classList.add('bg-green-500', 'text-white');
+                    setTimeout(() => {
+                        button.textContent = originalText;
+                        button.classList.remove('bg-green-500', 'text-white');
+                    }, 2000);
+                }).catch(err => {
+                    console.error('Error al copiar texto: ', err);
+                    alert('No se pudo copiar el texto.');
+                });
+            };
+
+            const applyFiltersAndRender = (salesToRender) => {
+                let filteredSales = [...salesToRender];
+                if (activePlatformFilter !== 'Todos') {
+                    filteredSales = filteredSales.filter(sale => sale.plataforma === activePlatformFilter);
+                }
+                if (currentSearchTerm) {
+                    const term = currentSearchTerm.toLowerCase();
+                    filteredSales = filteredSales.filter(sale => sale.cliente.toLowerCase().includes(term) || sale.plataforma.toLowerCase().includes(term) || (sale.correo && sale.correo.toLowerCase().includes(term)));
+                }
+                if (activeAccountFilter) {
+                    const account = allPlatformAccounts.find(a => a.id === activeAccountFilter);
+                    if (account) {
+                        filteredSales = filteredSales.filter(sale => sale.correo === account.email && sale.contrasena === account.password);
+                    }
+                }
+                if (activeStatusFilter) {
+                    filteredSales = filteredSales.filter(sale => getSaleStatus(sale.finPlan) === activeStatusFilter);
+                }
+                renderSales(filteredSales);
+            };
+            const renderPlatformFilters = () => {
+                selectors.platformFilters.innerHTML = '';
+                const platforms = ['Todos', ...Object.keys(platformStyles)];
+                platforms.forEach(platform => {
+                    const btn = document.createElement('button');
+                    btn.dataset.platform = platform;
+                    const activeClasses = 'border-indigo-500 bg-indigo-50';
+                    const inactiveClasses = 'border-transparent hover:bg-gray-100';
+                    btn.className = `p-2 rounded-lg border-2 transition-all duration-200 font-semibold ${activePlatformFilter === platform ? activeClasses : inactiveClasses}`;
+                    if (platform === 'Todos') {
+                        btn.textContent = 'Todos';
+                    } else {
+                        btn.innerHTML = getPlatformHtml(platform);
+                    }
+                    btn.addEventListener('click', () => {
+                        activePlatformFilter = platform;
+                        document.querySelectorAll('#platform-filters button').forEach(b => {
+                            b.className = `p-2 rounded-lg border-2 transition-all duration-200 font-semibold ${inactiveClasses}`;
+                        });
+                        btn.className = `p-2 rounded-lg border-2 transition-all duration-200 font-semibold ${activeClasses}`;
+                        const activeSales = allSales.filter(sale => sale.estado !== 'ARCHIVADO');
+                        applyFiltersAndRender(activeSales);
+                    });
+                    selectors.platformFilters.appendChild(btn);
+                });
+            };
+            const renderAccountPlatformButtons = () => {
+                const platformNames = Object.keys(platformStyles).filter(p => p !== 'Otro');
+                selectors.accountPlatformButtons.innerHTML = '';
+                platformNames.forEach(name => {
+                    const btn = document.createElement('button');
+                    btn.type = 'button';
+                    btn.textContent = name;
+                    btn.dataset.platformName = name;
+                    btn.className = 'px-3 py-1.5 border border-gray-300 rounded-md text-sm font-medium hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500';
+                    btn.addEventListener('click', () => {
+                        // Update hidden input
+                        selectors.addAccountForm['account-platform'].value = name;
+                        // Update button styles
+                        document.querySelectorAll('#account-platform-buttons button').forEach(b => b.classList.remove('bg-indigo-600', 'text-white', 'border-indigo-600'));
+                        btn.classList.add('bg-indigo-600', 'text-white', 'border-indigo-600');
+                    });
+                    selectors.accountPlatformButtons.appendChild(btn);
+                });
+            };
+            const renderSales = (sales) => {
+                selectors.salesList.innerHTML = '';
+                const parentContainer = document.querySelector('.bg-white.rounded-2xl.shadow-lg.p-4');
+                if (allSales.length === 0) {
+                    selectors.emptyState.classList.remove('hidden');
+                    parentContainer.classList.add('hidden'); // Ocultar el contenedor de la lista si no hay ventas
+                    return;
+                }
+                selectors.emptyState.classList.add('hidden');
+                parentContainer.classList.remove('hidden');
+
+                if (sales.length === 0) {
+                    selectors.salesList.innerHTML = `<p class="text-gray-500 text-center col-span-7 py-4">No se encontraron ventas que coincidan.</p>`;
+                    return;
+                }
+
+                sales.forEach(sale => {
+                    const statusText = getSaleStatus(sale.finPlan);
+                    const statusInfo = {
+                        'Vencido': { color: 'orange' },
+                        'Vence hoy': { color: 'red' },
+                        'Próximo a Vencer': { color: 'yellow' },
+                        'Activo': { color: 'green' }
+                    }[statusText];
+
+                    const endDateForDisplay = dayjs(sale.finPlan);
+                    const endDateForRelative = dayjs(sale.finPlan).endOf('day');
+
+                    const row = document.createElement('div');
+                    row.className = `grid grid-cols-2 md:grid-cols-7 gap-4 items-center p-3 rounded-lg hover:bg-gray-50 transition-colors duration-200 border-b text-sm`;
+
+                    row.innerHTML = `
+                        <div class="col-span-2 font-semibold text-gray-800">
+                            ${sale.cliente}
+                            <div class="font-normal text-xs text-gray-500 md:hidden mt-1">
+                                ${getPlatformHtml(sale.plataforma)} &middot; Vence: ${endDateForDisplay.format('DD/MM/YYYY')}
+                            </div>
+                        </div>
+                        <div class="hidden md:block">${getPlatformHtml(sale.plataforma)}</div>
+                        <div class="hidden md:block">${endDateForDisplay.format('DD/MM/YYYY')} <span class="text-xs text-gray-500">(${endDateForRelative.fromNow()})</span></div>
+                        <div class="hidden md:block"><span class="text-xs font-semibold py-1 px-2 uppercase rounded-full text-${statusInfo.color}-600 bg-${statusInfo.color}-100">${statusText}</span></div>
+                        <div class="hidden md:block font-bold text-gray-800">${formatCurrency(sale.precio)}</div>
+                        <div class="flex justify-end gap-3 items-center">
+                            <button class="edit-btn p-1 text-indigo-600 hover:text-indigo-800 hover:bg-indigo-100 rounded-full transition" data-id="${sale.id}" title="Editar">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L16.732 3.732z"></path></svg>
+                            </button>
+                            <button class="renew-btn p-1 text-green-600 hover:text-green-800 hover:bg-green-100 rounded-full transition" data-id="${sale.id}" title="Renovar">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h5M20 20v-5h-5M4 20h5v-5M20 4h-5v5"></path></svg>
+                            </button>
+                            <button class="delete-btn p-1 text-red-600 hover:text-red-800 hover:bg-red-100 rounded-full transition" data-id="${sale.id}" title="Eliminar">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                            </button>
+                        </div>
+                        <div class="md:hidden col-span-2 mt-2 pt-2 border-t flex justify-between items-center text-xs">
+                            <span class="font-semibold py-1 px-2 uppercase rounded-full text-${statusInfo.color}-600 bg-${statusInfo.color}-100">${statusText}</span>
+                            <span class="font-bold text-gray-800 text-base">${formatCurrency(sale.precio)}</span>
+                        </div>
+                    `;
+                    selectors.salesList.appendChild(row);
+                });
+
+                selectors.salesList.querySelectorAll('.edit-btn').forEach(b => b.addEventListener('click', e => handleEdit(e.currentTarget.dataset.id)));
+                selectors.salesList.querySelectorAll('.delete-btn').forEach(b => b.addEventListener('click', e => handleDeleteSale(e.currentTarget.dataset.id)));
+                selectors.salesList.querySelectorAll('.renew-btn').forEach(b => b.addEventListener('click', e => openRenewalModal(e.currentTarget.dataset.id)));
+            };
+            const renderExpenses = () => { selectors.expensesList.innerHTML = ''; if (allExpenses.length === 0) { selectors.expensesList.innerHTML = '<p class="text-sm text-gray-400">No hay egresos registrados.</p>'; return; } allExpenses.forEach(expense => { const item = document.createElement('div'); item.className = 'flex justify-between items-center text-sm p-2 rounded-md hover:bg-gray-50'; item.innerHTML = `<div class="flex-1 truncate pr-2"><p class="text-gray-700">${expense.description}</p><p class="text-xs text-gray-500">${dayjs(expense.date).format('DD/MM/YYYY')}</p></div><div class="flex items-center gap-2"><span class="font-semibold text-red-600">${formatCurrency(expense.amount)}</span><button class="delete-expense-btn text-gray-400 hover:text-red-600" data-id="${expense.id}"><svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm4 0a1 1 0 012 0v6a1 1 0 11-2 0V8z" clip-rule="evenodd"></path></svg></button></div>`; selectors.expensesList.appendChild(item); }); selectors.expensesList.querySelectorAll('.delete-expense-btn').forEach(b => b.addEventListener('click', e => handleDeleteExpense(e.currentTarget.dataset.id))); };
+            const renderPlatformAccounts = () => {
+                const { accountsList } = selectors;
+                accountsList.innerHTML = '';
+
+                if (allPlatformAccounts.length === 0) {
+                    accountsList.innerHTML = '<p class="text-sm text-gray-400">No hay cuentas de plataforma registradas.</p>';
+                    return;
+                }
+
+                // 1. Group accounts by platform
+                const groupedAccounts = allPlatformAccounts.reduce((acc, account) => {
+                    const { platform } = account;
+                    if (!acc[platform]) {
+                        acc[platform] = [];
+                    }
+                    acc[platform].push(account);
+                    return acc;
+                }, {});
+
+                // 2. Iterate and render each group
+                for (const platform in groupedAccounts) {
+                    const accounts = groupedAccounts[platform];
+                    const platformStyle = platformStyles[platform] || platformStyles['Otro'];
+
+                    const listItems = accounts.map(account => {
+                        const fechaPagoHtml = account.fechaPago
+                            ? `<small class="text-gray-500 mt-1 block">Próx. Pago: ${dayjs(account.fechaPago).format('DD/MM/YYYY')}</small>`
+                            : '';
+
+                        const enlaceBtnHtml = account.enlace
+                            ? `<a href="${account.enlace}" target="_blank" class="p-1 text-blue-600 hover:text-blue-800 hover:bg-blue-100 rounded-full transition" title="Abrir enlace">
+                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
+                               </a>`
+                            : `<span class="p-1 text-gray-400 cursor-not-allowed rounded-full" title="No hay enlace">
+                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
+                               </span>`;
+
+                        return `
+                            <li class="list-group-item flex flex-col md:flex-row justify-between items-start md:items-center py-3 px-4">
+                                <div class="mb-2 md:mb-0">
+                                    <span class="font-semibold text-gray-800 break-all">${account.email}</span>
+                                    ${fechaPagoHtml}
+                                </div>
+                                <div class="flex items-center gap-2 self-end md:self-center">
+                                    <input type="password" value="${account.password}" class="w-40 bg-gray-100 border-gray-200 text-sm rounded-md px-2 py-1" readonly>
+                                    <button class="toggle-password-btn p-1 text-gray-500 hover:text-gray-800 hover:bg-gray-200 rounded-full transition" title="Mostrar/Ocultar contraseña">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                                    </button>
+                                    <button class="edit-account-btn p-1 text-indigo-600 hover:text-indigo-800 hover:bg-indigo-100 rounded-full transition" data-id="${account.id}" title="Editar Cuenta">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L16.732 3.732z"></path></svg>
+                                    </button>
+                                    ${enlaceBtnHtml}
+                                    <button class="delete-account-btn p-1 text-red-600 hover:text-red-800 hover:bg-red-100 rounded-full transition" data-id="${account.id}" title="Eliminar">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                                     </button>
                                 </div>
-                            `;
-                            selectors.alertsSection.appendChild(card);
-                        });
-                    } else {
-                        selectors.alertsSection.className = 'space-y-3';
-                        selectors.alertsSection.innerHTML = '<p class="text-gray-500">No hay alertas de vencimiento.</p>';
-                    }
+                            </li>`;
+                    }).join('');
 
-                    // 5. Resumen Financiero
-                    const totalIngresos = allSales.reduce((sum, sale) => sum + (sale.precio || 0), 0);
-                    const totalEgresos = allExpenses.reduce((sum, expense) => sum + (expense.amount || 0), 0);
-                    const balance = totalIngresos - totalEgresos;
-                    selectors.summaryIngresos.textContent = formatCurrency(totalIngresos);
-                    selectors.summaryEgresos.textContent = formatCurrency(totalEgresos);
-                    selectors.summaryBalance.textContent = formatCurrency(balance);
-                    selectors.summaryBalance.classList.toggle('text-red-900', balance < 0);
-                    selectors.summaryBalance.classList.toggle('text-blue-900', balance >= 0);
-
-                    // Attach event listeners for copy buttons after rendering
-                    selectors.alertsSection.querySelectorAll('.copy-alert-btn').forEach(btn => {
-                        btn.addEventListener('click', handleCopyAlert);
-                    });
-                };
-
-                const handleCopyAlert = (event) => {
-                    const button = event.currentTarget;
-                    const saleId = button.dataset.saleId;
-                    const sale = allSales.find(s => s.id === saleId);
-                    if (!sale) return;
-
-                    const status = getSaleStatus(sale.finPlan);
-                    let message = '';
-
-                    if (status === 'Vencido') {
-                        message = `Buenas tardes 👋🏻, se le informa que su cuenta de "${sale.plataforma}" ya venció. Si desea renovar me avisa, por favor, para evitar el corte del servicio. Gracias por su preferencia 💯`;
-                    } else if (status === 'Vence hoy') {
-                        message = `Buenas tardes 👋🏻, se le informa que su cuenta de "${sale.plataforma}" vence el día de hoy a la medianoche ‼. Si desea renovar me avisa, por favor. Gracias por su preferencia 💯`;
-                    } else { // Próximo a Vencer
-                        const daysLeft = dayjs(sale.finPlan).endOf('day').diff(dayjs(), 'day');
-                        const dayText = daysLeft === 0 ? 'mañana' : `en ${daysLeft + 1} días`;
-                        message = `Buenas tardes 👋🏻, se le informa que su cuenta de "${sale.plataforma}" vence ${dayText}. Si desea renovar me avisa, por favor. Gracias por su preferencia 💯`;
-                    }
-
-                    navigator.clipboard.writeText(message).then(() => {
-                        const originalText = button.textContent;
-                        button.textContent = '¡Copiado!';
-                        button.classList.add('bg-green-500', 'text-white');
-                        setTimeout(() => {
-                            button.textContent = originalText;
-                            button.classList.remove('bg-green-500', 'text-white');
-                        }, 2000);
-                    }).catch(err => {
-                        console.error('Error al copiar texto: ', err);
-                        alert('No se pudo copiar el texto.');
-                    });
-                };
-
-                const applyFiltersAndRender = (salesToRender) => {
-                    let filteredSales = [...salesToRender];
-                    if (activePlatformFilter !== 'Todos') {
-                        filteredSales = filteredSales.filter(sale => sale.plataforma === activePlatformFilter);
-                    }
-                    if (currentSearchTerm) {
-                        const term = currentSearchTerm.toLowerCase();
-                        filteredSales = filteredSales.filter(sale => sale.cliente.toLowerCase().includes(term) || sale.plataforma.toLowerCase().includes(term) || (sale.correo && sale.correo.toLowerCase().includes(term)));
-                    }
-                    if (activeAccountFilter) {
-                        const account = allPlatformAccounts.find(a => a.id === activeAccountFilter);
-                        if (account) {
-                            filteredSales = filteredSales.filter(sale => sale.correo === account.email && sale.contrasena === account.password);
-                        }
-                    }
-                    if (activeStatusFilter) {
-                        filteredSales = filteredSales.filter(sale => getSaleStatus(sale.finPlan) === activeStatusFilter);
-                    }
-                    renderSales(filteredSales);
-                };
-                const renderPlatformFilters = () => {
-                    selectors.platformFilters.innerHTML = '';
-                    const platforms = ['Todos', ...Object.keys(platformStyles)];
-                    platforms.forEach(platform => {
-                        const btn = document.createElement('button');
-                        btn.dataset.platform = platform;
-                        const activeClasses = 'border-indigo-500 bg-indigo-50';
-                        const inactiveClasses = 'border-transparent hover:bg-gray-100';
-                        btn.className = `p-2 rounded-lg border-2 transition-all duration-200 font-semibold ${activePlatformFilter === platform ? activeClasses : inactiveClasses}`;
-                        if (platform === 'Todos') {
-                            btn.textContent = 'Todos';
-                        } else {
-                            btn.innerHTML = getPlatformHtml(platform);
-                        }
-                        btn.addEventListener('click', () => {
-                            activePlatformFilter = platform;
-                            document.querySelectorAll('#platform-filters button').forEach(b => {
-                                b.className = `p-2 rounded-lg border-2 transition-all duration-200 font-semibold ${inactiveClasses}`;
-                            });
-                            btn.className = `p-2 rounded-lg border-2 transition-all duration-200 font-semibold ${activeClasses}`;
-                            const activeSales = allSales.filter(sale => sale.estado !== 'ARCHIVADO');
-                            applyFiltersAndRender(activeSales);
-                        });
-                        selectors.platformFilters.appendChild(btn);
-                    });
-                };
-                const renderAccountPlatformButtons = () => {
-                    const platformNames = Object.keys(platformStyles).filter(p => p !== 'Otro');
-                    selectors.accountPlatformButtons.innerHTML = '';
-                    platformNames.forEach(name => {
-                        const btn = document.createElement('button');
-                        btn.type = 'button';
-                        btn.textContent = name;
-                        btn.dataset.platformName = name;
-                        btn.className = 'px-3 py-1.5 border border-gray-300 rounded-md text-sm font-medium hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500';
-                        btn.addEventListener('click', () => {
-                            // Update hidden input
-                            selectors.addAccountForm['account-platform'].value = name;
-                            // Update button styles
-                            document.querySelectorAll('#account-platform-buttons button').forEach(b => b.classList.remove('bg-indigo-600', 'text-white', 'border-indigo-600'));
-                            btn.classList.add('bg-indigo-600', 'text-white', 'border-indigo-600');
-                        });
-                        selectors.accountPlatformButtons.appendChild(btn);
-                    });
-                };
-                const renderSales = (sales) => {
-                    selectors.salesList.innerHTML = '';
-                    const parentContainer = document.querySelector('.bg-white.rounded-2xl.shadow-lg.p-4');
-                    if (allSales.length === 0) {
-                        selectors.emptyState.classList.remove('hidden');
-                        parentContainer.classList.add('hidden'); // Ocultar el contenedor de la lista si no hay ventas
-                        return;
-                    }
-                    selectors.emptyState.classList.add('hidden');
-                    parentContainer.classList.remove('hidden');
-
-                    if (sales.length === 0) {
-                        selectors.salesList.innerHTML = `<p class="text-gray-500 text-center col-span-7 py-4">No se encontraron ventas que coincidan.</p>`;
-                        return;
-                    }
-
-                    sales.forEach(sale => {
-                        const statusText = getSaleStatus(sale.finPlan);
-                        const statusInfo = {
-                            'Vencido': { color: 'orange' },
-                            'Vence hoy': { color: 'red' },
-                            'Próximo a Vencer': { color: 'yellow' },
-                            'Activo': { color: 'green' }
-                        }[statusText];
-
-                        const endDateForDisplay = dayjs(sale.finPlan);
-                        const endDateForRelative = dayjs(sale.finPlan).endOf('day');
-
-                        const row = document.createElement('div');
-                        row.className = `grid grid-cols-2 md:grid-cols-7 gap-4 items-center p-3 rounded-lg hover:bg-gray-50 transition-colors duration-200 border-b text-sm`;
-
-                        row.innerHTML = `
-                            <div class="col-span-2 font-semibold text-gray-800">
-                                ${sale.cliente}
-                                <div class="font-normal text-xs text-gray-500 md:hidden mt-1">
-                                    ${getPlatformHtml(sale.plataforma)} &middot; Vence: ${endDateForDisplay.format('DD/MM/YYYY')}
-                                </div>
+                    const cardHtml = `
+                        <div class="bg-white rounded-2xl shadow-lg mb-6 overflow-hidden border border-gray-200">
+                            <div class="px-4 py-3 border-b border-gray-200" style="background-color: ${platformStyle.bg};">
+                                <h3 class="text-lg font-semibold text-white">${platform}</h3>
                             </div>
-                            <div class="hidden md:block">${getPlatformHtml(sale.plataforma)}</div>
-                            <div class="hidden md:block">${endDateForDisplay.format('DD/MM/YYYY')} <span class="text-xs text-gray-500">(${endDateForRelative.fromNow()})</span></div>
-                            <div class="hidden md:block"><span class="text-xs font-semibold py-1 px-2 uppercase rounded-full text-${statusInfo.color}-600 bg-${statusInfo.color}-100">${statusText}</span></div>
-                            <div class="hidden md:block font-bold text-gray-800">${formatCurrency(sale.precio)}</div>
-                            <div class="flex justify-end gap-3 items-center">
-                                <button class="edit-btn p-1 text-indigo-600 hover:text-indigo-800 hover:bg-indigo-100 rounded-full transition" data-id="${sale.id}" title="Editar">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L16.732 3.732z"></path></svg>
-                                </button>
-                                <button class="renew-btn p-1 text-green-600 hover:text-green-800 hover:bg-green-100 rounded-full transition" data-id="${sale.id}" title="Renovar">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h5M20 20v-5h-5M4 20h5v-5M20 4h-5v5"></path></svg>
-                                </button>
-                                <button class="delete-btn p-1 text-red-600 hover:text-red-800 hover:bg-red-100 rounded-full transition" data-id="${sale.id}" title="Eliminar">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                                </button>
-                            </div>
-                            <div class="md:hidden col-span-2 mt-2 pt-2 border-t flex justify-between items-center text-xs">
-                                <span class="font-semibold py-1 px-2 uppercase rounded-full text-${statusInfo.color}-600 bg-${statusInfo.color}-100">${statusText}</span>
-                                <span class="font-bold text-gray-800 text-base">${formatCurrency(sale.precio)}</span>
-                            </div>
-                        `;
-                        selectors.salesList.appendChild(row);
-                    });
+                            <ul class="divide-y divide-gray-200">
+                                ${listItems}
+                            </ul>
+                        </div>
+                    `;
+                    accountsList.innerHTML += cardHtml;
+                }
 
-                    selectors.salesList.querySelectorAll('.edit-btn').forEach(b => b.addEventListener('click', e => handleEdit(e.currentTarget.dataset.id)));
-                    selectors.salesList.querySelectorAll('.delete-btn').forEach(b => b.addEventListener('click', e => handleDeleteSale(e.currentTarget.dataset.id)));
-                    selectors.salesList.querySelectorAll('.renew-btn').forEach(b => b.addEventListener('click', e => openRenewalModal(e.currentTarget.dataset.id)));
-                };
-                const renderExpenses = () => { selectors.expensesList.innerHTML = ''; if (allExpenses.length === 0) { selectors.expensesList.innerHTML = '<p class="text-sm text-gray-400">No hay egresos registrados.</p>'; return; } allExpenses.forEach(expense => { const item = document.createElement('div'); item.className = 'flex justify-between items-center text-sm p-2 rounded-md hover:bg-gray-50'; item.innerHTML = `<div class="flex-1 truncate pr-2"><p class="text-gray-700">${expense.description}</p><p class="text-xs text-gray-500">${dayjs(expense.date).format('DD/MM/YYYY')}</p></div><div class="flex items-center gap-2"><span class="font-semibold text-red-600">${formatCurrency(expense.amount)}</span><button class="delete-expense-btn text-gray-400 hover:text-red-600" data-id="${expense.id}"><svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm4 0a1 1 0 012 0v6a1 1 0 11-2 0V8z" clip-rule="evenodd"></path></svg></button></div>`; selectors.expensesList.appendChild(item); }); selectors.expensesList.querySelectorAll('.delete-expense-btn').forEach(b => b.addEventListener('click', e => handleDeleteExpense(e.currentTarget.dataset.id))); };
-                const renderPlatformAccounts = () => {
-                    const { accountsList } = selectors;
-                    accountsList.innerHTML = '';
-
-                    if (allPlatformAccounts.length === 0) {
-                        accountsList.innerHTML = '<p class="text-sm text-gray-400">No hay cuentas de plataforma registradas.</p>';
-                        return;
-                    }
-
-                    // 1. Group accounts by platform
-                    const groupedAccounts = allPlatformAccounts.reduce((acc, account) => {
-                        const { platform } = account;
-                        if (!acc[platform]) {
-                            acc[platform] = [];
-                        }
-                        acc[platform].push(account);
-                        return acc;
-                    }, {});
-
-                    // 2. Iterate and render each group
-                    for (const platform in groupedAccounts) {
-                        const accounts = groupedAccounts[platform];
-                        const platformStyle = platformStyles[platform] || platformStyles['Otro'];
-
-                        const listItems = accounts.map(account => {
-                            const fechaPagoHtml = account.fechaPago
-                                ? `<small class="text-gray-500 mt-1 block">Próx. Pago: ${dayjs(account.fechaPago).format('DD/MM/YYYY')}</small>`
-                                : '';
-
-                            const enlaceBtnHtml = account.enlace
-                                ? `<a href="${account.enlace}" target="_blank" class="p-1 text-blue-600 hover:text-blue-800 hover:bg-blue-100 rounded-full transition" title="Abrir enlace">
-                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
-                                   </a>`
-                                : '';
-
-                            return `
-                                <li class="list-group-item flex flex-col md:flex-row justify-between items-start md:items-center py-3 px-4">
-                                    <div class="mb-2 md:mb-0">
-                                        <span class="font-semibold text-gray-800 break-all">${account.email}</span>
-                                        ${fechaPagoHtml}
-                                    </div>
-                                    <div class="flex items-center gap-2 self-end md:self-center">
-                                        <input type="password" value="${account.password}" class="w-40 bg-gray-100 border-gray-200 text-sm rounded-md px-2 py-1" readonly>
-                                        <button class="toggle-password-btn p-1 text-gray-500 hover:text-gray-800 hover:bg-gray-200 rounded-full transition" title="Mostrar/Ocultar contraseña">
-                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
-                                        </button>
-                                        ${enlaceBtnHtml}
-                                        <button class="edit-account-btn p-1 text-indigo-600 hover:text-indigo-800 hover:bg-indigo-100 rounded-full transition" data-id="${account.id}" title="Editar Cuenta">
-                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L16.732 3.732z"></path></svg>
-                                        </button>
-                                        <button class="delete-account-btn p-1 text-red-600 hover:text-red-800 hover:bg-red-100 rounded-full transition" data-id="${account.id}" title="Eliminar">
-                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                                        </button>
-                                    </div>
-                                </li>`;
-                        }).join('');
-
-                        const cardHtml = `
-                            <div class="bg-white rounded-2xl shadow-lg mb-6 overflow-hidden border border-gray-200">
-                                <div class="px-4 py-3 border-b border-gray-200" style="background-color: ${platformStyle.bg};">
-                                    <h3 class="text-lg font-semibold text-white">${platform}</h3>
-                                </div>
-                                <ul class="divide-y divide-gray-200">
-                                    ${listItems}
-                                </ul>
-                            </div>
-                        `;
-                        accountsList.innerHTML += cardHtml;
-                    }
-
-                    // 3. Add Event Listeners after rendering
-                    accountsList.querySelectorAll('.delete-account-btn').forEach(btn => {
-                        btn.addEventListener('click', e => handleDeleteAccount(e.currentTarget.dataset.id));
-                    });
-                     accountsList.querySelectorAll('.edit-account-btn').forEach(btn => {
-                        btn.addEventListener('click', e => handleEditAccount(e.currentTarget.dataset.id));
-                    });
-
-                    accountsList.querySelectorAll('.toggle-password-btn').forEach(btn => {
-                        btn.addEventListener('click', (e) => {
-                            const button = e.currentTarget;
-                            const passwordInput = button.previousElementSibling;
-                            const icon = button.querySelector('svg');
-
-                            if (passwordInput && passwordInput.tagName === 'INPUT') {
-                                if (passwordInput.type === 'password') {
-                                    passwordInput.type = 'text';
-                                    icon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7 .946-3.11 3.563-5.522 6.837-6.141M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.581 10.41A7.48 7.48 0 0119.542 12c-1.274 4.057-5.064 7-9.542 7a10.046 10.046 0 01-3.132-.475M2.458 12c.946-3.11 3.563-5.522 6.837-6.141m1.581 2.318A4.5 4.5 0 0115 12a4.5 4.5 0 01-1.07 2.828M5 5l14 14" />`;
-                                } else {
-                                    passwordInput.type = 'password';
-                                    icon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />`;
-                                }
-                            }
-                        });
-                    });
-                };
-
-                const populatePlatformAccountsDropdowns = (platform = null) => {
-                    let accountsToDisplay = allPlatformAccounts;
-                    if (platform && platform !== 'Otro') {
-                        accountsToDisplay = allPlatformAccounts.filter(acc => acc.platform === platform);
-                    }
-
-                    const createOption = (account) => `<option value="${account.id}">${account.platform} - ${account.email}</option>`;
-                    const options = accountsToDisplay.map(createOption).join('');
-
-                    // For the "Add Sale" form
-                    selectors.platformAccountSelect.innerHTML = `<option value="">Sin cuenta / Ingresar manualmente</option>${options}`;
-
-                    // For the "Edit Sale" form - we might need to show all for existing sales
-                    const allOptions = allPlatformAccounts.map(createOption).join('');
-                    selectors.editPlatformAccountSelect.innerHTML = `<option value="">Sin cuenta / Ingresar manualmente</option>${allOptions}`;
-
-                    // For the general filter, always show all
-                    selectors.accountFilter.innerHTML = `<option value="">Filtrar por cuenta...</option>${allOptions}`;
-                };
-
-                const handlePlatformAccountChange = (select, emailInput, passwordInput, credentialsContainer) => {
-                    const accountId = select.value;
-                    const account = allPlatformAccounts.find(a => a.id === accountId);
-                    if (account) {
-                        emailInput.value = account.email;
-                        passwordInput.value = account.password;
-                        credentialsContainer.forEach(el => el.classList.add('hidden'));
-                    } else {
-                        emailInput.value = '';
-                        passwordInput.value = '';
-                        credentialsContainer.forEach(el => el.classList.remove('hidden'));
-                    }
-                };
-                const handleEdit = (id) => { const sale = allSales.find(s => s.id === id); if(!sale) return; const f = selectors.editForm; f['edit-sale-id'].value = sale.id; f['edit-cliente'].value = sale.cliente; f['edit-precio'].value = sale.precio; f['edit-inicioPlan'].value = sale.inicioPlan; f['edit-finPlan'].value = sale.finPlan; f['edit-correo'].value = sale.correo || ''; f['edit-contrasena'].value = sale.contrasena || ''; f['edit-pin'].value = sale.pin || ''; f['edit-notas'].value = sale.notas || ''; const standardPlatforms = Array.from(f['edit-plataforma'].options).map(o => o.value); if (standardPlatforms.includes(sale.plataforma)) { f['edit-plataforma'].value = sale.plataforma; } else { f['edit-plataforma'].value = 'Otro'; selectors.editOtroPlataformaInput.value = sale.plataforma; } handlePlatformChange(selectors.editPlataformaSelect, selectors.editOtroPlataformaContainer, selectors.editOtroPlataformaInput); openModal(); };
-                const openRenewalModal = (saleId) => {
-                    const sale = allSales.find(s => s.id === saleId);
-                    if (!sale) return;
-
-                    const modal = document.getElementById('renewal-modal');
-                    const form = document.getElementById('renewal-form');
-
-                    form['renewal-sale-id'].value = sale.id;
-                    form['renewal-amount'].value = sale.precio.toFixed(2);
-                    form['renewal-days'].value = 30; // Default a 30 días
-
-                    modal.classList.remove('hidden');
-                    setTimeout(() => {
-                        modal.classList.remove('opacity-0');
-                        modal.querySelector('.modal-content').classList.remove('scale-95');
-                    }, 10);
-                };
-
-                const closeRenewalModal = () => {
-                    const modal = document.getElementById('renewal-modal');
-                    modal.classList.add('opacity-0');
-                    modal.querySelector('.modal-content').classList.add('scale-95');
-                    setTimeout(() => {
-                        modal.classList.add('hidden');
-                        document.getElementById('renewal-form').reset();
-                    }, 300);
-                };
-
-                const handleRenew = async (id) => {
-                    const originalSale = allSales.find(s => s.id === id);
-                    if (!originalSale) {
-                        alert('Error: No se encontró la venta original.');
-                        return;
-                    }
-
-                    // Archivar la venta original
-                    await updateDoc(doc(db, "sales", id), { estado: 'ARCHIVADO' });
-
-                    // Crear una nueva venta
-                    const renewalDays = parseInt(document.getElementById('renewal-days').value, 10);
-                    const renewalAmount = parseFloat(document.getElementById('renewal-amount').value);
-
-                    if (isNaN(renewalDays) || isNaN(renewalAmount) || renewalDays <= 0) {
-                        alert('Por favor, ingresa un número de días y un monto válidos.');
-                        return;
-                    }
-
-                    const today = dayjs();
-                    const currentEndDate = dayjs(originalSale.finPlan);
-
-                    let newEndDate;
-                    if (currentEndDate.isAfter(today)) {
-                        // Caso A: Suscripción activa - sumar a la fecha de fin existente
-                        newEndDate = currentEndDate.add(renewalDays, 'day');
-                    } else {
-                        // Caso B: Suscripción vencida - sumar a la fecha de hoy
-                        newEndDate = today.add(renewalDays, 'day');
-                    }
-
-                    const newSale = {
-                        ...originalSale, // Copiar datos originales
-                        precio: renewalAmount,
-                        inicioPlan: dayjs().format('YYYY-MM-DD'), // El inicio es hoy
-                        finPlan: newEndDate.format('YYYY-MM-DD'),
-                        estado: 'ACTIVO', // Asegurarse de que el estado sea activo
-                        createdAt: new Date().toISOString()
-                    };
-                    delete newSale.id; // Eliminar el ID para que Firestore genere uno nuevo
-
-                    try {
-                        await addDoc(collection(db, "sales"), newSale);
-                        closeRenewalModal();
-                    } catch (error) {
-                        console.error("Error al crear la nueva venta de renovación:", error);
-                        // Opcional: Revertir el archivado si la creación falla
-                        await updateDoc(doc(db, "sales", id), { estado: 'ACTIVO' });
-                        alert('Hubo un error al procesar la renovación.');
-                    }
-                };
-                const handlePermanentDeleteAction = async (id) => {
-                    try {
-                        await deleteDoc(doc(db, "sales", id));
-                        hideArchiveDeleteModal();
-                    } catch (e) {
-                        console.error("Error deleting sale: ", e);
-                        alert('Error al eliminar la venta.');
-                        hideArchiveDeleteModal();
-                    }
-                };
-
-                const handleArchiveAction = async (id) => {
-                    try {
-                        await updateDoc(doc(db, "sales", id), { estado: 'ARCHIVADO' });
-                        hideArchiveDeleteModal();
-                    } catch (e) {
-                        console.error("Error archiving sale: ", e);
-                        alert('Error al archivar la venta.');
-                        hideArchiveDeleteModal();
-                    }
-                };
-                 const openEditAccountModal = () => {
-                    selectors.editAccountModal.classList.remove('hidden');
-                    setTimeout(() => {
-                        selectors.editAccountModal.classList.remove('opacity-0');
-                        selectors.editAccountModal.querySelector('.modal-content').classList.remove('scale-95');
-                    }, 10);
-                };
-
-                const closeEditAccountModal = () => {
-                    selectors.editAccountModal.classList.add('opacity-0');
-                    selectors.editAccountModal.querySelector('.modal-content').classList.add('scale-95');
-                    setTimeout(() => selectors.editAccountModal.classList.add('hidden'), 300);
-                };
-                 const handleEditAccount = (id) => {
-                    const account = allPlatformAccounts.find(acc => acc.id === id);
-                    if (!account) return;
-
-                    const form = selectors.editAccountForm;
-                    form['edit-account-id'].value = account.id;
-                    form['edit-account-platform'].value = account.platform;
-                    form['edit-account-email'].value = account.email;
-                    form['edit-account-enlace'].value = account.enlace || '';
-                    form['edit-account-fechaPago'].value = account.fechaPago || '';
-                    form['edit-account-password'].value = ''; // Clear password field for security
-
-                    openEditAccountModal();
-                };
-
-                const handleDeleteSale = (id) => showArchiveDeleteModal(id);
-                const handleDeleteExpense = (id) => {
-                    showConfirmationModal(
-                        'Eliminar Gasto',
-                        '¿Estás seguro de que quieres eliminar este gasto? Esta acción no se puede deshacer.',
-                        () => {
-                            deleteDoc(doc(db, "expenses", id)).catch(e => console.error(e));
-                        }
-                    );
-                };
-                const handleDeleteAccount = (id) => {
-                    showConfirmationModal(
-                        'Eliminar Cuenta',
-                        '¿Estás seguro de que quieres eliminar esta cuenta de plataforma? Esto no afectará a las ventas ya registradas.',
-                        () => {
-                            deleteDoc(doc(db, "platformAccounts", id)).catch(e => console.error(e));
-                        }
-                    );
-                };
-                onSnapshot(collection(db, "sales"), (snapshot) => {
-                    allSales = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
-                    const activeSales = allSales.filter(sale => sale.estado !== 'ARCHIVADO');
-                    activeSales.sort((a, b) => new Date(a.finPlan) - new Date(b.finPlan));
-                    selectors.loadingState.classList.add('hidden');
-                    if (activeSales.length === 0) {
-                        selectors.emptyState.classList.remove('hidden');
-                    } else {
-                        selectors.emptyState.classList.add('hidden');
-                    }
-                    renderPlatformFilters();
-                    renderAccountPlatformButtons();
-                    applyFiltersAndRender(activeSales); // Pass the filtered list
-                    updateFinancialSummary(); // This will still use allSales to include archived in totals
-                    loadDashboardData();
-                }, (e) => {
-                    console.error("Error al cargar ventas:", e);
+                // 3. Add Event Listeners after rendering
+                accountsList.querySelectorAll('.delete-account-btn').forEach(btn => {
+                    btn.addEventListener('click', e => handleDeleteAccount(e.currentTarget.dataset.id));
                 });
-                onSnapshot(collection(db, "expenses"), (snapshot) => { allExpenses = snapshot.docs.map(d => ({ id: d.id, ...d.data() })); allExpenses.sort((a, b) => new Date(b.date) - new Date(a.date)); renderExpenses(); updateFinancialSummary(); loadDashboardData(); }, (e) => { console.error("Error al cargar egresos:", e); });
-                onSnapshot(collection(db, "platformAccounts"), (snapshot) => { allPlatformAccounts = snapshot.docs.map(d => ({ id: d.id, ...d.data() })); renderPlatformAccounts(); populatePlatformAccountsDropdowns(); }, (e) => { console.error("Error al cargar cuentas:", e); });
-                selectors.addSaleForm.addEventListener('submit', async (e) => { e.preventDefault(); const f = selectors.addSaleForm; const newSale = { cliente: f.cliente.value, plataforma: f.plataforma.value === 'Otro' ? selectors.otroPlataformaInput.value : f.plataforma.value, precio: parseFloat(f.precio.value), inicioPlan: f.inicioPlan.value, finPlan: f.finPlan.value, correo: f.correo.value, contrasena: f.contrasena.value, pin: f.pin.value, notas: f.notas.value, createdAt: new Date().toISOString() }; try { await addDoc(collection(db, "sales"), newSale); f.reset(); handlePlatformChange(selectors.plataformaSelect, selectors.otroPlataformaContainer, selectors.otroPlataformaInput); } catch (err) { console.error("Error al guardar venta:", err); alert("Error al guardar la venta. Revisa la consola (F12).") } });
-                selectors.editForm.addEventListener('submit', async (e) => { e.preventDefault(); const f = selectors.editForm; const id = f['edit-sale-id'].value; const updated = { cliente: f['edit-cliente'].value, plataforma: f['edit-plataforma'].value === 'Otro' ? selectors.editOtroPlataformaInput.value : f['edit-plataforma'].value, precio: parseFloat(f['edit-precio'].value), inicioPlan: f['edit-inicioPlan'].value, finPlan: f['edit-finPlan'].value, correo: f['edit-correo'].value, contrasena: f['edit-contrasena'].value, pin: f['edit-pin'].value, notas: f['edit-notas'].value, }; try { await updateDoc(doc(db, "sales", id), updated); closeModal(); } catch (err) { console.error("Error al actualizar la venta:", err); alert("Error al actualizar la venta. Revisa la consola (F12).") } });
-                selectors.addExpenseForm.addEventListener('submit', async (e) => { e.preventDefault(); const f = selectors.addExpenseForm; const description = f['expense-description'].value; const amount = parseFloat(f['expense-amount'].value); const date = f['expense-date'].value; if (!description || !date || isNaN(amount) || amount <= 0) return; try { await addDoc(collection(db, "expenses"), { description, amount, date }); f.reset(); f['expense-date'].value = dayjs().format('YYYY-MM-DD'); } catch (err) { console.error("Error al añadir egreso:", err); } });
-                selectors.addAccountForm.addEventListener('submit', async (e) => { e.preventDefault(); const f = selectors.addAccountForm; const newAccount = { platform: f['account-platform'].value, email: f['account-email'].value, password: f['account-password'].value, enlace: f.enlace.value, fechaPago: f.fechaPago.value }; try { await addDoc(collection(db, "platformAccounts"), newAccount); f.reset(); document.querySelectorAll('#account-platform-buttons button').forEach(b => b.classList.remove('bg-indigo-600', 'text-white', 'border-indigo-600')); } catch (err) { console.error("Error al guardar cuenta:", err); } });
-                selectors.searchInput.addEventListener('input', e => {
-                    currentSearchTerm = e.target.value;
-                    const activeSales = allSales.filter(sale => sale.estado !== 'ARCHIVADO');
-                    applyFiltersAndRender(activeSales);
-                });
-                selectors.accountFilter.addEventListener('change', e => {
-                    activeAccountFilter = e.target.value;
-                    const activeSales = allSales.filter(sale => sale.estado !== 'ARCHIVADO');
-                    applyFiltersAndRender(activeSales);
-                });
-                selectors.statusFilter.addEventListener('change', e => {
-                    activeStatusFilter = e.target.value;
-                    const activeSales = allSales.filter(sale => sale.estado !== 'ARCHIVADO');
-                    applyFiltersAndRender(activeSales);
-                });
-                selectors.plataformaSelect.addEventListener('change', () => {
-                    handlePlatformChange(selectors.plataformaSelect, selectors.otroPlataformaContainer, selectors.otroPlataformaInput);
-                    populatePlatformAccountsDropdowns(selectors.plataformaSelect.value);
-                });
-                selectors.editPlataformaSelect.addEventListener('change', () => {
-                    handlePlatformChange(selectors.editPlataformaSelect, selectors.editOtroPlataformaContainer, selectors.editOtroPlataformaInput);
-                    // We don't filter the edit form dropdown to avoid issues with existing data
-                });
-                selectors.closeModalBtn.addEventListener('click', closeModal);
-                selectors.cancelEditBtn.addEventListener('click', closeModal);
-
-                document.getElementById('renewal-form').addEventListener('submit', (e) => {
-                    e.preventDefault();
-                    const saleId = document.getElementById('renewal-sale-id').value;
-                    handleRenew(saleId);
+                 accountsList.querySelectorAll('.edit-account-btn').forEach(btn => {
+                    btn.addEventListener('click', e => handleEditAccount(e.currentTarget.dataset.id));
                 });
 
-                document.getElementById('cancel-renewal-btn').addEventListener('click', closeRenewalModal);
-                selectors.platformAccountSelect.addEventListener('change', () => handlePlatformAccountChange(selectors.platformAccountSelect, selectors.addSaleForm.correo, selectors.addSaleForm.contrasena, document.querySelectorAll('.manual-credentials')));
-                selectors.editPlatformAccountSelect.addEventListener('change', () => handlePlatformAccountChange(selectors.editPlatformAccountSelect, selectors.editForm['edit-correo'], selectors.editForm['edit-contrasena'], document.querySelectorAll('.edit-manual-credentials')));
-                 selectors.editAccountForm.addEventListener('submit', async (e) => {
-                    e.preventDefault();
-                    const form = selectors.editAccountForm;
-                    const id = form['edit-account-id'].value;
-                    const account = allPlatformAccounts.find(acc => acc.id === id);
-                    if (!account) return;
+                accountsList.querySelectorAll('.toggle-password-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const button = e.currentTarget;
+                        const passwordInput = button.previousElementSibling;
+                        const icon = button.querySelector('svg');
 
-                    const updatedData = {
-                        email: form['edit-account-email'].value,
-                        enlace: form['edit-account-enlace'].value,
-                        fechaPago: form['edit-account-fechaPago'].value,
-                    };
-
-                    const newPassword = form['edit-account-password'].value;
-                    if (newPassword) {
-                        updatedData.password = newPassword;
-                    }
-
-                    try {
-                        await updateDoc(doc(db, "platformAccounts", id), updatedData);
-                        closeEditAccountModal();
-                    } catch (err) {
-                        console.error("Error al actualizar la cuenta:", err);
-                        alert("Error al actualizar la cuenta. Revisa la consola (F12).");
-                    }
-                });
-
-                selectors.closeEditAccountModalBtn.addEventListener('click', closeEditAccountModal);
-                selectors.cancelEditAccountBtn.addEventListener('click', closeEditAccountModal);
-                const diasPlanInput = document.getElementById('diasPlan'); const inicioPlanInput = document.getElementById('inicioPlan'); const finPlanInput = document.getElementById('finPlan'); const calculateDateBtn = document.getElementById('calculate-date-btn');
-                const editFinPlanInput = document.getElementById('edit-finPlan');
-
-
-                calculateDateBtn.addEventListener('click', () => {
-                    const days = parseInt(diasPlanInput.value, 10);
-                    const startDate = inicioPlanInput.value;
-                    if (!isNaN(days) && startDate) {
-                        const newEndDate = dayjs(startDate).add(days, 'day').format('YYYY-MM-DD');
-                        finPlanInput.value = newEndDate;
-                    }
-                });
-
-                // Set default expense date
-                document.getElementById('expense-date').value = dayjs().format('YYYY-MM-DD');
-
-
-                // Navigation logic
-                const navLinks = {
-                    'nav-dashboard': 'Dashboard',
-                    'nav-cuentas': 'Cuentas',
-                    'nav-ventas': 'Ventas',
-                    'nav-finanzas': 'Finanzas'
-                };
-                const views = document.querySelectorAll('.view');
-                const mainHeader = document.getElementById('main-header');
-
-                Object.keys(navLinks).forEach(navId => {
-                    document.getElementById(navId).addEventListener('click', (e) => {
-                        e.preventDefault();
-                        const viewId = `${navLinks[navId].toLowerCase()}-view`;
-
-                        views.forEach(view => {
-                            if (view.id === viewId) {
-                                view.classList.remove('hidden');
+                        if (passwordInput && passwordInput.tagName === 'INPUT') {
+                            if (passwordInput.type === 'password') {
+                                passwordInput.type = 'text';
+                                icon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7 .946-3.11 3.563-5.522 6.837-6.141M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.581 10.41A7.48 7.48 0 0119.542 12c-1.274 4.057-5.064 7-9.542 7a10.046 10.046 0 01-3.132-.475M2.458 12c.946-3.11 3.563-5.522 6.837-6.141m1.581 2.318A4.5 4.5 0 0115 12a4.5 4.5 0 01-1.07 2.828M5 5l14 14" />`;
                             } else {
-                                view.classList.add('hidden');
+                                passwordInput.type = 'password';
+                                icon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />`;
                             }
-                        });
-
-                        mainHeader.textContent = navLinks[navId];
-
-                        // Update active styles for nav links
-                        document.querySelectorAll('nav a').forEach(link => link.classList.remove('bg-gray-700'));
-                        document.getElementById(navId).classList.add('bg-gray-700');
+                        }
                     });
                 });
+            };
 
-                // Set default view
-                document.getElementById('nav-dashboard').click();
+            const populatePlatformAccountsDropdowns = (platform = null) => {
+                let accountsToDisplay = allPlatformAccounts;
+                if (platform && platform !== 'Otro') {
+                    accountsToDisplay = allPlatformAccounts.filter(acc => acc.platform === platform);
+                }
 
-                // Quick Access button listeners
-                document.getElementById('quick-add-sale').addEventListener('click', () => {
-                    document.getElementById('nav-ventas').click();
+                const createOption = (account) => `<option value="${account.id}">${account.platform} - ${account.email}</option>`;
+                const options = accountsToDisplay.map(createOption).join('');
+
+                // For the "Add Sale" form
+                selectors.platformAccountSelect.innerHTML = `<option value="">Sin cuenta / Ingresar manualmente</option>${options}`;
+
+                // For the "Edit Sale" form - we might need to show all for existing sales
+                const allOptions = allPlatformAccounts.map(createOption).join('');
+                selectors.editPlatformAccountSelect.innerHTML = `<option value="">Sin cuenta / Ingresar manualmente</option>${allOptions}`;
+
+                // For the general filter, always show all
+                selectors.accountFilter.innerHTML = `<option value="">Filtrar por cuenta...</option>${allOptions}`;
+            };
+
+            const handlePlatformAccountChange = (select, emailInput, passwordInput, credentialsContainer) => {
+                const accountId = select.value;
+                const account = allPlatformAccounts.find(a => a.id === accountId);
+                if (account) {
+                    emailInput.value = account.email;
+                    passwordInput.value = account.password;
+                    credentialsContainer.forEach(el => el.classList.add('hidden'));
+                } else {
+                    emailInput.value = '';
+                    passwordInput.value = '';
+                    credentialsContainer.forEach(el => el.classList.remove('hidden'));
+                }
+            };
+            const handleEdit = (id) => { const sale = allSales.find(s => s.id === id); if(!sale) return; const f = selectors.editForm; f['edit-sale-id'].value = sale.id; f['edit-cliente'].value = sale.cliente; f['edit-precio'].value = sale.precio; f['edit-inicioPlan'].value = sale.inicioPlan; f['edit-finPlan'].value = sale.finPlan; f['edit-correo'].value = sale.correo || ''; f['edit-contrasena'].value = sale.contrasena || ''; f['edit-pin'].value = sale.pin || ''; f['edit-notas'].value = sale.notas || ''; const standardPlatforms = Array.from(f['edit-plataforma'].options).map(o => o.value); if (standardPlatforms.includes(sale.plataforma)) { f['edit-plataforma'].value = sale.plataforma; } else { f['edit-plataforma'].value = 'Otro'; selectors.editOtroPlataformaInput.value = sale.plataforma; } handlePlatformChange(selectors.editPlataformaSelect, selectors.editOtroPlataformaContainer, selectors.editOtroPlataformaInput); openModal(); };
+            const openRenewalModal = (saleId) => {
+                const sale = allSales.find(s => s.id === saleId);
+                if (!sale) return;
+
+                const modal = document.getElementById('renewal-modal');
+                const form = document.getElementById('renewal-form');
+
+                form['renewal-sale-id'].value = sale.id;
+                form['renewal-amount'].value = sale.precio.toFixed(2);
+                form['renewal-days'].value = 30; // Default a 30 días
+
+                modal.classList.remove('hidden');
+                setTimeout(() => {
+                    modal.classList.remove('opacity-0');
+                    modal.querySelector('.modal-content').classList.remove('scale-95');
+                }, 10);
+            };
+
+            const closeRenewalModal = () => {
+                const modal = document.getElementById('renewal-modal');
+                modal.classList.add('opacity-0');
+                modal.querySelector('.modal-content').classList.add('scale-95');
+                setTimeout(() => {
+                    modal.classList.add('hidden');
+                    document.getElementById('renewal-form').reset();
+                }, 300);
+            };
+
+            const handleRenew = async (id) => {
+                const originalSale = allSales.find(s => s.id === id);
+                if (!originalSale) {
+                    alert('Error: No se encontró la venta original.');
+                    return;
+                }
+
+                // Archivar la venta original
+                await updateDoc(doc(db, "sales", id), { estado: 'ARCHIVADO' });
+
+                // Crear una nueva venta
+                const renewalDays = parseInt(document.getElementById('renewal-days').value, 10);
+                const renewalAmount = parseFloat(document.getElementById('renewal-amount').value);
+
+                if (isNaN(renewalDays) || isNaN(renewalAmount) || renewalDays <= 0) {
+                    alert('Por favor, ingresa un número de días y un monto válidos.');
+                    return;
+                }
+
+                const today = dayjs();
+                const currentEndDate = dayjs(originalSale.finPlan);
+
+                let newEndDate;
+                if (currentEndDate.isAfter(today)) {
+                    // Caso A: Suscripción activa - sumar a la fecha de fin existente
+                    newEndDate = currentEndDate.add(renewalDays, 'day');
+                } else {
+                    // Caso B: Suscripción vencida - sumar a la fecha de hoy
+                    newEndDate = today.add(renewalDays, 'day');
+                }
+
+                const newSale = {
+                    ...originalSale, // Copiar datos originales
+                    precio: renewalAmount,
+                    inicioPlan: dayjs().format('YYYY-MM-DD'), // El inicio es hoy
+                    finPlan: newEndDate.format('YYYY-MM-DD'),
+                    estado: 'ACTIVO', // Asegurarse de que el estado sea activo
+                    createdAt: new Date().toISOString()
+                };
+                delete newSale.id; // Eliminar el ID para que Firestore genere uno nuevo
+
+                try {
+                    await addDoc(collection(db, "sales"), newSale);
+                    closeRenewalModal();
+                } catch (error) {
+                    console.error("Error al crear la nueva venta de renovación:", error);
+                    // Opcional: Revertir el archivado si la creación falla
+                    await updateDoc(doc(db, "sales", id), { estado: 'ACTIVO' });
+                    alert('Hubo un error al procesar la renovación.');
+                }
+            };
+            const handlePermanentDeleteAction = async (id) => {
+                try {
+                    await deleteDoc(doc(db, "sales", id));
+                    hideArchiveDeleteModal();
+                } catch (e) {
+                    console.error("Error deleting sale: ", e);
+                    alert('Error al eliminar la venta.');
+                    hideArchiveDeleteModal();
+                }
+            };
+
+            const handleArchiveAction = async (id) => {
+                try {
+                    await updateDoc(doc(db, "sales", id), { estado: 'ARCHIVADO' });
+                    hideArchiveDeleteModal();
+                } catch (e) {
+                    console.error("Error archiving sale: ", e);
+                    alert('Error al archivar la venta.');
+                    hideArchiveDeleteModal();
+                }
+            };
+             const openEditAccountModal = () => {
+                selectors.editAccountModal.classList.remove('hidden');
+                setTimeout(() => {
+                    selectors.editAccountModal.classList.remove('opacity-0');
+                    selectors.editAccountModal.querySelector('.modal-content').classList.remove('scale-95');
+                }, 10);
+            };
+
+            const closeEditAccountModal = () => {
+                selectors.editAccountModal.classList.add('opacity-0');
+                selectors.editAccountModal.querySelector('.modal-content').classList.add('scale-95');
+                setTimeout(() => selectors.editAccountModal.classList.add('hidden'), 300);
+            };
+             const handleEditAccount = (id) => {
+                const account = allPlatformAccounts.find(acc => acc.id === id);
+                if (!account) return;
+
+                const form = selectors.editAccountForm;
+                form['edit-account-id'].value = account.id;
+                form['edit-account-platform'].value = account.platform;
+                form['edit-account-email'].value = account.email;
+                form['edit-account-enlace'].value = account.enlace || '';
+                form['edit-account-fechaPago'].value = account.fechaPago || '';
+                form['edit-account-password'].value = ''; // Clear password field for security
+
+                openEditAccountModal();
+            };
+
+            const handleDeleteSale = (id) => showArchiveDeleteModal(id);
+            const handleDeleteExpense = (id) => {
+                showConfirmationModal(
+                    'Eliminar Gasto',
+                    '¿Estás seguro de que quieres eliminar este gasto? Esta acción no se puede deshacer.',
+                    () => {
+                        deleteDoc(doc(db, "expenses", id)).catch(e => console.error(e));
+                    }
+                );
+            };
+            const handleDeleteAccount = (id) => {
+                showConfirmationModal(
+                    'Eliminar Cuenta',
+                    '¿Estás seguro de que quieres eliminar esta cuenta de plataforma? Esto no afectará a las ventas ya registradas.',
+                    () => {
+                        deleteDoc(doc(db, "platformAccounts", id)).catch(e => console.error(e));
+                    }
+                );
+            };
+            onSnapshot(collection(db, "sales"), (snapshot) => {
+                allSales = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+                const activeSales = allSales.filter(sale => sale.estado !== 'ARCHIVADO');
+                activeSales.sort((a, b) => new Date(a.finPlan) - new Date(b.finPlan));
+                selectors.loadingState.classList.add('hidden');
+                if (activeSales.length === 0) {
+                    selectors.emptyState.classList.remove('hidden');
+                } else {
+                    selectors.emptyState.classList.add('hidden');
+                }
+                renderPlatformFilters();
+                renderAccountPlatformButtons();
+                applyFiltersAndRender(activeSales); // Pass the filtered list
+                updateFinancialSummary(); // This will still use allSales to include archived in totals
+                loadDashboardData();
+            }, (e) => {
+                console.error("Error al cargar ventas:", e);
+            });
+            onSnapshot(collection(db, "expenses"), (snapshot) => { allExpenses = snapshot.docs.map(d => ({ id: d.id, ...d.data() })); allExpenses.sort((a, b) => new Date(b.date) - new Date(a.date)); renderExpenses(); updateFinancialSummary(); loadDashboardData(); }, (e) => { console.error("Error al cargar egresos:", e); });
+            onSnapshot(collection(db, "platformAccounts"), (snapshot) => { allPlatformAccounts = snapshot.docs.map(d => ({ id: d.id, ...d.data() })); renderPlatformAccounts(); populatePlatformAccountsDropdowns(); }, (e) => { console.error("Error al cargar cuentas:", e); });
+            selectors.addSaleForm.addEventListener('submit', async (e) => { e.preventDefault(); const f = selectors.addSaleForm; const newSale = { cliente: f.cliente.value, plataforma: f.plataforma.value === 'Otro' ? selectors.otroPlataformaInput.value : f.plataforma.value, precio: parseFloat(f.precio.value), inicioPlan: f.inicioPlan.value, finPlan: f.finPlan.value, correo: f.correo.value, contrasena: f.contrasena.value, pin: f.pin.value, notas: f.notas.value, createdAt: new Date().toISOString() }; try { await addDoc(collection(db, "sales"), newSale); f.reset(); handlePlatformChange(selectors.plataformaSelect, selectors.otroPlataformaContainer, selectors.otroPlataformaInput); } catch (err) { console.error("Error al guardar venta:", err); alert("Error al guardar la venta. Revisa la consola (F12).") } });
+            selectors.editForm.addEventListener('submit', async (e) => { e.preventDefault(); const f = selectors.editForm; const id = f['edit-sale-id'].value; const updated = { cliente: f['edit-cliente'].value, plataforma: f['edit-plataforma'].value === 'Otro' ? selectors.editOtroPlataformaInput.value : f['edit-plataforma'].value, precio: parseFloat(f['edit-precio'].value), inicioPlan: f['edit-inicioPlan'].value, finPlan: f['edit-finPlan'].value, correo: f['edit-correo'].value, contrasena: f['edit-contrasena'].value, pin: f['edit-pin'].value, notas: f['edit-notas'].value, }; try { await updateDoc(doc(db, "sales", id), updated); closeModal(); } catch (err) { console.error("Error al actualizar la venta:", err); alert("Error al actualizar la venta. Revisa la consola (F12).") } });
+            selectors.addExpenseForm.addEventListener('submit', async (e) => { e.preventDefault(); const f = selectors.addExpenseForm; const description = f['expense-description'].value; const amount = parseFloat(f['expense-amount'].value); const date = f['expense-date'].value; if (!description || !date || isNaN(amount) || amount <= 0) return; try { await addDoc(collection(db, "expenses"), { description, amount, date }); f.reset(); f['expense-date'].value = dayjs().format('YYYY-MM-DD'); } catch (err) { console.error("Error al añadir egreso:", err); } });
+            selectors.addAccountForm.addEventListener('submit', async (e) => { e.preventDefault(); const f = selectors.addAccountForm; const newAccount = { platform: f['account-platform'].value, email: f['account-email'].value, password: f['account-password'].value, enlace: f.enlace.value, fechaPago: f.fechaPago.value }; try { await addDoc(collection(db, "platformAccounts"), newAccount); f.reset(); document.querySelectorAll('#account-platform-buttons button').forEach(b => b.classList.remove('bg-indigo-600', 'text-white', 'border-indigo-600')); } catch (err) { console.error("Error al guardar cuenta:", err); } });
+            selectors.searchInput.addEventListener('input', e => {
+                currentSearchTerm = e.target.value;
+                const activeSales = allSales.filter(sale => sale.estado !== 'ARCHIVADO');
+                applyFiltersAndRender(activeSales);
+            });
+            selectors.accountFilter.addEventListener('change', e => {
+                activeAccountFilter = e.target.value;
+                const activeSales = allSales.filter(sale => sale.estado !== 'ARCHIVADO');
+                applyFiltersAndRender(activeSales);
+            });
+            selectors.statusFilter.addEventListener('change', e => {
+                activeStatusFilter = e.target.value;
+                const activeSales = allSales.filter(sale => sale.estado !== 'ARCHIVADO');
+                applyFiltersAndRender(activeSales);
+            });
+            selectors.plataformaSelect.addEventListener('change', () => {
+                handlePlatformChange(selectors.plataformaSelect, selectors.otroPlataformaContainer, selectors.otroPlataformaInput);
+                populatePlatformAccountsDropdowns(selectors.plataformaSelect.value);
+            });
+            selectors.editPlataformaSelect.addEventListener('change', () => {
+                handlePlatformChange(selectors.editPlataformaSelect, selectors.editOtroPlataformaContainer, selectors.editOtroPlataformaInput);
+                // We don't filter the edit form dropdown to avoid issues with existing data
+            });
+            selectors.closeModalBtn.addEventListener('click', closeModal);
+            selectors.cancelEditBtn.addEventListener('click', closeModal);
+
+            document.getElementById('renewal-form').addEventListener('submit', (e) => {
+                e.preventDefault();
+                const saleId = document.getElementById('renewal-sale-id').value;
+                handleRenew(saleId);
+            });
+
+            document.getElementById('cancel-renewal-btn').addEventListener('click', closeRenewalModal);
+            selectors.platformAccountSelect.addEventListener('change', () => handlePlatformAccountChange(selectors.platformAccountSelect, selectors.addSaleForm.correo, selectors.addSaleForm.contrasena, document.querySelectorAll('.manual-credentials')));
+            selectors.editPlatformAccountSelect.addEventListener('change', () => handlePlatformAccountChange(selectors.editPlatformAccountSelect, selectors.editForm['edit-correo'], selectors.editForm['edit-contrasena'], document.querySelectorAll('.edit-manual-credentials')));
+             selectors.editAccountForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const form = selectors.editAccountForm;
+                const id = form['edit-account-id'].value;
+                const account = allPlatformAccounts.find(acc => acc.id === id);
+                if (!account) return;
+
+                const updatedData = {
+                    email: form['edit-account-email'].value,
+                    enlace: form['edit-account-enlace'].value,
+                    fechaPago: form['edit-account-fechaPago'].value,
+                };
+
+                const newPassword = form['edit-account-password'].value;
+                if (newPassword) {
+                    updatedData.password = newPassword;
+                }
+
+                try {
+                    await updateDoc(doc(db, "platformAccounts", id), updatedData);
+                    closeEditAccountModal();
+                } catch (err) {
+                    console.error("Error al actualizar la cuenta:", err);
+                    alert("Error al actualizar la cuenta. Revisa la consola (F12).");
+                }
+            });
+
+            selectors.closeEditAccountModalBtn.addEventListener('click', closeEditAccountModal);
+            selectors.cancelEditAccountBtn.addEventListener('click', closeEditAccountModal);
+            const diasPlanInput = document.getElementById('diasPlan'); const inicioPlanInput = document.getElementById('inicioPlan'); const finPlanInput = document.getElementById('finPlan'); const calculateDateBtn = document.getElementById('calculate-date-btn');
+            const editFinPlanInput = document.getElementById('edit-finPlan');
+
+
+            calculateDateBtn.addEventListener('click', () => {
+                const days = parseInt(diasPlanInput.value, 10);
+                const startDate = inicioPlanInput.value;
+                if (!isNaN(days) && startDate) {
+                    const newEndDate = dayjs(startDate).add(days, 'day').format('YYYY-MM-DD');
+                    finPlanInput.value = newEndDate;
+                }
+            });
+
+            // Set default expense date
+            document.getElementById('expense-date').value = dayjs().format('YYYY-MM-DD');
+
+
+            // Navigation logic
+            const navLinks = {
+                'nav-dashboard': 'Dashboard',
+                'nav-cuentas': 'Cuentas',
+                'nav-ventas': 'Ventas',
+                'nav-finanzas': 'Finanzas'
+            };
+            const views = document.querySelectorAll('.view');
+            const mainHeader = document.getElementById('main-header');
+
+            Object.keys(navLinks).forEach(navId => {
+                document.getElementById(navId).addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const viewId = `${navLinks[navId].toLowerCase()}-view`;
+
+                    views.forEach(view => {
+                        if (view.id === viewId) {
+                            view.classList.remove('hidden');
+                        } else {
+                            view.classList.add('hidden');
+                        }
+                    });
+
+                    mainHeader.textContent = navLinks[navId];
+
+                    // Update active styles for nav links
+                    document.querySelectorAll('nav a').forEach(link => link.classList.remove('bg-gray-700'));
+                    document.getElementById(navId).classList.add('bg-gray-700');
                 });
-                document.getElementById('quick-add-expense').addEventListener('click', () => {
-                    document.getElementById('nav-finanzas').click();
-                });
+            });
 
+            // Set default view
+            document.getElementById('nav-dashboard').click();
+
+            // Quick Access button listeners
+            document.getElementById('quick-add-sale').addEventListener('click', () => {
+                document.getElementById('nav-ventas').click();
+            });
+            document.getElementById('quick-add-expense').addEventListener('click', () => {
+                document.getElementById('nav-finanzas').click();
+            });
+        }
+
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                startApp();
             } else {
                 // ❌ Si no hay nadie conectado, lo expulsamos a la página de login
                 window.location.href = 'login.html';
             }
         });
+        window.startApp = startApp;
 
         // Toast notification logic
         document.addEventListener('DOMContentLoaded', () => {
