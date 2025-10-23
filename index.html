@@ -455,11 +455,14 @@
                     summaryBalance: document.getElementById('summary-balance'),
                 };
                 const getSaleStatus = (finPlan) => {
+                    if (dayjs().isAfter(dayjs(finPlan).endOf('day'))) {
+                        return 'Vencido';
+                    }
+
                     const today = dayjs().startOf('day');
                     const expirationDate = dayjs(finPlan).startOf('day');
                     const diffDays = expirationDate.diff(today, 'day');
 
-                    if (diffDays < 0) return 'Vencido';
                     if (diffDays === 0) return 'Vence hoy';
                     if (diffDays <= 7) return 'Próximo a Vencer';
                     return 'Activo';
@@ -562,95 +565,62 @@
                     const activeClients = activeSales.length;
                     selectors.kpiActiveClients.textContent = activeClients;
 
-                    // 4. Alertas: Próximos Vencimientos
-                    const upcomingExpirations = activeSales.filter(sale => {
+                    // 4. Alertas de Vencimiento
+                    const expirationAlerts = activeSales.filter(sale => {
+                        const status = getSaleStatus(sale.finPlan);
+                        return status === 'Vencido' || status === 'Vence hoy' || status === 'Próximo a Vencer';
+                    }).filter(sale => {
                         const expirationDate = dayjs(sale.finPlan).startOf('day');
                         const diffDays = expirationDate.diff(today, 'day');
-                        return diffDays <= 3; // Incluye vencidas (negativo) y hasta 3 días en el futuro
+                        return diffDays <= 3; // Incluye vencidas y hasta 3 días próximos
                     }).sort((a, b) => new Date(a.finPlan) - new Date(b.finPlan));
 
                     selectors.alertsSection.innerHTML = '';
-                    if (upcomingExpirations.length > 0) {
-                        upcomingExpirations.forEach(sale => {
-                            const today = dayjs().startOf('day');
-                            const expirationDate = dayjs(sale.finPlan).startOf('day');
-                            const diffDays = expirationDate.diff(today, 'day');
+                    if (expirationAlerts.length > 0) {
+                        selectors.alertsSection.className = 'grid grid-cols-1 md:grid-cols-2 gap-4';
+                        expirationAlerts.forEach(sale => {
+                            const status = getSaleStatus(sale.finPlan);
+                            const borderColor = status === 'Vencido' ? 'border-red-500' : 'border-yellow-500';
+                            const card = document.createElement('div');
+                            card.className = `bg-white p-4 rounded-lg shadow-md border-l-4 ${borderColor} flex flex-col justify-between`;
 
-                            let bgColor, textColor, titleColor, dateText, dateColor;
-
-                            if (diffDays <= 0) { // Vencido o Vence Hoy
-                                bgColor = 'bg-red-50';
-                                textColor = 'text-red-600';
-                                titleColor = 'text-red-800';
-                                dateColor = 'text-red-900';
-                                if (diffDays === 0) {
-                                    dateText = 'Vence Hoy';
-                                } else {
-                                    dateText = `Venció ${dayjs(sale.finPlan).fromNow()}`;
-                                }
-                            } else { // Próximo a Vencer (1-3 días)
-                                bgColor = 'bg-orange-50';
-                                textColor = 'text-orange-600';
-                                titleColor = 'text-orange-800';
-                                dateColor = 'text-orange-900';
-                                dateText = `Vence en ${diffDays} día${diffDays > 1 ? 's' : ''}`;
+                            let statusText, statusColor;
+                            if (status === 'Vencido') {
+                                statusText = 'Venció ' + dayjs(sale.finPlan).fromNow();
+                                statusColor = 'text-red-600';
+                            } else if (status === 'Vence hoy') {
+                                statusText = 'Vence hoy';
+                                statusColor = 'text-yellow-700';
+                            } else {
+                                statusText = 'Vence ' + dayjs(sale.finPlan).endOf('day').fromNow();
+                                statusColor = 'text-yellow-600';
                             }
 
-                            const alertEl = document.createElement('div');
-                            alertEl.className = `flex justify-between items-center p-3 ${bgColor} rounded-lg`;
-                            alertEl.innerHTML = `
-                                <div class="flex-1">
-                                    <p class="font-semibold ${titleColor}">${sale.cliente}</p>
-                                    <p class="text-sm ${textColor}">${getPlatformHtml(sale.plataforma)}</p>
-                                </div>
-                                <div class="flex items-center gap-3">
-                                    <div class="text-right">
-                                        <p class="font-bold text-sm ${dateColor}">${dateText}</p>
-                                        <p class="text-xs ${textColor}">${dayjs(sale.finPlan).format('DD MMM')}</p>
+                            card.innerHTML = `
+                                <div>
+                                    <div class="flex justify-between items-start">
+                                        <div>
+                                            <p class="font-bold text-gray-800">${sale.cliente}</p>
+                                            <p class="text-sm text-gray-500">${getPlatformHtml(sale.plataforma)}</p>
+                                        </div>
+                                        <div class="text-right">
+                                            <p class="font-semibold text-sm ${statusColor}">${statusText}</p>
+                                            <p class="text-xs text-gray-500">${dayjs(sale.finPlan).format('DD [de] MMMM')}</p>
+                                        </div>
                                     </div>
-                                    <button class="copy-notification-btn p-2 rounded-full hover:bg-gray-200 transition" title="Copiar Notificación" data-sale-id="${sale.id}">
-                                        <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
+                                </div>
+                                <div class="mt-4 flex justify-end">
+                                    <button class="copy-alert-btn bg-gray-200 hover:bg-gray-300 text-gray-700 text-xs font-semibold py-1 px-3 rounded-md transition-colors" data-sale-id="${sale.id}">
+                                        Copiar Aviso
                                     </button>
-                                </div>`;
-                            selectors.alertsSection.appendChild(alertEl);
+                                </div>
+                            `;
+                            selectors.alertsSection.appendChild(card);
                         });
                     } else {
+                        selectors.alertsSection.className = 'space-y-3';
                         selectors.alertsSection.innerHTML = '<p class="text-gray-500">No hay alertas de vencimiento.</p>';
                     }
-
-                    document.querySelectorAll('.copy-notification-btn').forEach(btn => {
-                        btn.addEventListener('click', (e) => {
-                            const saleId = e.currentTarget.dataset.saleId;
-                            const sale = allSales.find(s => s.id === saleId);
-                            if (!sale) return;
-
-                            const today = dayjs().startOf('day');
-                            const expirationDate = dayjs(sale.finPlan).startOf('day');
-                            const diffDays = expirationDate.diff(today, 'day');
-                            const absDiffDays = Math.abs(diffDays);
-
-                            let message = '';
-                            const tipoCuenta = sale.plataforma;
-
-                            if (diffDays === 0) {
-                                message = `Estimado cliente 👋🏻, le recordamos que su suscripción a ${tipoCuenta} vence hoy a la medianoche. Si desea renovarla, por favor, avísenos. ¡Gracias por su preferencia! 💯`;
-                            } else if (diffDays > 0) {
-                                message = `Estimado cliente 👋🏻, le informamos que su suscripción a ${tipoCuenta} está próxima a vencer en ${diffDays} día${diffDays > 1 ? 's' : ''}. Para evitar interrupciones en su servicio, le recomendamos renovarla pronto. ¡Que tenga un excelente día!`;
-                            } else {
-                                message = `Estimado cliente 👋🏻, notamos que su suscripción a ${tipoCuenta} venció hace ${absDiffDays} día${absDiffDays > 1 ? 's' : ''}. Si desea reactivar su servicio, por favor, póngase en contacto con nosotros. ¡Estamos para ayudarle!`;
-                            }
-
-                            navigator.clipboard.writeText(message).then(() => {
-                                const originalIcon = e.currentTarget.innerHTML;
-                                e.currentTarget.innerHTML = `<svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>`;
-                                setTimeout(() => {
-                                    e.currentTarget.innerHTML = originalIcon;
-                                }, 2000);
-                            }).catch(err => {
-                                console.error('Error al copiar: ', err);
-                            });
-                        });
-                    });
 
                     // 5. Resumen Financiero
                     const totalIngresos = allSales.reduce((sum, sale) => sum + (sale.precio || 0), 0);
@@ -661,6 +631,44 @@
                     selectors.summaryBalance.textContent = formatCurrency(balance);
                     selectors.summaryBalance.classList.toggle('text-red-900', balance < 0);
                     selectors.summaryBalance.classList.toggle('text-blue-900', balance >= 0);
+
+                    // Attach event listeners for copy buttons after rendering
+                    selectors.alertsSection.querySelectorAll('.copy-alert-btn').forEach(btn => {
+                        btn.addEventListener('click', handleCopyAlert);
+                    });
+                };
+
+                const handleCopyAlert = (event) => {
+                    const button = event.currentTarget;
+                    const saleId = button.dataset.saleId;
+                    const sale = allSales.find(s => s.id === saleId);
+                    if (!sale) return;
+
+                    const status = getSaleStatus(sale.finPlan);
+                    let message = '';
+
+                    if (status === 'Vencido') {
+                        message = `Buenas tardes 👋🏻, se le informa que su cuenta de "${sale.plataforma}" ya venció. Si desea renovar me avisa, por favor, para evitar el corte del servicio. Gracias por su preferencia 💯`;
+                    } else if (status === 'Vence hoy') {
+                        message = `Buenas tardes 👋🏻, se le informa que su cuenta de "${sale.plataforma}" vence el día de hoy a la medianoche ‼. Si desea renovar me avisa, por favor. Gracias por su preferencia 💯`;
+                    } else { // Próximo a Vencer
+                        const daysLeft = dayjs(sale.finPlan).endOf('day').diff(dayjs(), 'day');
+                        const dayText = daysLeft === 0 ? 'mañana' : `en ${daysLeft + 1} días`;
+                        message = `Buenas tardes 👋🏻, se le informa que su cuenta de "${sale.plataforma}" vence ${dayText}. Si desea renovar me avisa, por favor. Gracias por su preferencia 💯`;
+                    }
+
+                    navigator.clipboard.writeText(message).then(() => {
+                        const originalText = button.textContent;
+                        button.textContent = '¡Copiado!';
+                        button.classList.add('bg-green-500', 'text-white');
+                        setTimeout(() => {
+                            button.textContent = originalText;
+                            button.classList.remove('bg-green-500', 'text-white');
+                        }, 2000);
+                    }).catch(err => {
+                        console.error('Error al copiar texto: ', err);
+                        alert('No se pudo copiar el texto.');
+                    });
                 };
 
                 const applyFiltersAndRender = (salesToRender) => {
