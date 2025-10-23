@@ -75,7 +75,7 @@
 
         <!-- Main Content -->
         <div class="flex-1 flex flex-col overflow-hidden">
-            <header class="bg-white shadow-md">
+            <header id="page-header" class="bg-white shadow-md">
                 <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8 flex justify-between items-center">
                     <h1 id="main-header" class="text-2xl font-bold text-gray-800">Cuentas</h1>
                 </div>
@@ -83,43 +83,44 @@
             <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 p-4 md:p-8">
                 <!-- Dashboard View -->
                 <div id="dashboard-view" class="view hidden">
+                    <h2 class="text-3xl font-bold text-gray-800 mb-6">Dashboard</h2>
                     <!-- KPI Widgets -->
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-                        <div class="bg-white p-6 rounded-2xl shadow-lg flex items-center">
-                            <div class="bg-green-100 p-4 rounded-full">
-                                <!-- Icono Sol -->
-                                <svg class="w-8 h-8 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                        <!-- Ventas de Hoy -->
+                        <div class="bg-white p-6 rounded-lg shadow-sm flex items-center">
+                            <div class="w-16 h-16 flex items-center justify-center rounded-full bg-gradient-to-tr from-yellow-400 to-orange-500 mr-6">
+                                <svg class="w-8 h-8 text-white" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><path d="M512 779.9c-71.5 0-138.8-27.9-189.4-78.4-50.6-50.6-78.4-117.8-78.4-189.4s27.9-138.8 78.4-189.4c50.6-50.6 117.8-78.4 189.4-78.4 71.5 0 138.8 27.9 189.4 78.4 50.6 50.6 78.4 117.8 78.4 189.4S752 650.9 701.4 701.5 583.5 779.9 512 779.9z" fill="currentColor"/></svg>
                             </div>
-                            <div class="ml-4">
+                            <div>
                                 <h3 class="text-sm font-medium text-gray-500">Ventas de Hoy</h3>
-                                <p id="kpi-sales-today" class="text-2xl font-bold text-gray-800">S/0.00</p>
+                                <p id="kpi-sales-today" class="text-3xl font-bold text-gray-800">S/0.00</p>
                             </div>
                         </div>
-                        <div class="bg-white p-6 rounded-2xl shadow-lg flex items-center">
-                            <div class="bg-green-100 p-4 rounded-full">
-                                <!-- Icono Billete -->
-                                <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                        <!-- Ventas del Mes -->
+                        <div class="bg-white p-6 rounded-lg shadow-sm flex items-center">
+                            <div class="w-16 h-16 flex items-center justify-center rounded-full bg-gradient-to-tr from-green-400 to-green-600 mr-6">
+                                <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><path d="M30,10.25a.75.75,0,0,0-1.5,0V12H23a.75.75,0,0,0,0,1.5h5.25A.75.75,0,0,0,29,12.75V3A.75.75,0,0,0,28.25,2.25H19.5A.75.75,0,0,0,18.75,3v5.25A.75.75,0,0,0,19.5,9H22V6.36l-7.4,7.4a.75.75,0,0,0,1.06,1.06l7.1-7.1V9h1.5V3A.75.75,0,0,0,30,2.25Z"/><path d="M12,13a.75.75,0,0,0-1.06-1.06L3.25,19.64V17H1.75v5.75A.75.75,0,0,0,2.5,23.5H8.25a.75.75,0,0,0,0-1.5H5.61l6.89-6.89A.75.75,0,0,0,12.5,14.75ZM7.72,22H2.5A.75.75,0,0,0,1.75,22.75V29a.75.75,0,0,0,1.5,0V26h3.25a.75.75,0,0,0,0-1.5H3V22.75A.75.75,0,0,0,2.25,22H7.75a.75.75,0,0,0,.75-.75V16a.75.75,0,0,0-1.5,0v5.25A.75.75,0,0,0,7.75,22Z"/><path d="M29,22.75V16a.75.75,0,0,0-1.5,0v5.25a.75.75,0,0,0,.75.75H30a.75.75,0,0,0,.75-.75V19.5a.75.75,0,0,0-1.5,0V22h-3.25a.75.75,0,0,0,0,1.5H29A.75.75,0,0,0,29.75,22.75Z"/><path d="M15,16a.75.75,0,0,0-1.5,0v5.25a.75.75,0,0,0,.75.75H16a.75.75,0,0,0,.75-.75V19.5a.75.75,0,0,0-1.5,0V22H12.25a.75.75,0,0,0,0,1.5H16a.75.75,0,0,0,.75-.75V16A.75.75,0,0,0,16,15.25Z"/></svg>
                             </div>
-                            <div class="ml-4">
+                            <div>
                                 <h3 class="text-sm font-medium text-gray-500">Ventas del Mes</h3>
-                                <p id="kpi-sales-month" class="text-2xl font-bold text-gray-800">S/0.00</p>
+                                <p id="kpi-sales-month" class="text-3xl font-bold text-gray-800">S/0.00</p>
                             </div>
                         </div>
-                        <div class="bg-white p-6 rounded-2xl shadow-lg flex items-center">
-                            <div class="bg-blue-100 p-4 rounded-full">
-                                <!-- Icono Usuario -->
-                                <svg class="w-8 h-8 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M15 21a6 6 0 00-9-5.197m0 0A5.978 5.978 0 0112 13a5.979 5.979 0 013 1.003m-3-1.003A4.002 4.002 0 0112 6.354a4.002 4.002 0 013 4.646m-3-4.646a4 4 0 010 5.292m0 0a4 4 0 01-3 1.003m3-1.003a4 4 0 013-1.003m0 0A5.978 5.978 0 0012 13a5.979 5.979 0 00-3 1.003m7.5 0C19.072 16.59 16.32 18 13.5 18c-2.82 0-5.572-1.41-7.5-3.997"></path></svg>
+                        <!-- Clientes Activos -->
+                        <div class="bg-white p-6 rounded-lg shadow-sm flex items-center">
+                            <div class="w-16 h-16 flex items-center justify-center rounded-full bg-gradient-to-tr from-blue-400 to-blue-600 mr-6">
+                                <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><path d="M31.221 24.889c-0.983-4.445-4.891-7.721-9.563-7.721-1.746 0-3.384 0.457-4.803 1.258l0.049-0.025c-1.163-0.409-2.504-0.649-3.899-0.657h-0.004c-5.951 0.026-10.924 4.18-12.205 9.745l-0.016 0.085c-0.018 0.080-0.029 0.173-0.029 0.268 0 0.691 0.56 1.251 1.251 1.251 0.596 0 1.094-0.417 1.22-0.975l0.002-0.008c1.020-4.531 5.010-7.865 9.779-7.865s8.759 3.334 9.766 7.798l0.013 0.067c0.127 0.566 0.625 0.982 1.221 0.982 0.69 0 1.25-0.559 1.25-1.25 0-0.095-0.011-0.187-0.031-0.276l0.002 0.008c-0.746-3.232-2.667-5.923-5.279-7.656l-0.046-0.029c0.534-0.141 1.147-0.221 1.779-0.221 3.478 0 6.384 2.444 7.096 5.708l0.009 0.048c0.127 0.565 0.624 0.982 1.219 0.982h0c0.096-0 0.189-0.011 0.278-0.031l-0.008 0.002c0.566-0.126 0.982-0.624 0.982-1.219 0-0.095-0.011-0.188-0.031-0.277l0.002 0.008z"/></svg>
                             </div>
-                            <div class="ml-4">
+                            <div>
                                 <h3 class="text-sm font-medium text-gray-500">Clientes Activos</h3>
-                                <p id="kpi-active-clients" class="text-2xl font-bold text-gray-800">0</p>
+                                <p id="kpi-active-clients" class="text-3xl font-bold text-gray-800">0</p>
                             </div>
                         </div>
                     </div>
 
                     <!-- Alerts and Quick Access -->
                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
-                        <div class="lg:col-span-2 bg-white p-6 rounded-2xl shadow-lg">
+                        <div class="lg:col-span-2 bg-white p-6 rounded-lg shadow-sm">
                             <h3 class="text-lg font-semibold text-gray-700 mb-4">Alertas de Vencimiento</h3>
                             <div id="alerts-section" class="space-y-3">
                                 <!-- Alertas se cargarán aquí -->
@@ -127,7 +128,7 @@
                             </div>
                         </div>
                         <div class="space-y-6">
-                            <div class="bg-white p-6 rounded-2xl shadow-lg">
+                            <div class="bg-white p-6 rounded-lg shadow-sm">
                                 <h3 class="text-lg font-semibold text-gray-700 mb-4">Accesos Rápidos</h3>
                                 <div class="flex flex-col space-y-3">
                                     <button id="quick-add-sale" class="w-full flex items-center justify-center bg-blue-600 text-white font-semibold px-4 py-3 rounded-lg hover:bg-blue-700 transition">
@@ -140,7 +141,7 @@
                                     </button>
                                 </div>
                             </div>
-                            <div class="bg-white p-6 rounded-2xl shadow-lg">
+                            <div class="bg-white p-6 rounded-lg shadow-sm">
                                 <h3 class="text-lg font-semibold text-gray-700 mb-4">Resumen Financiero</h3>
                                 <div class="space-y-3">
                                     <div class="flex justify-between items-center"><span class="font-medium text-green-700">Ingresos:</span><span id="summary-ingresos" class="font-bold text-lg text-green-800">S/0.00</span></div>
@@ -1118,21 +1119,30 @@
                 };
                 const views = document.querySelectorAll('.view');
                 const mainHeader = document.getElementById('main-header');
+                const pageHeader = document.getElementById('page-header');
+                const mainContent = document.querySelector('main');
 
                 Object.keys(navLinks).forEach(navId => {
                     document.getElementById(navId).addEventListener('click', (e) => {
                         e.preventDefault();
-                        const viewId = `${navLinks[navId].toLowerCase()}-view`;
+                        const viewKey = navLinks[navId].toLowerCase();
+                        const viewId = `${viewKey}-view`;
 
                         views.forEach(view => {
-                            if (view.id === viewId) {
-                                view.classList.remove('hidden');
-                            } else {
-                                view.classList.add('hidden');
-                            }
+                            view.classList.toggle('hidden', view.id !== viewId);
                         });
 
                         mainHeader.textContent = navLinks[navId];
+
+                        if (viewKey === 'dashboard') {
+                            pageHeader.classList.add('hidden');
+                            mainContent.classList.remove('bg-gray-100');
+                            mainContent.style.backgroundColor = '#f8f9fc';
+                        } else {
+                            pageHeader.classList.remove('hidden');
+                            mainContent.classList.add('bg-gray-100');
+                            mainContent.style.backgroundColor = '';
+                        }
 
                         // Update active styles for nav links
                         document.querySelectorAll('nav a').forEach(link => link.classList.remove('bg-gray-700'));
