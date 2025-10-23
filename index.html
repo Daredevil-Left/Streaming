@@ -376,6 +376,52 @@
             </div>
         </div>
     </div>
+    <!-- Edit Account Modal -->
+    <div id="edit-account-modal" class="modal fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 z-50 hidden opacity-0">
+        <div class="modal-content bg-white w-full max-w-2xl rounded-2xl shadow-2xl p-6 transform scale-95">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-semibold text-gray-700">Editar Cuenta de Plataforma</h2>
+                <button id="close-edit-account-modal" class="text-gray-400 hover:text-gray-600">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+            <form id="edit-account-form" class="space-y-6">
+                <input type="hidden" id="edit-account-id">
+                <div>
+                    <label class="block text-sm font-medium text-gray-600 mb-2">Plataforma</label>
+                    <input type="text" id="edit-account-platform" class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100" readonly>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="edit-account-email" class="block text-sm font-medium text-gray-600 mb-2">Correo</label>
+                        <input type="email" id="edit-account-email" class="w-full px-4 py-2 border border-gray-300 rounded-lg" required>
+                    </div>
+                    <div class="relative">
+                        <label for="edit-account-password" class="block text-sm font-medium text-gray-600 mb-2">Contraseña</label>
+                        <input type="password" id="edit-account-password" class="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="Dejar en blanco para no cambiar">
+                        <button type="button" class="absolute inset-y-0 right-0 top-6 flex items-center px-3 text-gray-500" onclick="togglePasswordVisibility('edit-account-password', this)">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+                        </button>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="edit-account-enlace" class="block text-sm font-medium text-gray-600 mb-2">Enlace (Opcional)</label>
+                        <input type="text" id="edit-account-enlace" class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+                    </div>
+                    <div>
+                        <label for="edit-account-fechaPago" class="block text-sm font-medium text-gray-600 mb-2">Fecha de pago</label>
+                        <input type="date" id="edit-account-fechaPago" class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+                    </div>
+                </div>
+                <div class="flex justify-end gap-4 mt-4">
+                    <button type="button" id="cancel-edit-account" class="bg-gray-200 text-gray-700 font-semibold px-6 py-3 rounded-lg hover:bg-gray-300 transition">Cancelar</button>
+                    <button type="submit" class="bg-blue-600 text-white font-semibold px-6 py-3 rounded-lg hover:bg-blue-700">Guardar Cambios</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <div id="renewal-modal" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden opacity-0">
         <div class="modal-content bg-white w-full max-w-md rounded-2xl shadow-2xl p-6 transform scale-95">
             <h2 class="text-2xl font-semibold text-gray-700 mb-6">Renovar Suscripción</h2>
@@ -419,7 +465,22 @@
 
                 dayjs.extend(dayjs_plugin_relativeTime);
                 dayjs.locale('es');
-                const platformStyles = { 'Netflix':{color:'text-red-600',fallback:'bg-red-500'},'Spotify':{color:'text-green-500',fallback:'bg-green-500'},'Disney+':{color:'text-blue-900',fallback:'bg-blue-900'},'HBO Max':{color:'text-purple-600',fallback:'bg-purple-600'},'Amazon Prime Video':{color:'text-blue-400',fallback:'bg-blue-400'},'YouTube Premium':{color:'text-red-500',fallback:'bg-red-500'},'Apple Music':{color:'text-pink-500',fallback:'bg-pink-500'},'Apple TV+':{color:'text-gray-800',fallback:'bg-gray-800'},'Crunchyroll':{color:'text-orange-500',fallback:'bg-orange-500'},'Canva':{color:'text-purple-500',fallback:'bg-purple-500'},'IPTV Premium':{color:'text-teal-500',fallback:'bg-teal-500'},'Vix+':{color:'text-yellow-400',fallback:'bg-yellow-400'},'Paramount+':{color:'text-blue-800',fallback:'bg-blue-800'},'Otro':{color:'text-gray-500',fallback:'bg-gray-500'}};
+                const platformStyles = {
+                    'Netflix': { color: 'text-red-600', bg: '#E50914' },
+                    'Spotify': { color: 'text-green-500', bg: '#1DB954' },
+                    'Disney+': { color: 'text-blue-900', bg: '#01153E' },
+                    'HBO Max': { color: 'text-purple-600', bg: '#8A2BE2' },
+                    'Amazon Prime Video': { color: 'text-blue-400', bg: '#00A8E1' },
+                    'YouTube Premium': { color: 'text-red-500', bg: '#FF0000' },
+                    'Apple Music': { color: 'text-pink-500', bg: '#FA243C' },
+                    'Apple TV+': { color: 'text-gray-800', bg: '#000000' },
+                    'Crunchyroll': { color: 'text-orange-500', bg: '#F47521' },
+                    'Canva': { color: 'text-purple-500', bg: '#8D44AD' },
+                    'IPTV Premium': { color: 'text-teal-500', bg: '#00AEEF' },
+                    'Vix+': { color: 'text-yellow-400', bg: '#F8C100' },
+                    'Paramount+': { color: 'text-blue-800', bg: '#0064FF' },
+                    'Otro': { color: 'text-gray-500', bg: '#6B7280' }
+                };
                 let allSales = [], allExpenses = [], allPlatformAccounts = [], activePlatformFilter = 'Todos', currentSearchTerm = '', activeAccountFilter = '', activeStatusFilter = '';
                 const selectors = {
                     addSaleForm: document.getElementById('add-sale-form'),
@@ -450,6 +511,10 @@
                     accountFilter: document.getElementById('account-filter'),
                     statusFilter: document.getElementById('status-filter'),
                     accountPlatformButtons: document.getElementById('account-platform-buttons'),
+                    editAccountModal: document.getElementById('edit-account-modal'),
+                    editAccountForm: document.getElementById('edit-account-form'),
+                    closeEditAccountModalBtn: document.getElementById('close-edit-account-modal'),
+                    cancelEditAccountBtn: document.getElementById('cancel-edit-account'),
                     // Dashboard selectors
                     kpiSalesToday: document.getElementById('kpi-sales-today'),
                     kpiSalesMonth: document.getElementById('kpi-sales-month'),
@@ -816,7 +881,7 @@
                         return;
                     }
 
-                    // 1. Agrupar cuentas por plataforma
+                    // 1. Group accounts by platform
                     const groupedAccounts = allPlatformAccounts.reduce((acc, account) => {
                         const { platform } = account;
                         if (!acc[platform]) {
@@ -826,9 +891,10 @@
                         return acc;
                     }, {});
 
-                    // 2. Iterar y renderizar cada grupo
+                    // 2. Iterate and render each group
                     for (const platform in groupedAccounts) {
                         const accounts = groupedAccounts[platform];
+                        const platformStyle = platformStyles[platform] || platformStyles['Otro'];
 
                         const listItems = accounts.map(account => {
                             const fechaPagoHtml = account.fechaPago
@@ -853,6 +919,9 @@
                                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
                                         </button>
                                         ${enlaceBtnHtml}
+                                        <button class="edit-account-btn p-1 text-indigo-600 hover:text-indigo-800 hover:bg-indigo-100 rounded-full transition" data-id="${account.id}" title="Editar Cuenta">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L16.732 3.732z"></path></svg>
+                                        </button>
                                         <button class="delete-account-btn p-1 text-red-600 hover:text-red-800 hover:bg-red-100 rounded-full transition" data-id="${account.id}" title="Eliminar">
                                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                                         </button>
@@ -862,8 +931,8 @@
 
                         const cardHtml = `
                             <div class="bg-white rounded-2xl shadow-lg mb-6 overflow-hidden border border-gray-200">
-                                <div class="px-4 py-3 bg-gray-50 border-b border-gray-200">
-                                    <h3 class="text-lg font-semibold text-gray-800">${platform}</h3>
+                                <div class="px-4 py-3 border-b border-gray-200" style="background-color: ${platformStyle.bg};">
+                                    <h3 class="text-lg font-semibold text-white">${platform}</h3>
                                 </div>
                                 <ul class="divide-y divide-gray-200">
                                     ${listItems}
@@ -873,9 +942,12 @@
                         accountsList.innerHTML += cardHtml;
                     }
 
-                    // 3. Añadir Event Listeners después de renderizar
+                    // 3. Add Event Listeners after rendering
                     accountsList.querySelectorAll('.delete-account-btn').forEach(btn => {
                         btn.addEventListener('click', e => handleDeleteAccount(e.currentTarget.dataset.id));
+                    });
+                     accountsList.querySelectorAll('.edit-account-btn').forEach(btn => {
+                        btn.addEventListener('click', e => handleEditAccount(e.currentTarget.dataset.id));
                     });
 
                     accountsList.querySelectorAll('.toggle-password-btn').forEach(btn => {
@@ -1031,6 +1103,34 @@
                         hideArchiveDeleteModal();
                     }
                 };
+                 const openEditAccountModal = () => {
+                    selectors.editAccountModal.classList.remove('hidden');
+                    setTimeout(() => {
+                        selectors.editAccountModal.classList.remove('opacity-0');
+                        selectors.editAccountModal.querySelector('.modal-content').classList.remove('scale-95');
+                    }, 10);
+                };
+
+                const closeEditAccountModal = () => {
+                    selectors.editAccountModal.classList.add('opacity-0');
+                    selectors.editAccountModal.querySelector('.modal-content').classList.add('scale-95');
+                    setTimeout(() => selectors.editAccountModal.classList.add('hidden'), 300);
+                };
+                 const handleEditAccount = (id) => {
+                    const account = allPlatformAccounts.find(acc => acc.id === id);
+                    if (!account) return;
+
+                    const form = selectors.editAccountForm;
+                    form['edit-account-id'].value = account.id;
+                    form['edit-account-platform'].value = account.platform;
+                    form['edit-account-email'].value = account.email;
+                    form['edit-account-enlace'].value = account.enlace || '';
+                    form['edit-account-fechaPago'].value = account.fechaPago || '';
+                    form['edit-account-password'].value = ''; // Clear password field for security
+
+                    openEditAccountModal();
+                };
+
                 const handleDeleteSale = (id) => showArchiveDeleteModal(id);
                 const handleDeleteExpense = (id) => {
                     showConfirmationModal(
@@ -1109,6 +1209,35 @@
                 document.getElementById('cancel-renewal-btn').addEventListener('click', closeRenewalModal);
                 selectors.platformAccountSelect.addEventListener('change', () => handlePlatformAccountChange(selectors.platformAccountSelect, selectors.addSaleForm.correo, selectors.addSaleForm.contrasena, document.querySelectorAll('.manual-credentials')));
                 selectors.editPlatformAccountSelect.addEventListener('change', () => handlePlatformAccountChange(selectors.editPlatformAccountSelect, selectors.editForm['edit-correo'], selectors.editForm['edit-contrasena'], document.querySelectorAll('.edit-manual-credentials')));
+                 selectors.editAccountForm.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const form = selectors.editAccountForm;
+                    const id = form['edit-account-id'].value;
+                    const account = allPlatformAccounts.find(acc => acc.id === id);
+                    if (!account) return;
+
+                    const updatedData = {
+                        email: form['edit-account-email'].value,
+                        enlace: form['edit-account-enlace'].value,
+                        fechaPago: form['edit-account-fechaPago'].value,
+                    };
+
+                    const newPassword = form['edit-account-password'].value;
+                    if (newPassword) {
+                        updatedData.password = newPassword;
+                    }
+
+                    try {
+                        await updateDoc(doc(db, "platformAccounts", id), updatedData);
+                        closeEditAccountModal();
+                    } catch (err) {
+                        console.error("Error al actualizar la cuenta:", err);
+                        alert("Error al actualizar la cuenta. Revisa la consola (F12).");
+                    }
+                });
+
+                selectors.closeEditAccountModalBtn.addEventListener('click', closeEditAccountModal);
+                selectors.cancelEditAccountBtn.addEventListener('click', closeEditAccountModal);
                 const diasPlanInput = document.getElementById('diasPlan'); const inicioPlanInput = document.getElementById('inicioPlan'); const finPlanInput = document.getElementById('finPlan'); const calculateDateBtn = document.getElementById('calculate-date-btn');
                 const editFinPlanInput = document.getElementById('edit-finPlan');
 
