@@ -155,20 +155,15 @@
                 <!-- Cuentas View -->
                 <div id="cuentas-view" class="view">
                     <div class="bg-white p-4 md:p-6 rounded-2xl shadow-lg mb-8 max-w-5xl mx-auto">
-                        <div class="flex justify-between items-center cursor-pointer" id="toggle-accounts-section">
-                            <h2 class="text-xl md:text-2xl font-semibold text-gray-700">Gestionar Cuentas de Plataformas</h2>
-                            <svg id="toggle-accounts-icon" class="w-6 h-6 transition-transform transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                            </svg>
-                        </div>
-                        <div id="collapsible-accounts-content" class="hidden mt-6">
-                            <form id="add-account-form" class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-                                <div class="md:col-span-3">
+                        <h2 class="text-xl md:text-2xl font-semibold text-gray-700 mb-6">Añadir Nueva Cuenta</h2>
+                        <div id="add-account-container">
+                             <form id="add-account-form" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6 border-b pb-6">
+                                <div class="md:col-span-2 lg:col-span-4">
                                     <label class="block text-sm font-medium text-gray-600 mb-2">Plataforma</label>
                                     <div id="account-platform-buttons" class="flex flex-wrap gap-2"></div>
                                     <input type="hidden" id="account-platform" name="account-platform" required>
                                 </div>
-                                <div>
+                                <div class="lg:col-span-2">
                                     <label for="account-email" class="block text-sm font-medium text-gray-600 mb-2">Correo</label>
                                     <input type="email" id="account-email" name="account-email" class="w-full px-4 py-2 border border-gray-300 rounded-lg" required>
                                 </div>
@@ -179,13 +174,21 @@
                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
                                     </button>
                                 </div>
-                                <div class="md:col-span-3 text-right">
+                                <div>
+                                    <label for="account-link" class="block text-sm font-medium text-gray-600 mb-2">Enlace</label>
+                                    <input type="url" id="account-link" name="account-link" class="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="https://...">
+                                </div>
+                                 <div class="lg:col-span-2">
+                                    <label for="account-payment-date" class="block text-sm font-medium text-gray-600 mb-2">Fecha de Pago</label>
+                                    <input type="date" id="account-payment-date" name="account-payment-date" class="w-full px-4 py-2 border border-gray-300 rounded-lg" required>
+                                </div>
+                                <div class="md:col-span-2 lg:col-span-4 text-right">
                                     <button type="submit" class="bg-blue-600 w-full md:w-auto text-white font-semibold px-6 py-3 rounded-lg hover:bg-blue-700 transition">Añadir Cuenta</button>
                                 </div>
                             </form>
-                            <div id="accounts-list" class="space-y-3"></div>
                         </div>
                     </div>
+                    <div id="accounts-list" class="space-y-8"></div>
                 </div>
 
                 <!-- Ventas View -->
@@ -396,6 +399,17 @@
 
     <script>
         function togglePasswordVisibility(inputId, button) { const input = document.getElementById(inputId), icon = button.querySelector('svg'); if (input.type === "password") { input.type = "text"; icon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7 .946-3.11 3.563-5.522 6.837-6.141M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.581 10.41A7.48 7.48 0 0119.542 12c-1.274 4.057-5.064 7-9.542 7a10.046 10.046 0 01-3.132-.475M2.458 12c.946-3.11 3.563-5.522 6.837-6.141m1.581 2.318A4.5 4.5 0 0115 12a4.5 4.5 0 01-1.07 2.828M5 5l14 14" />`; } else { input.type = "password"; icon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />`; } }
+        function toggleSiblingPasswordVisibility(button) {
+            const input = button.previousElementSibling;
+            const icon = button.querySelector('svg');
+            if (input.type === "password") {
+                input.type = "text";
+                icon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7 .946-3.11 3.563-5.522 6.837-6.141M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.581 10.41A7.48 7.48 0 0119.542 12c-1.274 4.057-5.064 7-9.542 7a10.046 10.046 0 01-3.132-.475M2.458 12c.946-3.11 3.563-5.522 6.837-6.141m1.581 2.318A4.5 4.5 0 0115 12a4.5 4.5 0 01-1.07 2.828M5 5l14 14" />`;
+            } else {
+                input.type = "password";
+                icon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />`;
+            }
+        }
     </script>
 
     <script type="module">
@@ -469,6 +483,20 @@
                 };
                 const formatCurrency = (amount) => `S/${(amount||0).toFixed(2)}`;
                 const getPlatformHtml = (platformName) => { const style=platformStyles[platformName]||platformStyles['Otro']; return `<span class="font-bold ${style.color}">${platformName}</span>`};
+                const getAccountStatusHtml = (paymentDate) => {
+                    if (!paymentDate) return '<span class="text-xs font-semibold py-1 px-2 uppercase rounded-full text-gray-600 bg-gray-100">No Definido</span>';
+                    const today = dayjs().startOf('day');
+                    const payDate = dayjs(paymentDate).startOf('day');
+                    const diffDays = payDate.diff(today, 'day');
+
+                    if (diffDays <= 0) {
+                        return `<span class="text-xs font-semibold py-1 px-2 uppercase rounded-full text-red-600 bg-red-100">Vence Hoy o Vencido</span>`;
+                    }
+                    if (diffDays <= 5) {
+                        return `<span class="text-xs font-semibold py-1 px-2 uppercase rounded-full text-yellow-700 bg-yellow-100">Próximo a pagar en ${diffDays} día(s)</span>`;
+                    }
+                    return '<span class="text-xs font-semibold py-1 px-2 uppercase rounded-full text-green-600 bg-green-100">Pago al día</span>';
+                };
                 const handlePlatformChange = (select, container, input) => { if (select.value==='Otro') { container.classList.remove('hidden'); input.required = true; } else { container.classList.add('hidden'); input.required = false; input.value = ''; }};
                 const openModal = () => { selectors.editModal.classList.remove('hidden'); setTimeout(() => { selectors.editModal.classList.remove('opacity-0'); selectors.editModal.querySelector('.modal-content').classList.remove('scale-95'); }, 10); };
                 const closeModal = () => { selectors.editModal.classList.add('opacity-0'); selectors.editModal.querySelector('.modal-content').classList.add('scale-95'); setTimeout(() => selectors.editModal.classList.add('hidden'), 300); };
@@ -805,62 +833,71 @@
                 const renderPlatformAccounts = () => {
                     selectors.accountsList.innerHTML = '';
                     if (allPlatformAccounts.length === 0) {
-                        selectors.accountsList.innerHTML = '<p class="text-sm text-gray-400">No hay cuentas de plataforma registradas.</p>';
                         return;
                     }
 
-                    allPlatformAccounts.forEach(account => {
-                        const item = document.createElement('div');
-                        // MODIFICADO: Clases para apilar en móvil y poner en fila en desktop
-                        item.className = 'flex flex-col md:flex-row justify-between items-start md:items-center text-sm p-3 rounded-md bg-gray-50 gap-2';
-                        item.dataset.accountId = account.id;
-                        item.innerHTML = `
-                            <div class="flex-1 w-full grid grid-cols-1 md:grid-cols-3 gap-2 md:gap-4 items-center">
-                                <p class="text-gray-800 font-semibold">${account.platform}</p>
-                                <div class="credentials-container">
-                                    <p class="text-gray-600 break-all">${account.email}</p>
+                    const groupedAccounts = allPlatformAccounts.reduce((acc, account) => {
+                        const platform = account.platform || 'Otro';
+                        if (!acc[platform]) {
+                            acc[platform] = [];
+                        }
+                        acc[platform].push(account);
+                        return acc;
+                    }, {});
+
+                    for (const platform in groupedAccounts) {
+                        const accounts = groupedAccounts[platform];
+                        const style = platformStyles[platform] || platformStyles['Otro'];
+                        const borderColorClass = style.fallback ? style.fallback.replace('bg-', 'border-') : 'border-gray-500';
+
+                        const card = document.createElement('div');
+                        card.className = `bg-white p-4 md:p-6 rounded-2xl shadow-lg border-t-4 ${borderColorClass}`;
+
+                        let accountsHtml = '';
+                        accounts.forEach(account => {
+                            const statusHtml = getAccountStatusHtml(account.paymentDate);
+
+                            accountsHtml += `
+                                <div class="grid grid-cols-1 md:grid-cols-5 gap-4 items-center p-3 rounded-lg hover:bg-gray-50 text-sm border-b last:border-b-0">
+                                    <div class="font-medium text-gray-800 break-all">${account.email}</div>
+                                    <div class="relative">
+                                        <input type="password" value="${account.password}" class="w-full bg-transparent border-none p-0" readonly>
+                                        <button class="absolute inset-y-0 right-0 flex items-center px-2 text-gray-500 hover:text-gray-700" onclick="toggleSiblingPasswordVisibility(this)">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                                        </button>
+                                    </div>
+                                    <div><a href="${account.link}" target="_blank" class="text-blue-600 hover:underline break-all">${account.link ? 'Ver Enlace' : ''}</a></div>
+                                    <div>${statusHtml}</div>
+                                    <div class="flex justify-end gap-2 items-center">
+                                        <button class="delete-account-btn p-1 text-red-500 hover:text-red-700 hover:bg-red-100 rounded-full transition" data-id="${account.id}" title="Eliminar Cuenta">
+                                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm4 0a1 1 0 012 0v6a1 1 0 11-2 0V8z" clip-rule="evenodd"></path></svg>
+                                        </button>
+                                    </div>
                                 </div>
-                                <div class="credentials-container">
-                                    <p class="text-gray-600 break-all truncate">${account.password}</p>
-                                </div>
+                            `;
+                        });
+
+                        card.innerHTML = `
+                            <h3 class="text-2xl font-bold text-center mb-6 ${style.color}">${platform}</h3>
+                             <div class="hidden md:grid grid-cols-5 gap-4 font-semibold text-gray-500 border-b pb-3 mb-3 text-xs uppercase">
+                                <div>Correo</div>
+                                <div>Contraseña</div>
+                                <div>Enlace</div>
+                                <div>Estado de Pago</div>
+                                <div class="text-right">Acciones</div>
                             </div>
-                            <div class="flex items-center self-end md:self-center">
-                                <button class="toggle-visibility-btn text-gray-400 hover:text-gray-600 ml-2" title="Mostrar/Ocultar">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
-                                </button>
-                                <button class="delete-account-btn text-gray-400 hover:text-red-600 ml-2" data-id="${account.id}">
-                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm4 0a1 1 0 012 0v6a1 1 0 11-2 0V8z" clip-rule="evenodd"></path></svg>
-                                </button>
+                            <div class="space-y-2">
+                                ${accountsHtml}
                             </div>
                         `;
-                        selectors.accountsList.appendChild(item);
-                    });
 
-                    selectors.accountsList.querySelectorAll('.delete-account-btn').forEach(b => b.addEventListener('click', e => {
-                        e.stopPropagation();
-                        handleDeleteAccount(e.currentTarget.dataset.id);
-                    }));
+                        selectors.accountsList.appendChild(card);
+                    }
 
-                    selectors.accountsList.querySelectorAll('.toggle-visibility-btn').forEach(btn => {
-                        btn.addEventListener('click', (e) => {
+                    selectors.accountsList.querySelectorAll('.delete-account-btn').forEach(b => {
+                        b.addEventListener('click', e => {
                             e.stopPropagation();
-                            const row = e.currentTarget.closest('.flex');
-                            const accountId = row.dataset.accountId;
-                            const account = allPlatformAccounts.find(a => a.id === accountId);
-                            if (!account) return;
-
-                            const credentialContainers = row.querySelectorAll('.credentials-container');
-                            const isHidden = btn.dataset.isHidden === 'true';
-
-                            credentialContainers[0].innerHTML = isHidden ? `<p class="text-gray-600 break-all">${account.email}</p>` : `<p class="text-gray-400 font-mono">••••••••</p>`;
-                            credentialContainers[1].innerHTML = isHidden ? `<p class="text-gray-600 break-all truncate">${account.password}</p>` : `<p class="text-gray-400 font-mono">••••••••</p>`;
-
-                            btn.dataset.isHidden = !isHidden;
-
-                            const icon = btn.querySelector('svg');
-                            icon.innerHTML = isHidden ?
-                                `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />` :
-                                `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7 .946-3.11 3.563-5.522 6.837-6.141M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.581 10.41A7.48 7.48 0 0119.542 12c-1.274 4.057-5.064 7-9.542 7a10.046 10.046 0 01-3.132-.475M2.458 12c.946-3.11 3.563-5.522 6.837-6.141m1.581 2.318A4.5 4.5 0 0115 12a4.5 4.5 0 01-1.07 2.828M5 5l14 14" />`;
+                            handleDeleteAccount(e.currentTarget.dataset.id);
                         });
                     });
                 };
@@ -1041,7 +1078,7 @@
                 selectors.addSaleForm.addEventListener('submit', async (e) => { e.preventDefault(); const f = selectors.addSaleForm; const newSale = { cliente: f.cliente.value, plataforma: f.plataforma.value === 'Otro' ? selectors.otroPlataformaInput.value : f.plataforma.value, precio: parseFloat(f.precio.value), inicioPlan: f.inicioPlan.value, finPlan: f.finPlan.value, correo: f.correo.value, contrasena: f.contrasena.value, pin: f.pin.value, notas: f.notas.value, createdAt: new Date().toISOString() }; try { await addDoc(collection(db, "sales"), newSale); f.reset(); handlePlatformChange(selectors.plataformaSelect, selectors.otroPlataformaContainer, selectors.otroPlataformaInput); } catch (err) { console.error("Error al guardar venta:", err); alert("Error al guardar la venta. Revisa la consola (F12).") } });
                 selectors.editForm.addEventListener('submit', async (e) => { e.preventDefault(); const f = selectors.editForm; const id = f['edit-sale-id'].value; const updated = { cliente: f['edit-cliente'].value, plataforma: f['edit-plataforma'].value === 'Otro' ? selectors.editOtroPlataformaInput.value : f['edit-plataforma'].value, precio: parseFloat(f['edit-precio'].value), inicioPlan: f['edit-inicioPlan'].value, finPlan: f['edit-finPlan'].value, correo: f['edit-correo'].value, contrasena: f['edit-contrasena'].value, pin: f['edit-pin'].value, notas: f['edit-notas'].value, }; try { await updateDoc(doc(db, "sales", id), updated); closeModal(); } catch (err) { console.error("Error al actualizar la venta:", err); alert("Error al actualizar la venta. Revisa la consola (F12).") } });
                 selectors.addExpenseForm.addEventListener('submit', async (e) => { e.preventDefault(); const f = selectors.addExpenseForm; const description = f['expense-description'].value; const amount = parseFloat(f['expense-amount'].value); const date = f['expense-date'].value; if (!description || !date || isNaN(amount) || amount <= 0) return; try { await addDoc(collection(db, "expenses"), { description, amount, date }); f.reset(); f['expense-date'].value = dayjs().format('YYYY-MM-DD'); } catch (err) { console.error("Error al añadir egreso:", err); } });
-                selectors.addAccountForm.addEventListener('submit', async (e) => { e.preventDefault(); const f = selectors.addAccountForm; const newAccount = { platform: f['account-platform'].value, email: f['account-email'].value, password: f['account-password'].value, }; try { await addDoc(collection(db, "platformAccounts"), newAccount); f.reset(); document.querySelectorAll('#account-platform-buttons button').forEach(b => b.classList.remove('bg-indigo-600', 'text-white', 'border-indigo-600')); } catch (err) { console.error("Error al guardar cuenta:", err); } });
+                selectors.addAccountForm.addEventListener('submit', async (e) => { e.preventDefault(); const f = selectors.addAccountForm; const newAccount = { platform: f['account-platform'].value, email: f['account-email'].value, password: f['account-password'].value, link: f['account-link'].value, paymentDate: f['account-payment-date'].value, }; try { await addDoc(collection(db, "platformAccounts"), newAccount); f.reset(); document.querySelectorAll('#account-platform-buttons button').forEach(b => b.classList.remove('bg-indigo-600', 'text-white', 'border-indigo-600')); } catch (err) { console.error("Error al guardar cuenta:", err); } });
                 selectors.searchInput.addEventListener('input', e => {
                     currentSearchTerm = e.target.value;
                     const activeSales = allSales.filter(sale => sale.estado !== 'ARCHIVADO');
