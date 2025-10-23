@@ -155,35 +155,40 @@
                 <!-- Cuentas View -->
                 <div id="cuentas-view" class="view">
                     <div class="bg-white p-4 md:p-6 rounded-2xl shadow-lg mb-8 max-w-5xl mx-auto">
-                        <div class="flex justify-between items-center cursor-pointer" id="toggle-accounts-section">
-                            <h2 class="text-xl md:text-2xl font-semibold text-gray-700">Gestionar Cuentas de Plataformas</h2>
-                            <svg id="toggle-accounts-icon" class="w-6 h-6 transition-transform transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                            </svg>
-                        </div>
-                        <div id="collapsible-accounts-content" class="hidden mt-6">
-                            <form id="add-account-form" class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-                                <div class="md:col-span-3">
+                        <h2 class="text-xl md:text-2xl font-semibold text-gray-700">Gestionar Cuentas de Plataformas</h2>
+                        <div id="collapsible-accounts-content" class="mt-6">
+                            <form id="add-account-form" class="space-y-6 mb-6">
+                                <div>
                                     <label class="block text-sm font-medium text-gray-600 mb-2">Plataforma</label>
                                     <div id="account-platform-buttons" class="flex flex-wrap gap-2"></div>
                                     <input type="hidden" id="account-platform" name="account-platform" required>
                                 </div>
-                                <div>
-                                    <label for="account-email" class="block text-sm font-medium text-gray-600 mb-2">Correo</label>
-                                    <input type="email" id="account-email" name="account-email" class="w-full px-4 py-2 border border-gray-300 rounded-lg" required>
+                                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                                    <div>
+                                        <label for="account-email" class="block text-sm font-medium text-gray-600 mb-2">Correo</label>
+                                        <input type="email" id="account-email" name="account-email" class="w-full px-4 py-2 border border-gray-300 rounded-lg" required>
+                                    </div>
+                                    <div class="relative">
+                                        <label for="account-password" class="block text-sm font-medium text-gray-600 mb-2">Contraseña</label>
+                                        <input type="password" id="account-password" name="account-password" class="w-full px-4 py-2 border border-gray-300 rounded-lg" required>
+                                        <button type="button" class="absolute inset-y-0 right-0 top-6 flex items-center px-3 text-gray-500" onclick="togglePasswordVisibility('account-password', this)">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+                                        </button>
+                                    </div>
+                                    <div>
+                                        <label for="enlace" class="block text-sm font-medium text-gray-600 mb-2">Enlace (Opcional)</label>
+                                        <input type="text" id="enlace" name="enlace" class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+                                    </div>
+                                    <div>
+                                        <label for="fechaPago" class="block text-sm font-medium text-gray-600 mb-2">Fecha de pago</label>
+                                        <input type="date" id="fechaPago" name="fechaPago" class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+                                    </div>
                                 </div>
-                                <div class="relative">
-                                    <label for="account-password" class="block text-sm font-medium text-gray-600 mb-2">Contraseña</label>
-                                    <input type="password" id="account-password" name="account-password" class="w-full px-4 py-2 border border-gray-300 rounded-lg" required>
-                                    <button type="button" class="absolute inset-y-0 right-0 top-6 flex items-center px-3 text-gray-500" onclick="togglePasswordVisibility('account-password', this)">
-                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
-                                    </button>
-                                </div>
-                                <div class="md:col-span-3 text-right">
+                                <div class="text-right">
                                     <button type="submit" class="bg-blue-600 w-full md:w-auto text-white font-semibold px-6 py-3 rounded-lg hover:bg-blue-700 transition">Añadir Cuenta</button>
                                 </div>
                             </form>
-                            <div id="accounts-list" class="space-y-3"></div>
+                            <div id="contenedor-cuentas-agrupadas"></div>
                         </div>
                     </div>
                 </div>
@@ -439,7 +444,7 @@
                     addExpenseForm: document.getElementById('add-expense-form'),
                     expensesList: document.getElementById('expenses-list'),
                     addAccountForm: document.getElementById('add-account-form'),
-                    accountsList: document.getElementById('accounts-list'),
+                    accountsList: document.getElementById('contenedor-cuentas-agrupadas'),
                     platformAccountSelect: document.getElementById('platform-account'),
                     editPlatformAccountSelect: document.getElementById('edit-platform-account'),
                     accountFilter: document.getElementById('account-filter'),
@@ -803,64 +808,91 @@
                 };
                 const renderExpenses = () => { selectors.expensesList.innerHTML = ''; if (allExpenses.length === 0) { selectors.expensesList.innerHTML = '<p class="text-sm text-gray-400">No hay egresos registrados.</p>'; return; } allExpenses.forEach(expense => { const item = document.createElement('div'); item.className = 'flex justify-between items-center text-sm p-2 rounded-md hover:bg-gray-50'; item.innerHTML = `<div class="flex-1 truncate pr-2"><p class="text-gray-700">${expense.description}</p><p class="text-xs text-gray-500">${dayjs(expense.date).format('DD/MM/YYYY')}</p></div><div class="flex items-center gap-2"><span class="font-semibold text-red-600">${formatCurrency(expense.amount)}</span><button class="delete-expense-btn text-gray-400 hover:text-red-600" data-id="${expense.id}"><svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm4 0a1 1 0 012 0v6a1 1 0 11-2 0V8z" clip-rule="evenodd"></path></svg></button></div>`; selectors.expensesList.appendChild(item); }); selectors.expensesList.querySelectorAll('.delete-expense-btn').forEach(b => b.addEventListener('click', e => handleDeleteExpense(e.currentTarget.dataset.id))); };
                 const renderPlatformAccounts = () => {
-                    selectors.accountsList.innerHTML = '';
+                    const { accountsList } = selectors;
+                    accountsList.innerHTML = '';
+
                     if (allPlatformAccounts.length === 0) {
-                        selectors.accountsList.innerHTML = '<p class="text-sm text-gray-400">No hay cuentas de plataforma registradas.</p>';
+                        accountsList.innerHTML = '<p class="text-sm text-gray-400">No hay cuentas de plataforma registradas.</p>';
                         return;
                     }
 
-                    allPlatformAccounts.forEach(account => {
-                        const item = document.createElement('div');
-                        // MODIFICADO: Clases para apilar en móvil y poner en fila en desktop
-                        item.className = 'flex flex-col md:flex-row justify-between items-start md:items-center text-sm p-3 rounded-md bg-gray-50 gap-2';
-                        item.dataset.accountId = account.id;
-                        item.innerHTML = `
-                            <div class="flex-1 w-full grid grid-cols-1 md:grid-cols-3 gap-2 md:gap-4 items-center">
-                                <p class="text-gray-800 font-semibold">${account.platform}</p>
-                                <div class="credentials-container">
-                                    <p class="text-gray-600 break-all">${account.email}</p>
+                    // 1. Agrupar cuentas por plataforma
+                    const groupedAccounts = allPlatformAccounts.reduce((acc, account) => {
+                        const { platform } = account;
+                        if (!acc[platform]) {
+                            acc[platform] = [];
+                        }
+                        acc[platform].push(account);
+                        return acc;
+                    }, {});
+
+                    // 2. Iterar y renderizar cada grupo
+                    for (const platform in groupedAccounts) {
+                        const accounts = groupedAccounts[platform];
+
+                        const listItems = accounts.map(account => {
+                            const fechaPagoHtml = account.fechaPago
+                                ? `<small class="text-gray-500 mt-1 block">Próx. Pago: ${dayjs(account.fechaPago).format('DD/MM/YYYY')}</small>`
+                                : '';
+
+                            const enlaceBtnHtml = account.enlace
+                                ? `<a href="${account.enlace}" target="_blank" class="p-1 text-blue-600 hover:text-blue-800 hover:bg-blue-100 rounded-full transition" title="Abrir enlace">
+                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
+                                   </a>`
+                                : '';
+
+                            return `
+                                <li class="list-group-item flex flex-col md:flex-row justify-between items-start md:items-center py-3 px-4">
+                                    <div class="mb-2 md:mb-0">
+                                        <span class="font-semibold text-gray-800 break-all">${account.email}</span>
+                                        ${fechaPagoHtml}
+                                    </div>
+                                    <div class="flex items-center gap-2 self-end md:self-center">
+                                        <input type="password" value="${account.password}" class="w-40 bg-gray-100 border-gray-200 text-sm rounded-md px-2 py-1" readonly>
+                                        <button class="toggle-password-btn p-1 text-gray-500 hover:text-gray-800 hover:bg-gray-200 rounded-full transition" title="Mostrar/Ocultar contraseña">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                                        </button>
+                                        ${enlaceBtnHtml}
+                                        <button class="delete-account-btn p-1 text-red-600 hover:text-red-800 hover:bg-red-100 rounded-full transition" data-id="${account.id}" title="Eliminar">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                        </button>
+                                    </div>
+                                </li>`;
+                        }).join('');
+
+                        const cardHtml = `
+                            <div class="bg-white rounded-2xl shadow-lg mb-6 overflow-hidden border border-gray-200">
+                                <div class="px-4 py-3 bg-gray-50 border-b border-gray-200">
+                                    <h3 class="text-lg font-semibold text-gray-800">${platform}</h3>
                                 </div>
-                                <div class="credentials-container">
-                                    <p class="text-gray-600 break-all truncate">${account.password}</p>
-                                </div>
-                            </div>
-                            <div class="flex items-center self-end md:self-center">
-                                <button class="toggle-visibility-btn text-gray-400 hover:text-gray-600 ml-2" title="Mostrar/Ocultar">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
-                                </button>
-                                <button class="delete-account-btn text-gray-400 hover:text-red-600 ml-2" data-id="${account.id}">
-                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm4 0a1 1 0 012 0v6a1 1 0 11-2 0V8z" clip-rule="evenodd"></path></svg>
-                                </button>
+                                <ul class="divide-y divide-gray-200">
+                                    ${listItems}
+                                </ul>
                             </div>
                         `;
-                        selectors.accountsList.appendChild(item);
+                        accountsList.innerHTML += cardHtml;
+                    }
+
+                    // 3. Añadir Event Listeners después de renderizar
+                    accountsList.querySelectorAll('.delete-account-btn').forEach(btn => {
+                        btn.addEventListener('click', e => handleDeleteAccount(e.currentTarget.dataset.id));
                     });
 
-                    selectors.accountsList.querySelectorAll('.delete-account-btn').forEach(b => b.addEventListener('click', e => {
-                        e.stopPropagation();
-                        handleDeleteAccount(e.currentTarget.dataset.id);
-                    }));
-
-                    selectors.accountsList.querySelectorAll('.toggle-visibility-btn').forEach(btn => {
+                    accountsList.querySelectorAll('.toggle-password-btn').forEach(btn => {
                         btn.addEventListener('click', (e) => {
-                            e.stopPropagation();
-                            const row = e.currentTarget.closest('.flex');
-                            const accountId = row.dataset.accountId;
-                            const account = allPlatformAccounts.find(a => a.id === accountId);
-                            if (!account) return;
+                            const button = e.currentTarget;
+                            const passwordInput = button.previousElementSibling;
+                            const icon = button.querySelector('svg');
 
-                            const credentialContainers = row.querySelectorAll('.credentials-container');
-                            const isHidden = btn.dataset.isHidden === 'true';
-
-                            credentialContainers[0].innerHTML = isHidden ? `<p class="text-gray-600 break-all">${account.email}</p>` : `<p class="text-gray-400 font-mono">••••••••</p>`;
-                            credentialContainers[1].innerHTML = isHidden ? `<p class="text-gray-600 break-all truncate">${account.password}</p>` : `<p class="text-gray-400 font-mono">••••••••</p>`;
-
-                            btn.dataset.isHidden = !isHidden;
-
-                            const icon = btn.querySelector('svg');
-                            icon.innerHTML = isHidden ?
-                                `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />` :
-                                `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7 .946-3.11 3.563-5.522 6.837-6.141M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.581 10.41A7.48 7.48 0 0119.542 12c-1.274 4.057-5.064 7-9.542 7a10.046 10.046 0 01-3.132-.475M2.458 12c.946-3.11 3.563-5.522 6.837-6.141m1.581 2.318A4.5 4.5 0 0115 12a4.5 4.5 0 01-1.07 2.828M5 5l14 14" />`;
+                            if (passwordInput && passwordInput.tagName === 'INPUT') {
+                                if (passwordInput.type === 'password') {
+                                    passwordInput.type = 'text';
+                                    icon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7 .946-3.11 3.563-5.522 6.837-6.141M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.581 10.41A7.48 7.48 0 0119.542 12c-1.274 4.057-5.064 7-9.542 7a10.046 10.046 0 01-3.132-.475M2.458 12c.946-3.11 3.563-5.522 6.837-6.141m1.581 2.318A4.5 4.5 0 0115 12a4.5 4.5 0 01-1.07 2.828M5 5l14 14" />`;
+                                } else {
+                                    passwordInput.type = 'password';
+                                    icon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />`;
+                                }
+                            }
                         });
                     });
                 };
@@ -1041,7 +1073,7 @@
                 selectors.addSaleForm.addEventListener('submit', async (e) => { e.preventDefault(); const f = selectors.addSaleForm; const newSale = { cliente: f.cliente.value, plataforma: f.plataforma.value === 'Otro' ? selectors.otroPlataformaInput.value : f.plataforma.value, precio: parseFloat(f.precio.value), inicioPlan: f.inicioPlan.value, finPlan: f.finPlan.value, correo: f.correo.value, contrasena: f.contrasena.value, pin: f.pin.value, notas: f.notas.value, createdAt: new Date().toISOString() }; try { await addDoc(collection(db, "sales"), newSale); f.reset(); handlePlatformChange(selectors.plataformaSelect, selectors.otroPlataformaContainer, selectors.otroPlataformaInput); } catch (err) { console.error("Error al guardar venta:", err); alert("Error al guardar la venta. Revisa la consola (F12).") } });
                 selectors.editForm.addEventListener('submit', async (e) => { e.preventDefault(); const f = selectors.editForm; const id = f['edit-sale-id'].value; const updated = { cliente: f['edit-cliente'].value, plataforma: f['edit-plataforma'].value === 'Otro' ? selectors.editOtroPlataformaInput.value : f['edit-plataforma'].value, precio: parseFloat(f['edit-precio'].value), inicioPlan: f['edit-inicioPlan'].value, finPlan: f['edit-finPlan'].value, correo: f['edit-correo'].value, contrasena: f['edit-contrasena'].value, pin: f['edit-pin'].value, notas: f['edit-notas'].value, }; try { await updateDoc(doc(db, "sales", id), updated); closeModal(); } catch (err) { console.error("Error al actualizar la venta:", err); alert("Error al actualizar la venta. Revisa la consola (F12).") } });
                 selectors.addExpenseForm.addEventListener('submit', async (e) => { e.preventDefault(); const f = selectors.addExpenseForm; const description = f['expense-description'].value; const amount = parseFloat(f['expense-amount'].value); const date = f['expense-date'].value; if (!description || !date || isNaN(amount) || amount <= 0) return; try { await addDoc(collection(db, "expenses"), { description, amount, date }); f.reset(); f['expense-date'].value = dayjs().format('YYYY-MM-DD'); } catch (err) { console.error("Error al añadir egreso:", err); } });
-                selectors.addAccountForm.addEventListener('submit', async (e) => { e.preventDefault(); const f = selectors.addAccountForm; const newAccount = { platform: f['account-platform'].value, email: f['account-email'].value, password: f['account-password'].value, }; try { await addDoc(collection(db, "platformAccounts"), newAccount); f.reset(); document.querySelectorAll('#account-platform-buttons button').forEach(b => b.classList.remove('bg-indigo-600', 'text-white', 'border-indigo-600')); } catch (err) { console.error("Error al guardar cuenta:", err); } });
+                selectors.addAccountForm.addEventListener('submit', async (e) => { e.preventDefault(); const f = selectors.addAccountForm; const newAccount = { platform: f['account-platform'].value, email: f['account-email'].value, password: f['account-password'].value, enlace: f.enlace.value, fechaPago: f.fechaPago.value }; try { await addDoc(collection(db, "platformAccounts"), newAccount); f.reset(); document.querySelectorAll('#account-platform-buttons button').forEach(b => b.classList.remove('bg-indigo-600', 'text-white', 'border-indigo-600')); } catch (err) { console.error("Error al guardar cuenta:", err); } });
                 selectors.searchInput.addEventListener('input', e => {
                     currentSearchTerm = e.target.value;
                     const activeSales = allSales.filter(sale => sale.estado !== 'ARCHIVADO');
@@ -1093,21 +1125,6 @@
                 // Set default expense date
                 document.getElementById('expense-date').value = dayjs().format('YYYY-MM-DD');
 
-                // Collapsible section logic
-                const toggleButton = document.getElementById('toggle-accounts-section');
-                const toggleIcon = document.getElementById('toggle-accounts-icon');
-                const collapsibleContent = document.getElementById('collapsible-accounts-content');
-
-                toggleButton.addEventListener('click', () => {
-                    const isHidden = collapsibleContent.classList.contains('hidden');
-                    if (isHidden) {
-                        collapsibleContent.classList.remove('hidden');
-                        toggleIcon.classList.add('rotate-180');
-                    } else {
-                        collapsibleContent.classList.add('hidden');
-                        toggleIcon.classList.remove('rotate-180');
-                    }
-                });
 
                 // Navigation logic
                 const navLinks = {
