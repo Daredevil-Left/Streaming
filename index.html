@@ -119,11 +119,20 @@
 
                     <!-- Alerts and Quick Access -->
                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
-                        <div class="lg:col-span-2 bg-white p-6 rounded-2xl shadow-lg">
-                            <h3 class="text-lg font-semibold text-gray-700 mb-4">Alertas de Vencimiento</h3>
-                            <div id="alerts-section" class="space-y-3">
-                                <!-- Alertas se cargarán aquí -->
-                                <p class="text-gray-500">No hay vencimientos próximos.</p>
+                        <div class="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <div class="bg-white p-6 rounded-2xl shadow-lg">
+                                <h3 class="text-lg font-semibold text-gray-700 mb-4">Alertas de Vencimiento</h3>
+                                <div id="alerts-section" class="space-y-3">
+                                    <!-- Alertas se cargarán aquí -->
+                                    <p class="text-gray-500">No hay vencimientos próximos.</p>
+                                </div>
+                            </div>
+                            <div class="bg-white p-6 rounded-2xl shadow-lg">
+                                <h3 class="text-lg font-semibold text-gray-700 mb-4">Alerta de Pago de Cuentas</h3>
+                                <div id="payment-alerts-section" class="space-y-3">
+                                    <!-- Alertas de pago se cargarán aquí -->
+                                    <p class="text-gray-500">No hay pagos próximos.</p>
+                                </div>
                             </div>
                         </div>
                         <div class="space-y-6">
@@ -531,6 +540,7 @@
                 kpiSalesMonth: document.getElementById('kpi-sales-month'),
                 kpiActiveClients: document.getElementById('kpi-active-clients'),
                 alertsSection: document.getElementById('alerts-section'),
+                paymentAlertsSection: document.getElementById('payment-alerts-section'),
                 summaryIngresos: document.getElementById('summary-ingresos'),
                 summaryEgresos: document.getElementById('summary-egresos'),
                 summaryBalance: document.getElementById('summary-balance'),
@@ -717,6 +727,39 @@
                 selectors.alertsSection.querySelectorAll('.copy-alert-btn').forEach(btn => {
                     btn.addEventListener('click', handleCopyAlert);
                 });
+
+                // 6. Alertas de Pago de Cuentas
+                const upcomingPayments = allPlatformAccounts.filter(account => {
+                    if (!account.fechaPago) return false;
+                    const paymentDate = dayjs(account.fechaPago);
+                    const diffDays = paymentDate.diff(today, 'day');
+                    return diffDays >= 0 && diffDays <= 5;
+                }).sort((a, b) => new Date(a.fechaPago) - new Date(b.fechaPago));
+
+                selectors.paymentAlertsSection.innerHTML = '';
+                if (upcomingPayments.length > 0) {
+                    selectors.paymentAlertsSection.className = 'space-y-3';
+                    upcomingPayments.forEach(account => {
+                        const card = document.createElement('div');
+                        card.className = 'bg-gray-50 p-3 rounded-lg border border-gray-200';
+                        card.innerHTML = `
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <p class="font-bold text-gray-800">${getPlatformHtml(account.platform)}</p>
+                                    <p class="text-sm text-gray-500">${account.email}</p>
+                                </div>
+                                <div class="text-right">
+                                    <p class="font-semibold text-sm text-red-600">Vence ${dayjs(account.fechaPago).fromNow()}</p>
+                                    <p class="text-xs text-gray-500">${dayjs(account.fechaPago).format('DD/MM/YYYY')}</p>
+                                </div>
+                            </div>
+                        `;
+                        selectors.paymentAlertsSection.appendChild(card);
+                    });
+                } else {
+                    selectors.paymentAlertsSection.className = 'space-y-3';
+                    selectors.paymentAlertsSection.innerHTML = '<p class="text-gray-500">No hay pagos próximos.</p>';
+                }
             };
 
             const handleCopyAlert = (event) => {
