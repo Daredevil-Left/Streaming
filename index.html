@@ -283,21 +283,59 @@
                 </div>
 
                 <!-- Finanzas View -->
-                <div id="finanzas-view" class="view hidden">
+                <div id="finanzas-view" class="view hidden max-w-5xl mx-auto">
                      <div class="bg-white p-4 md:p-6 rounded-2xl shadow-lg">
                         <h2 class="text-xl md:text-2xl font-semibold text-gray-700 mb-6">Resumen Financiero</h2>
-                        <div class="space-y-4 mb-6">
-                            <div class="flex justify-between items-center p-4 bg-green-50 rounded-lg"><span class="font-medium text-green-800">Ingresos Totales:</span><span id="total-ingresos" class="font-bold text-lg md:text-xl text-green-900">S/0.00</span></div>
-                            <div class="flex justify-between items-center p-4 bg-red-50 rounded-lg"><span class="font-medium text-red-800">Egresos Totales:</span><span id="total-egresos" class="font-bold text-lg md:text-xl text-red-900">S/0.00</span></div>
-                            <div class="flex justify-between items-center p-4 bg-blue-50 rounded-lg border-t-2 border-blue-200"><span class="font-medium text-blue-800">Balance General:</span><span id="balance-total" class="font-bold text-xl md:text-2xl text-blue-900">S/0.00</span></div>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                            <!-- Card Ingresos -->
+                            <div class="bg-white p-6 rounded-xl shadow-md flex items-center space-x-4">
+                                <div class="bg-green-100 p-3 rounded-full">
+                                    <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 6V5m0 14v-1m-7-7h1m14 0h-1m-2.001-5.599a2.001 2.001 0 00-2.828 0l-.707.707m0 9.192l.707.707a2.001 2.001 0 002.828 0m-11.314-4.243l.707-.707a2.001 2.001 0 000-2.828l-.707-.707m9.192 0l-.707.707a2.001 2.001 0 000 2.828l.707.707"></path></svg>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-medium text-gray-500">Ingresos Totales</p>
+                                    <p id="total-ingresos" class="text-2xl font-bold text-green-600">S/0.00</p>
+                                </div>
+                            </div>
+                            <!-- Card Egresos -->
+                            <div class="bg-white p-6 rounded-xl shadow-md flex items-center space-x-4">
+                                <div class="bg-red-100 p-3 rounded-full">
+                                    <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-medium text-gray-500">Egresos Totales</p>
+                                    <p id="total-egresos" class="text-2xl font-bold text-red-600">S/0.00</p>
+                                </div>
+                            </div>
+                            <!-- Card Balance General -->
+                            <div class="bg-gray-800 p-6 rounded-xl shadow-md flex items-center space-x-4">
+                                <div class="bg-gray-700 p-3 rounded-full">
+                                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3"></path></svg>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-medium text-gray-300">Balance General</p>
+                                    <p id="balance-total" class="font-bold text-xl md:text-2xl text-white">S/0.00</p>
+                                </div>
+                            </div>
                         </div>
                         <div class="border-t pt-6 mt-6">
                             <h3 class="text-lg md:text-xl font-semibold text-gray-700 mb-4">Añadir Egreso</h3>
-                            <form id="add-expense-form" class="space-y-4">
-                                <div><label for="expense-description" class="block text-sm font-medium text-gray-600 mb-2">Descripción</label><input type="text" id="expense-description" name="expense-description" class="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="Ej: Pago de internet" required></div>
-                                <div><label for="expense-amount" class="block text-sm font-medium text-gray-600 mb-2">Monto (S/)</label><input type="number" id="expense-amount" name="expense-amount" min="0" step="0.01" class="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="Ej: 50.00" required></div>
-                                <div><label for="expense-date" class="block text-sm font-medium text-gray-600 mb-2">Fecha</label><input type="date" id="expense-date" name="expense-date" class="w-full px-4 py-2 border border-gray-300 rounded-lg" required></div>
-                                <button type="submit" class="w-full bg-red-500 text-white font-semibold py-2 rounded-lg hover:bg-red-600 transition">Añadir Gasto</button>
+                            <form id="add-expense-form">
+                                <div class="mb-4">
+                                    <label for="expense-description" class="block text-sm font-medium text-gray-600 mb-2">Descripción</label>
+                                    <input type="text" id="expense-description" name="expense-description" class="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="Ej: Pago de internet" required>
+                                </div>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                                    <div>
+                                        <label for="expense-amount" class="block text-sm font-medium text-gray-600 mb-2">Monto (S/)</label>
+                                        <input type="number" id="expense-amount" name="expense-amount" min="0" step="0.01" class="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="Ej: 50.00" required>
+                                    </div>
+                                    <div>
+                                        <label for="expense-date" class="block text-sm font-medium text-gray-600 mb-2">Fecha</label>
+                                        <input type="date" id="expense-date" name="expense-date" class="w-full px-4 py-2 border border-gray-300 rounded-lg" required>
+                                    </div>
+                                </div>
+                                <button type="submit" class="w-full bg-blue-600 text-white font-semibold py-3 rounded-lg hover:bg-blue-700 transition">Añadir Gasto</button>
                             </form>
                         </div>
                         <div id="expenses-list-container" class="border-t pt-6 mt-6">
@@ -635,7 +673,24 @@
                     document.getElementById('cancel-action-btn').onclick = null;
                 }, 300);
             };
-            const updateFinancialSummary = () => { const salesIncome = allSales.reduce((sum, sale) => sum + (sale.precio || 0), 0); const totalIngresos = salesIncome; const totalEgresos = allExpenses.reduce((sum, expense) => sum + (expense.amount || 0), 0); const balance = totalIngresos - totalEgresos; selectors.totalIngresos.textContent = formatCurrency(totalIngresos); selectors.totalEgresos.textContent = formatCurrency(totalEgresos); selectors.balanceTotal.textContent = formatCurrency(balance); selectors.balanceTotal.classList.toggle('text-red-900', balance < 0); selectors.balanceTotal.classList.toggle('text-blue-900', balance >= 0); };
+            const updateFinancialSummary = () => {
+                const salesIncome = allSales.reduce((sum, sale) => sum + (sale.precio || 0), 0);
+                const totalIngresos = salesIncome;
+                const totalEgresos = allExpenses.reduce((sum, expense) => sum + (expense.amount || 0), 0);
+                const balance = totalIngresos - totalEgresos;
+
+                selectors.totalIngresos.textContent = formatCurrency(totalIngresos);
+                selectors.totalEgresos.textContent = formatCurrency(totalEgresos);
+                selectors.balanceTotal.textContent = formatCurrency(balance);
+
+                // Adjust text color for the new dark 'Balance' card
+                selectors.balanceTotal.classList.remove('text-red-400', 'text-white');
+                if (balance < 0) {
+                    selectors.balanceTotal.classList.add('text-red-400');
+                } else {
+                    selectors.balanceTotal.classList.add('text-white');
+                }
+            };
 
             const loadDashboardData = () => {
                 const today = dayjs().startOf('day');
@@ -964,7 +1019,29 @@
                 selectors.salesList.querySelectorAll('.delete-btn').forEach(b => b.addEventListener('click', e => handleDeleteSale(e.currentTarget.dataset.id)));
                 selectors.salesList.querySelectorAll('.renew-btn').forEach(b => b.addEventListener('click', e => openRenewalModal(e.currentTarget.dataset.id)));
             };
-            const renderExpenses = () => { selectors.expensesList.innerHTML = ''; if (allExpenses.length === 0) { selectors.expensesList.innerHTML = '<p class="text-sm text-gray-400">No hay egresos registrados.</p>'; return; } allExpenses.forEach(expense => { const item = document.createElement('div'); item.className = 'flex justify-between items-center text-sm p-2 rounded-md hover:bg-gray-50'; item.innerHTML = `<div class="flex-1 truncate pr-2"><p class="text-gray-700">${expense.description}</p><p class="text-xs text-gray-500">${dayjs(expense.date).format('DD/MM/YYYY')}</p></div><div class="flex items-center gap-2"><span class="font-semibold text-red-600">${formatCurrency(expense.amount)}</span><button class="delete-expense-btn text-gray-400 hover:text-red-600" data-id="${expense.id}"><svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm4 0a1 1 0 012 0v6a1 1 0 11-2 0V8z" clip-rule="evenodd"></path></svg></button></div>`; selectors.expensesList.appendChild(item); }); selectors.expensesList.querySelectorAll('.delete-expense-btn').forEach(b => b.addEventListener('click', e => handleDeleteExpense(e.currentTarget.dataset.id))); };
+            const renderExpenses = () => {
+                selectors.expensesList.innerHTML = '';
+                if (allExpenses.length === 0) {
+                    selectors.expensesList.innerHTML = '<p class="text-sm text-gray-400">No hay egresos registrados.</p>';
+                    return;
+                }
+                const expenseItems = allExpenses.map(expense => `
+                    <div class="flex justify-between items-center py-3 border-b border-gray-100 last:border-b-0">
+                        <div>
+                            <p class="font-medium text-gray-800">${expense.description}</p>
+                            <p class="text-sm text-gray-500">${dayjs(expense.date).format('DD/MM/YYYY')}</p>
+                        </div>
+                        <div class="flex items-center space-x-4">
+                            <span class="font-semibold text-red-600 text-lg">${formatCurrency(expense.amount)}</span>
+                            <button class="delete-expense-btn text-gray-400 hover:text-red-600 p-1 rounded-full hover:bg-red-50 transition" data-id="${expense.id}" title="Eliminar Gasto">
+                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm4 0a1 1 0 012 0v6a1 1 0 11-2 0V8z" clip-rule="evenodd"></path></svg>
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+                selectors.expensesList.innerHTML = expenseItems;
+                selectors.expensesList.querySelectorAll('.delete-expense-btn').forEach(b => b.addEventListener('click', e => handleDeleteExpense(e.currentTarget.dataset.id)));
+            };
             const renderPlatformAccounts = () => {
                 const { accountsList } = selectors;
                 accountsList.innerHTML = '';
