@@ -203,13 +203,8 @@
                             <div id="otro-plataforma-container" class="hidden"><label for="otro-plataforma" class="block text-sm font-medium text-gray-600 mb-2">Especificar Plataforma</label><input type="text" id="otro-plataforma" name="otro-plataforma" class="w-full px-4 py-2 border border-gray-300 rounded-lg"></div>
                             <div><label for="precio" class="block text-sm font-medium text-gray-600 mb-2">Precio Pagado (S/)</label><input type="number" id="precio" name="precio" min="0" step="0.01" class="w-full px-4 py-2 border border-gray-300 rounded-lg" required></div>
                             <div><label for="inicioPlan" class="block text-sm font-medium text-gray-600 mb-2">Inicio del Plan</label><input type="date" id="inicioPlan" name="inicioPlan" class="w-full px-4 py-2 border border-gray-300 rounded-lg" required></div>
-                            <div>
-                                <div class="flex items-end gap-2">
-                                    <div class="flex-grow"><label for="diasPlan" class="block text-sm font-medium text-gray-600 mb-2">Nº Días</label><input type="number" id="diasPlan" name="diasPlan" class="w-full px-4 py-2 border border-gray-300 rounded-lg"></div>
-                                    <button type="button" id="calculate-date-btn" class="bg-indigo-500 text-white font-semibold px-4 py-2 rounded-lg hover:bg-indigo-600 transition h-10">Calcular</button>
-                                </div>
-                                <div class="mt-2"><label for="finPlan" class="block text-sm font-medium text-gray-600 mb-2">Fin del Plan</label><input type="date" id="finPlan" name="finPlan" class="w-full px-4 py-2 border border-gray-300 rounded-lg" required></div>
-                            </div>
+                            <div><label for="diasPlan" class="block text-sm font-medium text-gray-600 mb-2">Nº Días</label><input type="number" id="diasPlan" name="diasPlan" class="w-full px-4 py-2 border border-gray-300 rounded-lg"></div>
+                            <div><label for="finPlan" class="block text-sm font-medium text-gray-600 mb-2">Fin del Plan</label><input type="date" id="finPlan" name="finPlan" class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100" readonly></div>
                             <div>
                                 <label for="platform-account" class="block text-sm font-medium text-gray-600 mb-2">Cuenta de Plataforma</label>
                                 <select id="platform-account" name="platform-account" class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white">
@@ -228,7 +223,15 @@
                                 </button>
                             </div>
                             <div><label for="pin" class="block text-sm font-medium text-gray-600 mb-2">PIN</label><input type="text" id="pin" name="pin" class="w-full px-4 py-2 border border-gray-300 rounded-lg"></div>
-                            <div class="md:col-span-1 xl:col-span-2"><label for="notas" class="block text-sm font-medium text-gray-600 mb-2">Notas Adicionales</label><input type="text" id="notas" name="notas" class="w-full px-4 py-2 border border-gray-300 rounded-lg"></div>
+                            <div><label for="notas" class="block text-sm font-medium text-gray-600 mb-2">Notas Adicionales</label><input type="text" id="notas" name="notas" class="w-full px-4 py-2 border border-gray-300 rounded-lg"></div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-600 mb-2">Método de Pago</label>
+                                <div id="payment-method-buttons" class="flex items-center gap-2">
+                                    <button type="button" data-value="BCP" class="payment-method-btn flex-1 px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium hover:bg-gray-100">BCP</button>
+                                    <button type="button" data-value="Efectivo" class="payment-method-btn flex-1 px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium hover:bg-gray-100">Efectivo</button>
+                                </div>
+                                <input type="hidden" id="metodoPago" name="metodoPago">
+                            </div>
                             <div class="md:col-span-2 lg:col-span-3 xl:col-span-4 text-right self-end"><button type="submit" class="bg-indigo-600 w-full md:w-auto text-white font-semibold px-6 py-3 rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-4 focus:ring-indigo-500 focus:ring-opacity-50 transition-transform transform hover:scale-105">Guardar Venta</button></div>
                         </form>
                     </div>
@@ -255,12 +258,13 @@
                     </div>
 
                     <div class="bg-white rounded-2xl shadow-lg p-4">
-                        <div class="hidden md:grid grid-cols-7 gap-4 font-semibold text-gray-600 border-b pb-3 mb-3 text-sm">
+                        <div class="hidden md:grid grid-cols-8 gap-4 font-semibold text-gray-600 border-b pb-3 mb-3 text-sm">
                             <div class="col-span-2">Cliente</div>
                             <div>Plataforma</div>
                             <div>Vencimiento</div>
                             <div>Estado</div>
                             <div>Precio</div>
+                            <div>Método de Pago</div>
                             <div class="text-right">Acciones</div>
                         </div>
                         <div id="sales-list" class="space-y-2"></div>
@@ -343,7 +347,15 @@
                     </button>
                 </div>
                 <div><label for="edit-pin" class="block text-sm font-medium text-gray-600 mb-2">PIN</label><input type="text" id="edit-pin" name="edit-pin" class="w-full px-4 py-2 border border-gray-300 rounded-lg"></div>
-                <div class="lg:col-span-2 md:col-span-2"><label for="edit-notas" class="block text-sm font-medium text-gray-600 mb-2">Notas Adicionales</label><input type="text" id="edit-notas" name="edit-notas" class="w-full px-4 py-2 border border-gray-300 rounded-lg"></div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-600 mb-2">Método de Pago</label>
+                    <div id="edit-payment-method-buttons" class="flex items-center gap-2">
+                        <button type="button" data-value="BCP" class="edit-payment-method-btn flex-1 px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium hover:bg-gray-100">BCP</button>
+                        <button type="button" data-value="Efectivo" class="edit-payment-method-btn flex-1 px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium hover:bg-gray-100">Efectivo</button>
+                    </div>
+                    <input type="hidden" id="edit-metodoPago" name="edit-metodoPago">
+                </div>
+                <div class="lg:col-span-1 md:col-span-1"><label for="edit-notas" class="block text-sm font-medium text-gray-600 mb-2">Notas Adicionales</label><input type="text" id="edit-notas" name="edit-notas" class="w-full px-4 py-2 border border-gray-300 rounded-lg"></div>
                 <div class="lg:col-span-3 md:col-span-2 flex justify-end gap-4 mt-4"><button type="button" id="cancel-edit" class="bg-gray-200 text-gray-700 font-semibold px-6 py-3 rounded-lg hover:bg-gray-300 transition">Cancelar</button><button type="submit" class="bg-indigo-600 text-white font-semibold px-6 py-3 rounded-lg hover:bg-indigo-700">Guardar Cambios</button></div>
             </form>
         </div>
@@ -817,7 +829,7 @@
                 parentContainer.classList.remove('hidden');
 
                 if (sales.length === 0) {
-                    selectors.salesList.innerHTML = `<p class="text-gray-500 text-center col-span-7 py-4">No se encontraron ventas que coincidan.</p>`;
+                    selectors.salesList.innerHTML = `<p class="text-gray-500 text-center col-span-8 py-4">No se encontraron ventas que coincidan.</p>`;
                     return;
                 }
 
@@ -834,7 +846,7 @@
                     const endDateForRelative = dayjs(sale.finPlan).endOf('day');
 
                     const row = document.createElement('div');
-                    row.className = `grid grid-cols-2 md:grid-cols-7 gap-4 items-center p-3 rounded-lg hover:bg-gray-50 transition-colors duration-200 border-b text-sm`;
+                    row.className = `grid grid-cols-2 md:grid-cols-8 gap-4 items-center p-3 rounded-lg hover:bg-gray-50 transition-colors duration-200 border-b text-sm`;
 
                     row.innerHTML = `
                         <div class="col-span-2 font-semibold text-gray-800">
@@ -847,6 +859,7 @@
                         <div class="hidden md:block">${endDateForDisplay.format('DD/MM/YYYY')} <span class="text-xs text-gray-500">(${endDateForRelative.fromNow()})</span></div>
                         <div class="hidden md:block"><span class="text-xs font-semibold py-1 px-2 uppercase rounded-full text-${statusInfo.color}-600 bg-${statusInfo.color}-100">${statusText}</span></div>
                         <div class="hidden md:block font-bold text-gray-800">${formatCurrency(sale.precio)}</div>
+                        <div class="hidden md:block">${sale.metodoPago || 'N/A'}</div>
                         <div class="flex justify-end gap-3 items-center">
                             <button class="edit-btn p-1 text-indigo-600 hover:text-indigo-800 hover:bg-indigo-100 rounded-full transition" data-id="${sale.id}" title="Editar">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L16.732 3.732z"></path></svg>
@@ -1012,7 +1025,42 @@
                     credentialsContainer.forEach(el => el.classList.remove('hidden'));
                 }
             };
-            const handleEdit = (id) => { const sale = allSales.find(s => s.id === id); if(!sale) return; const f = selectors.editForm; f['edit-sale-id'].value = sale.id; f['edit-cliente'].value = sale.cliente; f['edit-precio'].value = sale.precio; f['edit-inicioPlan'].value = sale.inicioPlan; f['edit-finPlan'].value = sale.finPlan; f['edit-correo'].value = sale.correo || ''; f['edit-contrasena'].value = sale.contrasena || ''; f['edit-pin'].value = sale.pin || ''; f['edit-notas'].value = sale.notas || ''; const standardPlatforms = Array.from(f['edit-plataforma'].options).map(o => o.value); if (standardPlatforms.includes(sale.plataforma)) { f['edit-plataforma'].value = sale.plataforma; } else { f['edit-plataforma'].value = 'Otro'; selectors.editOtroPlataformaInput.value = sale.plataforma; } handlePlatformChange(selectors.editPlataformaSelect, selectors.editOtroPlataformaContainer, selectors.editOtroPlataformaInput); openModal(); };
+            const handleEdit = (id) => {
+                const sale = allSales.find(s => s.id === id);
+                if (!sale) return;
+                const f = selectors.editForm;
+                f['edit-sale-id'].value = sale.id;
+                f['edit-cliente'].value = sale.cliente;
+                f['edit-precio'].value = sale.precio;
+                f['edit-inicioPlan'].value = sale.inicioPlan;
+                f['edit-finPlan'].value = sale.finPlan;
+                f['edit-correo'].value = sale.correo || '';
+                f['edit-contrasena'].value = sale.contrasena || '';
+                f['edit-pin'].value = sale.pin || '';
+                f['edit-notas'].value = sale.notas || '';
+                f['edit-metodoPago'].value = sale.metodoPago || '';
+
+                // Update payment method button styles
+                const editPaymentMethodButtons = document.querySelectorAll('.edit-payment-method-btn');
+                editPaymentMethodButtons.forEach(btn => {
+                    btn.classList.remove('bg-indigo-600', 'text-white', 'border-indigo-600');
+                    btn.classList.add('border-gray-300');
+                    if (btn.dataset.value === sale.metodoPago) {
+                        btn.classList.add('bg-indigo-600', 'text-white', 'border-indigo-600');
+                        btn.classList.remove('border-gray-300');
+                    }
+                });
+
+                const standardPlatforms = Array.from(f['edit-plataforma'].options).map(o => o.value);
+                if (standardPlatforms.includes(sale.plataforma)) {
+                    f['edit-plataforma'].value = sale.plataforma;
+                } else {
+                    f['edit-plataforma'].value = 'Otro';
+                    selectors.editOtroPlataformaInput.value = sale.plataforma;
+                }
+                handlePlatformChange(selectors.editPlataformaSelect, selectors.editOtroPlataformaContainer, selectors.editOtroPlataformaInput);
+                openModal();
+            };
             const openRenewalModal = (saleId) => {
                 const sale = allSales.find(s => s.id === saleId);
                 if (!sale) return;
@@ -1180,8 +1228,8 @@
             });
             onSnapshot(collection(db, "expenses"), (snapshot) => { allExpenses = snapshot.docs.map(d => ({ id: d.id, ...d.data() })); allExpenses.sort((a, b) => new Date(b.date) - new Date(a.date)); renderExpenses(); updateFinancialSummary(); loadDashboardData(); }, (e) => { console.error("Error al cargar egresos:", e); });
             onSnapshot(collection(db, "platformAccounts"), (snapshot) => { allPlatformAccounts = snapshot.docs.map(d => ({ id: d.id, ...d.data() })); renderPlatformAccounts(); populatePlatformAccountsDropdowns(); }, (e) => { console.error("Error al cargar cuentas:", e); });
-            selectors.addSaleForm.addEventListener('submit', async (e) => { e.preventDefault(); const f = selectors.addSaleForm; const newSale = { cliente: f.cliente.value, plataforma: f.plataforma.value === 'Otro' ? selectors.otroPlataformaInput.value : f.plataforma.value, precio: parseFloat(f.precio.value), inicioPlan: f.inicioPlan.value, finPlan: f.finPlan.value, correo: f.correo.value, contrasena: f.contrasena.value, pin: f.pin.value, notas: f.notas.value, createdAt: new Date().toISOString() }; try { await addDoc(collection(db, "sales"), newSale); f.reset(); handlePlatformChange(selectors.plataformaSelect, selectors.otroPlataformaContainer, selectors.otroPlataformaInput); } catch (err) { console.error("Error al guardar venta:", err); alert("Error al guardar la venta. Revisa la consola (F12).") } });
-            selectors.editForm.addEventListener('submit', async (e) => { e.preventDefault(); const f = selectors.editForm; const id = f['edit-sale-id'].value; const updated = { cliente: f['edit-cliente'].value, plataforma: f['edit-plataforma'].value === 'Otro' ? selectors.editOtroPlataformaInput.value : f['edit-plataforma'].value, precio: parseFloat(f['edit-precio'].value), inicioPlan: f['edit-inicioPlan'].value, finPlan: f['edit-finPlan'].value, correo: f['edit-correo'].value, contrasena: f['edit-contrasena'].value, pin: f['edit-pin'].value, notas: f['edit-notas'].value, }; try { await updateDoc(doc(db, "sales", id), updated); closeModal(); } catch (err) { console.error("Error al actualizar la venta:", err); alert("Error al actualizar la venta. Revisa la consola (F12).") } });
+            selectors.addSaleForm.addEventListener('submit', async (e) => { e.preventDefault(); const f = selectors.addSaleForm; const newSale = { cliente: f.cliente.value, plataforma: f.plataforma.value === 'Otro' ? selectors.otroPlataformaInput.value : f.plataforma.value, precio: parseFloat(f.precio.value), inicioPlan: f.inicioPlan.value, finPlan: f.finPlan.value, correo: f.correo.value, contrasena: f.contrasena.value, pin: f.pin.value, notas: f.notas.value, metodoPago: f.metodoPago.value, createdAt: new Date().toISOString() }; try { await addDoc(collection(db, "sales"), newSale); f.reset(); handlePlatformChange(selectors.plataformaSelect, selectors.otroPlataformaContainer, selectors.otroPlataformaInput); document.querySelectorAll('.payment-method-btn').forEach(btn => { btn.classList.remove('bg-indigo-600', 'text-white', 'border-indigo-600'); btn.classList.add('border-gray-300'); }); } catch (err) { console.error("Error al guardar venta:", err); alert("Error al guardar la venta. Revisa la consola (F12).") } });
+            selectors.editForm.addEventListener('submit', async (e) => { e.preventDefault(); const f = selectors.editForm; const id = f['edit-sale-id'].value; const updated = { cliente: f['edit-cliente'].value, plataforma: f['edit-plataforma'].value === 'Otro' ? selectors.editOtroPlataformaInput.value : f['edit-plataforma'].value, precio: parseFloat(f['edit-precio'].value), inicioPlan: f['edit-inicioPlan'].value, finPlan: f['edit-finPlan'].value, correo: f['edit-correo'].value, contrasena: f['edit-contrasena'].value, pin: f['edit-pin'].value, notas: f['edit-notas'].value, metodoPago: f['edit-metodoPago'].value }; try { await updateDoc(doc(db, "sales", id), updated); closeModal(); } catch (err) { console.error("Error al actualizar la venta:", err); alert("Error al actualizar la venta. Revisa la consola (F12).") } });
             selectors.addExpenseForm.addEventListener('submit', async (e) => { e.preventDefault(); const f = selectors.addExpenseForm; const description = f['expense-description'].value; const amount = parseFloat(f['expense-amount'].value); const date = f['expense-date'].value; if (!description || !date || isNaN(amount) || amount <= 0) return; try { await addDoc(collection(db, "expenses"), { description, amount, date }); f.reset(); f['expense-date'].value = dayjs().format('YYYY-MM-DD'); } catch (err) { console.error("Error al añadir egreso:", err); } });
             selectors.addAccountForm.addEventListener('submit', async (e) => { e.preventDefault(); const f = selectors.addAccountForm; const newAccount = { platform: f['account-platform'].value, email: f['account-email'].value, password: f['account-password'].value, enlace: f.enlace.value, fechaPago: f.fechaPago.value }; try { await addDoc(collection(db, "platformAccounts"), newAccount); f.reset(); document.querySelectorAll('#account-platform-buttons button').forEach(b => b.classList.remove('bg-indigo-600', 'text-white', 'border-indigo-600')); } catch (err) { console.error("Error al guardar cuenta:", err); } });
             selectors.searchInput.addEventListener('input', e => {
@@ -1248,18 +1296,56 @@
 
             selectors.closeEditAccountModalBtn.addEventListener('click', closeEditAccountModal);
             selectors.cancelEditAccountBtn.addEventListener('click', closeEditAccountModal);
-            const diasPlanInput = document.getElementById('diasPlan'); const inicioPlanInput = document.getElementById('inicioPlan'); const finPlanInput = document.getElementById('finPlan'); const calculateDateBtn = document.getElementById('calculate-date-btn');
+            const diasPlanInput = document.getElementById('diasPlan'); const inicioPlanInput = document.getElementById('inicioPlan'); const finPlanInput = document.getElementById('finPlan');
             const editFinPlanInput = document.getElementById('edit-finPlan');
+            const paymentMethodButtons = document.querySelectorAll('.payment-method-btn');
+            const metodoPagoInput = document.getElementById('metodoPago');
 
-
-            calculateDateBtn.addEventListener('click', () => {
+            const calculateEndDate = () => {
                 const days = parseInt(diasPlanInput.value, 10);
                 const startDate = inicioPlanInput.value;
                 if (!isNaN(days) && startDate) {
                     const newEndDate = dayjs(startDate).add(days, 'day').format('YYYY-MM-DD');
                     finPlanInput.value = newEndDate;
                 }
+            };
+
+            diasPlanInput.addEventListener('input', calculateEndDate);
+            inicioPlanInput.addEventListener('change', calculateEndDate);
+
+            paymentMethodButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const value = button.dataset.value;
+                    metodoPagoInput.value = value;
+
+                    // Update styles
+                    paymentMethodButtons.forEach(btn => {
+                        btn.classList.remove('bg-indigo-600', 'text-white', 'border-indigo-600');
+                        btn.classList.add('border-gray-300');
+                    });
+                    button.classList.add('bg-indigo-600', 'text-white', 'border-indigo-600');
+                    button.classList.remove('border-gray-300');
+                });
             });
+
+            const editPaymentMethodButtons = document.querySelectorAll('.edit-payment-method-btn');
+            const editMetodoPagoInput = document.getElementById('edit-metodoPago');
+
+            editPaymentMethodButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const value = button.dataset.value;
+                    editMetodoPagoInput.value = value;
+
+                    // Update styles
+                    editPaymentMethodButtons.forEach(btn => {
+                        btn.classList.remove('bg-indigo-600', 'text-white', 'border-indigo-600');
+                        btn.classList.add('border-gray-300');
+                    });
+                    button.classList.add('bg-indigo-600', 'text-white', 'border-indigo-600');
+                    button.classList.remove('border-gray-300');
+                });
+            });
+
 
             // Set default expense date
             document.getElementById('expense-date').value = dayjs().format('YYYY-MM-DD');
