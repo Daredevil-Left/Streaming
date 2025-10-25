@@ -1025,7 +1025,7 @@
                 const parentContainer = document.querySelector('.bg-white.rounded-2xl.shadow-lg.p-4');
                 if (allSales.length === 0) {
                     selectors.emptyState.classList.remove('hidden');
-                    parentContainer.classList.add('hidden'); // Ocultar el contenedor de la lista si no hay ventas
+                    parentContainer.classList.add('hidden');
                     return;
                 }
                 selectors.emptyState.classList.add('hidden');
@@ -1036,51 +1036,83 @@
                     return;
                 }
 
-                sales.forEach(sale => {
-                    const statusText = getSaleStatus(sale.finPlan);
-                    const statusInfo = {
-                        'Vencido': { color: 'orange' },
-                        'Vence hoy': { color: 'red' },
-                        'Próximo a Vencer': { color: 'yellow' },
-                        'Activo': { color: 'green' }
-                    }[statusText];
+                const groupedSales = sales.reduce((acc, sale) => {
+                    let key = 'Cuentas Manuales';
+                    if (sale.accountId) {
+                        const account = allPlatformAccounts.find(a => a.id === sale.accountId);
+                        if (account) {
+                            key = account.email;
+                        } else if(sale.correo) {
+                            key = sale.correo;
+                        }
+                    } else if (sale.correo) {
+                         key = sale.correo;
+                    }
 
-                    const endDateForDisplay = dayjs(sale.finPlan);
-                    const endDateForRelative = dayjs(sale.finPlan).endOf('day');
+                    if (!acc[key]) {
+                        acc[key] = [];
+                    }
+                    acc[key].push(sale);
+                    return acc;
+                }, {});
 
-                    const row = document.createElement('div');
-                    row.className = `grid grid-cols-2 md:grid-cols-8 gap-4 items-center p-3 rounded-lg hover:bg-gray-50 transition-colors duration-200 border-b text-sm`;
+                const sortedAccounts = Object.keys(groupedSales).sort();
 
-                    row.innerHTML = `
-                        <div class="col-span-2 font-semibold text-gray-800">
-                            ${sale.cliente}
-                            <div class="font-normal text-xs text-gray-500 md:hidden mt-1">
-                                ${getPlatformHtml(sale.plataforma)} &middot; Vence: ${endDateForDisplay.format('DD/MM/YYYY')}
+                for (const accountEmail of sortedAccounts) {
+                    const salesInGroup = groupedSales[accountEmail];
+                    const groupContainer = document.createElement('div');
+                    groupContainer.className = 'mb-6';
+
+                    const groupHeader = document.createElement('div');
+                    groupHeader.className = 'py-2 px-4 bg-gray-100 rounded-t-lg border-b-2 border-gray-200';
+                    groupHeader.innerHTML = `<h3 class="text-md font-semibold text-gray-800">${accountEmail}</h3>`;
+                    groupContainer.appendChild(groupHeader);
+
+                    const salesRowsContainer = document.createElement('div');
+                    salesRowsContainer.className = 'bg-white rounded-b-lg shadow-sm border border-t-0 border-gray-200';
+
+                    salesInGroup.forEach(sale => {
+                        const statusText = getSaleStatus(sale.finPlan);
+                        const statusInfo = { 'Vencido': { color: 'orange' }, 'Vence hoy': { color: 'red' }, 'Próximo a Vencer': { color: 'yellow' }, 'Activo': { color: 'green' } }[statusText];
+                        const endDateForDisplay = dayjs(sale.finPlan);
+                        const endDateForRelative = dayjs(sale.finPlan).endOf('day');
+
+                        const row = document.createElement('div');
+                        row.className = `grid grid-cols-2 md:grid-cols-8 gap-4 items-center p-3 hover:bg-gray-50 transition-colors duration-200 border-b last:border-b-0 border-gray-100 text-sm`;
+                        row.innerHTML = `
+                            <div class="col-span-2 font-semibold text-gray-800">
+                                ${sale.cliente}
+                                <div class="font-normal text-xs text-gray-500 md:hidden mt-1">
+                                    ${getPlatformHtml(sale.plataforma)} &middot; Vence: ${endDateForDisplay.format('DD/MM/YYYY')}
+                                </div>
                             </div>
-                        </div>
-                        <div class="hidden md:block">${getPlatformHtml(sale.plataforma)}</div>
-                        <div class="hidden md:block">${endDateForDisplay.format('DD/MM/YYYY')} <span class="text-xs text-gray-500">(${endDateForRelative.fromNow()})</span></div>
-                        <div class="hidden md:block"><span class="text-xs font-semibold py-1 px-2 uppercase rounded-full text-${statusInfo.color}-600 bg-${statusInfo.color}-100">${statusText}</span></div>
-                        <div class="hidden md:block font-bold text-gray-800">${formatCurrency(sale.precio)}</div>
-                        <div class="hidden md:block">${sale.metodoPago || 'N/A'}</div>
-                        <div class="flex justify-end gap-3 items-center">
-                            <button class="edit-btn p-1 text-indigo-600 hover:text-indigo-800 hover:bg-indigo-100 rounded-full transition" data-id="${sale.id}" title="Editar">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L16.732 3.732z"></path></svg>
-                            </button>
-                            <button class="renew-btn p-1 text-green-600 hover:text-green-800 hover:bg-green-100 rounded-full transition" data-id="${sale.id}" title="Renovar">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h5M20 20v-5h-5M4 20h5v-5M20 4h-5v5"></path></svg>
-                            </button>
-                            <button class="delete-btn p-1 text-red-600 hover:text-red-800 hover:bg-red-100 rounded-full transition" data-id="${sale.id}" title="Eliminar">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                            </button>
-                        </div>
-                        <div class="md:hidden col-span-2 mt-2 pt-2 border-t flex justify-between items-center text-xs">
-                            <span class="font-semibold py-1 px-2 uppercase rounded-full text-${statusInfo.color}-600 bg-${statusInfo.color}-100">${statusText}</span>
-                            <span class="font-bold text-gray-800 text-base">${formatCurrency(sale.precio)}</span>
-                        </div>
-                    `;
-                    selectors.salesList.appendChild(row);
-                });
+                            <div class="hidden md:block">${getPlatformHtml(sale.plataforma)}</div>
+                            <div class="hidden md:block">${endDateForDisplay.format('DD/MM/YYYY')} <span class="text-xs text-gray-500">(${endDateForRelative.fromNow()})</span></div>
+                            <div class="hidden md:block"><span class="text-xs font-semibold py-1 px-2 uppercase rounded-full text-${statusInfo.color}-600 bg-${statusInfo.color}-100">${statusText}</span></div>
+                            <div class="hidden md:block font-bold text-gray-800">${formatCurrency(sale.precio)}</div>
+                            <div class="hidden md:block">${sale.metodoPago || 'N/A'}</div>
+                            <div class="flex justify-end gap-3 items-center">
+                                <button class="edit-btn p-1 text-indigo-600 hover:text-indigo-800 hover:bg-indigo-100 rounded-full transition" data-id="${sale.id}" title="Editar">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L16.732 3.732z"></path></svg>
+                                </button>
+                                <button class="renew-btn p-1 text-green-600 hover:text-green-800 hover:bg-green-100 rounded-full transition" data-id="${sale.id}" title="Renovar">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h5M20 20v-5h-5M4 20h5v-5M20 4h-5v5"></path></svg>
+                                </button>
+                                <button class="delete-btn p-1 text-red-600 hover:text-red-800 hover:bg-red-100 rounded-full transition" data-id="${sale.id}" title="Eliminar">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                </button>
+                            </div>
+                            <div class="md:hidden col-span-2 mt-2 pt-2 border-t flex justify-between items-center text-xs">
+                                <span class="font-semibold py-1 px-2 uppercase rounded-full text-${statusInfo.color}-600 bg-${statusInfo.color}-100">${statusText}</span>
+                                <span class="font-bold text-gray-800 text-base">${formatCurrency(sale.precio)}</span>
+                            </div>
+                        `;
+                        salesRowsContainer.appendChild(row);
+                    });
+
+                    groupContainer.appendChild(salesRowsContainer);
+                    selectors.salesList.appendChild(groupContainer);
+                }
 
                 selectors.salesList.querySelectorAll('.edit-btn').forEach(b => b.addEventListener('click', e => handleEdit(e.currentTarget.dataset.id)));
                 selectors.salesList.querySelectorAll('.delete-btn').forEach(b => b.addEventListener('click', e => handleDeleteSale(e.currentTarget.dataset.id)));
