@@ -238,12 +238,13 @@
                             <div><label for="pin" class="block text-sm font-medium text-gray-600 mb-2">PIN</label><input type="text" id="pin" name="pin" class="w-full px-4 py-2 border border-gray-300 rounded-lg"></div>
                             <div><label for="notas" class="block text-sm font-medium text-gray-600 mb-2">Notas Adicionales</label><input type="text" id="notas" name="notas" class="w-full px-4 py-2 border border-gray-300 rounded-lg"></div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-600 mb-2">Método de Pago</label>
-                                <div id="payment-method-buttons" class="flex items-center gap-2">
-                                    <button type="button" data-value="BCP" class="payment-method-btn flex-1 px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium hover:bg-gray-100">BCP</button>
-                                    <button type="button" data-value="Efectivo" class="payment-method-btn flex-1 px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium hover:bg-gray-100">Efectivo</button>
-                                </div>
-                                <input type="hidden" id="metodoPago" name="metodoPago">
+                                <label for="metodoPago" class="block text-sm font-medium text-gray-600 mb-2">Método de Pago</label>
+                                <select id="metodoPago" name="metodoPago" class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white" required>
+                                    <option value="" disabled selected>Seleccione un método</option>
+                                    <option value="BCP">BCP</option>
+                                    <option value="Falta pagar">Falta pagar</option>
+                                    <option value="Gratis">Gratis</option>
+                                </select>
                             </div>
                             <div class="md:col-span-2 lg:col-span-3 xl:col-span-4 text-right self-end"><button type="submit" class="bg-indigo-600 w-full md:w-auto text-white font-semibold px-6 py-3 rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-4 focus:ring-indigo-500 focus:ring-opacity-50 transition-transform transform hover:scale-105">Guardar Venta</button></div>
                         </form>
@@ -421,12 +422,12 @@
                 </div>
                 <div><label for="edit-pin" class="block text-sm font-medium text-gray-600 mb-2">PIN</label><input type="text" id="edit-pin" name="edit-pin" class="w-full px-4 py-2 border border-gray-300 rounded-lg"></div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-600 mb-2">Método de Pago</label>
-                    <div id="edit-payment-method-buttons" class="flex items-center gap-2">
-                        <button type="button" data-value="BCP" class="edit-payment-method-btn flex-1 px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium hover:bg-gray-100">BCP</button>
-                        <button type="button" data-value="Efectivo" class="edit-payment-method-btn flex-1 px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium hover:bg-gray-100">Efectivo</button>
-                    </div>
-                    <input type="hidden" id="edit-metodoPago" name="edit-metodoPago">
+                    <label for="edit-metodoPago" class="block text-sm font-medium text-gray-600 mb-2">Método de Pago</label>
+                    <select id="edit-metodoPago" name="edit-metodoPago" class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white" required>
+                        <option value="BCP">BCP</option>
+                        <option value="Falta pagar">Falta pagar</option>
+                        <option value="Gratis">Gratis</option>
+                    </select>
                 </div>
                 <div class="lg:col-span-1 md:col-span-1"><label for="edit-notas" class="block text-sm font-medium text-gray-600 mb-2">Notas Adicionales</label><input type="text" id="edit-notas" name="edit-notas" class="w-full px-4 py-2 border border-gray-300 rounded-lg"></div>
                 <div class="lg:col-span-3 md:col-span-2 flex justify-end gap-4 mt-4"><button type="button" id="cancel-edit" class="bg-gray-200 text-gray-700 font-semibold px-6 py-3 rounded-lg hover:bg-gray-300 transition">Cancelar</button><button type="submit" class="bg-indigo-600 text-white font-semibold px-6 py-3 rounded-lg hover:bg-indigo-700">Guardar Cambios</button></div>
@@ -649,6 +650,15 @@
             };
             const formatCurrency = (amount) => `S/${(amount||0).toFixed(2)}`;
             const getPlatformHtml = (platformName) => { const style=platformStyles[platformName]||platformStyles['Otro']; return `<span class="font-bold ${style.color}">${platformName}</span>`};
+            const getMetodoPagoBadge = (metodo) => {
+                const styles = {
+                    'BCP': 'bg-orange-400 text-white',
+                    'Falta pagar': 'bg-red-500 text-white',
+                    'Gratis': 'bg-green-500 text-white',
+                };
+                const style = styles[metodo] || 'bg-gray-400 text-white';
+                return `<span class="px-2 py-1 text-xs font-semibold rounded-full ${style}">${metodo}</span>`;
+            };
             const handlePlatformChange = (select, container, input) => { if (select.value==='Otro') { container.classList.remove('hidden'); input.required = true; } else { container.classList.add('hidden'); input.required = false; input.value = ''; }};
             const openModal = () => { selectors.editModal.classList.remove('hidden'); setTimeout(() => { selectors.editModal.classList.remove('opacity-0'); selectors.editModal.querySelector('.modal-content').classList.remove('scale-95'); }, 10); };
             const closeModal = () => { selectors.editModal.classList.add('opacity-0'); selectors.editModal.querySelector('.modal-content').classList.add('scale-95'); setTimeout(() => selectors.editModal.classList.add('hidden'), 300); };
@@ -1089,7 +1099,7 @@
                             <div class="hidden md:block">${endDateForDisplay.format('DD/MM/YYYY')} <span class="text-xs text-gray-500">(${endDateForRelative.fromNow()})</span></div>
                             <div class="hidden md:block"><span class="text-xs font-semibold py-1 px-2 uppercase rounded-full text-${statusInfo.color}-600 bg-${statusInfo.color}-100">${statusText}</span></div>
                             <div class="hidden md:block font-bold text-gray-800">${formatCurrency(sale.precio)}</div>
-                            <div class="hidden md:block">${sale.metodoPago || 'N/A'}</div>
+                            <div class="hidden md:block">${getMetodoPagoBadge(sale.metodoPago) || 'N/A'}</div>
                             <div class="flex justify-end gap-3 items-center">
                                 <button class="edit-btn p-1 text-indigo-600 hover:text-indigo-800 hover:bg-indigo-100 rounded-full transition" data-id="${sale.id}" title="Editar">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L16.732 3.732z"></path></svg>
@@ -1366,16 +1376,7 @@
                  f['edit-profile-select'].value = sale.profileId || '';
 
 
-                // Update payment method button styles
-                const editPaymentMethodButtons = document.querySelectorAll('.edit-payment-method-btn');
-                editPaymentMethodButtons.forEach(btn => {
-                    btn.classList.remove('bg-indigo-600', 'text-white', 'border-indigo-600');
-                    btn.classList.add('border-gray-300');
-                    if (btn.dataset.value === sale.metodoPago) {
-                        btn.classList.add('bg-indigo-600', 'text-white', 'border-indigo-600');
-                        btn.classList.remove('border-gray-300');
-                    }
-                });
+                // El menú desplegable se actualiza directamente con .value
 
                 const standardPlatforms = Array.from(f['edit-plataforma'].options).map(o => o.value);
                 if (standardPlatforms.includes(sale.plataforma)) {
@@ -1701,11 +1702,8 @@
                     }
 
                     f.reset();
+                    f.metodoPago.value = ""; // Reiniciar el select
                     handlePlatformChange(selectors.plataformaSelect, selectors.otroPlataformaContainer, selectors.otroPlataformaInput);
-                    document.querySelectorAll('.payment-method-btn').forEach(btn => {
-                        btn.classList.remove('bg-indigo-600', 'text-white', 'border-indigo-600');
-                        btn.classList.add('border-gray-300');
-                    });
                 } catch (err) {
                     console.error("Error al guardar venta:", err);
                     alert("Error al guardar la venta. Revisa la consola (F12).");
@@ -1844,8 +1842,6 @@
             selectors.cancelEditAccountBtn.addEventListener('click', closeEditAccountModal);
             const diasPlanInput = document.getElementById('diasPlan'); const inicioPlanInput = document.getElementById('inicioPlan'); const finPlanInput = document.getElementById('finPlan');
             const editFinPlanInput = document.getElementById('edit-finPlan');
-            const paymentMethodButtons = document.querySelectorAll('.payment-method-btn');
-            const metodoPagoInput = document.getElementById('metodoPago');
 
             const calculateEndDate = () => {
                 const days = parseInt(diasPlanInput.value, 10);
@@ -1858,39 +1854,6 @@
 
             diasPlanInput.addEventListener('input', calculateEndDate);
             inicioPlanInput.addEventListener('change', calculateEndDate);
-
-            paymentMethodButtons.forEach(button => {
-                button.addEventListener('click', () => {
-                    const value = button.dataset.value;
-                    metodoPagoInput.value = value;
-
-                    // Update styles
-                    paymentMethodButtons.forEach(btn => {
-                        btn.classList.remove('bg-indigo-600', 'text-white', 'border-indigo-600');
-                        btn.classList.add('border-gray-300');
-                    });
-                    button.classList.add('bg-indigo-600', 'text-white', 'border-indigo-600');
-                    button.classList.remove('border-gray-300');
-                });
-            });
-
-            const editPaymentMethodButtons = document.querySelectorAll('.edit-payment-method-btn');
-            const editMetodoPagoInput = document.getElementById('edit-metodoPago');
-
-            editPaymentMethodButtons.forEach(button => {
-                button.addEventListener('click', () => {
-                    const value = button.dataset.value;
-                    editMetodoPagoInput.value = value;
-
-                    // Update styles
-                    editPaymentMethodButtons.forEach(btn => {
-                        btn.classList.remove('bg-indigo-600', 'text-white', 'border-indigo-600');
-                        btn.classList.add('border-gray-300');
-                    });
-                    button.classList.add('bg-indigo-600', 'text-white', 'border-indigo-600');
-                    button.classList.remove('border-gray-300');
-                });
-            });
 
 
             // Set default expense date
