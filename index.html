@@ -1820,6 +1820,7 @@
                 const account = allPlatformAccounts.find(acc => acc.id === id);
                 if (!account) return;
 
+                const originalEmail = account.email;
                 const updatedData = {
                     email: form['edit-account-email'].value,
                     enlace: form['edit-account-enlace'].value,
@@ -1829,10 +1830,36 @@
                 const newPassword = form['edit-account-password'].value;
                 if (newPassword) {
                     updatedData.password = newPassword;
+                } else {
+                    updatedData.password = account.password;
                 }
 
                 try {
                     await updateDoc(doc(db, "platformAccounts", id), updatedData);
+
+                    if (originalEmail !== updatedData.email) {
+                        const salesToUpdate = allSales.filter(sale => sale.correo === originalEmail);
+                        const updatePromises = salesToUpdate.map(sale => {
+                            const saleRef = doc(db, "sales", sale.id);
+                            return updateDoc(saleRef, { correo: updatedData.email });
+                        });
+                        await Promise.all(updatePromises);
+
+                        allSales.forEach(sale => {
+                            if (sale.correo === originalEmail) {
+                                sale.correo = updatedData.email;
+                            }
+                        });
+                    }
+
+                    // Actualizar la cuenta en la lista en memoria
+                    const accountIndex = allPlatformAccounts.findIndex(acc => acc.id === id);
+                    if (accountIndex !== -1) {
+                        allPlatformAccounts[accountIndex] = { ...allPlatformAccounts[accountIndex], ...updatedData };
+                    }
+
+                    renderPlatformAccounts();
+                    applyFiltersAndRender(allSales.filter(s => s.estado !== 'ARCHIVADO'));
                     closeEditAccountModal();
                 } catch (err) {
                     console.error("Error al actualizar la cuenta:", err);
