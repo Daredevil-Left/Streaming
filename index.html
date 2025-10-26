@@ -239,10 +239,10 @@
                             <div><label for="notas" class="block text-sm font-medium text-gray-600 mb-2">Notas Adicionales</label><input type="text" id="notas" name="notas" class="w-full px-4 py-2 border border-gray-300 rounded-lg"></div>
                             <div>
                                 <label class="block text-sm font-medium text-gray-600 mb-2">Método de Pago</label>
-                                <button type="button" id="open-payment-modal-btn" class="w-full px-4 py-2 border border-gray-300 rounded-lg text-left font-medium hover:bg-gray-100">
-                                    Seleccionar Método de Pago
+                                <button type="button" id="open-payment-modal-btn" class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-left font-medium">
+                                    <span id="selected-payment-method-text">Seleccionar método</span>
                                 </button>
-                                <input type="hidden" id="metodoPago" name="metodoPago">
+                                <input type="hidden" id="metodoPago" name="metodoPago" required>
                             </div>
                             <div class="md:col-span-2 lg:col-span-3 xl:col-span-4 text-right self-end"><button type="submit" class="bg-indigo-600 w-full md:w-auto text-white font-semibold px-6 py-3 rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-4 focus:ring-indigo-500 focus:ring-opacity-50 transition-transform transform hover:scale-105">Guardar Venta</button></div>
                         </form>
@@ -381,6 +381,22 @@
         </div>
     </div>
 
+    <!-- Payment Method Modal -->
+    <div id="payment-method-modal" class="modal fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 z-50 hidden opacity-0">
+        <div class="modal-content bg-white w-full max-w-sm rounded-2xl shadow-2xl p-6 transform scale-95">
+            <h2 class="text-xl font-semibold text-gray-800 mb-6 text-center">Seleccionar Método de Pago</h2>
+            <div class="grid grid-cols-2 gap-4">
+                <button data-value="BCP" class="payment-option-btn w-full text-white font-semibold py-3 px-4 rounded-lg transition-transform transform hover:scale-105" style="background-color: #FF6B00;">BCP</button>
+                <button data-value="Efectivo" class="payment-option-btn w-full bg-green-500 text-white font-semibold py-3 px-4 rounded-lg transition-transform transform hover:scale-105">Efectivo</button>
+                <button data-value="Debe" class="payment-option-btn w-full bg-red-600 text-white font-semibold py-3 px-4 rounded-lg transition-transform transform hover:scale-105">Debe</button>
+                <button data-value="Gratis" class="payment-option-btn w-full bg-blue-600 text-white font-semibold py-3 px-4 rounded-lg transition-transform transform hover:scale-105">Gratis</button>
+            </div>
+            <div class="mt-6 text-center">
+                <button id="cancel-payment-modal" class="text-gray-500 hover:text-gray-700 font-medium">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
     <div id="edit-modal" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden opacity-0">
         <div class="modal-content bg-white w-full max-w-4xl rounded-2xl shadow-2xl p-6 transform scale-95">
             <div class="flex justify-between items-center mb-6"><h2 class="text-2xl font-semibold text-gray-700">Editar Venta</h2><button id="close-modal" class="text-gray-400 hover:text-gray-600"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button></div>
@@ -421,10 +437,10 @@
                 <div><label for="edit-pin" class="block text-sm font-medium text-gray-600 mb-2">PIN</label><input type="text" id="edit-pin" name="edit-pin" class="w-full px-4 py-2 border border-gray-300 rounded-lg"></div>
                 <div>
                     <label class="block text-sm font-medium text-gray-600 mb-2">Método de Pago</label>
-                    <button type="button" id="edit-open-payment-modal-btn" class="w-full px-4 py-2 border border-gray-300 rounded-lg text-left font-medium hover:bg-gray-100">
-                        Seleccionar Método de Pago
+                    <button type="button" id="edit-open-payment-modal-btn" class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-left font-medium">
+                        <span id="edit-selected-payment-method-text">Seleccionar método</span>
                     </button>
-                    <input type="hidden" id="edit-metodoPago" name="edit-metodoPago">
+                    <input type="hidden" id="edit-metodoPago" name="edit-metodoPago" required>
                 </div>
                 <div class="lg:col-span-1 md:col-span-1"><label for="edit-notas" class="block text-sm font-medium text-gray-600 mb-2">Notas Adicionales</label><input type="text" id="edit-notas" name="edit-notas" class="w-full px-4 py-2 border border-gray-300 rounded-lg"></div>
                 <div class="lg:col-span-3 md:col-span-2 flex justify-end gap-4 mt-4"><button type="button" id="cancel-edit" class="bg-gray-200 text-gray-700 font-semibold px-6 py-3 rounded-lg hover:bg-gray-300 transition">Cancelar</button><button type="submit" class="bg-indigo-600 text-white font-semibold px-6 py-3 rounded-lg hover:bg-indigo-700">Guardar Cambios</button></div>
@@ -546,25 +562,6 @@
         </div>
     </div>
 
-    <!-- Payment Method Modal -->
-    <div id="payment-method-modal" class="modal fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 z-50 hidden opacity-0">
-        <div class="modal-content bg-white w-full max-w-md rounded-2xl shadow-2xl p-6 transform scale-95">
-            <div class="flex justify-between items-center mb-6">
-                <h2 class="text-2xl font-semibold text-gray-700">Seleccionar Método de Pago</h2>
-                <button id="close-payment-modal" class="text-gray-400 hover:text-gray-600">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                </button>
-            </div>
-            <div class="grid grid-cols-2 gap-4">
-                <button data-value="BCP" class="payment-option-btn w-full text-center bg-blue-100 text-blue-800 font-semibold px-4 py-3 rounded-lg hover:bg-blue-200 transition">BCP</button>
-                <button data-value="Efectivo" class="payment-option-btn w-full text-center bg-green-100 text-green-800 font-semibold px-4 py-3 rounded-lg hover:bg-green-200 transition">Efectivo</button>
-                <button data-value="Debe" class="payment-option-btn w-full text-center bg-yellow-100 text-yellow-800 font-semibold px-4 py-3 rounded-lg hover:bg-yellow-200 transition">Debe</button>
-                <button data-value="Gratis" class="payment-option-btn w-full text-center bg-gray-100 text-gray-800 font-semibold px-4 py-3 rounded-lg hover:bg-gray-200 transition">Gratis</button>
-            </div>
-        </div>
-    </div>
-
-
     <script>
         function togglePasswordVisibility(inputId, button) { const input = document.getElementById(inputId), icon = button.querySelector('svg'); if (input.type === "password") { input.type = "text"; icon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7 .946-3.11 3.563-5.522 6.837-6.141M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.581 10.41A7.48 7.48 0 0119.542 12c-1.274 4.057-5.064 7-9.542 7a10.046 10.046 0 01-3.132-.475M2.458 12c.946-3.11 3.563-5.522 6.837-6.141m1.581 2.318A4.5 4.5 0 0115 12a4.5 4.5 0 01-1.07 2.828M5 5l14 14" />`; } else { input.type = "password"; icon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />`; } }
     </script>
@@ -650,12 +647,6 @@
                 closeProfilesModalBtn: document.getElementById('close-profiles-modal'),
                 profilesContentArea: document.getElementById('profiles-content-area'),
                 profilesModalAccountEmail: document.getElementById('profiles-modal-account-email'),
-                 // Payment Modal Selectors
-                paymentMethodModal: document.getElementById('payment-method-modal'),
-                closePaymentModalBtn: document.getElementById('close-payment-modal'),
-                openPaymentModalBtn: document.getElementById('open-payment-modal-btn'),
-                editOpenPaymentModalBtn: document.getElementById('edit-open-payment-modal-btn'),
-
             };
             const getSaleStatus = (finPlan) => {
                 if (dayjs().isAfter(dayjs(finPlan).endOf('day'))) {
@@ -671,29 +662,43 @@
                 return 'Activo';
             };
             const formatCurrency = (amount) => `S/${(amount||0).toFixed(2)}`;
+            const getPaymentMethodHtml = (method) => {
+                const styles = {
+                    'BCP': 'background-color: #FF6B00; color: white;',
+                    'Efectivo': 'background-color: #28a745; color: white;',
+                    'Debe': 'background-color: #dc3545; color: white;',
+                    'Gratis': 'background-color: #007bff; color: white;',
+                    'default': 'background-color: #6c757d; color: white;'
+                };
+                const style = styles[method] || styles['default'];
+                return `<span class="px-2 py-1 text-xs font-semibold rounded-md" style="${style}">${method || 'N/A'}</span>`;
+            };
             const getPlatformHtml = (platformName) => { const style=platformStyles[platformName]||platformStyles['Otro']; return `<span class="font-bold ${style.color}">${platformName}</span>`};
             const handlePlatformChange = (select, container, input) => { if (select.value==='Otro') { container.classList.remove('hidden'); input.required = true; } else { container.classList.add('hidden'); input.required = false; input.value = ''; }};
             const openModal = () => { selectors.editModal.classList.remove('hidden'); setTimeout(() => { selectors.editModal.classList.remove('opacity-0'); selectors.editModal.querySelector('.modal-content').classList.remove('scale-95'); }, 10); };
             const closeModal = () => { selectors.editModal.classList.add('opacity-0'); selectors.editModal.querySelector('.modal-content').classList.add('scale-95'); setTimeout(() => selectors.editModal.classList.add('hidden'), 300); };
-            const openProfilesModal = () => { selectors.manageProfilesModal.classList.remove('hidden'); setTimeout(() => { selectors.manageProfilesModal.classList.remove('opacity-0'); selectors.manageProfilesModal.querySelector('.modal-content').classList.remove('scale-95'); }, 10); };
-            const closeProfilesModal = () => { selectors.manageProfilesModal.classList.add('opacity-0'); selectors.manageProfilesModal.querySelector('.modal-content').classList.add('scale-95'); setTimeout(() => selectors.manageProfilesModal.classList.add('hidden'), 300); };
 
-            const openPaymentModal = (isEdit = false) => {
-                const modal = selectors.paymentMethodModal;
-                modal.dataset.isEdit = isEdit;
-                modal.classList.remove('hidden');
+            // Payment Modal Logic
+            let currentPaymentForm = null; // Can be 'add' or 'edit'
+            const paymentModal = document.getElementById('payment-method-modal');
+            const openPaymentModal = (formType) => {
+                currentPaymentForm = formType;
+                paymentModal.classList.remove('hidden');
                 setTimeout(() => {
-                    modal.classList.remove('opacity-0');
-                    modal.querySelector('.modal-content').classList.remove('scale-95');
+                    paymentModal.classList.remove('opacity-0');
+                    paymentModal.querySelector('.modal-content').classList.remove('scale-95');
                 }, 10);
             };
-
             const closePaymentModal = () => {
-                const modal = selectors.paymentMethodModal;
-                modal.classList.add('opacity-0');
-                modal.querySelector('.modal-content').classList.add('scale-95');
-                setTimeout(() => modal.classList.add('hidden'), 300);
+                paymentModal.classList.add('opacity-0');
+                paymentModal.querySelector('.modal-content').classList.add('scale-95');
+                setTimeout(() => {
+                    paymentModal.classList.add('hidden');
+                    currentPaymentForm = null;
+                }, 300);
             };
+            const openProfilesModal = () => { selectors.manageProfilesModal.classList.remove('hidden'); setTimeout(() => { selectors.manageProfilesModal.classList.remove('opacity-0'); selectors.manageProfilesModal.querySelector('.modal-content').classList.remove('scale-95'); }, 10); };
+            const closeProfilesModal = () => { selectors.manageProfilesModal.classList.add('opacity-0'); selectors.manageProfilesModal.querySelector('.modal-content').classList.add('scale-95'); setTimeout(() => selectors.manageProfilesModal.classList.add('hidden'), 300); };
             const showConfirmationModal = (title, message, onConfirm) => {
                 const modal = document.getElementById('confirmation-modal');
                 document.getElementById('confirmation-title').textContent = title;
@@ -1129,7 +1134,7 @@
                             <div class="hidden md:block">${endDateForDisplay.format('DD/MM/YYYY')} <span class="text-xs text-gray-500">(${endDateForRelative.fromNow()})</span></div>
                             <div class="hidden md:block"><span class="text-xs font-semibold py-1 px-2 uppercase rounded-full text-${statusInfo.color}-600 bg-${statusInfo.color}-100">${statusText}</span></div>
                             <div class="hidden md:block font-bold text-gray-800">${formatCurrency(sale.precio)}</div>
-                            <div class="hidden md:block">${sale.metodoPago || 'N/A'}</div>
+                            <div class="hidden md:block">${getPaymentMethodHtml(sale.metodoPago)}</div>
                             <div class="flex justify-end gap-3 items-center">
                                 <button class="edit-btn p-1 text-indigo-600 hover:text-indigo-800 hover:bg-indigo-100 rounded-full transition" data-id="${sale.id}" title="Editar">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L16.732 3.732z"></path></svg>
@@ -1384,6 +1389,7 @@
                 f['edit-pin'].value = sale.pin || '';
                 f['edit-notas'].value = sale.notas || '';
                 f['edit-metodoPago'].value = sale.metodoPago || '';
+                document.getElementById('edit-selected-payment-method-text').textContent = sale.metodoPago || 'Seleccionar método';
                 f['edit-platform-account'].value = sale.accountId || '';
 
                 // Populate and set the profile dropdown
@@ -1741,11 +1747,8 @@
                     }
 
                     f.reset();
+                    document.getElementById('selected-payment-method-text').textContent = 'Seleccionar método';
                     handlePlatformChange(selectors.plataformaSelect, selectors.otroPlataformaContainer, selectors.otroPlataformaInput);
-                    document.querySelectorAll('.payment-method-btn').forEach(btn => {
-                        btn.classList.remove('bg-indigo-600', 'text-white', 'border-indigo-600');
-                        btn.classList.add('border-gray-300');
-                    });
                 } catch (err) {
                     console.error("Error al guardar venta:", err);
                     alert("Error al guardar la venta. Revisa la consola (F12).");
@@ -1842,25 +1845,6 @@
             selectors.closeModalBtn.addEventListener('click', closeModal);
             selectors.cancelEditBtn.addEventListener('click', closeModal);
             selectors.closeProfilesModalBtn.addEventListener('click', closeProfilesModal);
-            selectors.openPaymentModalBtn.addEventListener('click', () => openPaymentModal(false));
-            selectors.editOpenPaymentModalBtn.addEventListener('click', () => openPaymentModal(true));
-            selectors.closePaymentModalBtn.addEventListener('click', closePaymentModal);
-
-            selectors.paymentMethodModal.querySelectorAll('.payment-option-btn').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    const value = btn.dataset.value;
-                    const isEdit = selectors.paymentMethodModal.dataset.isEdit === 'true';
-
-                    if (isEdit) {
-                        selectors.editForm['edit-metodoPago'].value = value;
-                        selectors.editOpenPaymentModalBtn.textContent = value;
-                    } else {
-                        selectors.addSaleForm['metodoPago'].value = value;
-                        selectors.openPaymentModalBtn.textContent = value;
-                    }
-                    closePaymentModal();
-                });
-            });
 
 
             document.getElementById('renewal-form').addEventListener('submit', (e) => {
@@ -1933,24 +1917,24 @@
                 });
             });
 
-            const editPaymentMethodButtons = document.querySelectorAll('.edit-payment-method-btn');
-            const editMetodoPagoInput = document.getElementById('edit-metodoPago');
+            // Payment Modal Listeners
+            document.getElementById('open-payment-modal-btn').addEventListener('click', () => openPaymentModal('add'));
+            document.getElementById('edit-open-payment-modal-btn').addEventListener('click', () => openPaymentModal('edit'));
+            document.getElementById('cancel-payment-modal').addEventListener('click', closePaymentModal);
 
-            editPaymentMethodButtons.forEach(button => {
+            document.querySelectorAll('.payment-option-btn').forEach(button => {
                 button.addEventListener('click', () => {
                     const value = button.dataset.value;
-                    editMetodoPagoInput.value = value;
-
-                    // Update styles
-                    editPaymentMethodButtons.forEach(btn => {
-                        btn.classList.remove('bg-indigo-600', 'text-white', 'border-indigo-600');
-                        btn.classList.add('border-gray-300');
-                    });
-                    button.classList.add('bg-indigo-600', 'text-white', 'border-indigo-600');
-                    button.classList.remove('border-gray-300');
+                    if (currentPaymentForm === 'add') {
+                        document.getElementById('metodoPago').value = value;
+                        document.getElementById('selected-payment-method-text').textContent = value;
+                    } else if (currentPaymentForm === 'edit') {
+                        document.getElementById('edit-metodoPago').value = value;
+                        document.getElementById('edit-selected-payment-method-text').textContent = value;
+                    }
+                    closePaymentModal();
                 });
             });
-
 
             // Set default expense date
             document.getElementById('expense-date').value = dayjs().format('YYYY-MM-DD');
