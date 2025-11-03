@@ -1210,7 +1210,13 @@
                             const sortedProfiles = account.profiles.sort((a, b) => a.nombre.localeCompare(b.nombre));
                             sortedProfiles.forEach(profile => {
                                 const color = profile.estado === 'Disponible' ? 'text-green-500' : 'text-red-500';
-                                profilesIndicatorHtml += `<span class="${color}" title="${profile.nombre}: ${profile.estado}">${userIconSvg}</span>`;
+                                const sale = (profile.estado === 'Ocupado' && profile.clienteId) ? allSales.find(s => s.id === profile.clienteId) : null;
+                                const clientName = sale ? sale.cliente : 'Ocupado';
+                                profilesIndicatorHtml += `
+                                    <div class="flex flex-col items-center text-center">
+                                        <span class="${color}" title="${profile.nombre}: ${clientName}">${userIconSvg}</span>
+                                        <span class="text-xs text-gray-600 mt-1 w-12 truncate" title="${clientName}">${profile.estado === 'Ocupado' ? clientName : ''}</span>
+                                    </div>`;
                             });
                         } else {
                             for (let i = 0; i < 5; i++) {
