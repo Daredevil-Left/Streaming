@@ -565,6 +565,7 @@
         const auth = getAuth(app);
         
         function startApp() {
+            let allSales = [], allExpenses = [], allPlatformAccounts = [], activePlatformFilter = 'Todos', currentSearchTerm = '', activeAccountFilter = '', activeStatusFilter = '';
             document.getElementById('app').classList.remove('hidden');
             document.getElementById('logout-btn').addEventListener('click', () => { signOut(auth).catch((error) => console.error("Error al cerrar sesión", error)); });
 
@@ -586,7 +587,6 @@
                 'Paramount+': { color: 'text-blue-800', bg: '#0064FF' },
                 'Otro': { color: 'text-gray-500', bg: '#6B7280' }
             };
-            let allSales = [], allExpenses = [], allPlatformAccounts = [], activePlatformFilter = 'Todos', currentSearchTerm = '', activeAccountFilter = '', activeStatusFilter = '';
             const selectors = {
                 addSaleForm: document.getElementById('add-sale-form'),
                 salesList: document.getElementById('sales-list'),
@@ -1210,7 +1210,14 @@
                             const sortedProfiles = account.profiles.sort((a, b) => a.nombre.localeCompare(b.nombre));
                             sortedProfiles.forEach(profile => {
                                 const color = profile.estado === 'Disponible' ? 'text-green-500' : 'text-red-500';
-                                profilesIndicatorHtml += `<span class="${color}" title="${profile.nombre}: ${profile.estado}">${userIconSvg}</span>`;
+                                let title = `${profile.nombre}: ${profile.estado}`;
+                                if (profile.estado === 'Ocupado' && profile.clienteId) {
+                                    const sale = allSales.find(s => s.id === profile.clienteId);
+                                    if (sale) {
+                                        title += ` por ${sale.cliente}`;
+                                    }
+                                }
+                                profilesIndicatorHtml += `<span class="${color}" title="${title}">${userIconSvg}</span>`;
                             });
                         } else {
                             for (let i = 0; i < 5; i++) {
