@@ -1585,12 +1585,20 @@
                             ? `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>`
                             : `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>`;
 
+                        let statusText = profile.estado;
+                        if (!isAvailable) {
+                            const sale = allSales.find(s => s.id === profile.clienteId);
+                            if (sale) {
+                                statusText = `Ocupado (${sale.cliente})`;
+                            }
+                        }
+
                         profilesHtml += `
                             <li class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                                 <span class="font-semibold text-gray-700">${profile.nombre}</span>
                                 <span class="px-3 py-1 text-xs font-bold rounded-full ${statusColor} flex items-center gap-1">
                                     ${statusIcon}
-                                    ${profile.estado}
+                                    ${statusText}
                                 </span>
                             </li>
                         `;
