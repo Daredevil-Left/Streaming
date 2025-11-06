@@ -39,6 +39,44 @@
         .toast {
             transition: opacity 0.5s, transform 0.5s;
         }
+        /* Estilos para el tooltip personalizado */
+        .profile-icon-wrapper {
+            position: relative;
+            display: inline-block;
+        }
+
+        .custom-tooltip {
+            visibility: hidden;
+            width: max-content;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px 10px;
+            position: absolute;
+            z-index: 10;
+            bottom: 125%; /* Posicionar encima del icono */
+            left: 50%;
+            transform: translateX(-50%); /* Centrar robustamente */
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .custom-tooltip::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: #333 transparent transparent transparent;
+        }
+
+        .profile-icon-wrapper:hover .custom-tooltip {
+            visibility: visible;
+            opacity: 1;
+        }
     </style>
 </head>
 <body class="antialiased">
@@ -554,7 +592,11 @@
     <script>
         function togglePasswordVisibility(inputId, button) { const input = document.getElementById(inputId), icon = button.querySelector('svg'); if (input.type === "password") { input.type = "text"; icon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7 .946-3.11 3.563-5.522 6.837-6.141M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.581 10.41A7.48 7.48 0 0119.542 12c-1.274 4.057-5.064 7-9.542 7a10.046 10.046 0 01-3.132-.475M2.458 12c.946-3.11 3.563-5.522 6.837-6.141m1.581 2.318A4.5 4.5 0 0115 12a4.5 4.5 0 01-1.07 2.828M5 5l14 14" />`; } else { input.type = "password"; icon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />`; } }
     </script>
-
+    <script>
+        window.testUtils = {
+            renderPlatformAccounts: () => console.error('renderPlatformAccounts not initialized for testing'),
+        };
+    </script>
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getFirestore, collection, addDoc, onSnapshot, doc, updateDoc, deleteDoc, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
@@ -1166,6 +1208,8 @@
                     return;
                 }
 
+                const salesById = new Map(allSales.map(sale => [sale.id, sale]));
+
                 // 1. Group accounts by platform
                 const groupedAccounts = allPlatformAccounts.reduce((acc, account) => {
                     const { platform } = account;
@@ -1210,7 +1254,21 @@
                             const sortedProfiles = account.profiles.sort((a, b) => a.nombre.localeCompare(b.nombre));
                             sortedProfiles.forEach(profile => {
                                 const color = profile.estado === 'Disponible' ? 'text-green-500' : 'text-red-500';
-                                profilesIndicatorHtml += `<span class="${color}" title="${profile.nombre}: ${profile.estado}">${userIconSvg}</span>`;
+                                let tooltip = `${profile.nombre}: ${profile.estado}`;
+                                if (profile.estado === 'Ocupado' && profile.clienteId) {
+                                    const sale = salesById.get(profile.clienteId);
+                                    if (sale) {
+                                        profilesIndicatorHtml += `
+                                            <div class="profile-icon-wrapper">
+                                                <span class="${color}">${userIconSvg}</span>
+                                                <div class="custom-tooltip">${sale.cliente}</div>
+                                            </div>`;
+                                    } else {
+                                        profilesIndicatorHtml += `<span class="${color}" title="${tooltip}">${userIconSvg}</span>`;
+                                    }
+                                } else {
+                                    profilesIndicatorHtml += `<span class="${color}" title="${tooltip}">${userIconSvg}</span>`;
+                                }
                             });
                         } else {
                             for (let i = 0; i < 5; i++) {
@@ -1930,15 +1988,21 @@
             }
         };
 
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                checkAndReleaseExpiredProfiles().then(() => {
-                    startApp();
-                });
-            } else {
-                window.location.href = 'login.html';
-            }
-        });
+        if (window.isTesting) {
+            window.testUtils.renderPlatformAccounts = renderPlatformAccounts;
+        }
+
+        if (!window.isTesting) {
+            onAuthStateChanged(auth, (user) => {
+                if (user) {
+                    checkAndReleaseExpiredProfiles().then(() => {
+                        startApp();
+                    });
+                } else {
+                    window.location.href = 'login.html';
+                }
+            });
+        }
         window.startApp = startApp;
 
         // Toast notification logic
