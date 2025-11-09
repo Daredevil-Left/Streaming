@@ -1472,13 +1472,17 @@
             const handlePermanentDeleteAction = async (id) => {
                 const sale = allSales.find(s => s.id === id);
                 if (sale && sale.accountId && sale.profileId) {
-                    const profileRef = doc(db, "platformAccounts", sale.accountId, "Perfiles", sale.profileId);
-                    await updateDoc(profileRef, { estado: 'Disponible', fechaVencimiento: null, clienteId: null });
-
                     const account = allPlatformAccounts.find(a => a.id === sale.accountId);
-                    const profile = account.profiles.find(p => p.id === sale.profileId);
-                    profile.estado = 'Disponible';
-                    renderPlatformAccounts();
+                    if (account) {
+                        const profileRef = doc(db, "platformAccounts", sale.accountId, "Perfiles", sale.profileId);
+                        await updateDoc(profileRef, { estado: 'Disponible', fechaVencimiento: null, clienteId: null });
+
+                        const profile = account.profiles.find(p => p.id === sale.profileId);
+                        if (profile) {
+                            profile.estado = 'Disponible';
+                        }
+                        renderPlatformAccounts();
+                    }
                 }
                 try {
                     await deleteDoc(doc(db, "sales", id));
@@ -1493,13 +1497,17 @@
             const handleArchiveAction = async (id) => {
                  const sale = allSales.find(s => s.id === id);
                 if (sale && sale.accountId && sale.profileId) {
-                    const profileRef = doc(db, "platformAccounts", sale.accountId, "Perfiles", sale.profileId);
-                    await updateDoc(profileRef, { estado: 'Disponible', fechaVencimiento: null, clienteId: null });
-
                     const account = allPlatformAccounts.find(a => a.id === sale.accountId);
-                    const profile = account.profiles.find(p => p.id === sale.profileId);
-                    profile.estado = 'Disponible';
-                    renderPlatformAccounts();
+                    if (account) {
+                        const profileRef = doc(db, "platformAccounts", sale.accountId, "Perfiles", sale.profileId);
+                        await updateDoc(profileRef, { estado: 'Disponible', fechaVencimiento: null, clienteId: null });
+
+                        const profile = account.profiles.find(p => p.id === sale.profileId);
+                        if (profile) {
+                            profile.estado = 'Disponible';
+                        }
+                        renderPlatformAccounts();
+                    }
                 }
                 try {
                     await updateDoc(doc(db, "sales", id), { estado: 'ARCHIVADO' });
