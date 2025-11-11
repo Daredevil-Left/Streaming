@@ -1714,8 +1714,9 @@
                 const f = selectors.addSaleForm;
                 const accountId = f['platform-account'].value;
                 const profileId = f['profile-select'].value;
+                const plataforma = f.plataforma.value;
 
-                if (accountId && !profileId) {
+                if (plataforma !== 'Canva' && accountId && !profileId) {
                     alert('Por favor, selecciona un perfil para esta cuenta.');
                     return;
                 }
