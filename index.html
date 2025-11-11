@@ -1204,20 +1204,30 @@
                                </span>`;
 
                         const userIconSvg = `<svg class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" /></svg>`;
-                        let profilesIndicatorHtml = '<div class="flex items-center gap-1.5 mt-2">';
+                        let profilesIndicatorHtml = '';
 
-                        if (account.profiles && account.profiles.length > 0) {
-                            const sortedProfiles = account.profiles.sort((a, b) => a.nombre.localeCompare(b.nombre));
-                            sortedProfiles.forEach(profile => {
-                                const color = profile.estado === 'Disponible' ? 'text-green-500' : 'text-red-500';
-                                profilesIndicatorHtml += `<span class="${color}" title="${profile.nombre}: ${profile.estado}">${userIconSvg}</span>`;
-                            });
-                        } else {
-                            for (let i = 0; i < 5; i++) {
-                                profilesIndicatorHtml += `<span class="text-gray-300" title="Perfil no configurado">${userIconSvg}</span>`;
+                        if (account.platform !== 'Canva') {
+                            profilesIndicatorHtml = '<div class="flex items-center gap-1.5 mt-2">';
+                            if (account.profiles && account.profiles.length > 0) {
+                                const sortedProfiles = account.profiles.sort((a, b) => a.nombre.localeCompare(b.nombre));
+                                sortedProfiles.forEach(profile => {
+                                    const color = profile.estado === 'Disponible' ? 'text-green-500' : 'text-red-500';
+                                    profilesIndicatorHtml += `<span class="${color}" title="${profile.nombre}: ${profile.estado}">${userIconSvg}</span>`;
+                                });
+                            } else {
+                                for (let i = 0; i < 5; i++) {
+                                    profilesIndicatorHtml += `<span class="text-gray-300" title="Perfil no configurado">${userIconSvg}</span>`;
+                                }
                             }
+                            profilesIndicatorHtml += '</div>';
                         }
-                        profilesIndicatorHtml += '</div>';
+
+                        const manageProfilesBtnHtml = account.platform !== 'Canva'
+                            ? `<button class="manage-profiles-btn p-1 text-teal-600 hover:text-teal-800 hover:bg-teal-100 rounded-full transition" data-id="${account.id}" title="Gestionar Perfiles">
+                                 <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                               </button>`
+                            : '';
+
                         return `
                             <li class="list-group-item flex flex-col md:flex-row justify-between items-start md:items-center py-3 px-4">
                                 <div class="mb-2 md:mb-0">
@@ -1230,9 +1240,7 @@
                                     <button class="toggle-password-btn p-1 text-gray-500 hover:text-gray-800 hover:bg-gray-200 rounded-full transition" title="Mostrar/Ocultar contraseña">
                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
                                     </button>
-                                    <button class="manage-profiles-btn p-1 text-teal-600 hover:text-teal-800 hover:bg-teal-100 rounded-full transition" data-id="${account.id}" title="Gestionar Perfiles">
-                                        <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-                                    </button>
+                                    ${manageProfilesBtnHtml}
                                     <button class="edit-account-btn p-1 text-indigo-600 hover:text-indigo-800 hover:bg-indigo-100 rounded-full transition" data-id="${account.id}" title="Editar Cuenta">
                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L16.732 3.732z"></path></svg>
                                     </button>
@@ -1310,36 +1318,48 @@
             const handlePlatformAccountChange = (select, emailInput, passwordInput, credentialsContainer, profileSelect) => {
                 const accountId = select.value;
                 const account = allPlatformAccounts.find(a => a.id === accountId);
+                const profileContainer = profileSelect.parentElement;
 
                 // Reset profile dropdown
                 profileSelect.innerHTML = '<option value="">Selecciona una cuenta madre primero</option>';
                 profileSelect.disabled = true;
                 profileSelect.classList.add('bg-gray-200');
+                profileContainer.classList.remove('hidden');
+
 
                 if (account) {
                     emailInput.value = account.email;
                     passwordInput.value = account.password;
                     credentialsContainer.forEach(el => el.classList.add('hidden'));
 
-                    if (account.profiles && account.profiles.length > 0) {
-                        const availableProfiles = account.profiles.filter(p => p.estado === 'Disponible');
-                        if (availableProfiles.length > 0) {
-                            profileSelect.innerHTML = '<option value="">Selecciona un perfil</option>';
-                            availableProfiles.forEach(p => {
-                                profileSelect.innerHTML += `<option value="${p.id}">${p.nombre}</option>`;
-                            });
-                            profileSelect.disabled = false;
-                            profileSelect.classList.remove('bg-gray-200');
-                        } else {
-                            profileSelect.innerHTML = '<option value="">No hay perfiles disponibles</option>';
-                        }
+                    if (account.platform === 'Canva') {
+                        profileContainer.classList.add('hidden');
+                        profileSelect.required = false;
                     } else {
-                         profileSelect.innerHTML = '<option value="">Perfiles no configurados</option>';
+                         profileContainer.classList.remove('hidden');
+                         profileSelect.required = true;
+                        if (account.profiles && account.profiles.length > 0) {
+                            const availableProfiles = account.profiles.filter(p => p.estado === 'Disponible');
+                            if (availableProfiles.length > 0) {
+                                profileSelect.innerHTML = '<option value="">Selecciona un perfil</option>';
+                                availableProfiles.forEach(p => {
+                                    profileSelect.innerHTML += `<option value="${p.id}">${p.nombre}</option>`;
+                                });
+                                profileSelect.disabled = false;
+                                profileSelect.classList.remove('bg-gray-200');
+                            } else {
+                                profileSelect.innerHTML = '<option value="">No hay perfiles disponibles</option>';
+                            }
+                        } else {
+                            profileSelect.innerHTML = '<option value="">Perfiles no configurados</option>';
+                        }
                     }
                 } else {
                     emailInput.value = '';
                     passwordInput.value = '';
                     credentialsContainer.forEach(el => el.classList.remove('hidden'));
+                    profileContainer.classList.remove('hidden');
+                    profileSelect.required = true;
                 }
             };
             const handleEdit = (id) => {
@@ -1548,7 +1568,7 @@
 
             const handleManageProfiles = async (accountId) => {
                 const account = allPlatformAccounts.find(acc => acc.id === accountId);
-                if (!account) return;
+                if (!account || account.platform === 'Canva') return;
 
                 selectors.profilesModalAccountEmail.textContent = account.email;
                 const profilesRef = collection(db, "platformAccounts", accountId, "Perfiles");
