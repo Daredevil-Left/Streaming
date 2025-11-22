@@ -2453,22 +2453,19 @@
         const updateTicket = () => {
             const items = [];
             let totalRegular = 0;
-            let totalDiscount = 0;
-            let totalProfit = 0;
+            let totalCost = 0;
 
+            // 1. Calculate Totals
             selectedServices.forEach(id => {
                 const service = defaultServices.find(s => s.id === id);
                 if (service) {
-                    const cost = serviceCosts[id] || service.cost;
-                    const price = service.price * selectedMonths;
+                    const costTotal = (serviceCosts[id] || service.cost);
+                    const costPerProfile = costTotal / service.divider;
+                    const costForDuration = costPerProfile * selectedMonths;
+                    const priceForDuration = service.price * selectedMonths;
 
-                    // Profit calculation: Price - (Cost / Divider * Months)
-                    const costPerProfile = cost / service.divider;
-                    const totalCost = costPerProfile * selectedMonths;
-                    const itemProfit = price - totalCost;
-
-                    totalRegular += price;
-                    totalProfit += itemProfit;
+                    totalRegular += priceForDuration;
+                    totalCost += costForDuration;
 
                     items.push(`
                             <div class="flex justify-between items-center py-1 border-b border-gray-50 last:border-0">
@@ -2476,16 +2473,53 @@
                                     <div class="w-2 h-2 rounded-full mr-2" style="background-color: ${service.color}"></div>
                                     <span class="text-gray-700 text-sm">${service.name} <span class="text-xs text-gray-400">x${selectedMonths}</span></span>
                                 </div>
-                                <span class="font-medium text-gray-800">S/${price.toFixed(2)}</span>
+                                <span class="font-medium text-gray-800">S/${priceForDuration.toFixed(2)}</span>
                             </div>
                         `);
                 }
             });
 
+            // 2. Calculate Discount Percentages (Intelligent Algorithm)
+            let durationDiscount = 0;
+            if (selectedMonths === 2) durationDiscount = 0.10;
+            if (selectedMonths === 3) durationDiscount = 0.15;
+            if (selectedMonths === 6) durationDiscount = 0.20;
+            if (selectedMonths === 12) durationDiscount = 0.25;
+
+            let comboDiscount = 0;
+            if (selectedServices.size === 2) comboDiscount = 0.05;
+            if (selectedServices.size >= 3) comboDiscount = 0.10;
+
+            const totalDiscountPercent = durationDiscount + comboDiscount;
+            let discountAmount = totalRegular * totalDiscountPercent;
+
+            // 3. Safety Floor (Profit Margin Safeguard)
+            // Ensure Net Price >= Cost * 1.15 (15% margin)
+            const minSafePrice = totalCost * 1.15;
+            const proposedPrice = totalRegular - discountAmount;
+
+            if (proposedPrice < minSafePrice) {
+                const maxAllowedDiscount = Math.max(0, totalRegular - minSafePrice);
+                discountAmount = maxAllowedDiscount;
+            }
+
+            const finalPrice = totalRegular - discountAmount;
+            const totalProfit = finalPrice - totalCost;
+
+            // 4. Render
             selectors.ticketItems.innerHTML = items.length ? items.join('') : '<p class="text-gray-400 italic text-center py-4">Selecciona servicios para ver el resumen</p>';
+
             selectors.ticketRegularPrice.textContent = formatCurrency(totalRegular);
-            selectors.ticketDiscountAmount.textContent = formatCurrency(totalDiscount);
-            selectors.ticketFinalPrice.textContent = formatCurrency(totalRegular - totalDiscount);
+            if (discountAmount > 0.01) {
+                selectors.ticketRegularPrice.classList.add('line-through', 'text-gray-400');
+                selectors.ticketRegularPrice.classList.remove('text-gray-500');
+            } else {
+                selectors.ticketRegularPrice.classList.remove('line-through', 'text-gray-400');
+                selectors.ticketRegularPrice.classList.add('text-gray-500');
+            }
+
+            selectors.ticketDiscountAmount.textContent = `-${formatCurrency(discountAmount)}`;
+            selectors.ticketFinalPrice.textContent = formatCurrency(finalPrice);
             selectors.ticketProfit.textContent = formatCurrency(totalProfit);
 
             // Update profit color
