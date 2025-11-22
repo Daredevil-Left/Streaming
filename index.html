@@ -973,7 +973,7 @@
         import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { db, auth } from "./firebase-config.js";
 
-        function startApp() {
+        async function startApp() {
             document.getElementById('app').classList.remove('hidden');
             document.getElementById('logout-btn').addEventListener('click', () => { signOut(auth).catch((error) => console.error("Error al cerrar sesión", error)); });
 
@@ -1010,7 +1010,24 @@
             ];
 
             let allSales = [], allExpenses = [], allPlatformAccounts = [], activePlatformFilter = 'Todos', currentSearchTerm = '', activeAccountFilter = '', activeStatusFilter = '';
-            let serviceCosts = {}, selectedServices = new Set(), selectedMonths = 1;
+            let selectedServices = new Set(), selectedMonths = 1;
+
+            // Cargar configuración de precios desde Firestore
+            try {
+                const configDoc = await getDoc(doc(db, "config", "service_prices"));
+                if (configDoc.exists()) {
+                    const data = configDoc.data();
+                    defaultServices.forEach(s => {
+                        if (data[s.id]) {
+                            s.cost = data[s.id].cost !== undefined ? data[s.id].cost : s.cost;
+                            s.price = data[s.id].price !== undefined ? data[s.id].price : s.price;
+                        }
+                    });
+                }
+            } catch (error) {
+                console.error("Error cargando precios:", error);
+            }
+
             const selectors = {
                 addSaleForm: document.getElementById('add-sale-form'),
                 salesList: document.getElementById('sales-list'),
@@ -2405,32 +2422,51 @@
             updateTicket();
         };
 
+        // Helper para contraste de color (YIQ)
+        function getContrastYIQ(hexcolor){
+            hexcolor = hexcolor.replace("#", "");
+            if (hexcolor.length === 3) hexcolor = hexcolor.split('').map(c => c+c).join('');
+            var r = parseInt(hexcolor.substr(0,2),16);
+            var g = parseInt(hexcolor.substr(2,2),16);
+            var b = parseInt(hexcolor.substr(4,2),16);
+            var yiq = ((r*299)+(g*587)+(b*114))/1000;
+            return (yiq >= 128) ? 'black' : 'white';
+        }
+
         const renderServices = () => {
             selectors.servicesGrid.innerHTML = defaultServices.map(service => {
                 const isSelected = selectedServices.has(service.id);
                 const price = service.price * selectedMonths;
                 const labelHtml = service.label ? `<span class="absolute top-3 left-3 bg-blue-500 text-white text-xs font-bold px-2 py-1 rounded-full z-20 shadow-sm">${service.label}</span>` : '';
 
+                const cardStyle = isSelected ? `background-color: ${service.color}; color: ${getContrastYIQ(service.color)}` : '';
+                const textColor = isSelected ? getContrastYIQ(service.color) : '';
+                const titleColor = isSelected ? 'inherit' : 'text-gray-800';
+                const priceColor = isSelected ? 'inherit' : 'text-indigo-600';
+                const subTextColor = isSelected ? 'opacity-80' : 'text-gray-500';
+
                 return `
-                    <div class="service-card relative group cursor-pointer transition-all duration-300 transform hover:-translate-y-1 ${isSelected ? 'ring-2 ring-indigo-500 shadow-xl scale-[1.02]' : 'hover:shadow-lg border border-gray-100'}"
+                    <div class="service-card relative group cursor-pointer transition-all duration-300 transform hover:-translate-y-1 ${isSelected ? 'shadow-xl scale-[1.02]' : 'hover:shadow-lg border border-gray-100'}"
+                        style="${cardStyle}"
                         onclick="toggleService('${service.id}')">
                         ${labelHtml}
                         <div class="absolute top-3 right-3 z-10">
-                            <div class="w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${isSelected ? 'bg-indigo-600 border-indigo-600' : 'border-gray-300 bg-white/80 backdrop-blur-sm'}">
-                                ${isSelected ? '<svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>' : ''}
+                            <div class="w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${isSelected ? 'bg-white border-white' : 'border-gray-300 bg-white/80 backdrop-blur-sm'}">
+                                ${isSelected ? `<svg class="w-4 h-4" style="color: ${service.color}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>` : ''}
                             </div>
                         </div>
-                        <div class="bg-white rounded-2xl overflow-hidden h-full flex flex-col">
+                        <div class="${isSelected ? '' : 'bg-white'} rounded-2xl overflow-hidden h-full flex flex-col">
+                            ${isSelected ? '' : `
                             <div class="h-24 relative overflow-hidden flex items-center justify-center" style="background-color: ${service.color}15;">
                                 <div class="absolute inset-0 opacity-10 group-hover:opacity-20 transition-opacity" style="background-color: ${service.color};"></div>
                                 <span class="text-xl font-black text-center px-2 transform group-hover:scale-110 transition-transform duration-500 drop-shadow-sm" style="color: ${service.color};">${service.name}</span>
-                            </div>
-                            <div class="p-4 flex-grow flex flex-col justify-between">
+                            </div>`}
+                            <div class="p-4 flex-grow flex flex-col justify-between ${isSelected ? 'h-full justify-center' : ''}">
                                 <div>
-                                    <h3 class="font-bold text-gray-800 mb-1 leading-tight">${service.name}</h3>
-                                    <div class="flex justify-between items-baseline">
-                                        <span class="text-xs text-gray-500">${selectedMonths} Mes${selectedMonths > 1 ? 'es' : ''}</span>
-                                        <span class="text-xl font-bold text-indigo-600">S/${price.toFixed(2)}</span>
+                                    <h3 class="font-bold mb-1 leading-tight ${titleColor} ${isSelected ? 'text-xl text-center' : ''}">${service.name}</h3>
+                                    <div class="flex justify-between items-baseline ${isSelected ? 'flex-col items-center mt-2' : ''}">
+                                        <span class="text-xs ${subTextColor}">${selectedMonths} Mes${selectedMonths > 1 ? 'es' : ''}</span>
+                                        <span class="text-xl font-bold ${priceColor}">S/${price.toFixed(2)}</span>
                                     </div>
                                 </div>
                             </div>
@@ -2459,7 +2495,7 @@
             selectedServices.forEach(id => {
                 const service = defaultServices.find(s => s.id === id);
                 if (service) {
-                    const costTotal = (serviceCosts[id] || service.cost);
+                        const costTotal = service.cost;
                     const costPerProfile = costTotal / service.divider;
                     const costForDuration = costPerProfile * selectedMonths;
                     const priceForDuration = service.price * selectedMonths;
@@ -2536,37 +2572,74 @@
         const renderCostInputs = () => {
             selectors.costInputsGrid.innerHTML = defaultServices.map(service => `
                     <div class="bg-gray-50 p-2 rounded border border-gray-200">
-                        <label class="block text-xs font-bold text-gray-500 mb-1 truncate" title="${service.name}" for="cost-${service.id}">${service.name}</label>
-                        <div class="flex items-center">
-                            <span class="text-gray-400 text-xs mr-1">S/</span>
-                            <input type="number" step="0.1" value="${serviceCosts[service.id] || service.cost}"
-                                class="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-indigo-500 outline-none"
-                                id="cost-${service.id}">
+                        <div class="font-bold text-gray-700 mb-2 text-sm">${service.name}</div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <label class="text-[10px] text-gray-500 block">Costo (Cuenta)</label>
+                                <input type="number" step="0.1"
+                                    value="${service.cost}"
+                                    id="cost-${service.id}"
+                                    oninput="updateSuggestedPrice('${service.id}', this.value, ${service.divider})"
+                                    class="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-indigo-500 outline-none">
+                            </div>
+                            <div>
+                                <label class="text-[10px] text-gray-500 block">Venta (Perfil)</label>
+                                <input type="number" step="0.1"
+                                    value="${service.price}"
+                                    id="price-${service.id}"
+                                    class="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-indigo-500 outline-none">
+                            </div>
                         </div>
                     </div>
                 `).join('');
         };
 
-        const saveCosts = () => {
+        window.updateSuggestedPrice = (id, costVal, divider) => {
+            const cost = parseFloat(costVal) || 0;
+            const profit = 15; // Ganancia mínima por cuenta
+            // Fórmula: Precio sugerido = (Costo + Ganancia) / Perfiles
+            const suggested = Math.ceil((cost + profit) / divider);
+            const priceInput = document.getElementById(`price-${id}`);
+            if (priceInput) {
+                priceInput.value = suggested.toFixed(2);
+            }
+        };
+
+        const saveCosts = async () => {
+            const updates = {};
+            const saveBtn = selectors.saveCostsBtn;
+            const originalText = saveBtn.textContent;
+            saveBtn.textContent = 'Guardando...';
+            saveBtn.disabled = true;
+
             defaultServices.forEach(service => {
-                const input = document.getElementById(`cost-${service.id}`);
-                if (input) {
-                    serviceCosts[service.id] = parseFloat(input.value);
+                const costInput = document.getElementById(`cost-${service.id}`);
+                const priceInput = document.getElementById(`price-${service.id}`);
+                if (costInput && priceInput) {
+                    service.cost = parseFloat(costInput.value) || 0;
+                    service.price = parseFloat(priceInput.value) || 0;
+                    updates[service.id] = { cost: service.cost, price: service.price };
                 }
             });
-            toggleConfig();
-            renderServices();
-            updateTicket();
 
-            // Show feedback
-            const btn = selectors.saveCostsBtn;
-            const originalText = btn.textContent;
-            btn.textContent = '¡Guardado!';
-            btn.classList.add('bg-green-600');
+            try {
+                await setDoc(doc(db, "config", "service_prices"), updates);
+                saveBtn.textContent = '¡Guardado!';
+                saveBtn.classList.add('bg-green-600');
+            } catch (error) {
+                console.error("Error guardando costos:", error);
+                saveBtn.textContent = 'Error';
+                saveBtn.classList.add('bg-red-600');
+            }
+
             setTimeout(() => {
-                btn.textContent = originalText;
-                btn.classList.remove('bg-green-600');
-            }, 2000);
+                saveBtn.textContent = originalText;
+                saveBtn.classList.remove('bg-green-600', 'bg-red-600');
+                saveBtn.disabled = false;
+                toggleConfig();
+                renderServices();
+                updateTicket();
+            }, 1500);
         };
 
         const copyPromo = () => {
