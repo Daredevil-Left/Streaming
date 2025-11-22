@@ -17,9 +17,13 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 
 // Initialize App Check
-if (location.hostname === "localhost") {
+// Log hostname to verify where we are running
+console.log("Current hostname:", location.hostname);
+
+if (location.hostname === "localhost" || location.hostname === "127.0.0.1") {
   // @ts-ignore
   self.FIREBASE_APPCHECK_DEBUG_TOKEN = true;
+  console.log("Firebase App Check Debug Token enabled");
 }
 
 const appCheck = initializeAppCheck(app, {

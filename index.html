@@ -1987,17 +1987,205 @@
                         toast.remove();
                         // Clean up URL
                         window.history.replaceState({}, document.title, window.location.pathname);
+                        const accountData = { id: accountDoc.id, ...accountDoc.data() };
+                        const profilesRef = collection(db, "platformAccounts", accountDoc.id, "Perfiles");
+                        const profilesSnapshot = await getDocs(profilesRef);
+                        accountData.profiles = profilesSnapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+                        return accountData;
+                    });
+                    allPlatformAccounts = await Promise.all(accountsPromises);
+                    renderPlatformAccounts();
+
+                    closeModal();
+                } catch (err) {
+                    console.error("Error al actualizar la venta:", err);
+                    alert("Error al actualizar la venta. Revisa la consola (F12).");
+                }
+            });
+            selectors.addExpenseForm.addEventListener('submit', async (e) => { e.preventDefault(); const f = selectors.addExpenseForm; const description = f['expense-description'].value; const amount = parseFloat(f['expense-amount'].value); const date = f['expense-date'].value; if (!description || !date || isNaN(amount) || amount <= 0) return; try { await addDoc(collection(db, "expenses"), { description, amount, date }); f.reset(); f['expense-date'].value = dayjs().format('YYYY-MM-DD'); } catch (err) { console.error("Error al añadir egreso:", err); } });
+            selectors.addAccountForm.addEventListener('submit', async (e) => { e.preventDefault(); const f = selectors.addAccountForm; const newAccount = { platform: f['account-platform'].value, email: f['account-email'].value, password: f['account-password'].value, enlace: f.enlace.value, fechaPago: f.fechaPago.value }; try { await addDoc(collection(db, "platformAccounts"), newAccount); f.reset(); document.querySelectorAll('#account-platform-buttons button').forEach(b => b.classList.remove('bg-indigo-600', 'text-white', 'border-indigo-600')); } catch (err) { console.error("Error al guardar cuenta:", err); } });
+            selectors.searchInput.addEventListener('input', e => {
+                currentSearchTerm = e.target.value;
+                const activeSales = allSales.filter(sale => sale.estado !== 'ARCHIVADO');
+                applyFiltersAndRender(activeSales);
+            });
+            selectors.accountFilter.addEventListener('change', e => {
+                activeAccountFilter = e.target.value;
+                const activeSales = allSales.filter(sale => sale.estado !== 'ARCHIVADO');
+                applyFiltersAndRender(activeSales);
+            });
+            selectors.statusFilter.addEventListener('change', e => {
+                activeStatusFilter = e.target.value;
+                const activeSales = allSales.filter(sale => sale.estado !== 'ARCHIVADO');
+                applyFiltersAndRender(activeSales);
+            });
+            selectors.plataformaSelect.addEventListener('change', () => {
+                handlePlatformChange(selectors.plataformaSelect, selectors.otroPlataformaContainer, selectors.otroPlataformaInput);
+                populatePlatformAccountsDropdowns(selectors.plataformaSelect.value);
+            });
+            selectors.editPlataformaSelect.addEventListener('change', () => {
+                handlePlatformChange(selectors.editPlataformaSelect, selectors.editOtroPlataformaContainer, selectors.editOtroPlataformaInput);
+                // We don't filter the edit form dropdown to avoid issues with existing data
+            });
+            selectors.closeModalBtn.addEventListener('click', closeModal);
+            selectors.cancelEditBtn.addEventListener('click', closeModal);
+            selectors.closeProfilesModalBtn.addEventListener('click', closeProfilesModal);
+
+
+            document.getElementById('renewal-form').addEventListener('submit', (e) => {
+                e.preventDefault();
+                const saleId = document.getElementById('renewal-sale-id').value;
+                handleRenew(saleId);
+            });
+
+            document.getElementById('cancel-renewal-btn').addEventListener('click', closeRenewalModal);
+            selectors.platformAccountSelect.addEventListener('change', () => handlePlatformAccountChange(selectors.platformAccountSelect, selectors.addSaleForm.correo, selectors.addSaleForm.contrasena, document.querySelectorAll('.manual-credentials'), selectors.profileSelect));
+            selectors.editPlatformAccountSelect.addEventListener('change', () => handlePlatformAccountChange(selectors.editPlatformAccountSelect, selectors.editForm['edit-correo'], selectors.editForm['edit-contrasena'], document.querySelectorAll('.edit-manual-credentials'), selectors.editProfileSelect));
+             selectors.editAccountForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const form = selectors.editAccountForm;
+                const id = form['edit-account-id'].value;
+                const account = allPlatformAccounts.find(acc => acc.id === id);
+                if (!account) return;
+
+                const updatedData = {
+                    email: form['edit-account-email'].value,
+                    enlace: form['edit-account-enlace'].value,
+                    fechaPago: form['edit-account-fechaPago'].value,
+                };
+
+                const newPassword = form['edit-account-password'].value;
+                if (newPassword) {
+                    updatedData.password = newPassword;
+                }
+
+                try {
+                    await updateDoc(doc(db, "platformAccounts", id), updatedData);
+                    closeEditAccountModal();
+                } catch (err) {
+                    console.error("Error al actualizar la cuenta:", err);
+                    alert("Error al actualizar la cuenta. Revisa la consola (F12).");
+                }
+            });
+
+            selectors.closeEditAccountModalBtn.addEventListener('click', closeEditAccountModal);
+            selectors.cancelEditAccountBtn.addEventListener('click', closeEditAccountModal);
+            const diasPlanInput = document.getElementById('diasPlan'); const inicioPlanInput = document.getElementById('inicioPlan'); const finPlanInput = document.getElementById('finPlan');
+            const editFinPlanInput = document.getElementById('edit-finPlan');
+
+            const calculateEndDate = () => {
+                const days = parseInt(diasPlanInput.value, 10);
+                const startDate = inicioPlanInput.value;
+                if (!isNaN(days) && startDate) {
+                    const newEndDate = dayjs(startDate).add(days, 'day').format('YYYY-MM-DD');
+                    finPlanInput.value = newEndDate;
+                }
+            };
+
+            diasPlanInput.addEventListener('input', calculateEndDate);
+            inicioPlanInput.addEventListener('change', calculateEndDate);
+
+
+            // Set default expense date
+            document.getElementById('expense-date').value = dayjs().format('YYYY-MM-DD');
+
+
+            // Navigation logic
+            const navLinks = {
+                'nav-dashboard': 'Dashboard',
+                'nav-cuentas': 'Cuentas',
+                'nav-ventas': 'Ventas',
+                'nav-finanzas': 'Finanzas'
+            };
+            const views = document.querySelectorAll('.view');
+
+            Object.keys(navLinks).forEach(navId => {
+                document.getElementById(navId).addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const viewId = `${navLinks[navId].toLowerCase()}-view`;
+
+                    views.forEach(view => {
+                        if (view.id === viewId) {
+                            view.classList.remove('hidden');
+                        } else {
+                            view.classList.add('hidden');
+                        }
+                    });
+
+                    // Update active styles for nav links
+                    document.querySelectorAll('nav a').forEach(link => link.classList.remove('bg-gray-700'));
+                    document.getElementById(navId).classList.add('bg-gray-700');
+                });
+            });
+
+            // Set default view
+            document.getElementById('nav-dashboard').click();
+
+
+            // Quick Access button listeners
+            document.getElementById('quick-add-sale').addEventListener('click', () => {
+                document.getElementById('nav-ventas').click();
+            });
+            document.getElementById('quick-add-expense').addEventListener('click', () => {
+                document.getElementById('nav-finanzas').click();
+            });
+        }
+
+        const checkAndReleaseExpiredProfiles = async () => {
+            const today = dayjs().startOf('day');
+            const accountsSnapshot = await getDocs(collection(db, "platformAccounts"));
+            for (const accountDoc of accountsSnapshot.docs) {
+                const profilesRef = collection(db, "platformAccounts", accountDoc.id, "Perfiles");
+                const profilesSnapshot = await getDocs(profilesRef);
+                for (const profileDoc of profilesSnapshot.docs) {
+                    const profile = profileDoc.data();
+                    if (profile.estado === 'Ocupado' && profile.fechaVencimiento) {
+                        if (today.isAfter(dayjs(profile.fechaVencimiento))) {
+                            console.log(`Liberando perfil ${profile.nombre} de la cuenta ${accountDoc.data().email} por vencimiento.`);
+                            const profileRef = doc(db, "platformAccounts", accountDoc.id, "Perfiles", profileDoc.id);
+                            await updateDoc(profileRef, { estado: 'Disponible', fechaVencimiento: null, clienteId: null });
+                        }
+                    }
+                }
+            }
+        };
+
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                checkAndReleaseExpiredProfiles().then(() => {
+                    startApp();
+                });
+            } else {
+                window.location.href = 'login.html';
+            }
+        });
+        window.startApp = startApp;
+
+        // Toast notification logic
+        document.addEventListener('DOMContentLoaded', () => {
+            const params = new URLSearchParams(window.location.search);
+            if (params.has('loggedin')) {
+                const toast = document.createElement('div');
+                toast.className = 'toast fixed top-5 right-5 bg-green-500 text-white py-3 px-6 rounded-lg shadow-lg transform translate-x-full opacity-0';
+                toast.textContent = 'Bienvenido a NineStreaming. Renzo y Charitsa';
+                document.body.appendChild(toast);
+
+                setTimeout(() => {
+                    toast.classList.remove('translate-x-full', 'opacity-0');
+                    toast.classList.add('translate-x-0', 'opacity-100');
+                }, 100);
+
+                setTimeout(() => {
+                    toast.classList.remove('translate-x-0', 'opacity-100');
+                    toast.classList.add('translate-x-full', 'opacity-0');
+                    setTimeout(() => {
+                        toast.remove();
+                        // Clean up URL
+                        window.history.replaceState({}, document.title, window.location.pathname);
                     }, 500);
                 }, 5000);
             }
         });
     </script>
-    <script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('/sw.js');
-    });
-  }
-</script>
 </body>
 </html>
