@@ -26,13 +26,18 @@ if (location.hostname === "localhost" || location.hostname === "127.0.0.1") {
   console.log("Firebase App Check Debug Token enabled");
 }
 
-const appCheck = initializeAppCheck(app, {
-  provider: new ReCaptchaV3Provider('6LfiwBQsAAAAAPAVE56_DL1VqLUYZbwvtbC2e8Ho'),
+try {
+  // Initialize App Check
+  initializeAppCheck(app, {
+    provider: new ReCaptchaV3Provider('6LfiwBQsAAAAAPAVE56_DL1VqLUYZbwvtbC2e8Ho'),
 
-  // Optional argument. If true, the SDK automatically refreshes App Check
-  // tokens as needed.
-  isTokenAutoRefreshEnabled: true
-});
+    // Optional argument. If true, the SDK automatically refreshes App Check
+    // tokens as needed.
+    isTokenAutoRefreshEnabled: true
+  });
+} catch (error) {
+  console.warn("Firebase App Check initialization failed. If you are in production, ensure your domain is whitelisted in the Firebase Console -> App Check -> reCAPTCHA.", error);
+}
 
 export const auth = getAuth(app);
 export const db = getFirestore(app);
