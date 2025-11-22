@@ -1249,42 +1249,59 @@
             const renderAccountPlatformButtons = () => {
                 const platformNames = Object.keys(platformStyles).filter(p => p !== 'Otro');
                 selectors.accountPlatformButtons.innerHTML = '';
+
+                const resetButtons = () => {
+                    document.querySelectorAll('#account-platform-buttons button').forEach(b => {
+                        const pname = b.dataset.platformName;
+                        const pStyle = platformStyles[pname] || platformStyles['Otro'];
+                        b.style.backgroundColor = 'white';
+                        b.style.color = pStyle.bg;
+                        b.style.borderColor = pStyle.bg;
+                        b.classList.remove('scale-110', 'shadow-md', 'ring-2', 'ring-offset-2', 'ring-indigo-500');
+                    });
+                };
+
                 platformNames.forEach(name => {
                     const btn = document.createElement('button');
                     const platformStyle = platformStyles[name] || platformStyles['Otro'];
                     btn.type = 'button';
                     btn.dataset.platformName = name;
-                    btn.className = `w-16 h-16 rounded-xl border-2 flex items-center justify-center transition-all duration-200 ease-in-out transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 overflow-hidden bg-white`;
-                    btn.style.borderColor = 'transparent';
-                    if (platformStyle.logo) {
-                        const img = document.createElement('img');
-                        img.src = platformStyle.logo;
-                        img.alt = name;
-                        img.className = 'w-full h-full object-cover';
-                        img.onerror = () => { btn.innerHTML = `<span class="text-xs font-bold text-center break-words p-1" style="color: ${platformStyle.bg}">${name}</span>`; };
-                        btn.appendChild(img);
-                    } else {
-                        btn.innerHTML = `<span class="text-xs font-bold text-center break-words p-1" style="color: ${platformStyle.bg}">${name}</span>`;
-                    }
+                    btn.className = `px-4 py-2 rounded-lg border-2 font-bold text-sm transition-all duration-200 ease-in-out transform hover:scale-105 focus:outline-none`;
+
+                    // Initial State: Outline
+                    btn.style.backgroundColor = 'white';
+                    btn.style.borderColor = platformStyle.bg;
+                    btn.style.color = platformStyle.bg;
+                    btn.textContent = name;
+
                     btn.addEventListener('click', () => {
                         selectors.addAccountForm['account-platform'].value = name;
-                        document.querySelectorAll('#account-platform-buttons button').forEach(b => { b.style.borderColor = 'transparent'; b.classList.remove('ring-2', 'ring-offset-2', 'ring-indigo-500', 'scale-110'); b.style.boxShadow = 'none'; });
-                        btn.style.borderColor = platformStyle.bg;
-                        btn.classList.add('scale-110');
-                        btn.style.boxShadow = `0 0 10px ${platformStyle.bg}80`;
+                        resetButtons();
+                        // Active State: Solid
+                        btn.style.backgroundColor = platformStyle.bg;
+                        btn.style.color = 'white';
+                        btn.classList.add('scale-110', 'shadow-md');
                     });
                     selectors.accountPlatformButtons.appendChild(btn);
                 });
+
                 const otroBtn = document.createElement('button');
+                const otroStyle = platformStyles['Otro'];
                 otroBtn.type = 'button';
                 otroBtn.dataset.platformName = 'Otro';
-                otroBtn.className = `w-16 h-16 rounded-xl border-2 flex items-center justify-center transition-all duration-200 ease-in-out transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 overflow-hidden bg-gray-200`;
-                otroBtn.innerHTML = `<span class="text-xs font-bold text-gray-600">Otro</span>`;
+                otroBtn.className = `px-4 py-2 rounded-lg border-2 font-bold text-sm transition-all duration-200 ease-in-out transform hover:scale-105 focus:outline-none`;
+
+                otroBtn.style.backgroundColor = 'white';
+                otroBtn.style.borderColor = otroStyle.bg;
+                otroBtn.style.color = otroStyle.bg;
+                otroBtn.textContent = 'Otro';
+
                 otroBtn.addEventListener('click', () => {
                     selectors.addAccountForm['account-platform'].value = 'Otro';
-                    document.querySelectorAll('#account-platform-buttons button').forEach(b => { b.style.borderColor = 'transparent'; b.classList.remove('scale-110'); b.style.boxShadow = 'none'; });
-                    otroBtn.style.borderColor = '#6B7280';
-                    otroBtn.classList.add('scale-110');
+                    resetButtons();
+                    otroBtn.style.backgroundColor = otroStyle.bg;
+                    otroBtn.style.color = 'white';
+                    otroBtn.classList.add('scale-110', 'shadow-md');
                 });
                 selectors.accountPlatformButtons.appendChild(otroBtn);
             };
@@ -2332,7 +2349,8 @@
             'nav-dashboard': 'Dashboard',
             'nav-cuentas': 'Cuentas',
             'nav-ventas': 'Ventas',
-            'nav-finanzas': 'Finanzas'
+            'nav-finanzas': 'Finanzas',
+            'nav-precios': 'Precios'
         };
         const views = document.querySelectorAll('.view');
 
@@ -2405,8 +2423,7 @@
                         <div class="bg-white rounded-2xl overflow-hidden h-full flex flex-col">
                             <div class="h-24 relative overflow-hidden flex items-center justify-center" style="background-color: ${service.color}15;">
                                 <div class="absolute inset-0 opacity-10 group-hover:opacity-20 transition-opacity" style="background-color: ${service.color};"></div>
-                                <img src="${service.logo}" alt="${service.name}" class="h-12 object-contain transform group-hover:scale-110 transition-transform duration-500 drop-shadow-sm" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
-                                <span class="hidden text-lg font-bold text-gray-700">${service.name}</span>
+                                <span class="text-xl font-black text-center px-2 transform group-hover:scale-110 transition-transform duration-500 drop-shadow-sm" style="color: ${service.color};">${service.name}</span>
                             </div>
                             <div class="p-4 flex-grow flex flex-col justify-between">
                                 <div>
