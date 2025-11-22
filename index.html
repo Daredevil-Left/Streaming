@@ -66,6 +66,10 @@
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"></path></svg>
                     <span class="ml-4 sidebar-text">Finanzas</span>
                 </a>
+                <a href="#" id="nav-precios" class="flex items-center py-2.5 px-2 rounded-md hover:bg-gray-700">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+                    <span class="ml-4 sidebar-text">Precios</span>
+                </a>
             </nav>
             <div class="px-2 py-4">
                 <button id="logout-btn" class="w-full flex items-center py-2.5 px-2 rounded-md bg-red-500 hover:bg-red-600">
@@ -367,6 +371,80 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Precios View (Calculadora) -->
+                <div id="precios-view" class="view hidden max-w-7xl mx-auto">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
+                        <h1 class="text-3xl font-bold text-gray-800">Calculadora de Precios</h1>
+                        <button id="toggle-config-btn" class="mt-4 md:mt-0 flex items-center text-gray-600 hover:text-gray-900 transition">
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                            Configurar Costos
+                        </button>
+                    </div>
+
+                    <!-- Config Panel -->
+                    <div id="config-panel" class="hidden bg-white p-6 rounded-2xl shadow-lg mb-8 border border-gray-200">
+                        <h3 class="text-lg font-semibold text-gray-700 mb-4">Costos de Proveedor (Cuenta Completa)</h3>
+                        <div id="cost-inputs-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                            <!-- Inputs injected via JS -->
+                        </div>
+                        <div class="mt-4 flex justify-end">
+                            <button id="save-costs-btn" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">Guardar Costos</button>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col lg:flex-row gap-8">
+                        <!-- Main Area: Duration & Services -->
+                        <div class="flex-grow">
+                            <!-- Duration Selector -->
+                            <div class="bg-white p-4 rounded-2xl shadow-sm mb-6 flex flex-wrap gap-4 items-center justify-center md:justify-start">
+                                <span class="font-medium text-gray-600 mr-2">Duración:</span>
+                                <div id="duration-buttons" class="flex gap-2">
+                                    <!-- Buttons injected via JS -->
+                                </div>
+                            </div>
+
+                            <!-- Services Grid -->
+                            <div id="services-grid" class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
+                                <!-- Service Cards injected via JS -->
+                            </div>
+                        </div>
+
+                        <!-- Results Ticket -->
+                        <div class="w-full lg:w-80 flex-shrink-0">
+                            <div class="bg-white p-6 rounded-2xl shadow-xl border border-gray-200 sticky top-4">
+                                <h2 class="text-xl font-bold text-gray-800 mb-4 border-b pb-2">Resumen</h2>
+                                <div id="ticket-items" class="space-y-2 mb-4 text-sm">
+                                    <p class="text-gray-400 italic">Selecciona servicios...</p>
+                                </div>
+
+                                <div class="space-y-2 pt-4 border-t border-dashed border-gray-300">
+                                    <div class="flex justify-between text-gray-500">
+                                        <span>Precio Regular</span>
+                                        <span id="ticket-regular-price">S/0.00</span>
+                                    </div>
+                                    <div class="flex justify-between text-green-600 font-medium">
+                                        <span>Descuento Combo</span>
+                                        <span id="ticket-discount-amount">-S/0.00</span>
+                                    </div>
+                                    <div class="flex justify-between items-end mt-2">
+                                        <span class="font-bold text-gray-800 text-lg">TOTAL</span>
+                                        <span id="ticket-final-price" class="font-black text-3xl text-indigo-600">S/0.00</span>
+                                    </div>
+                                     <div class="flex justify-between text-xs text-gray-400 mt-1">
+                                        <span>Ganancia Neta</span>
+                                        <span id="ticket-profit">S/0.00</span>
+                                    </div>
+                                </div>
+
+                                <button id="copy-promo-btn" class="w-full mt-6 bg-green-500 text-white font-bold py-3 rounded-xl hover:bg-green-600 transition flex items-center justify-center shadow-lg transform active:scale-95">
+                                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
+                                    Copiar Promo
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </main>
         </div>
     </div>
@@ -556,7 +634,7 @@
     </script>
 
     <script type="module">
-        import { collection, addDoc, onSnapshot, doc, updateDoc, deleteDoc, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { collection, addDoc, onSnapshot, doc, updateDoc, deleteDoc, getDocs, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
         import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { db, auth } from "./firebase-config.js";
         
@@ -582,7 +660,22 @@
                 'Paramount+': { color: 'text-blue-800', bg: '#0064FF' },
                 'Otro': { color: 'text-gray-500', bg: '#6B7280' }
             };
+            const defaultServices = [
+                { id: 'netflix', name: 'Netflix', cost: 38.00, price: 12.00, type: 'monthly', divider: 5, logo: 'https://upload.wikimedia.org/wikipedia/commons/0/08/Netflix_2015_logo.svg', color: '#E50914' },
+                { id: 'disney', name: 'Disney+', cost: 18.00, price: 8.00, type: 'monthly', divider: 5, logo: 'https://upload.wikimedia.org/wikipedia/commons/3/3e/Disney%2B_logo.svg', color: '#01153E' },
+                { id: 'max_plat', name: 'Max Platino', cost: 17.00, price: 8.00, type: 'monthly', divider: 5, logo: 'https://upload.wikimedia.org/wikipedia/commons/c/ce/Max_logo.svg', color: '#8A2BE2' },
+                { id: 'max_bas', name: 'Max Básico', cost: 10.20, price: 6.00, type: 'monthly', divider: 5, label: 'Básico', logo: 'https://upload.wikimedia.org/wikipedia/commons/c/ce/Max_logo.svg', color: '#8A2BE2' },
+                { id: 'prime', name: 'Amazon Prime', cost: 11.00, price: 6.00, type: 'monthly', divider: 5, logo: 'https://upload.wikimedia.org/wikipedia/commons/1/11/Amazon_Prime_Video_logo.svg', color: '#00A8E1' },
+                { id: 'plex', name: 'Plex', cost: 14.00, price: 9.00, type: 'monthly', divider: 4, logo: 'https://upload.wikimedia.org/wikipedia/commons/7/7b/Plex_logo_2022.svg', color: '#e5a00d' },
+                { id: 'paramount', name: 'Paramount+', cost: 8.50, price: 6.00, type: 'monthly', divider: 5, logo: 'https://upload.wikimedia.org/wikipedia/commons/a/a5/Paramount_Plus.svg', color: '#0064FF' },
+                { id: 'crunchy', name: 'Crunchyroll', cost: 7.50, price: 5.00, type: 'monthly', divider: 5, logo: 'https://upload.wikimedia.org/wikipedia/commons/0/08/Crunchyroll_Logo.png', color: '#F47521' },
+                { id: 'vix', name: 'Vix+', cost: 8.20, price: 6.00, type: 'monthly', divider: 5, logo: 'https://upload.wikimedia.org/wikipedia/commons/b/b6/ViX_logo_2022.svg', color: '#F8C100' },
+                { id: 'universal', name: 'Universal+', cost: 7.50, price: 6.00, type: 'monthly', divider: 5, logo: 'https://upload.wikimedia.org/wikipedia/commons/2/2d/Universal_Pictures_Logo.svg', color: '#000000' },
+                { id: 'canva', name: 'Canva Pro', cost: 8.00, price: 8.00, type: 'annual', divider: 1, logo: 'https://upload.wikimedia.org/wikipedia/commons/0/08/Canva_icon_2021.svg', color: '#8D44AD' }
+            ];
+
             let allSales = [], allExpenses = [], allPlatformAccounts = [], activePlatformFilter = 'Todos', currentSearchTerm = '', activeAccountFilter = '', activeStatusFilter = '';
+            let serviceCosts = {}, selectedServices = new Set(), selectedMonths = 1;
             const selectors = {
                 addSaleForm: document.getElementById('add-sale-form'),
                 salesList: document.getElementById('sales-list'),
@@ -632,6 +725,20 @@
                 closeProfilesModalBtn: document.getElementById('close-profiles-modal'),
                 profilesContentArea: document.getElementById('profiles-content-area'),
                 profilesModalAccountEmail: document.getElementById('profiles-modal-account-email'),
+                // Precios View Selectors
+                preciosView: document.getElementById('precios-view'),
+                toggleConfigBtn: document.getElementById('toggle-config-btn'),
+                configPanel: document.getElementById('config-panel'),
+                costInputsGrid: document.getElementById('cost-inputs-grid'),
+                saveCostsBtn: document.getElementById('save-costs-btn'),
+                durationButtons: document.getElementById('duration-buttons'),
+                servicesGrid: document.getElementById('services-grid'),
+                ticketItems: document.getElementById('ticket-items'),
+                ticketRegularPrice: document.getElementById('ticket-regular-price'),
+                ticketDiscountAmount: document.getElementById('ticket-discount-amount'),
+                ticketFinalPrice: document.getElementById('ticket-final-price'),
+                ticketProfit: document.getElementById('ticket-profit'),
+                copyPromoBtn: document.getElementById('copy-promo-btn'),
             };
             const getSaleStatus = (finPlan) => {
                 if (dayjs().isAfter(dayjs(finPlan).endOf('day'))) {
@@ -1900,7 +2007,8 @@
                 'nav-dashboard': 'Dashboard',
                 'nav-cuentas': 'Cuentas',
                 'nav-ventas': 'Ventas',
-                'nav-finanzas': 'Finanzas'
+                'nav-finanzas': 'Finanzas',
+                'nav-precios': 'Precios'
             };
             const views = document.querySelectorAll('.view');
 
@@ -1922,6 +2030,318 @@
                     document.getElementById(navId).classList.add('bg-gray-700');
                 });
             });
+
+            // --- Calculator / Precios Logic ---
+
+            const loadServiceCosts = async () => {
+                try {
+                    const docRef = doc(db, 'config', 'service_prices');
+                    const docSnap = await getDoc(docRef);
+                    if (docSnap.exists()) {
+                        const savedCosts = docSnap.data();
+                        // Merge saved costs with defaults (in case new services were added)
+                        serviceCosts = defaultServices.reduce((acc, service) => {
+                            acc[service.id] = savedCosts[service.id] || service.cost;
+                            return acc;
+                        }, {});
+                    } else {
+                        // Use defaults
+                        serviceCosts = defaultServices.reduce((acc, service) => {
+                            acc[service.id] = service.cost;
+                            return acc;
+                        }, {});
+                    }
+                } catch (error) {
+                    console.error("Error loading costs:", error);
+                    // Fallback to defaults on error
+                    serviceCosts = defaultServices.reduce((acc, service) => {
+                        acc[service.id] = service.cost;
+                        return acc;
+                    }, {});
+                }
+                renderConfigPanel();
+                renderServiceGrid(); // Re-render to ensure calculations use loaded costs
+                renderTicket();
+            };
+
+            const saveServiceCosts = async () => {
+                const inputs = selectors.costInputsGrid.querySelectorAll('input');
+                const newCosts = {};
+                inputs.forEach(input => {
+                    newCosts[input.dataset.id] = parseFloat(input.value);
+                });
+
+                try {
+                    await setDoc(doc(db, 'config', 'service_prices'), newCosts);
+                    serviceCosts = newCosts;
+                    selectors.configPanel.classList.add('hidden');
+                    renderServiceGrid();
+                    renderTicket();
+                    alert('Costos actualizados correctamente.');
+                } catch (error) {
+                    console.error("Error saving costs:", error);
+                    alert('Error al guardar los costos.');
+                }
+            };
+
+            const renderConfigPanel = () => {
+                selectors.costInputsGrid.innerHTML = '';
+                defaultServices.forEach(service => {
+                    const currentCost = serviceCosts[service.id] || service.cost;
+                    const div = document.createElement('div');
+                    div.innerHTML = `
+                        <label class="block text-xs font-medium text-gray-500 mb-1">${service.name}</label>
+                        <div class="relative rounded-md shadow-sm">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <span class="text-gray-500 sm:text-sm">S/</span>
+                            </div>
+                            <input type="number" step="0.10" data-id="${service.id}" value="${currentCost}" class="focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-7 pr-3 sm:text-sm border-gray-300 rounded-md" placeholder="0.00">
+                        </div>
+                    `;
+                    selectors.costInputsGrid.appendChild(div);
+                });
+            };
+
+            const renderDurationButtons = () => {
+                selectors.durationButtons.innerHTML = '';
+                const durations = [1, 2, 3, 6];
+                durations.forEach(months => {
+                    const btn = document.createElement('button');
+                    const isActive = selectedMonths === months;
+                    btn.className = `px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 ${isActive ? 'bg-indigo-600 text-white shadow-md' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`;
+                    btn.textContent = `${months} Mes${months > 1 ? 'es' : ''}`;
+                    btn.addEventListener('click', () => {
+                        selectedMonths = months;
+                        renderDurationButtons();
+                        renderServiceGrid(); // Re-render to update prices on cards? (Optional, prices on cards are usually base prices, but logic says "costs and prices multiply by months")
+                        // Actually user probably wants to see the price for the selected duration on the card too?
+                        // The prompt says "Grid de Servicios (Tarjetas...)". Usually cards show the base or calculated price.
+                        // Let's stick to showing the name and maybe the "per month" price or total.
+                        // For now, renderServiceGrid updates the visual state, renderTicket updates totals.
+                        renderTicket();
+                    });
+                    selectors.durationButtons.appendChild(btn);
+                });
+            };
+
+            const renderServiceGrid = () => {
+                selectors.servicesGrid.innerHTML = '';
+                defaultServices.forEach(service => {
+                    const isSelected = selectedServices.has(service.id);
+                    const providerCost = serviceCosts[service.id] || service.cost;
+
+                    // Calculate Sale Price for this specific service based on duration
+                    // Logic: Monthly service -> Price * months. Annual (Canva) -> Price * 1.
+                    let multiplier = selectedMonths;
+                    if (service.type === 'annual') multiplier = 1;
+
+                    const displayPrice = service.price * multiplier;
+
+                    const card = document.createElement('div');
+                    card.className = `relative group cursor-pointer rounded-xl p-4 border-2 transition-all duration-200 flex flex-col items-center text-center bg-white shadow-sm hover:shadow-md ${isSelected ? 'border-green-500 ring-2 ring-green-100' : 'border-gray-100 hover:border-gray-300'}`;
+
+                    // Checkmark for selected state
+                    if (isSelected) {
+                        card.innerHTML += `<div class="absolute top-2 right-2 bg-green-500 text-white rounded-full p-1"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg></div>`;
+                    }
+
+                    // Label (e.g. Max Basico)
+                    if (service.label) {
+                        card.innerHTML += `<span class="absolute top-2 left-2 bg-gray-100 text-gray-600 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wide">${service.label}</span>`;
+                    }
+
+                    card.innerHTML += `
+                        <div class="w-16 h-16 mb-3 flex items-center justify-center">
+                            <img src="${service.logo}" alt="${service.name}" class="max-w-full max-h-full object-contain filter drop-shadow-sm" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+                            <div class="hidden w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center text-gray-500 font-bold text-xl">${service.name.charAt(0)}</div>
+                        </div>
+                        <h3 class="font-bold text-gray-800 mb-1">${service.name}</h3>
+                        <p class="text-gray-500 text-sm">S/ ${displayPrice.toFixed(2)}</p>
+                        <p class="text-xs text-gray-400 mt-1">${selectedMonths} ${selectedMonths > 1 ? 'meses' : 'mes'} ${service.type === 'annual' ? '(Anual)' : ''}</p>
+                    `;
+
+                    card.addEventListener('click', () => {
+                        if (selectedServices.has(service.id)) {
+                            selectedServices.delete(service.id);
+                        } else {
+                            selectedServices.add(service.id);
+                        }
+                        renderServiceGrid();
+                        renderTicket();
+                    });
+
+                    selectors.servicesGrid.appendChild(card);
+                });
+            };
+
+            const calculateTotals = () => {
+                let totalRegular = 0;
+                let totalCost = 0;
+                const selectedItems = [];
+
+                selectedServices.forEach(id => {
+                    const service = defaultServices.find(s => s.id === id);
+                    const providerCost = serviceCosts[id] || service.cost;
+
+                    let multiplier = selectedMonths;
+                    if (service.type === 'annual') multiplier = 1;
+
+                    // Sale Price Calculation
+                    const salePrice = service.price * multiplier;
+                    totalRegular += salePrice;
+
+                    // Cost Calculation
+                    // Rule: Cost / Divider. Exception Plex: /4. Canva: Full cost (no divider, usually 1).
+                    // Actually prompt says: "Excepción Canva (Anual): Costo Cuenta (no se divide)." -> implied divider is 1.
+                    // And "Costo se multiplica por numero de meses" (if monthly).
+                    // "Si es anual (Canva), el precio es fijo (multiplicador = 1) sin importar la duración" -> Applies to cost too?
+                    // Prompt: "Si es anual (Canva), el precio es fijo... sin importar la duración".
+                    // Assumed logic: Cost is per account.
+                    // Monthly Service Cost Per Profile = (ProviderCost / Divider) * Months.
+                    // Annual Service Cost Per Profile = (ProviderCost / Divider) * 1.
+
+                    let realCost = (providerCost / service.divider) * multiplier;
+                    totalCost += realCost;
+
+                    selectedItems.push({
+                        name: service.name,
+                        price: salePrice,
+                        months: multiplier
+                    });
+                });
+
+                // Discounts
+                // A. Quantity Discount
+                let quantityDiscountPercent = 0;
+                if (selectedServices.size >= 3) quantityDiscountPercent = 0.15;
+                else if (selectedServices.size === 2) quantityDiscountPercent = 0.10;
+
+                // B. Duration Discount (Extra)
+                let durationDiscountPercent = 0;
+                if (selectedMonths === 6) durationDiscountPercent = 0.10;
+                else if (selectedMonths === 3) durationDiscountPercent = 0.05;
+
+                // Apply Discounts
+                // "Descuento por Duración... EXTRA (sobre el total ya rebajado o acumulado)"
+                // "acumulado" usually means additive (10% + 5% = 15%) or multiplicative?
+                // "sobre el total ya rebajado" implies sequential.
+                // Let's do sequential for "already discounted" logic.
+                // Price after Qty Discount = Regular * (1 - QtyDisc)
+                // Final Price = PriceAfterQty * (1 - DurDisc)
+
+                // OR additive: Total Discount % = QtyDisc + DurDisc.
+                // Prompt says "sobre el total ya rebajado O acumulado". This is ambiguous.
+                // "5% de descuento EXTRA (sobre el total ya rebajado...)" strongly suggests sequential.
+
+                let priceAfterQty = totalRegular * (1 - quantityDiscountPercent);
+                let finalPriceRaw = priceAfterQty * (1 - durationDiscountPercent);
+
+                // Redondeo: "0.5 o entero más cercano hacia arriba (Math.ceil)"
+                // e.g. 14.1 -> 14.5. 14.6 -> 15.0.
+                const ceilToHalf = (num) => {
+                    return Math.ceil(num * 2) / 2;
+                };
+
+                const finalPrice = ceilToHalf(finalPriceRaw);
+                const discountAmount = totalRegular - finalPrice;
+                const profit = finalPrice - totalCost;
+
+                return {
+                    items: selectedItems,
+                    regular: totalRegular,
+                    final: finalPrice,
+                    discount: discountAmount,
+                    profit: profit
+                };
+            };
+
+            const renderTicket = () => {
+                const totals = calculateTotals();
+
+                // Render Items List
+                if (totals.items.length === 0) {
+                    selectors.ticketItems.innerHTML = '<p class="text-gray-400 italic">Selecciona servicios...</p>';
+                } else {
+                    selectors.ticketItems.innerHTML = totals.items.map(item => `
+                        <div class="flex justify-between">
+                            <span>${item.name} <span class="text-xs text-gray-400">x${item.months}m</span></span>
+                            <span>S/ ${item.price.toFixed(2)}</span>
+                        </div>
+                    `).join('');
+                }
+
+                selectors.ticketRegularPrice.textContent = formatCurrency(totals.regular);
+                selectors.ticketDiscountAmount.textContent = `-S/ ${totals.discount.toFixed(2)}`;
+                selectors.ticketDiscountAmount.classList.toggle('text-transparent', totals.discount === 0); // Hide if 0
+                selectors.ticketFinalPrice.textContent = formatCurrency(totals.final);
+                selectors.ticketProfit.textContent = formatCurrency(totals.profit);
+
+                // Color profit
+                if (totals.profit > 0) selectors.ticketProfit.className = 'font-bold text-green-600';
+                else if (totals.profit < 0) selectors.ticketProfit.className = 'font-bold text-red-600';
+                else selectors.ticketProfit.className = 'font-bold text-gray-600';
+            };
+
+            const handleCopyPromo = () => {
+                if (selectedServices.size === 0) return;
+                const totals = calculateTotals();
+
+                // Emojis map
+                const emojis = {
+                    'netflix': '🍿',
+                    'disney': '🏰',
+                    'max_plat': '💜',
+                    'max_bas': '💙',
+                    'prime': '📦',
+                    'plex': '🎬',
+                    'paramount': '🏔️',
+                    'crunchy': '🍜',
+                    'vix': '🧡',
+                    'universal': '🌍',
+                    'canva': '🎨'
+                };
+
+                let text = `*¡OFERTA STREAMING!* 🔥\n\n`;
+                text += `⏱️ Duración: *${selectedMonths} Mes${selectedMonths > 1 ? 'es' : ''}*\n\n`;
+
+                totals.items.forEach(item => {
+                    // Find ID by name is risky if names change, better pass ID in totals or map
+                    // Let's just look it up from defaultServices
+                    const s = defaultServices.find(ds => ds.name === item.name);
+                    const emoji = emojis[s.id] || '📺';
+                    text += `${emoji} ${item.name}\n`;
+                });
+
+                text += `\n💰 *PRECIO TOTAL: S/ ${totals.final.toFixed(2)}* ✅\n`;
+                if (totals.discount > 0) {
+                    text += `(Antes: ~S/ ${totals.regular.toFixed(2)}~)\n`;
+                }
+                text += `\n¡Pide tu combo ahora! 📲`;
+
+                navigator.clipboard.writeText(text).then(() => {
+                    const originalText = selectors.copyPromoBtn.innerHTML;
+                    selectors.copyPromoBtn.innerHTML = `<svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> ¡Copiado!`;
+                    selectors.copyPromoBtn.classList.remove('bg-green-500', 'hover:bg-green-600');
+                    selectors.copyPromoBtn.classList.add('bg-gray-800', 'hover:bg-gray-900');
+
+                    setTimeout(() => {
+                        selectors.copyPromoBtn.innerHTML = originalText;
+                        selectors.copyPromoBtn.classList.add('bg-green-500', 'hover:bg-green-600');
+                        selectors.copyPromoBtn.classList.remove('bg-gray-800', 'hover:bg-gray-900');
+                    }, 2000);
+                });
+            };
+
+            // Event Listeners for Precios View
+            selectors.toggleConfigBtn.addEventListener('click', () => {
+                selectors.configPanel.classList.toggle('hidden');
+            });
+            selectors.saveCostsBtn.addEventListener('click', saveServiceCosts);
+            selectors.copyPromoBtn.addEventListener('click', handleCopyPromo);
+
+            // Initial Load for Precios
+            loadServiceCosts();
+            renderDurationButtons();
 
             // Set default view
             document.getElementById('nav-dashboard').click();
