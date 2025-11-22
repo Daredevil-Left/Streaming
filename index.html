@@ -2601,14 +2601,7 @@
                 return `
                     <tr class="hover:bg-gray-50 transition-colors">
                         <td class="px-4 py-3 whitespace-nowrap">
-                            <div class="flex items-center">
-                                <div class="flex-shrink-0 h-8 w-8 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden border border-gray-200">
-                                    <img class="h-full w-full object-cover" src="${service.logo}" alt="${service.name}" onerror="this.src='logo_nuevo.png'">
-                                </div>
-                                <div class="ml-3">
-                                    <div class="text-sm font-medium text-gray-900">${service.name}</div>
-                                </div>
-                            </div>
+                            <span class="font-bold text-sm" style="color: ${service.color}">${service.name}</span>
                         </td>
                         <td class="px-4 py-3 whitespace-nowrap">
                             <div class="relative rounded-md shadow-sm max-w-[100px]">
