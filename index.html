@@ -1,132 +1,75 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
-    <link rel="manifest" href="manifest.json">
-    <link rel="icon" href="logo_nuevo.png" type="image/png">
-    <link href="./output.css" rel="stylesheet">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Control de Ventas</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.11.10/dayjs.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.11.10/plugin/relativeTime.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.11.10/locale/es.js"></script>
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="logo_nuevo.png" type="image/png">
+  <link href="./output.css" rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Control de Ventas</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.11.10/dayjs.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.11.10/plugin/relativeTime.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.11.10/locale/es.js"></script>
 </head>
 
 
-<style>
-    body {
-        font-family: 'Inter', sans-serif;
-        background-color: #f3f4f6;
-    }
-
-    .modal {
-        transition: opacity 0.3s ease;
-    }
-
-    .modal-content {
-        transition: transform 0.3s ease;
-    }
-
-    input[type=number]::-webkit-inner-spin-button,
-    input[type=number]::-webkit-outer-spin-button {
-        -webkit-appearance: none;
-        margin: 0;
-    }
-
-    input[type=number] {
-        -moz-appearance: textfield;
-    }
-
-    .platform-btn img {
-        transition: transform 0.2s ease-in-out;
-    }
-
-    .platform-btn:hover img {
-        transform: scale(1.1);
-    }
-
-    .sidebar-text {
-        display: none;
-        /* Oculto por defecto */
-        transition: opacity 0.3s ease-in-out;
-        white-space: nowrap;
-        opacity: 0;
-    }
-
-    #sidebar:hover .sidebar-text {
-        display: inline-block;
-        /* Mostrar en hover */
-        opacity: 1;
-    }
-
-    /* Nuevo: Centrar íconos cuando el sidebar está colapsado */
-    #sidebar:not(:hover) nav a,
-    #sidebar:not(:hover) #logout-btn {
-        justify-content: center;
-    }
-
-    .toast {
-        transition: opacity 0.5s, transform 0.5s;
-    }
-</style>
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; }
+        .modal { transition: opacity 0.3s ease; }
+        .modal-content { transition: transform 0.3s ease; }
+        input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+        input[type=number] { -moz-appearance: textfield; }
+        .platform-btn img { transition: transform 0.2s ease-in-out; }
+        .platform-btn:hover img { transform: scale(1.1); }
+        .sidebar-text {
+            display: none; /* Oculto por defecto */
+            transition: opacity 0.3s ease-in-out;
+            white-space: nowrap;
+            opacity: 0;
+        }
+        #sidebar:hover .sidebar-text {
+            display: inline-block; /* Mostrar en hover */
+            opacity: 1;
+        }
+        /* Nuevo: Centrar íconos cuando el sidebar está colapsado */
+        #sidebar:not(:hover) nav a, #sidebar:not(:hover) #logout-btn {
+            justify-content: center;
+        }
+        .toast {
+            transition: opacity 0.5s, transform 0.5s;
+        }
+    </style>
 </head>
-
 <body class="antialiased">
 
     <div id="app" class="flex h-screen bg-gray-100 hidden">
         <!-- Sidebar -->
-        <div id="sidebar"
-            class="w-16 hover:w-64 bg-gray-800 text-white flex flex-col transition-all duration-300 ease-in-out overflow-hidden">
+        <div id="sidebar" class="w-16 hover:w-64 bg-gray-800 text-white flex flex-col transition-all duration-300 ease-in-out overflow-hidden">
             <div class="flex items-center justify-center h-20 border-b border-gray-700">
                 <img src="logo_nuevo.png" alt="Logo" class="h-10 w-10 object-contain">
             </div>
             <nav class="flex-1 px-2 py-4 space-y-2">
                 <a href="#" id="nav-dashboard" class="flex items-center py-2.5 px-2 rounded-md hover:bg-gray-700">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                        xmlns="http://www.w3.org/2000/svg">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6">
-                        </path>
-                    </svg>
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
                     <span class="ml-4 sidebar-text">Dashboard</span>
                 </a>
                 <a href="#" id="nav-cuentas" class="flex items-center py-2.5 px-2 rounded-md hover:bg-gray-700">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                        xmlns="http://www.w3.org/2000/svg">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                    </svg>
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
                     <span class="ml-4 sidebar-text">Cuentas</span>
                 </a>
                 <a href="#" id="nav-ventas" class="flex items-center py-2.5 px-2 rounded-md hover:bg-gray-700">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                        xmlns="http://www.w3.org/2000/svg">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z">
-                        </path>
-                    </svg>
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
                     <span class="ml-4 sidebar-text">Ventas</span>
                 </a>
                 <a href="#" id="nav-finanzas" class="flex items-center py-2.5 px-2 rounded-md hover:bg-gray-700">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                        xmlns="http://www.w3.org/2000/svg">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"></path>
-                    </svg>
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"></path></svg>
                     <span class="ml-4 sidebar-text">Finanzas</span>
                 </a>
             </nav>
             <div class="px-2 py-4">
-                <button id="logout-btn"
-                    class="w-full flex items-center py-2.5 px-2 rounded-md bg-red-500 hover:bg-red-600">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                        xmlns="http://www.w3.org/2000/svg">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1">
-                        </path>
-                    </svg>
+                <button id="logout-btn" class="w-full flex items-center py-2.5 px-2 rounded-md bg-red-500 hover:bg-red-600">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
                     <span class="ml-4 sidebar-text">Cerrar Sesión</span>
                 </button>
             </div>
@@ -143,48 +86,31 @@
                         <div class="bg-[linear-gradient(to_right,#00b09b,#1a2a27)] p-6 rounded-2xl flex items-center">
                             <div>
                                 <!-- Icono Ventas Hoy (Forma Sol) -->
-                                <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                                    xmlns="http://www.w3.org/2000/svg">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z">
-                                    </path>
-                                </svg>
+                                <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
                             </div>
                             <div class="ml-4">
                                 <h3 class="text-sm font-medium text-white/75">Ventas de Hoy</h3>
-                                <p id="kpi-sales-today" class="text-2xl font-black text-white"
-                                    style="text-shadow: 0 0 8px rgba(0, 176, 155, 0.7);">S/0.00</p>
+                                <p id="kpi-sales-today" class="text-2xl font-black text-white" style="text-shadow: 0 0 8px rgba(0, 176, 155, 0.7);">S/0.00</p>
                             </div>
                         </div>
                         <div class="bg-[linear-gradient(to_right,#2c3e50,#000428)] p-6 rounded-2xl flex items-center">
                             <div>
                                 <!-- Icono Calendario -->
-                                <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                                    xmlns="http://www.w3.org/2000/svg">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
-                                    </path>
-                                </svg>
+                                <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                             </div>
                             <div class="ml-4">
                                 <h3 class="text-sm font-medium text-white/75">Ventas del Mes</h3>
-                                <p id="kpi-sales-month" class="text-2xl font-black text-white"
-                                    style="text-shadow: 0 0 8px rgba(44, 62, 80, 0.7);">S/312.00</p>
+                                <p id="kpi-sales-month" class="text-2xl font-black text-white" style="text-shadow: 0 0 8px rgba(44, 62, 80, 0.7);">S/312.00</p>
                             </div>
                         </div>
                         <div class="bg-[linear-gradient(to_right,#6a3093,#301934)] p-6 rounded-2xl flex items-center">
                             <div>
                                 <!-- Icono Usuario -->
-                                <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                                    xmlns="http://www.w3.org/2000/svg">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                                </svg>
+                                <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
                             </div>
                             <div class="ml-4">
                                 <h3 class="text-sm font-medium text-white/75">Clientes Activos</h3>
-                                <p id="kpi-active-clients" class="text-2xl font-black text-white"
-                                    style="text-shadow: 0 0 8px rgba(106, 48, 147, 0.7);">47</p>
+                                <p id="kpi-active-clients" class="text-2xl font-black text-white" style="text-shadow: 0 0 8px rgba(106, 48, 147, 0.7);">47</p>
                             </div>
                         </div>
                     </div>
@@ -211,20 +137,12 @@
                             <div class="bg-white p-6 rounded-2xl shadow-lg">
                                 <h3 class="text-lg font-semibold text-gray-700 mb-4">Accesos Rápidos</h3>
                                 <div class="flex flex-col space-y-3">
-                                    <button id="quick-add-sale"
-                                        class="w-full flex items-center justify-center bg-blue-600 text-white font-semibold px-4 py-3 rounded-lg hover:bg-blue-700 transition">
-                                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-                                        </svg>
+                                    <button id="quick-add-sale" class="w-full flex items-center justify-center bg-blue-600 text-white font-semibold px-4 py-3 rounded-lg hover:bg-blue-700 transition">
+                                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
                                         Añadir Nueva Venta
                                     </button>
-                                    <button id="quick-add-expense"
-                                        class="w-full flex items-center justify-center bg-red-500 text-white font-semibold px-4 py-3 rounded-lg hover:bg-red-600 transition">
-                                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M18 12H6"></path>
-                                        </svg>
+                                    <button id="quick-add-expense" class="w-full flex items-center justify-center bg-red-500 text-white font-semibold px-4 py-3 rounded-lg hover:bg-red-600 transition">
+                                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 12H6"></path></svg>
                                         Añadir Egreso
                                     </button>
                                 </div>
@@ -232,16 +150,9 @@
                             <div class="bg-white p-6 rounded-2xl shadow-lg">
                                 <h3 class="text-lg font-semibold text-gray-700 mb-4">Resumen Financiero</h3>
                                 <div class="space-y-3">
-                                    <div class="flex justify-between items-center"><span
-                                            class="font-medium text-green-700">Ingresos:</span><span
-                                            id="summary-ingresos" class="font-bold text-lg text-green-800">S/0.00</span>
-                                    </div>
-                                    <div class="flex justify-between items-center"><span
-                                            class="font-medium text-red-700">Egresos:</span><span id="summary-egresos"
-                                            class="font-bold text-lg text-red-800">S/0.00</span></div>
-                                    <div class="border-t pt-3 mt-2 flex justify-between items-center"><span
-                                            class="font-bold text-blue-800">Balance:</span><span id="summary-balance"
-                                            class="font-bold text-xl text-blue-900">S/0.00</span></div>
+                                    <div class="flex justify-between items-center"><span class="font-medium text-green-700">Ingresos:</span><span id="summary-ingresos" class="font-bold text-lg text-green-800">S/0.00</span></div>
+                                    <div class="flex justify-between items-center"><span class="font-medium text-red-700">Egresos:</span><span id="summary-egresos" class="font-bold text-lg text-red-800">S/0.00</span></div>
+                                    <div class="border-t pt-3 mt-2 flex justify-between items-center"><span class="font-bold text-blue-800">Balance:</span><span id="summary-balance" class="font-bold text-xl text-blue-900">S/0.00</span></div>
                                 </div>
                             </div>
                         </div>
@@ -262,44 +173,27 @@
                                 </div>
                                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                                     <div>
-                                        <label for="account-email"
-                                            class="block text-sm font-medium text-gray-600 mb-2">Correo</label>
-                                        <input type="text" id="account-email" name="account-email"
-                                            class="w-full px-4 py-2 border border-gray-300 rounded-lg" required>
+                                        <label for="account-email" class="block text-sm font-medium text-gray-600 mb-2">Correo</label>
+                                        <input type="text" id="account-email" name="account-email" class="w-full px-4 py-2 border border-gray-300 rounded-lg" required>
                                     </div>
                                     <div class="relative">
-                                        <label for="account-password"
-                                            class="block text-sm font-medium text-gray-600 mb-2">Contraseña</label>
-                                        <input type="password" id="account-password" name="account-password"
-                                            class="w-full px-4 py-2 border border-gray-300 rounded-lg" required>
-                                        <button type="button"
-                                            class="absolute inset-y-0 right-0 top-6 flex items-center px-3 text-gray-500"
-                                            onclick="togglePasswordVisibility('account-password', this)">
-                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                            </svg>
+                                        <label for="account-password" class="block text-sm font-medium text-gray-600 mb-2">Contraseña</label>
+                                        <input type="password" id="account-password" name="account-password" class="w-full px-4 py-2 border border-gray-300 rounded-lg" required>
+                                        <button type="button" class="absolute inset-y-0 right-0 top-6 flex items-center px-3 text-gray-500" onclick="togglePasswordVisibility('account-password', this)">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
                                         </button>
                                     </div>
                                     <div>
-                                        <label for="enlace" class="block text-sm font-medium text-gray-600 mb-2">Enlace
-                                            (Opcional)</label>
-                                        <input type="text" id="enlace" name="enlace"
-                                            class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+                                        <label for="enlace" class="block text-sm font-medium text-gray-600 mb-2">Enlace (Opcional)</label>
+                                        <input type="text" id="enlace" name="enlace" class="w-full px-4 py-2 border border-gray-300 rounded-lg">
                                     </div>
                                     <div>
-                                        <label for="fechaPago"
-                                            class="block text-sm font-medium text-gray-600 mb-2">Fecha de pago</label>
-                                        <input type="date" id="fechaPago" name="fechaPago"
-                                            class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+                                        <label for="fechaPago" class="block text-sm font-medium text-gray-600 mb-2">Fecha de pago</label>
+                                        <input type="date" id="fechaPago" name="fechaPago" class="w-full px-4 py-2 border border-gray-300 rounded-lg">
                                     </div>
                                 </div>
                                 <div class="text-right">
-                                    <button type="submit"
-                                        class="bg-blue-600 w-full md:w-auto text-white font-semibold px-6 py-3 rounded-lg hover:bg-blue-700 transition">Añadir
-                                        Cuenta</button>
+                                    <button type="submit" class="bg-blue-600 w-full md:w-auto text-white font-semibold px-6 py-3 rounded-lg hover:bg-blue-700 transition">Añadir Cuenta</button>
                                 </div>
                             </form>
                             <div id="contenedor-cuentas-agrupadas"></div>
@@ -312,129 +206,62 @@
                     <h1 class="text-3xl font-bold text-gray-800 mb-8">Ventas</h1>
                     <div class="bg-white p-4 md:p-6 rounded-2xl shadow-lg mb-8 max-w-5xl mx-auto">
                         <h2 class="text-2xl font-semibold text-gray-700 mb-6">Añadir Nueva Venta</h2>
-                        <form id="add-sale-form"
-                            class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                            <div><label for="cliente" class="block text-sm font-medium text-gray-600 mb-2">Nombre del
-                                    Cliente</label><input type="text" id="cliente" name="cliente"
-                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg" required></div>
-                            <div><label for="plataforma"
-                                    class="block text-sm font-medium text-gray-600 mb-2">Plataforma</label><select
-                                    id="plataforma" name="plataforma"
-                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white">
-                                    <option>Netflix</option>
-                                    <option>Spotify</option>
-                                    <option>Disney+</option>
-                                    <option>HBO Max</option>
-                                    <option>Amazon Prime Video</option>
-                                    <option>YouTube Premium</option>
-                                    <option>Apple Music</option>
-                                    <option>Apple TV+</option>
-                                    <option>Crunchyroll</option>
-                                    <option>Canva</option>
-                                    <option>IPTV Premium</option>
-                                    <option>Vix+</option>
-                                    <option>Paramount+</option>
-                                    <option>Otro</option>
-                                </select></div>
-                            <div id="otro-plataforma-container" class="hidden"><label for="otro-plataforma"
-                                    class="block text-sm font-medium text-gray-600 mb-2">Especificar
-                                    Plataforma</label><input type="text" id="otro-plataforma" name="otro-plataforma"
-                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg"></div>
-                            <div><label for="precio" class="block text-sm font-medium text-gray-600 mb-2">Precio Pagado
-                                    (S/)</label><input type="number" id="precio" name="precio" min="0" step="0.01"
-                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg" required></div>
-                            <div><label for="inicioPlan" class="block text-sm font-medium text-gray-600 mb-2">Inicio del
-                                    Plan</label><input type="date" id="inicioPlan" name="inicioPlan"
-                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg" required></div>
-                            <div><label for="diasPlan" class="block text-sm font-medium text-gray-600 mb-2">Nº
-                                    Días</label><input type="number" id="diasPlan" name="diasPlan"
-                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg"></div>
-                            <div><label for="finPlan" class="block text-sm font-medium text-gray-600 mb-2">Fin del
-                                    Plan</label><input type="date" id="finPlan" name="finPlan"
-                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100" readonly>
-                            </div>
+                        <form id="add-sale-form" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                            <div><label for="cliente" class="block text-sm font-medium text-gray-600 mb-2">Nombre del Cliente</label><input type="text" id="cliente" name="cliente" class="w-full px-4 py-2 border border-gray-300 rounded-lg" required></div>
+                            <div><label for="plataforma" class="block text-sm font-medium text-gray-600 mb-2">Plataforma</label><select id="plataforma" name="plataforma" class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white"><option>Netflix</option> <option>Spotify</option> <option>Disney+</option> <option>HBO Max</option> <option>Amazon Prime Video</option> <option>YouTube Premium</option> <option>Apple Music</option> <option>Apple TV+</option> <option>Crunchyroll</option> <option>Canva</option> <option>IPTV Premium</option> <option>Vix+</option> <option>Paramount+</option> <option>Otro</option></select></div>
+                            <div id="otro-plataforma-container" class="hidden"><label for="otro-plataforma" class="block text-sm font-medium text-gray-600 mb-2">Especificar Plataforma</label><input type="text" id="otro-plataforma" name="otro-plataforma" class="w-full px-4 py-2 border border-gray-300 rounded-lg"></div>
+                            <div><label for="precio" class="block text-sm font-medium text-gray-600 mb-2">Precio Pagado (S/)</label><input type="number" id="precio" name="precio" min="0" step="0.01" class="w-full px-4 py-2 border border-gray-300 rounded-lg" required></div>
+                            <div><label for="inicioPlan" class="block text-sm font-medium text-gray-600 mb-2">Inicio del Plan</label><input type="date" id="inicioPlan" name="inicioPlan" class="w-full px-4 py-2 border border-gray-300 rounded-lg" required></div>
+                            <div><label for="diasPlan" class="block text-sm font-medium text-gray-600 mb-2">Nº Días</label><input type="number" id="diasPlan" name="diasPlan" class="w-full px-4 py-2 border border-gray-300 rounded-lg"></div>
+                            <div><label for="finPlan" class="block text-sm font-medium text-gray-600 mb-2">Fin del Plan</label><input type="date" id="finPlan" name="finPlan" class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100" readonly></div>
                             <div>
-                                <label for="platform-account"
-                                    class="block text-sm font-medium text-gray-600 mb-2">Cuenta Madre</label>
-                                <select id="platform-account" name="platform-account"
-                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white">
+                                <label for="platform-account" class="block text-sm font-medium text-gray-600 mb-2">Cuenta Madre</label>
+                                <select id="platform-account" name="platform-account" class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white">
                                     <option value="">Sin cuenta / Ingresar manualmente</option>
                                 </select>
                             </div>
-                            <div>
-                                <label for="profile-select"
-                                    class="block text-sm font-medium text-gray-600 mb-2">Perfil</label>
-                                <select id="profile-select" name="profile-select"
-                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-200" disabled
-                                    required>
+                             <div>
+                                <label for="profile-select" class="block text-sm font-medium text-gray-600 mb-2">Perfil</label>
+                                <select id="profile-select" name="profile-select" class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-200" disabled required>
                                     <option value="">Selecciona una cuenta madre primero</option>
                                 </select>
                             </div>
                             <div class="manual-credentials">
                                 <label for="correo" class="block text-sm font-medium text-gray-600 mb-2">Correo</label>
-                                <input type="text" id="correo" name="correo"
-                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+                                <input type="text" id="correo" name="correo" class="w-full px-4 py-2 border border-gray-300 rounded-lg">
                             </div>
                             <div class="manual-credentials relative">
-                                <label for="contrasena"
-                                    class="block text-sm font-medium text-gray-600 mb-2">Contraseña</label>
-                                <input type="password" id="contrasena" name="contrasena"
-                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg">
-                                <button type="button"
-                                    class="absolute inset-y-0 right-0 top-6 flex items-center px-3 text-gray-500"
-                                    onclick="togglePasswordVisibility('contrasena', this)">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                    </svg>
+                                <label for="contrasena" class="block text-sm font-medium text-gray-600 mb-2">Contraseña</label>
+                                <input type="password" id="contrasena" name="contrasena" class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+                                <button type="button" class="absolute inset-y-0 right-0 top-6 flex items-center px-3 text-gray-500" onclick="togglePasswordVisibility('contrasena', this)">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
                                 </button>
                             </div>
-                            <div><label for="pin" class="block text-sm font-medium text-gray-600 mb-2">PIN</label><input
-                                    type="text" id="pin" name="pin"
-                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg"></div>
-                            <div><label for="notas" class="block text-sm font-medium text-gray-600 mb-2">Notas
-                                    Adicionales</label><input type="text" id="notas" name="notas"
-                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg"></div>
+                            <div><label for="pin" class="block text-sm font-medium text-gray-600 mb-2">PIN</label><input type="text" id="pin" name="pin" class="w-full px-4 py-2 border border-gray-300 rounded-lg"></div>
+                            <div><label for="notas" class="block text-sm font-medium text-gray-600 mb-2">Notas Adicionales</label><input type="text" id="notas" name="notas" class="w-full px-4 py-2 border border-gray-300 rounded-lg"></div>
                             <div>
-                                <label for="metodoPago" class="block text-sm font-medium text-gray-600 mb-2">Método de
-                                    Pago</label>
-                                <select id="metodoPago" name="metodoPago"
-                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white" required>
+                                <label for="metodoPago" class="block text-sm font-medium text-gray-600 mb-2">Método de Pago</label>
+                                <select id="metodoPago" name="metodoPago" class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white" required>
                                     <option value="" disabled selected>Seleccione un método</option>
                                     <option value="BCP">BCP</option>
                                     <option value="Falta pagar">Falta pagar</option>
                                     <option value="Gratis">Gratis</option>
                                 </select>
                             </div>
-                            <div class="md:col-span-2 lg:col-span-3 xl:col-span-4 text-right self-end"><button
-                                    type="submit"
-                                    class="bg-indigo-600 w-full md:w-auto text-white font-semibold px-6 py-3 rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-4 focus:ring-indigo-500 focus:ring-opacity-50 transition-transform transform hover:scale-105">Guardar
-                                    Venta</button></div>
+                            <div class="md:col-span-2 lg:col-span-3 xl:col-span-4 text-right self-end"><button type="submit" class="bg-indigo-600 w-full md:w-auto text-white font-semibold px-6 py-3 rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-4 focus:ring-indigo-500 focus:ring-opacity-50 transition-transform transform hover:scale-105">Guardar Venta</button></div>
                         </form>
                     </div>
 
                     <div class="bg-white p-4 rounded-2xl shadow-lg mb-8">
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                            <div class="relative flex-grow w-full md:col-span-1"><input type="text" id="search-input"
-                                    placeholder="Buscar por cliente, plataforma o correo..."
-                                    class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"><svg
-                                    class="w-5 h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2"
-                                    xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                    stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                                </svg></div>
+                            <div class="relative flex-grow w-full md:col-span-1"><input type="text" id="search-input" placeholder="Buscar por cliente, plataforma o correo..." class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"><svg class="w-5 h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg></div>
                             <div>
-                                <select id="account-filter"
-                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white">
+                                <select id="account-filter" class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white">
                                     <option value="">Filtrar por cuenta...</option>
                                 </select>
                             </div>
                             <div>
-                                <select id="status-filter"
-                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white">
+                                <select id="status-filter" class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white">
                                     <option value="">Filtrar por estado...</option>
                                     <option value="Activo">Activo</option>
                                     <option value="Próximo a Vencer">Próximo a Vencer</option>
@@ -447,8 +274,7 @@
                     </div>
 
                     <div class="bg-white rounded-2xl shadow-lg p-4">
-                        <div
-                            class="hidden md:grid grid-cols-8 gap-4 font-semibold text-gray-600 border-b pb-3 mb-3 text-sm">
+                        <div class="hidden md:grid grid-cols-8 gap-4 font-semibold text-gray-600 border-b pb-3 mb-3 text-sm">
                             <div class="col-span-2">Cliente</div>
                             <div>Plataforma</div>
                             <div>Vencimiento</div>
@@ -459,19 +285,8 @@
                         </div>
                         <div id="sales-list" class="space-y-2"></div>
                     </div>
-                    <div id="loading-state" class="text-center py-10">
-                        <p class="text-gray-500">Cargando ventas...</p>
-                    </div>
-                    <div id="empty-state" class="hidden text-center py-20 bg-white rounded-2xl shadow-lg"><svg
-                            class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24"
-                            stroke="currentColor">
-                            <path vector-effect="non-scaling-stroke" stroke-linecap="round" stroke-linejoin="round"
-                                stroke-width="2"
-                                d="M9 13h6m-3-3v6m-9 1V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
-                        </svg>
-                        <h3 class="mt-2 text-xl font-medium text-gray-900">No hay ventas registradas</h3>
-                        <p class="mt-1 text-sm text-gray-500">Comienza añadiendo una nueva venta.</p>
-                    </div>
+                    <div id="loading-state" class="text-center py-10"><p class="text-gray-500">Cargando ventas...</p></div>
+                    <div id="empty-state" class="hidden text-center py-20 bg-white rounded-2xl shadow-lg"><svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path vector-effect="non-scaling-stroke" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 13h6m-3-3v6m-9 1V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z" /></svg><h3 class="mt-2 text-xl font-medium text-gray-900">No hay ventas registradas</h3><p class="mt-1 text-sm text-gray-500">Comienza añadiendo una nueva venta.</p></div>
                 </div>
 
                 <!-- Finanzas View -->
@@ -480,31 +295,22 @@
                     <!-- Financial Summary Cards -->
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
                         <!-- Total Ingresos -->
-                        <div id="total-ingresos-card"
-                            class="bg-gradient-to-r from-green-500 to-emerald-600 p-6 rounded-2xl shadow-lg flex items-center">
+                        <div id="total-ingresos-card" class="bg-gradient-to-r from-green-500 to-emerald-600 p-6 rounded-2xl shadow-lg flex items-center">
                             <div id="total-ingresos-icon-bg" class="p-4 rounded-full">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
-                                    class="w-8 h-8 text-white">
-                                    <path fill-rule="evenodd"
-                                        d="M15.22 6.268a.75.75 0 0 1 .968-.432l5.942 2.28a.75.75 0 0 1 .431.97l-2.28 5.94a.75.75 0 1 1-1.4-.537l1.63-4.251-1.086.484a11.2 11.2 0 0 0-5.45 5.173.75.75 0 0 1-1.199.19L9 12.312l-6.22 6.22a.75.75 0 0 1-1.06-1.06l6.75-6.75a.75.75 0 0 1 1.06 0l3.606 3.606a12.7 12.7 0 0 1 5.68-4.974l1.086-.483-4.251-1.632a.75.75 0 0 1-.432-.97Z"
-                                        clip-rule="evenodd" />
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-8 h-8 text-white">
+                                    <path fill-rule="evenodd" d="M15.22 6.268a.75.75 0 0 1 .968-.432l5.942 2.28a.75.75 0 0 1 .431.97l-2.28 5.94a.75.75 0 1 1-1.4-.537l1.63-4.251-1.086.484a11.2 11.2 0 0 0-5.45 5.173.75.75 0 0 1-1.199.19L9 12.312l-6.22 6.22a.75.75 0 0 1-1.06-1.06l6.75-6.75a.75.75 0 0 1 1.06 0l3.606 3.606a12.7 12.7 0 0 1 5.68-4.974l1.086-.483-4.251-1.632a.75.75 0 0 1-.432-.97Z" clip-rule="evenodd" />
                                 </svg>
                             </div>
                             <div class="ml-4">
-                                <h3 id="total-ingresos-text" class="text-sm font-medium text-white">Ingresos Totales
-                                </h3>
+                                <h3 id="total-ingresos-text" class="text-sm font-medium text-white">Ingresos Totales</h3>
                                 <p id="total-ingresos" class="text-2xl font-bold text-white">S/0.00</p>
                             </div>
                         </div>
                         <!-- Total Egresos -->
-                        <div id="total-egresos-card"
-                            class="bg-gradient-to-r from-red-500 to-orange-500 p-6 rounded-2xl shadow-lg flex items-center">
+                        <div id="total-egresos-card" class="bg-gradient-to-r from-red-500 to-orange-500 p-6 rounded-2xl shadow-lg flex items-center">
                             <div id="total-egresos-icon-bg" class="p-4 rounded-full">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
-                                    class="w-8 h-8 text-white">
-                                    <path fill-rule="evenodd"
-                                        d="M1.72 5.47a.75.75 0 0 1 1.06 0L9 11.69l3.756-3.756a.75.75 0 0 1 .984-.067 12.693 12.693 0 0 1 4.575 6.832l.308 1.149 2.277-3.943a.75.75 0 1 1 1.3.75l-3.182 5.51a.75.75 0 0 1-1.025.275l-5.511-3.182a.75.75 0 0 1 .75-1.3l3.943 2.277-.308-1.149a11.194 11.194 0 0 0-3.528-5.617l-3.81 3.81a.75.75 0 0 1-1.06 0L1.72 6.53a.75.75 0 0 1 0-1.061Z"
-                                        clip-rule="evenodd" />
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-8 h-8 text-white">
+                                    <path fill-rule="evenodd" d="M1.72 5.47a.75.75 0 0 1 1.06 0L9 11.69l3.756-3.756a.75.75 0 0 1 .984-.067 12.693 12.693 0 0 1 4.575 6.832l.308 1.149 2.277-3.943a.75.75 0 1 1 1.3.75l-3.182 5.51a.75.75 0 0 1-1.025.275l-5.511-3.182a.75.75 0 0 1 .75-1.3l3.943 2.277-.308-1.149a11.194 11.194 0 0 0-3.528-5.617l-3.81 3.81a.75.75 0 0 1-1.06 0L1.72 6.53a.75.75 0 0 1 0-1.061Z" clip-rule="evenodd" />
                                 </svg>
                             </div>
                             <div class="ml-4">
@@ -513,13 +319,10 @@
                             </div>
                         </div>
                         <!-- Balance General -->
-                        <div id="balance-total-card"
-                            class="bg-gradient-to-r from-blue-500 to-indigo-600 p-6 rounded-2xl shadow-lg flex items-center">
+                        <div id="balance-total-card" class="bg-gradient-to-r from-blue-500 to-indigo-600 p-6 rounded-2xl shadow-lg flex items-center">
                             <div id="balance-total-icon-bg" class="p-4 rounded-full">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                    stroke-width="1.5" stroke="currentColor" class="w-8 h-8 text-white">
-                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                        d="M12 6v12m-3-2.818.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8 text-white">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m-3-2.818.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
                                 </svg>
                             </div>
                             <div class="ml-4">
@@ -537,37 +340,25 @@
                                 <h3 class="text-xl font-semibold text-gray-700 mb-6">Añadir Egreso</h3>
                                 <form id="add-expense-form" class="space-y-6">
                                     <div>
-                                        <label for="expense-description"
-                                            class="block text-sm font-medium text-gray-600 mb-2">Descripción</label>
-                                        <input type="text" id="expense-description" name="expense-description"
-                                            class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
-                                            placeholder="Ej: Pago de internet" required>
+                                        <label for="expense-description" class="block text-sm font-medium text-gray-600 mb-2">Descripción</label>
+                                        <input type="text" id="expense-description" name="expense-description" class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition" placeholder="Ej: Pago de internet" required>
                                     </div>
                                     <div>
-                                        <label for="expense-amount"
-                                            class="block text-sm font-medium text-gray-600 mb-2">Monto (S/)</label>
-                                        <input type="number" id="expense-amount" name="expense-amount" min="0"
-                                            step="0.01"
-                                            class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
-                                            placeholder="Ej: 50.00" required>
+                                        <label for="expense-amount" class="block text-sm font-medium text-gray-600 mb-2">Monto (S/)</label>
+                                        <input type="number" id="expense-amount" name="expense-amount" min="0" step="0.01" class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition" placeholder="Ej: 50.00" required>
                                     </div>
                                     <div>
-                                        <label for="expense-date"
-                                            class="block text-sm font-medium text-gray-600 mb-2">Fecha</label>
-                                        <input type="date" id="expense-date" name="expense-date"
-                                            class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
-                                            required>
+                                        <label for="expense-date" class="block text-sm font-medium text-gray-600 mb-2">Fecha</label>
+                                        <input type="date" id="expense-date" name="expense-date" class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition" required>
                                     </div>
-                                    <button type="submit"
-                                        class="w-full bg-gradient-to-r from-red-500 to-orange-500 text-white font-bold py-3 px-4 rounded-lg hover:from-red-600 hover:to-orange-600 transition-all duration-300 transform hover:scale-105 shadow-md">Añadir
-                                        Gasto</button>
+                                    <button type="submit" class="w-full bg-gradient-to-r from-red-500 to-orange-500 text-white font-bold py-3 px-4 rounded-lg hover:from-red-600 hover:to-orange-600 transition-all duration-300 transform hover:scale-105 shadow-md">Añadir Gasto</button>
                                 </form>
                             </div>
                         </div>
 
                         <!-- Recent Expenses List -->
                         <div id="expenses-list-container" class="lg:col-span-3">
-                            <div class="bg-white p-6 rounded-2xl shadow-lg h-full">
+                             <div class="bg-white p-6 rounded-2xl shadow-lg h-full">
                                 <h3 class="text-xl font-semibold text-gray-700 mb-6">Últimos Egresos</h3>
                                 <div id="expenses-list" class="space-y-4 pr-2 -mr-2 max-h-96 overflow-y-auto">
                                     <p class="text-gray-500">No hay egresos registrados.</p>
@@ -579,136 +370,73 @@
             </main>
         </div>
     </div>
-    <div id="confirmation-modal"
-        class="modal fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 z-50 hidden opacity-0">
+    <div id="confirmation-modal" class="modal fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 z-50 hidden opacity-0">
         <div class="modal-content bg-white w-full max-w-md rounded-2xl shadow-2xl p-6 transform scale-95 text-center">
             <h2 id="confirmation-title" class="text-2xl font-bold text-gray-800 mb-4">Confirmar Acción</h2>
             <p id="confirmation-message" class="text-gray-600 mb-8">¿Estás seguro de que quieres continuar?</p>
             <div class="flex justify-center gap-4">
-                <button id="cancel-confirmation-btn"
-                    class="bg-gray-200 text-gray-700 font-semibold px-6 py-3 rounded-lg hover:bg-gray-300 transition w-full md:w-auto">
+                <button id="cancel-confirmation-btn" class="bg-gray-200 text-gray-700 font-semibold px-6 py-3 rounded-lg hover:bg-gray-300 transition w-full md:w-auto">
                     Cancelar
                 </button>
-                <button id="confirm-action-btn"
-                    class="bg-red-600 text-white font-semibold px-6 py-3 rounded-lg hover:bg-red-700 transition w-full md:w-auto">
+                <button id="confirm-action-btn" class="bg-red-600 text-white font-semibold px-6 py-3 rounded-lg hover:bg-red-700 transition w-full md:w-auto">
                     Confirmar
                 </button>
             </div>
         </div>
     </div>
 
-    <div id="edit-modal"
-        class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden opacity-0">
+    <div id="edit-modal" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden opacity-0">
         <div class="modal-content bg-white w-full max-w-4xl rounded-2xl shadow-2xl p-6 transform scale-95">
-            <div class="flex justify-between items-center mb-6">
-                <h2 class="text-2xl font-semibold text-gray-700">Editar Venta</h2><button id="close-modal"
-                    class="text-gray-400 hover:text-gray-600"><svg class="w-6 h-6" fill="none" stroke="currentColor"
-                        viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
-                        </path>
-                    </svg></button>
-            </div>
+            <div class="flex justify-between items-center mb-6"><h2 class="text-2xl font-semibold text-gray-700">Editar Venta</h2><button id="close-modal" class="text-gray-400 hover:text-gray-600"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button></div>
             <form id="edit-sale-form" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <input type="hidden" id="edit-sale-id" name="edit-sale-id">
-                <div><label for="edit-cliente" class="block text-sm font-medium text-gray-600 mb-2">Nombre del
-                        Cliente</label><input type="text" id="edit-cliente" name="edit-cliente"
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg" required></div>
-                <div><label for="edit-plataforma"
-                        class="block text-sm font-medium text-gray-600 mb-2">Plataforma</label><select
-                        id="edit-plataforma" name="edit-plataforma"
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white">
-                        <option>Netflix</option>
-                        <option>Spotify</option>
-                        <option>Disney+</option>
-                        <option>HBO Max</option>
-                        <option>Amazon Prime Video</option>
-                        <option>YouTube Premium</option>
-                        <option>Apple Music</option>
-                        <option>Apple TV+</option>
-                        <option>Crunchyroll</option>
-                        <option>Canva</option>
-                        <option>IPTV Premium</option>
-                        <option>Vix+</option>
-                        <option>Paramount+</option>
-                        <option>Otro</option>
-                    </select></div>
-                <div id="edit-otro-plataforma-container" class="hidden"><label for="edit-otro-plataforma"
-                        class="block text-sm font-medium text-gray-600 mb-2">Especificar Plataforma</label><input
-                        type="text" id="edit-otro-plataforma" name="edit-otro-plataforma"
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg"></div>
-                <div><label for="edit-precio" class="block text-sm font-medium text-gray-600 mb-2">Precio Pagado
-                        (S/)</label><input type="number" id="edit-precio" name="edit-precio" min="0" step="0.01"
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg" required></div>
-                <div><label for="edit-inicioPlan" class="block text-sm font-medium text-gray-600 mb-2">Inicio del
-                        Plan</label><input type="date" id="edit-inicioPlan" name="edit-inicioPlan"
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg" required></div>
+                <div><label for="edit-cliente" class="block text-sm font-medium text-gray-600 mb-2">Nombre del Cliente</label><input type="text" id="edit-cliente" name="edit-cliente" class="w-full px-4 py-2 border border-gray-300 rounded-lg" required></div>
+                <div><label for="edit-plataforma" class="block text-sm font-medium text-gray-600 mb-2">Plataforma</label><select id="edit-plataforma" name="edit-plataforma" class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white"><option>Netflix</option><option>Spotify</option><option>Disney+</option><option>HBO Max</option><option>Amazon Prime Video</option><option>YouTube Premium</option><option>Apple Music</option><option>Apple TV+</option><option>Crunchyroll</option><option>Canva</option><option>IPTV Premium</option><option>Vix+</option><option>Paramount+</option><option>Otro</option></select></div>
+                <div id="edit-otro-plataforma-container" class="hidden"><label for="edit-otro-plataforma" class="block text-sm font-medium text-gray-600 mb-2">Especificar Plataforma</label><input type="text" id="edit-otro-plataforma" name="edit-otro-plataforma" class="w-full px-4 py-2 border border-gray-300 rounded-lg"></div>
+                <div><label for="edit-precio" class="block text-sm font-medium text-gray-600 mb-2">Precio Pagado (S/)</label><input type="number" id="edit-precio" name="edit-precio" min="0" step="0.01" class="w-full px-4 py-2 border border-gray-300 rounded-lg" required></div>
+                <div><label for="edit-inicioPlan" class="block text-sm font-medium text-gray-600 mb-2">Inicio del Plan</label><input type="date" id="edit-inicioPlan" name="edit-inicioPlan" class="w-full px-4 py-2 border border-gray-300 rounded-lg" required></div>
                 <div>
                     <label for="edit-finPlan" class="block text-sm font-medium text-gray-600 mb-2">Fin del Plan</label>
-                    <input type="date" id="edit-finPlan" name="edit-finPlan"
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white" required>
+                    <input type="date" id="edit-finPlan" name="edit-finPlan" class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white" required>
                 </div>
                 <div>
-                    <label for="edit-platform-account" class="block text-sm font-medium text-gray-600 mb-2">Cuenta
-                        Madre</label>
-                    <select id="edit-platform-account" name="edit-platform-account"
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white">
+                    <label for="edit-platform-account" class="block text-sm font-medium text-gray-600 mb-2">Cuenta Madre</label>
+                    <select id="edit-platform-account" name="edit-platform-account" class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white">
                         <option value="">Sin cuenta / Ingresar manualmente</option>
                     </select>
                 </div>
                 <div>
                     <label for="edit-profile-select" class="block text-sm font-medium text-gray-600 mb-2">Perfil</label>
-                    <select id="edit-profile-select" name="edit-profile-select"
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white">
+                    <select id="edit-profile-select" name="edit-profile-select" class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white">
                         <option value="">Selecciona un perfil</option>
                     </select>
                 </div>
                 <div class="edit-manual-credentials">
                     <label for="edit-correo" class="block text-sm font-medium text-gray-600 mb-2">Correo</label>
-                    <input type="text" id="edit-correo" name="edit-correo"
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+                    <input type="text" id="edit-correo" name="edit-correo" class="w-full px-4 py-2 border border-gray-300 rounded-lg">
                 </div>
                 <div class="edit-manual-credentials relative">
                     <label for="edit-contrasena" class="block text-sm font-medium text-gray-600 mb-2">Contraseña</label>
-                    <input type="password" id="edit-contrasena" name="edit-contrasena"
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg">
-                    <button type="button" class="absolute inset-y-0 right-0 top-6 flex items-center px-3 text-gray-500"
-                        onclick="togglePasswordVisibility('edit-contrasena', this)">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                        </svg>
+                    <input type="password" id="edit-contrasena" name="edit-contrasena" class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+                    <button type="button" class="absolute inset-y-0 right-0 top-6 flex items-center px-3 text-gray-500" onclick="togglePasswordVisibility('edit-contrasena', this)">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
                     </button>
                 </div>
-                <div><label for="edit-pin" class="block text-sm font-medium text-gray-600 mb-2">PIN</label><input
-                        type="text" id="edit-pin" name="edit-pin"
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg"></div>
+                <div><label for="edit-pin" class="block text-sm font-medium text-gray-600 mb-2">PIN</label><input type="text" id="edit-pin" name="edit-pin" class="w-full px-4 py-2 border border-gray-300 rounded-lg"></div>
                 <div>
-                    <label for="edit-metodoPago" class="block text-sm font-medium text-gray-600 mb-2">Método de
-                        Pago</label>
-                    <select id="edit-metodoPago" name="edit-metodoPago"
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white" required>
+                    <label for="edit-metodoPago" class="block text-sm font-medium text-gray-600 mb-2">Método de Pago</label>
+                    <select id="edit-metodoPago" name="edit-metodoPago" class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white" required>
                         <option value="BCP">BCP</option>
                         <option value="Falta pagar">Falta pagar</option>
                         <option value="Gratis">Gratis</option>
                     </select>
                 </div>
-                <div class="lg:col-span-1 md:col-span-1"><label for="edit-notas"
-                        class="block text-sm font-medium text-gray-600 mb-2">Notas Adicionales</label><input type="text"
-                        id="edit-notas" name="edit-notas" class="w-full px-4 py-2 border border-gray-300 rounded-lg">
-                </div>
-                <div class="lg:col-span-3 md:col-span-2 flex justify-end gap-4 mt-4"><button type="button"
-                        id="cancel-edit"
-                        class="bg-gray-200 text-gray-700 font-semibold px-6 py-3 rounded-lg hover:bg-gray-300 transition">Cancelar</button><button
-                        type="submit"
-                        class="bg-indigo-600 text-white font-semibold px-6 py-3 rounded-lg hover:bg-indigo-700">Guardar
-                        Cambios</button></div>
+                <div class="lg:col-span-1 md:col-span-1"><label for="edit-notas" class="block text-sm font-medium text-gray-600 mb-2">Notas Adicionales</label><input type="text" id="edit-notas" name="edit-notas" class="w-full px-4 py-2 border border-gray-300 rounded-lg"></div>
+                <div class="lg:col-span-3 md:col-span-2 flex justify-end gap-4 mt-4"><button type="button" id="cancel-edit" class="bg-gray-200 text-gray-700 font-semibold px-6 py-3 rounded-lg hover:bg-gray-300 transition">Cancelar</button><button type="submit" class="bg-indigo-600 text-white font-semibold px-6 py-3 rounded-lg hover:bg-indigo-700">Guardar Cambios</button></div>
             </form>
         </div>
     </div>
-    <div id="archive-delete-modal"
-        class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden opacity-0">
+    <div id="archive-delete-modal" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden opacity-0">
         <div class="modal-content bg-white w-full max-w-lg rounded-2xl shadow-2xl p-8 transform scale-95 text-center">
             <h2 class="text-2xl font-bold text-gray-800 mb-4">¿Qué deseas hacer con esta venta?</h2>
             <p class="text-gray-600 mb-8">Elige una opción según si la venta se concretó o fue un error.</p>
@@ -716,21 +444,16 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div class="border border-gray-200 rounded-lg p-6 hover:shadow-lg transition-shadow">
                     <h3 class="text-xl font-semibold text-gray-700 mb-2">Archivar</h3>
-                    <p class="text-sm text-gray-500 mb-6">La venta fue real y el dinero se recibió, pero la suscripción
-                        ya terminó. La venta desaparecerá de la lista principal pero se contará en el resumen
-                        financiero.</p>
-                    <button id="archive-btn"
-                        class="w-full bg-blue-600 text-white font-semibold py-3 rounded-lg hover:bg-blue-700 transition">
+                    <p class="text-sm text-gray-500 mb-6">La venta fue real y el dinero se recibió, pero la suscripción ya terminó. La venta desaparecerá de la lista principal pero se contará en el resumen financiero.</p>
+                    <button id="archive-btn" class="w-full bg-blue-600 text-white font-semibold py-3 rounded-lg hover:bg-blue-700 transition">
                         Archivar Venta
                     </button>
                 </div>
 
                 <div class="border border-red-200 rounded-lg p-6 hover:shadow-lg transition-shadow">
                     <h3 class="text-xl font-semibold text-red-700 mb-2">Eliminar Permanentemente</h3>
-                    <p class="text-sm text-gray-500 mb-6">Solo si registraste esta venta por error y nunca recibiste el
-                        dinero. Se borrará para siempre y no se contará en el resumen financiero.</p>
-                    <button id="delete-permanently-btn"
-                        class="w-full bg-red-600 text-white font-semibold py-3 rounded-lg hover:bg-red-700 transition">
+                    <p class="text-sm text-gray-500 mb-6">Solo si registraste esta venta por error y nunca recibiste el dinero. Se borrará para siempre y no se contará en el resumen financiero.</p>
+                    <button id="delete-permanently-btn" class="w-full bg-red-600 text-white font-semibold py-3 rounded-lg hover:bg-red-700 transition">
                         Eliminar Permanentemente
                     </button>
                 </div>
@@ -742,109 +465,76 @@
         </div>
     </div>
     <!-- Edit Account Modal -->
-    <div id="edit-account-modal"
-        class="modal fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 z-50 hidden opacity-0">
+    <div id="edit-account-modal" class="modal fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 z-50 hidden opacity-0">
         <div class="modal-content bg-white w-full max-w-2xl rounded-2xl shadow-2xl p-6 transform scale-95">
             <div class="flex justify-between items-center mb-6">
                 <h2 class="text-2xl font-semibold text-gray-700">Editar Cuenta de Plataforma</h2>
                 <button id="close-edit-account-modal" class="text-gray-400 hover:text-gray-600">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
-                        </path>
-                    </svg>
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
             </div>
             <form id="edit-account-form" class="space-y-6">
                 <input type="hidden" id="edit-account-id">
                 <div>
                     <label class="block text-sm font-medium text-gray-600 mb-2">Plataforma</label>
-                    <input type="text" id="edit-account-platform"
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100" readonly>
+                    <input type="text" id="edit-account-platform" class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100" readonly>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                        <label for="edit-account-email"
-                            class="block text-sm font-medium text-gray-600 mb-2">Correo</label>
-                        <input type="text" id="edit-account-email"
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg" required>
+                        <label for="edit-account-email" class="block text-sm font-medium text-gray-600 mb-2">Correo</label>
+                        <input type="text" id="edit-account-email" class="w-full px-4 py-2 border border-gray-300 rounded-lg" required>
                     </div>
                     <div class="relative">
-                        <label for="edit-account-password"
-                            class="block text-sm font-medium text-gray-600 mb-2">Contraseña</label>
-                        <input type="password" id="edit-account-password"
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg"
-                            placeholder="Dejar en blanco para no cambiar">
-                        <button type="button"
-                            class="absolute inset-y-0 right-0 top-6 flex items-center px-3 text-gray-500"
-                            onclick="togglePasswordVisibility('edit-account-password', this)">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                            </svg>
+                        <label for="edit-account-password" class="block text-sm font-medium text-gray-600 mb-2">Contraseña</label>
+                        <input type="password" id="edit-account-password" class="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="Dejar en blanco para no cambiar">
+                        <button type="button" class="absolute inset-y-0 right-0 top-6 flex items-center px-3 text-gray-500" onclick="togglePasswordVisibility('edit-account-password', this)">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
                         </button>
                     </div>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                        <label for="edit-account-enlace" class="block text-sm font-medium text-gray-600 mb-2">Enlace
-                            (Opcional)</label>
-                        <input type="text" id="edit-account-enlace"
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+                        <label for="edit-account-enlace" class="block text-sm font-medium text-gray-600 mb-2">Enlace (Opcional)</label>
+                        <input type="text" id="edit-account-enlace" class="w-full px-4 py-2 border border-gray-300 rounded-lg">
                     </div>
                     <div>
-                        <label for="edit-account-fechaPago" class="block text-sm font-medium text-gray-600 mb-2">Fecha
-                            de pago</label>
-                        <input type="date" id="edit-account-fechaPago"
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+                        <label for="edit-account-fechaPago" class="block text-sm font-medium text-gray-600 mb-2">Fecha de pago</label>
+                        <input type="date" id="edit-account-fechaPago" class="w-full px-4 py-2 border border-gray-300 rounded-lg">
                     </div>
                 </div>
                 <div class="flex justify-end gap-4 mt-4">
-                    <button type="button" id="cancel-edit-account"
-                        class="bg-gray-200 text-gray-700 font-semibold px-6 py-3 rounded-lg hover:bg-gray-300 transition">Cancelar</button>
-                    <button type="submit"
-                        class="bg-blue-600 text-white font-semibold px-6 py-3 rounded-lg hover:bg-blue-700">Guardar
-                        Cambios</button>
+                    <button type="button" id="cancel-edit-account" class="bg-gray-200 text-gray-700 font-semibold px-6 py-3 rounded-lg hover:bg-gray-300 transition">Cancelar</button>
+                    <button type="submit" class="bg-blue-600 text-white font-semibold px-6 py-3 rounded-lg hover:bg-blue-700">Guardar Cambios</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <div id="renewal-modal"
-        class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden opacity-0">
+    <div id="renewal-modal" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden opacity-0">
         <div class="modal-content bg-white w-full max-w-md rounded-2xl shadow-2xl p-6 transform scale-95">
             <h2 class="text-2xl font-semibold text-gray-700 mb-6">Renovar Suscripción</h2>
             <form id="renewal-form">
                 <input type="hidden" id="renewal-sale-id">
                 <div class="space-y-4">
                     <div>
-                        <label for="renewal-days" class="block text-sm font-medium text-gray-600 mb-2">Días a
-                            renovar</label>
-                        <input type="number" id="renewal-days"
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg" required>
+                        <label for="renewal-days" class="block text-sm font-medium text-gray-600 mb-2">Días a renovar</label>
+                        <input type="number" id="renewal-days" class="w-full px-4 py-2 border border-gray-300 rounded-lg" required>
                     </div>
                     <div>
-                        <label for="renewal-amount" class="block text-sm font-medium text-gray-600 mb-2">Monto de
-                            renovación (S/)</label>
-                        <input type="number" id="renewal-amount" step="0.01"
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg" required>
+                        <label for="renewal-amount" class="block text-sm font-medium text-gray-600 mb-2">Monto de renovación (S/)</label>
+                        <input type="number" id="renewal-amount" step="0.01" class="w-full px-4 py-2 border border-gray-300 rounded-lg" required>
                     </div>
                 </div>
                 <div class="flex justify-end gap-4 mt-8">
-                    <button type="button" id="cancel-renewal-btn"
-                        class="bg-gray-200 text-gray-700 font-semibold px-6 py-3 rounded-lg hover:bg-gray-300 transition">Cancelar</button>
-                    <button type="submit"
-                        class="bg-green-600 text-white font-semibold px-6 py-3 rounded-lg hover:bg-green-700 transition">Confirmar
-                        Renovación</button>
+                    <button type="button" id="cancel-renewal-btn" class="bg-gray-200 text-gray-700 font-semibold px-6 py-3 rounded-lg hover:bg-gray-300 transition">Cancelar</button>
+                    <button type="submit" class="bg-green-600 text-white font-semibold px-6 py-3 rounded-lg hover:bg-green-700 transition">Confirmar Renovación</button>
                 </div>
             </form>
         </div>
     </div>
 
     <!-- Manage Profiles Modal -->
-    <div id="manage-profiles-modal"
-        class="modal fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 z-50 hidden opacity-0">
+    <div id="manage-profiles-modal" class="modal fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 z-50 hidden opacity-0">
         <div class="modal-content bg-white w-full max-w-2xl rounded-2xl shadow-2xl p-6 transform scale-95">
             <div class="flex justify-between items-center mb-6">
                 <div>
@@ -852,10 +542,7 @@
                     <p id="profiles-modal-account-email" class="text-sm text-gray-500"></p>
                 </div>
                 <button id="close-profiles-modal" class="text-gray-400 hover:text-gray-600">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
-                        </path>
-                    </svg>
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
             </div>
             <div id="profiles-content-area">
@@ -872,7 +559,7 @@
         import { collection, addDoc, onSnapshot, doc, updateDoc, deleteDoc, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
         import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { db, auth } from "./firebase-config.js";
-
+        
         function startApp() {
             document.getElementById('app').classList.remove('hidden');
             document.getElementById('logout-btn').addEventListener('click', () => { signOut(auth).catch((error) => console.error("Error al cerrar sesión", error)); });
@@ -940,7 +627,7 @@
                 summaryIngresos: document.getElementById('summary-ingresos'),
                 summaryEgresos: document.getElementById('summary-egresos'),
                 summaryBalance: document.getElementById('summary-balance'),
-                // Profiles Modal Selectors
+                 // Profiles Modal Selectors
                 manageProfilesModal: document.getElementById('manage-profiles-modal'),
                 closeProfilesModalBtn: document.getElementById('close-profiles-modal'),
                 profilesContentArea: document.getElementById('profiles-content-area'),
@@ -959,8 +646,8 @@
                 if (diffDays <= 7) return 'Próximo a Vencer';
                 return 'Activo';
             };
-            const formatCurrency = (amount) => `S/${(amount || 0).toFixed(2)}`;
-            const getPlatformHtml = (platformName) => { const style = platformStyles[platformName] || platformStyles['Otro']; return `<span class="font-bold ${style.color}">${platformName}</span>` };
+            const formatCurrency = (amount) => `S/${(amount||0).toFixed(2)}`;
+            const getPlatformHtml = (platformName) => { const style=platformStyles[platformName]||platformStyles['Otro']; return `<span class="font-bold ${style.color}">${platformName}</span>`};
             const getMetodoPagoBadge = (metodo) => {
                 const styles = {
                     'BCP': 'bg-orange-400 text-white',
@@ -970,7 +657,7 @@
                 const style = styles[metodo] || 'bg-gray-400 text-white';
                 return `<span class="px-2 py-1 text-xs font-semibold rounded-full ${style}">${metodo}</span>`;
             };
-            const handlePlatformChange = (select, container, input) => { if (select.value === 'Otro') { container.classList.remove('hidden'); input.required = true; } else { container.classList.add('hidden'); input.required = false; input.value = ''; } };
+            const handlePlatformChange = (select, container, input) => { if (select.value==='Otro') { container.classList.remove('hidden'); input.required = true; } else { container.classList.add('hidden'); input.required = false; input.value = ''; }};
             const openModal = () => { selectors.editModal.classList.remove('hidden'); setTimeout(() => { selectors.editModal.classList.remove('opacity-0'); selectors.editModal.querySelector('.modal-content').classList.remove('scale-95'); }, 10); };
             const closeModal = () => { selectors.editModal.classList.add('opacity-0'); selectors.editModal.querySelector('.modal-content').classList.add('scale-95'); setTimeout(() => selectors.editModal.classList.add('hidden'), 300); };
             const openProfilesModal = () => { selectors.manageProfilesModal.classList.remove('hidden'); setTimeout(() => { selectors.manageProfilesModal.classList.remove('opacity-0'); selectors.manageProfilesModal.querySelector('.modal-content').classList.remove('scale-95'); }, 10); };
@@ -1117,12 +804,12 @@
 
                 // 1. KPI: Ventas de Hoy
                 const salesToday = allSales.filter(sale => dayjs(sale.inicioPlan).isSame(today, 'day'))
-                    .reduce((sum, sale) => sum + sale.precio, 0);
+                                           .reduce((sum, sale) => sum + sale.precio, 0);
                 selectors.kpiSalesToday.textContent = formatCurrency(salesToday);
 
                 // 2. KPI: Ventas del Mes
                 const salesMonth = allSales.filter(sale => dayjs(sale.inicioPlan).isAfter(startOfMonth) || dayjs(sale.inicioPlan).isSame(startOfMonth))
-                    .reduce((sum, sale) => sum + sale.precio, 0);
+                                         .reduce((sum, sale) => sum + sale.precio, 0);
                 selectors.kpiSalesMonth.textContent = formatCurrency(salesMonth);
 
                 // 3. KPI: Clientes Activos
@@ -1362,11 +1049,11 @@
                         const account = allPlatformAccounts.find(a => a.id === sale.accountId);
                         if (account) {
                             key = account.email;
-                        } else if (sale.correo) {
+                        } else if(sale.correo) {
                             key = sale.correo;
                         }
                     } else if (sale.correo) {
-                        key = sale.correo;
+                         key = sale.correo;
                     }
 
                     if (!acc[key]) {
@@ -1578,7 +1265,7 @@
                 accountsList.querySelectorAll('.delete-account-btn').forEach(btn => {
                     btn.addEventListener('click', e => handleDeleteAccount(e.currentTarget.dataset.id));
                 });
-                accountsList.querySelectorAll('.edit-account-btn').forEach(btn => {
+                 accountsList.querySelectorAll('.edit-account-btn').forEach(btn => {
                     btn.addEventListener('click', e => handleEditAccount(e.currentTarget.dataset.id));
                 });
                 accountsList.querySelectorAll('.manage-profiles-btn').forEach(btn => {
@@ -1645,8 +1332,8 @@
                         profileContainer.classList.add('hidden');
                         profileSelect.required = false;
                     } else {
-                        profileContainer.classList.remove('hidden');
-                        profileSelect.required = true;
+                         profileContainer.classList.remove('hidden');
+                         profileSelect.required = true;
                         if (account.profiles && account.profiles.length > 0) {
                             const availableProfiles = account.profiles.filter(p => p.estado === 'Disponible');
                             if (availableProfiles.length > 0) {
@@ -1701,10 +1388,10 @@
 
                     // Add the currently assigned profile if it's not already in the list (i.e., it's 'Ocupado')
                     if (currentProfile && !availableProfiles.some(p => p.id === currentProfile.id)) {
-                        selectors.editProfileSelect.innerHTML += `<option value="${currentProfile.id}">${currentProfile.nombre} (Ocupado)</option>`;
+                         selectors.editProfileSelect.innerHTML += `<option value="${currentProfile.id}">${currentProfile.nombre} (Ocupado)</option>`;
                     }
                 }
-                f['edit-profile-select'].value = sale.profileId || '';
+                 f['edit-profile-select'].value = sale.profileId || '';
 
 
                 // El menú desplegable se actualiza directamente con .value
@@ -1824,7 +1511,7 @@
             };
 
             const handleArchiveAction = async (id) => {
-                const sale = allSales.find(s => s.id === id);
+                 const sale = allSales.find(s => s.id === id);
                 if (sale && sale.accountId && sale.profileId) {
                     const account = allPlatformAccounts.find(a => a.id === sale.accountId);
                     if (account) {
@@ -1847,7 +1534,7 @@
                     hideArchiveDeleteModal();
                 }
             };
-            const openEditAccountModal = () => {
+             const openEditAccountModal = () => {
                 selectors.editAccountModal.classList.remove('hidden');
                 setTimeout(() => {
                     selectors.editAccountModal.classList.remove('opacity-0');
@@ -1860,7 +1547,7 @@
                 selectors.editAccountModal.querySelector('.modal-content').classList.add('scale-95');
                 setTimeout(() => selectors.editAccountModal.classList.add('hidden'), 300);
             };
-            const handleEditAccount = (id) => {
+             const handleEditAccount = (id) => {
                 const account = allPlatformAccounts.find(acc => acc.id === id);
                 if (!account) return;
 
@@ -2104,7 +1791,7 @@
 
                     // Manually trigger a re-render
                     const accountsSnapshot = await getDocs(collection(db, "platformAccounts"));
-                    const accountsPromises = accountsSnapshot.docs.map(async (accountDoc) => {
+                     const accountsPromises = accountsSnapshot.docs.map(async (accountDoc) => {
                         const accountData = { id: accountDoc.id, ...accountDoc.data() };
                         const profilesRef = collection(db, "platformAccounts", accountDoc.id, "Perfiles");
                         const profilesSnapshot = await getDocs(profilesRef);
@@ -2159,7 +1846,7 @@
             document.getElementById('cancel-renewal-btn').addEventListener('click', closeRenewalModal);
             selectors.platformAccountSelect.addEventListener('change', () => handlePlatformAccountChange(selectors.platformAccountSelect, selectors.addSaleForm.correo, selectors.addSaleForm.contrasena, document.querySelectorAll('.manual-credentials'), selectors.profileSelect));
             selectors.editPlatformAccountSelect.addEventListener('change', () => handlePlatformAccountChange(selectors.editPlatformAccountSelect, selectors.editForm['edit-correo'], selectors.editForm['edit-contrasena'], document.querySelectorAll('.edit-manual-credentials'), selectors.editProfileSelect));
-            selectors.editAccountForm.addEventListener('submit', async (e) => {
+             selectors.editAccountForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 const form = selectors.editAccountForm;
                 const id = form['edit-account-id'].value;
@@ -2300,206 +1987,11 @@
                         toast.remove();
                         // Clean up URL
                         window.history.replaceState({}, document.title, window.location.pathname);
-                        const accountData = { id: accountDoc.id, ...accountDoc.data() };
-                        const profilesRef = collection(db, "platformAccounts", accountDoc.id, "Perfiles");
-                        const profilesSnapshot = await getDocs(profilesRef);
-                        accountData.profiles = profilesSnapshot.docs.map(d => ({ id: d.id, ...d.data() }));
-                        return accountData;
-                    });
-                    allPlatformAccounts = await Promise.all(accountsPromises);
-                    renderPlatformAccounts();
-
-                    closeModal();
-                } catch (err) {
-                    console.error("Error al actualizar la venta:", err);
-                    alert("Error al actualizar la venta. Revisa la consola (F12).");
-                }
-            });
-        selectors.addExpenseForm.addEventListener('submit', async (e) => { e.preventDefault(); const f = selectors.addExpenseForm; const description = f['expense-description'].value; const amount = parseFloat(f['expense-amount'].value); const date = f['expense-date'].value; if (!description || !date || isNaN(amount) || amount <= 0) return; try { await addDoc(collection(db, "expenses"), { description, amount, date }); f.reset(); f['expense-date'].value = dayjs().format('YYYY-MM-DD'); } catch (err) { console.error("Error al añadir egreso:", err); } });
-        selectors.addAccountForm.addEventListener('submit', async (e) => { e.preventDefault(); const f = selectors.addAccountForm; const newAccount = { platform: f['account-platform'].value, email: f['account-email'].value, password: f['account-password'].value, enlace: f.enlace.value, fechaPago: f.fechaPago.value }; try { await addDoc(collection(db, "platformAccounts"), newAccount); f.reset(); document.querySelectorAll('#account-platform-buttons button').forEach(b => b.classList.remove('bg-indigo-600', 'text-white', 'border-indigo-600')); } catch (err) { console.error("Error al guardar cuenta:", err); } });
-        selectors.searchInput.addEventListener('input', e => {
-            currentSearchTerm = e.target.value;
-            const activeSales = allSales.filter(sale => sale.estado !== 'ARCHIVADO');
-            applyFiltersAndRender(activeSales);
-        });
-        selectors.accountFilter.addEventListener('change', e => {
-            activeAccountFilter = e.target.value;
-            const activeSales = allSales.filter(sale => sale.estado !== 'ARCHIVADO');
-            applyFiltersAndRender(activeSales);
-        });
-        selectors.statusFilter.addEventListener('change', e => {
-            activeStatusFilter = e.target.value;
-            const activeSales = allSales.filter(sale => sale.estado !== 'ARCHIVADO');
-            applyFiltersAndRender(activeSales);
-        });
-        selectors.plataformaSelect.addEventListener('change', () => {
-            handlePlatformChange(selectors.plataformaSelect, selectors.otroPlataformaContainer, selectors.otroPlataformaInput);
-            populatePlatformAccountsDropdowns(selectors.plataformaSelect.value);
-        });
-        selectors.editPlataformaSelect.addEventListener('change', () => {
-            handlePlatformChange(selectors.editPlataformaSelect, selectors.editOtroPlataformaContainer, selectors.editOtroPlataformaInput);
-            // We don't filter the edit form dropdown to avoid issues with existing data
-        });
-        selectors.closeModalBtn.addEventListener('click', closeModal);
-        selectors.cancelEditBtn.addEventListener('click', closeModal);
-        selectors.closeProfilesModalBtn.addEventListener('click', closeProfilesModal);
-
-
-        document.getElementById('renewal-form').addEventListener('submit', (e) => {
-            e.preventDefault();
-            const saleId = document.getElementById('renewal-sale-id').value;
-            handleRenew(saleId);
-        });
-
-        document.getElementById('cancel-renewal-btn').addEventListener('click', closeRenewalModal);
-        selectors.platformAccountSelect.addEventListener('change', () => handlePlatformAccountChange(selectors.platformAccountSelect, selectors.addSaleForm.correo, selectors.addSaleForm.contrasena, document.querySelectorAll('.manual-credentials'), selectors.profileSelect));
-        selectors.editPlatformAccountSelect.addEventListener('change', () => handlePlatformAccountChange(selectors.editPlatformAccountSelect, selectors.editForm['edit-correo'], selectors.editForm['edit-contrasena'], document.querySelectorAll('.edit-manual-credentials'), selectors.editProfileSelect));
-        selectors.editAccountForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const form = selectors.editAccountForm;
-            const id = form['edit-account-id'].value;
-            const account = allPlatformAccounts.find(acc => acc.id === id);
-            if (!account) return;
-
-            const updatedData = {
-                email: form['edit-account-email'].value,
-                enlace: form['edit-account-enlace'].value,
-                fechaPago: form['edit-account-fechaPago'].value,
-            };
-
-            const newPassword = form['edit-account-password'].value;
-            if (newPassword) {
-                updatedData.password = newPassword;
-            }
-
-            try {
-                await updateDoc(doc(db, "platformAccounts", id), updatedData);
-                closeEditAccountModal();
-            } catch (err) {
-                console.error("Error al actualizar la cuenta:", err);
-                alert("Error al actualizar la cuenta. Revisa la consola (F12).");
-            }
-        });
-
-        selectors.closeEditAccountModalBtn.addEventListener('click', closeEditAccountModal);
-        selectors.cancelEditAccountBtn.addEventListener('click', closeEditAccountModal);
-        const diasPlanInput = document.getElementById('diasPlan'); const inicioPlanInput = document.getElementById('inicioPlan'); const finPlanInput = document.getElementById('finPlan');
-        const editFinPlanInput = document.getElementById('edit-finPlan');
-
-        const calculateEndDate = () => {
-            const days = parseInt(diasPlanInput.value, 10);
-            const startDate = inicioPlanInput.value;
-            if (!isNaN(days) && startDate) {
-                const newEndDate = dayjs(startDate).add(days, 'day').format('YYYY-MM-DD');
-                finPlanInput.value = newEndDate;
-            }
-        };
-
-        diasPlanInput.addEventListener('input', calculateEndDate);
-        inicioPlanInput.addEventListener('change', calculateEndDate);
-
-
-        // Set default expense date
-        document.getElementById('expense-date').value = dayjs().format('YYYY-MM-DD');
-
-
-        // Navigation logic
-        const navLinks = {
-            'nav-dashboard': 'Dashboard',
-            'nav-cuentas': 'Cuentas',
-            'nav-ventas': 'Ventas',
-            'nav-finanzas': 'Finanzas'
-        };
-        const views = document.querySelectorAll('.view');
-
-        Object.keys(navLinks).forEach(navId => {
-            document.getElementById(navId).addEventListener('click', (e) => {
-                e.preventDefault();
-                const viewId = `${navLinks[navId].toLowerCase()}-view`;
-
-                views.forEach(view => {
-                    if (view.id === viewId) {
-                        view.classList.remove('hidden');
-                    } else {
-                        view.classList.add('hidden');
-                    }
-                });
-
-                // Update active styles for nav links
-                document.querySelectorAll('nav a').forEach(link => link.classList.remove('bg-gray-700'));
-                document.getElementById(navId).classList.add('bg-gray-700');
-            });
-        });
-
-        // Set default view
-        document.getElementById('nav-dashboard').click();
-
-
-        // Quick Access button listeners
-        document.getElementById('quick-add-sale').addEventListener('click', () => {
-            document.getElementById('nav-ventas').click();
-        });
-        document.getElementById('quick-add-expense').addEventListener('click', () => {
-            document.getElementById('nav-finanzas').click();
-        });
-        }
-
-        const checkAndReleaseExpiredProfiles = async () => {
-            const today = dayjs().startOf('day');
-            const accountsSnapshot = await getDocs(collection(db, "platformAccounts"));
-            for (const accountDoc of accountsSnapshot.docs) {
-                const profilesRef = collection(db, "platformAccounts", accountDoc.id, "Perfiles");
-                const profilesSnapshot = await getDocs(profilesRef);
-                for (const profileDoc of profilesSnapshot.docs) {
-                    const profile = profileDoc.data();
-                    if (profile.estado === 'Ocupado' && profile.fechaVencimiento) {
-                        if (today.isAfter(dayjs(profile.fechaVencimiento))) {
-                            console.log(`Liberando perfil ${profile.nombre} de la cuenta ${accountDoc.data().email} por vencimiento.`);
-                            const profileRef = doc(db, "platformAccounts", accountDoc.id, "Perfiles", profileDoc.id);
-                            await updateDoc(profileRef, { estado: 'Disponible', fechaVencimiento: null, clienteId: null });
-                        }
-                    }
-                }
-            }
-        };
-
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                checkAndReleaseExpiredProfiles().then(() => {
-                    startApp();
-                });
-            } else {
-                window.location.href = 'login.html';
-            }
-        });
-        window.startApp = startApp;
-
-        // Toast notification logic
-        document.addEventListener('DOMContentLoaded', () => {
-            const params = new URLSearchParams(window.location.search);
-            if (params.has('loggedin')) {
-                const toast = document.createElement('div');
-                toast.className = 'toast fixed top-5 right-5 bg-green-500 text-white py-3 px-6 rounded-lg shadow-lg transform translate-x-full opacity-0';
-                toast.textContent = 'Bienvenido a NineStreaming. Renzo y Charitsa';
-                document.body.appendChild(toast);
-
-                setTimeout(() => {
-                    toast.classList.remove('translate-x-full', 'opacity-0');
-                    toast.classList.add('translate-x-0', 'opacity-100');
-                }, 100);
-
-                setTimeout(() => {
-                    toast.classList.remove('translate-x-0', 'opacity-100');
-                    toast.classList.add('translate-x-full', 'opacity-0');
-                    setTimeout(() => {
-                        toast.remove();
-                        // Clean up URL
-                        window.history.replaceState({}, document.title, window.location.pathname);
                     }, 500);
                 }, 5000);
             }
         });
     </script>
+    
 </body>
-
 </html>
