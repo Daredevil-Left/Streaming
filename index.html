@@ -117,6 +117,15 @@
                     </svg>
                     <span class="ml-4 sidebar-text">Finanzas</span>
                 </a>
+                <a href="#" id="nav-precios" class="flex items-center py-2.5 px-2 rounded-md hover:bg-gray-700">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z">
+                        </path>
+                    </svg>
+                    <span class="ml-4 sidebar-text">Precios</span>
+                </a>
             </nav>
             <div class="px-2 py-4">
                 <button id="logout-btn"
@@ -576,6 +585,97 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Precios View (Calculadora) -->
+                <div id="precios-view" class="view hidden max-w-7xl mx-auto">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
+                        <h1 class="text-3xl font-bold text-gray-800">Calculadora de Precios</h1>
+                        <button id="toggle-config-btn"
+                            class="mt-4 md:mt-0 flex items-center text-gray-600 hover:text-gray-900 transition">
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z">
+                                </path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            </svg>
+                            Configurar Costos
+                        </button>
+                    </div>
+
+                    <!-- Config Panel -->
+                    <div id="config-panel"
+                        class="hidden bg-white p-6 rounded-2xl shadow-lg mb-8 border border-gray-200">
+                        <h3 class="text-lg font-semibold text-gray-700 mb-4">Costos de Proveedor (Cuenta Completa)</h3>
+                        <div id="cost-inputs-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                            <!-- Inputs injected via JS -->
+                        </div>
+                        <div class="mt-4 flex justify-end">
+                            <button id="save-costs-btn"
+                                class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">Guardar
+                                Costos</button>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col lg:flex-row gap-8">
+                        <!-- Main Area: Duration & Services -->
+                        <div class="flex-grow">
+                            <!-- Duration Selector -->
+                            <div
+                                class="bg-white p-4 rounded-2xl shadow-sm mb-6 flex flex-wrap gap-4 items-center justify-center md:justify-start">
+                                <span class="font-medium text-gray-600 mr-2">Duración:</span>
+                                <div id="duration-buttons" class="flex gap-2">
+                                    <!-- Buttons injected via JS -->
+                                </div>
+                            </div>
+
+                            <!-- Services Grid -->
+                            <div id="services-grid" class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
+                                <!-- Service Cards injected via JS -->
+                            </div>
+                        </div>
+
+                        <!-- Results Ticket -->
+                        <div class="w-full lg:w-80 flex-shrink-0">
+                            <div class="bg-white p-6 rounded-2xl shadow-xl border border-gray-200 sticky top-4">
+                                <h2 class="text-xl font-bold text-gray-800 mb-4 border-b pb-2">Resumen</h2>
+                                <div id="ticket-items" class="space-y-2 mb-4 text-sm">
+                                    <p class="text-gray-400 italic">Selecciona servicios...</p>
+                                </div>
+
+                                <div class="space-y-2 pt-4 border-t border-dashed border-gray-300">
+                                    <div class="flex justify-between text-gray-500">
+                                        <span>Precio Regular</span>
+                                        <span id="ticket-regular-price">S/0.00</span>
+                                    </div>
+                                    <div class="flex justify-between text-green-600 font-medium">
+                                        <span>Descuento Combo</span>
+                                        <span id="ticket-discount-amount">-S/0.00</span>
+                                    </div>
+                                    <div class="flex justify-between items-end mt-2">
+                                        <span class="font-bold text-gray-800 text-lg">TOTAL</span>
+                                        <span id="ticket-final-price"
+                                            class="font-black text-3xl text-indigo-600">S/0.00</span>
+                                    </div>
+                                    <div class="flex justify-between text-xs text-gray-400 mt-1">
+                                        <span>Ganancia Neta</span>
+                                        <span id="ticket-profit">S/0.00</span>
+                                    </div>
+                                </div>
+
+                                <button id="copy-promo-btn"
+                                    class="w-full mt-6 bg-green-500 text-white font-bold py-3 rounded-xl hover:bg-green-600 transition flex items-center justify-center shadow-lg transform active:scale-95">
+                                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3">
+                                        </path>
+                                    </svg>
+                                    Copiar Promo
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </main>
         </div>
     </div>
@@ -869,7 +969,7 @@
     </script>
 
     <script type="module">
-        import { collection, addDoc, onSnapshot, doc, updateDoc, deleteDoc, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { collection, addDoc, onSnapshot, doc, updateDoc, deleteDoc, getDocs, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
         import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { db, auth } from "./firebase-config.js";
 
@@ -895,7 +995,22 @@
                 'Paramount+': { color: 'text-blue-800', bg: '#0064FF', logo: 'https://logo.clearbit.com/paramountplus.com' },
                 'Otro': { color: 'text-gray-500', bg: '#6B7280', logo: '' }
             };
+            const defaultServices = [
+                { id: 'netflix', name: 'Netflix', cost: 38.00, price: 12.00, type: 'monthly', divider: 5, logo: 'https://upload.wikimedia.org/wikipedia/commons/0/08/Netflix_2015_logo.svg', color: '#E50914' },
+                { id: 'disney', name: 'Disney+', cost: 18.00, price: 8.00, type: 'monthly', divider: 5, logo: 'https://upload.wikimedia.org/wikipedia/commons/3/3e/Disney%2B_logo.svg', color: '#01153E' },
+                { id: 'max_plat', name: 'Max Platino', cost: 17.00, price: 8.00, type: 'monthly', divider: 5, logo: 'https://upload.wikimedia.org/wikipedia/commons/c/ce/Max_logo.svg', color: '#8A2BE2' },
+                { id: 'max_bas', name: 'Max Básico', cost: 10.20, price: 6.00, type: 'monthly', divider: 5, label: 'Básico', logo: 'https://upload.wikimedia.org/wikipedia/commons/c/ce/Max_logo.svg', color: '#8A2BE2' },
+                { id: 'prime', name: 'Amazon Prime', cost: 11.00, price: 6.00, type: 'monthly', divider: 5, logo: 'https://upload.wikimedia.org/wikipedia/commons/1/11/Amazon_Prime_Video_logo.svg', color: '#00A8E1' },
+                { id: 'plex', name: 'Plex', cost: 14.00, price: 9.00, type: 'monthly', divider: 4, logo: 'https://upload.wikimedia.org/wikipedia/commons/7/7b/Plex_logo_2022.svg', color: '#e5a00d' },
+                { id: 'paramount', name: 'Paramount+', cost: 8.50, price: 6.00, type: 'monthly', divider: 5, logo: 'https://upload.wikimedia.org/wikipedia/commons/a/a5/Paramount_Plus.svg', color: '#0064FF' },
+                { id: 'crunchy', name: 'Crunchyroll', cost: 7.50, price: 5.00, type: 'monthly', divider: 5, logo: 'https://upload.wikimedia.org/wikipedia/commons/0/08/Crunchyroll_Logo.png', color: '#F47521' },
+                { id: 'vix', name: 'Vix+', cost: 8.20, price: 6.00, type: 'monthly', divider: 5, logo: 'https://upload.wikimedia.org/wikipedia/commons/b/b6/ViX_logo_2022.svg', color: '#F8C100' },
+                { id: 'universal', name: 'Universal+', cost: 7.50, price: 6.00, type: 'monthly', divider: 5, logo: 'https://upload.wikimedia.org/wikipedia/commons/2/2d/Universal_Pictures_Logo.svg', color: '#000000' },
+                { id: 'canva', name: 'Canva Pro', cost: 8.00, price: 8.00, type: 'annual', divider: 1, logo: 'https://upload.wikimedia.org/wikipedia/commons/0/08/Canva_icon_2021.svg', color: '#8D44AD' }
+            ];
+
             let allSales = [], allExpenses = [], allPlatformAccounts = [], activePlatformFilter = 'Todos', currentSearchTerm = '', activeAccountFilter = '', activeStatusFilter = '';
+            let serviceCosts = {}, selectedServices = new Set(), selectedMonths = 1;
             const selectors = {
                 addSaleForm: document.getElementById('add-sale-form'),
                 salesList: document.getElementById('sales-list'),
@@ -943,6 +1058,20 @@
                 closeProfilesModalBtn: document.getElementById('close-profiles-modal'),
                 profilesContentArea: document.getElementById('profiles-content-area'),
                 profilesModalAccountEmail: document.getElementById('profiles-modal-account-email'),
+                // Precios View Selectors
+                preciosView: document.getElementById('precios-view'),
+                toggleConfigBtn: document.getElementById('toggle-config-btn'),
+                configPanel: document.getElementById('config-panel'),
+                costInputsGrid: document.getElementById('cost-inputs-grid'),
+                saveCostsBtn: document.getElementById('save-costs-btn'),
+                durationButtons: document.getElementById('duration-buttons'),
+                servicesGrid: document.getElementById('services-grid'),
+                ticketItems: document.getElementById('ticket-items'),
+                ticketRegularPrice: document.getElementById('ticket-regular-price'),
+                ticketDiscountAmount: document.getElementById('ticket-discount-amount'),
+                ticketFinalPrice: document.getElementById('ticket-final-price'),
+                ticketProfit: document.getElementById('ticket-profit'),
+                copyPromoBtn: document.getElementById('copy-promo-btn'),
             };
             const getSaleStatus = (finPlan) => {
                 if (dayjs().isAfter(dayjs(finPlan).endOf('day'))) { return 'Vencido'; }
