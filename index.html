@@ -606,13 +606,36 @@
                     <!-- Config Panel -->
                     <div id="config-panel"
                         class="hidden bg-white p-6 rounded-2xl shadow-lg mb-8 border border-gray-200">
-                        <h3 class="text-lg font-semibold text-gray-700 mb-4">Costos de Proveedor (Cuenta Completa)</h3>
-                        <div id="cost-inputs-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-                            <!-- Inputs injected via JS -->
+                        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
+                            <h3 class="text-lg font-semibold text-gray-700">Costos de Proveedor (Cuenta Completa)</h3>
+                            <div class="mt-2 md:mt-0 bg-blue-50 border-l-4 border-blue-500 p-3 rounded text-sm text-blue-700 max-w-2xl" style="background-color: #eff6ff; border-left-width: 4px; border-color: #3b82f6; color: #1d4ed8;">
+                                <p class="font-bold flex items-center"><svg class="w-4 h-4 mr-1" style="width: 16px; height: 16px; margin-right: 4px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> Cómo funciona:</p>
+                                <p>El sistema sugiere un precio de venta para asegurar una ganancia mínima de <strong>S/15.00</strong> por Cuenta Madre. <br>
+                                <span class="text-xs opacity-80">Fórmula: (Precio Venta × Perfiles) - Costo Cuenta = Ganancia Estimada</span></p>
+                            </div>
                         </div>
-                        <div class="mt-4 flex justify-end">
+
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th scope="col" class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Plataforma</th>
+                                        <th scope="col" class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Costo Cuenta</th>
+                                        <th scope="col" class="px-4 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-wider" title="Perfiles por cuenta">Perfiles</th>
+                                        <th scope="col" class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Costo Unit.</th>
+                                        <th scope="col" class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Precio Venta</th>
+                                        <th scope="col" class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Ganancia Est.</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="cost-inputs-grid" class="bg-white divide-y divide-gray-200">
+                                    <!-- Rows injected via JS -->
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="mt-6 flex justify-end">
                             <button id="save-costs-btn"
-                                class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">Guardar
+                                class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 shadow-md font-medium transition transform hover:scale-105">Guardar
                                 Costos</button>
                         </div>
                     </div>
@@ -2570,38 +2593,107 @@
         };
 
         const renderCostInputs = () => {
-            selectors.costInputsGrid.innerHTML = defaultServices.map(service => `
-                    <div class="bg-gray-50 p-2 rounded border border-gray-200">
-                        <div class="font-bold text-gray-700 mb-2 text-sm">${service.name}</div>
-                        <div class="grid grid-cols-2 gap-2">
-                            <div>
-                                <label class="text-[10px] text-gray-500 block">Costo (Cuenta)</label>
+            selectors.costInputsGrid.innerHTML = defaultServices.map(service => {
+                const unitCost = (service.cost / service.divider).toFixed(2);
+                const estimatedProfit = ((service.price * service.divider) - service.cost).toFixed(2);
+                const profitColor = estimatedProfit >= 15 ? 'text-green-600' : 'text-orange-500';
+
+                return `
+                    <tr class="hover:bg-gray-50 transition-colors">
+                        <td class="px-4 py-3 whitespace-nowrap">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0 h-8 w-8 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden border border-gray-200">
+                                    <img class="h-full w-full object-cover" src="${service.logo}" alt="${service.name}" onerror="this.src='logo_nuevo.png'">
+                                </div>
+                                <div class="ml-3">
+                                    <div class="text-sm font-medium text-gray-900">${service.name}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-4 py-3 whitespace-nowrap">
+                            <div class="relative rounded-md shadow-sm max-w-[100px]">
+                                <div class="absolute inset-y-0 left-0 pl-2 flex items-center pointer-events-none">
+                                    <span class="text-gray-500 sm:text-sm">S/</span>
+                                </div>
                                 <input type="number" step="0.1"
                                     value="${service.cost}"
                                     id="cost-${service.id}"
                                     oninput="updateSuggestedPrice('${service.id}', this.value, ${service.divider})"
-                                    class="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-indigo-500 outline-none">
+                                    style="padding-left: 1.75rem;"
+                                    class="focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-7 sm:text-sm border-gray-300 rounded-md py-1">
                             </div>
-                            <div>
-                                <label class="text-[10px] text-gray-500 block">Venta (Perfil)</label>
+                        </td>
+                        <td class="px-4 py-3 whitespace-nowrap text-center text-sm text-gray-500">
+                            ${service.divider}
+                        </td>
+                        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
+                            S/<span id="unit-cost-${service.id}">${unitCost}</span>
+                        </td>
+                        <td class="px-4 py-3 whitespace-nowrap">
+                            <div class="relative rounded-md shadow-sm max-w-[100px]">
+                                <div class="absolute inset-y-0 left-0 pl-2 flex items-center pointer-events-none">
+                                    <span class="text-gray-500 sm:text-sm">S/</span>
+                                </div>
                                 <input type="number" step="0.1"
                                     value="${service.price}"
                                     id="price-${service.id}"
-                                    class="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-indigo-500 outline-none">
+                                    oninput="updateProfit('${service.id}', ${service.divider})"
+                                    style="padding-left: 1.75rem;"
+                                    class="focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-7 sm:text-sm border-gray-300 rounded-md py-1">
                             </div>
-                        </div>
-                    </div>
-                `).join('');
+                        </td>
+                        <td class="px-4 py-3 whitespace-nowrap text-sm font-semibold ${profitColor}" id="profit-container-${service.id}">
+                            S/<span id="profit-${service.id}">${estimatedProfit}</span>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
         };
 
         window.updateSuggestedPrice = (id, costVal, divider) => {
             const cost = parseFloat(costVal) || 0;
-            const profit = 15; // Ganancia mínima por cuenta
-            // Fórmula: Precio sugerido = (Costo + Ganancia) / Perfiles
-            const suggested = Math.ceil((cost + profit) / divider);
+            const profitMargin = 15; // Ganancia mínima por cuenta
+
+            // 1. Update Unit Cost display
+            const unitCost = (cost / divider).toFixed(2);
+            const unitCostEl = document.getElementById(`unit-cost-${id}`);
+            if(unitCostEl) unitCostEl.textContent = unitCost;
+
+            // 2. Calculate Suggested Price
+            const suggested = Math.ceil((cost + profitMargin) / divider);
             const priceInput = document.getElementById(`price-${id}`);
             if (priceInput) {
                 priceInput.value = suggested.toFixed(2);
+            }
+
+            // 3. Update Profit display
+            updateProfit(id, divider);
+        };
+
+        window.updateProfit = (id, divider) => {
+            const costInput = document.getElementById(`cost-${id}`);
+            const priceInput = document.getElementById(`price-${id}`);
+            const profitEl = document.getElementById(`profit-${id}`);
+            const profitContainer = document.getElementById(`profit-container-${id}`);
+
+            if (costInput && priceInput && profitEl) {
+                const cost = parseFloat(costInput.value) || 0;
+                const price = parseFloat(priceInput.value) || 0;
+
+                const profit = ((price * divider) - cost).toFixed(2);
+                profitEl.textContent = profit;
+
+                // Visual feedback for profitability
+                if (parseFloat(profit) >= 15) {
+                    profitContainer.classList.remove('text-orange-500', 'text-red-600');
+                    profitContainer.classList.add('text-green-600');
+                } else if (parseFloat(profit) > 0) {
+                    profitContainer.classList.remove('text-green-600', 'text-red-600');
+                    profitContainer.classList.add('text-orange-500');
+                } else {
+                    profitContainer.classList.remove('text-green-600', 'text-orange-500');
+                    profitContainer.classList.add('text-red-600');
+                }
             }
         };
 
