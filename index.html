@@ -1775,24 +1775,69 @@
                 modal.classList.add('opacity-0');
                 modal.querySelector('.modal-content').classList.add('scale-95');
                 setTimeout(() => {
-                    if (account) {
-                        const profileRef = doc(db, "platformAccounts", sale.accountId, "Perfiles", sale.profileId);
-                        await updateDoc(profileRef, { estado: 'Disponible', fechaVencimiento: null, clienteId: null });
+                    modal.classList.add('hidden');
+                }, 300);
+            };
 
-                        const profile = account.profiles.find(p => p.id === sale.profileId);
-                        if (profile) {
-                            profile.estado = 'Disponible';
+            const handleArchiveAction = async (id) => {
+                const sale = allSales.find(s => s.id === id);
+                if (!sale) return;
+
+                try {
+                    // Release profile if it exists
+                    if (sale.accountId && sale.profileId) {
+                        const account = allPlatformAccounts.find(a => a.id === sale.accountId);
+                        if (account && account.platform !== 'Canva') {
+                            const profileRef = doc(db, "platformAccounts", sale.accountId, "Perfiles", sale.profileId);
+                            await updateDoc(profileRef, { estado: 'Disponible', fechaVencimiento: null, clienteId: null });
+
+                            // Update local state for immediate feedback
+                            if (account.profiles) {
+                                const profile = account.profiles.find(p => p.id === sale.profileId);
+                                if (profile) {
+                                    profile.estado = 'Disponible';
+                                }
+                            }
+                            renderPlatformAccounts();
                         }
-                        renderPlatformAccounts();
                     }
-                }
-                        try {
+
                     await updateDoc(doc(db, "sales", id), { estado: 'ARCHIVADO' });
                     hideArchiveDeleteModal();
                 } catch (e) {
                     console.error("Error archiving sale: ", e);
                     alert('Error al archivar la venta.');
+                }
+            };
+
+            const handlePermanentDeleteAction = async (id) => {
+                const sale = allSales.find(s => s.id === id);
+                if (!sale) return;
+
+                try {
+                    // Release profile if it exists
+                    if (sale.accountId && sale.profileId) {
+                        const account = allPlatformAccounts.find(a => a.id === sale.accountId);
+                        if (account && account.platform !== 'Canva') {
+                            const profileRef = doc(db, "platformAccounts", sale.accountId, "Perfiles", sale.profileId);
+                            await updateDoc(profileRef, { estado: 'Disponible', fechaVencimiento: null, clienteId: null });
+
+                            // Update local state
+                            if (account.profiles) {
+                                const profile = account.profiles.find(p => p.id === sale.profileId);
+                                if (profile) {
+                                    profile.estado = 'Disponible';
+                                }
+                            }
+                            renderPlatformAccounts();
+                        }
+                    }
+
+                    await deleteDoc(doc(db, "sales", id));
                     hideArchiveDeleteModal();
+                } catch (e) {
+                    console.error("Error deleting sale: ", e);
+                    alert('Error al eliminar la venta.');
                 }
             };
             const openEditAccountModal = () => {
@@ -1895,12 +1940,11 @@
                 </li>
                 `;
                     });
-                    profilesHtml += '
-            </ul > ';
-            selectors.profilesContentArea.innerHTML = profilesHtml;
-        }
+                    profilesHtml += '</ul>';
+                    selectors.profilesContentArea.innerHTML = profilesHtml;
+                }
 
-        openProfilesModal();
+                openProfilesModal();
             };
 
         const createInitialProfiles = async (accountId) => {
@@ -1915,10 +1959,30 @@
             } return createdProfiles;
         }; const
             handleDeleteSale = (id) => showArchiveDeleteModal(id);
+
         const handleDeleteExpense = (id) => {
             showConfirmationModal(
                 'Eliminar Gasto',
                 '¿Estás seguro de que quieres eliminar este gasto? Esta acción no se puede deshacer.',
+                async () => {
+                    try {
+                        await deleteDoc(doc(db, "expenses", id));
+                    } catch (err) {
+                        console.error("Error al eliminar gasto:", err);
+                        alert("Error al eliminar el gasto.");
+                    }
+                }
+            );
+        };
+
+        onSnapshot(collection(db, "sales"), (snapshot) => {
+            allSales = snapshot.docs.map(d => ({
+                id: d.id,
+                ...d.data()
+            }));
+
+            const activeSales = allSales.filter(sale => sale.estado !== 'ARCHIVADO');
+
             if (activeSales.length === 0) {
                 selectors.emptyState.classList.remove('hidden');
             } else {
@@ -1926,8 +1990,8 @@
             }
             renderPlatformFilters();
             renderAccountPlatformButtons();
-            applyFiltersAndRender(activeSales); // Pass the filtered list
-            updateFinancialSummary(); // This will still use allSales to include archived in totals
+            applyFiltersAndRender(activeSales);
+            updateFinancialSummary();
             loadDashboardData();
         }, (e) => {
             console.error("Error al cargar ventas:", e);
@@ -2124,6 +2188,79 @@
         selectors.cancelEditBtn.addEventListener('click', closeModal);
         selectors.closeProfilesModalBtn.addEventListener('click', closeProfilesModal);
 
+
+        const handleRenew = async (saleId) => {
+            const sale = allSales.find(s => s.id === saleId);
+            if (!sale) return;
+
+            const renewalDays = parseInt(document.getElementById('renewal-days').value);
+            const renewalAmount = parseFloat(document.getElementById('renewal-amount').value);
+
+            if (isNaN(renewalDays) || renewalDays <= 0 || isNaN(renewalAmount)) {
+                alert('Por favor ingrese valores válidos.');
+                return;
+            }
+
+            const today = dayjs().startOf('day');
+            let newStartDate = today.format('YYYY-MM-DD');
+
+            // Logic: If plan is active (end date in future), add days to current end date.
+            // If expired, start from today.
+            const currentEndDate = dayjs(sale.finPlan);
+            if (currentEndDate.isAfter(today)) {
+               newStartDate = currentEndDate.add(1, 'day').format('YYYY-MM-DD');
+            }
+
+            const newEndDate = dayjs(newStartDate).add(renewalDays, 'day').format('YYYY-MM-DD');
+
+            try {
+                // 1. Create new sale
+                const newSale = {
+                    ...sale,
+                    precio: renewalAmount,
+                    inicioPlan: newStartDate,
+                    finPlan: newEndDate,
+                    createdAt: new Date().toISOString(),
+                    estado: 'ACTIVO',
+                    metodoPago: 'Falta pagar', // Reset payment status or ask user (assuming 'Falta pagar' for safety)
+                    notas: `Renovación de venta anterior. ${sale.notas || ''}`
+                };
+                delete newSale.id; // Firestore will assign new ID
+
+                const docRef = await addDoc(collection(db, "sales"), newSale);
+
+                // 2. Archive old sale
+                await updateDoc(doc(db, "sales", saleId), { estado: 'ARCHIVADO' });
+
+                // 3. Update Profile Expiration (keep it 'Ocupado', but link to new sale)
+                if (sale.accountId && sale.profileId) {
+                     const account = allPlatformAccounts.find(a => a.id === sale.accountId);
+                     if (account && account.platform !== 'Canva') {
+                        const profileRef = doc(db, "platformAccounts", sale.accountId, "Perfiles", sale.profileId);
+                        await updateDoc(profileRef, {
+                            fechaVencimiento: newEndDate,
+                            clienteId: docRef.id
+                        });
+
+                        // Update local state
+                         if (account.profiles) {
+                            const profile = account.profiles.find(p => p.id === sale.profileId);
+                            if (profile) {
+                                profile.fechaVencimiento = newEndDate;
+                                profile.clienteId = docRef.id;
+                            }
+                        }
+                        renderPlatformAccounts();
+                     }
+                }
+
+                closeRenewalModal();
+                alert('Renovación exitosa.');
+            } catch (e) {
+                console.error("Error en renovación:", e);
+                alert("Error al renovar la suscripción.");
+            }
+        };
 
         document.getElementById('renewal-form').addEventListener('submit', (e) => {
             e.preventDefault();
