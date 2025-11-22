@@ -2229,7 +2229,195 @@
         document.getElementById('quick-add-expense').addEventListener('click', () => {
             document.getElementById('nav-finanzas').click();
         });
-                    }
+
+
+        // --- Price Calculator Logic ---
+        const durations = [1, 3, 6, 12];
+
+        const renderDurationButtons = () => {
+            selectors.durationButtons.innerHTML = durations.map(months => `
+                    <button class="duration-btn px-4 py-2 rounded-lg font-semibold transition-all ${selectedMonths === months ? 'bg-indigo-600 text-white shadow-md' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}"
+                        onclick="setDuration(${months})">
+                        ${months} Mes${months > 1 ? 'es' : ''}
+                    </button>
+                `).join('');
+        };
+
+        window.setDuration = (months) => {
+            selectedMonths = months;
+            renderDurationButtons();
+            renderServices();
+            updateTicket();
+        };
+
+        const renderServices = () => {
+            selectors.servicesGrid.innerHTML = defaultServices.map(service => {
+                const isSelected = selectedServices.has(service.id);
+                const price = service.price * selectedMonths;
+                const labelHtml = service.label ? `<span class="absolute top-3 left-3 bg-blue-500 text-white text-xs font-bold px-2 py-1 rounded-full z-20 shadow-sm">${service.label}</span>` : '';
+
+                return `
+                    <div class="service-card relative group cursor-pointer transition-all duration-300 transform hover:-translate-y-1 ${isSelected ? 'ring-2 ring-indigo-500 shadow-xl scale-[1.02]' : 'hover:shadow-lg border border-gray-100'}"
+                        onclick="toggleService('${service.id}')">
+                        ${labelHtml}
+                        <div class="absolute top-3 right-3 z-10">
+                            <div class="w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${isSelected ? 'bg-indigo-600 border-indigo-600' : 'border-gray-300 bg-white/80 backdrop-blur-sm'}">
+                                ${isSelected ? '<svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>' : ''}
+                            </div>
+                        </div>
+                        <div class="bg-white rounded-2xl overflow-hidden h-full flex flex-col">
+                            <div class="h-24 relative overflow-hidden flex items-center justify-center" style="background-color: ${service.color}15;">
+                                <div class="absolute inset-0 opacity-10 group-hover:opacity-20 transition-opacity" style="background-color: ${service.color};"></div>
+                                <img src="${service.logo}" alt="${service.name}" class="h-12 object-contain transform group-hover:scale-110 transition-transform duration-500 drop-shadow-sm" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+                                <span class="hidden text-lg font-bold text-gray-700">${service.name}</span>
+                            </div>
+                            <div class="p-4 flex-grow flex flex-col justify-between">
+                                <div>
+                                    <h3 class="font-bold text-gray-800 mb-1 leading-tight">${service.name}</h3>
+                                    <div class="flex justify-between items-baseline">
+                                        <span class="text-xs text-gray-500">${selectedMonths} Mes${selectedMonths > 1 ? 'es' : ''}</span>
+                                        <span class="text-xl font-bold text-indigo-600">S/${price.toFixed(2)}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    `;
+            }).join('');
+        };
+
+        window.toggleService = (serviceId) => {
+            if (selectedServices.has(serviceId)) {
+                selectedServices.delete(serviceId);
+            } else {
+                selectedServices.add(serviceId);
+            }
+            renderServices();
+            updateTicket();
+        };
+
+        const updateTicket = () => {
+            const items = [];
+            let totalRegular = 0;
+            let totalDiscount = 0;
+            let totalProfit = 0;
+
+            selectedServices.forEach(id => {
+                const service = defaultServices.find(s => s.id === id);
+                if (service) {
+                    const cost = serviceCosts[id] || service.cost;
+                    const price = service.price * selectedMonths;
+
+                    // Profit calculation: Price - (Cost / Divider * Months)
+                    const costPerProfile = cost / service.divider;
+                    const totalCost = costPerProfile * selectedMonths;
+                    const itemProfit = price - totalCost;
+
+                    totalRegular += price;
+                    totalProfit += itemProfit;
+
+                    items.push(`
+                            <div class="flex justify-between items-center py-1 border-b border-gray-50 last:border-0">
+                                <div class="flex items-center">
+                                    <div class="w-2 h-2 rounded-full mr-2" style="background-color: ${service.color}"></div>
+                                    <span class="text-gray-700 text-sm">${service.name} <span class="text-xs text-gray-400">x${selectedMonths}</span></span>
+                                </div>
+                                <span class="font-medium text-gray-800">S/${price.toFixed(2)}</span>
+                            </div>
+                        `);
+                }
+            });
+
+            selectors.ticketItems.innerHTML = items.length ? items.join('') : '<p class="text-gray-400 italic text-center py-4">Selecciona servicios para ver el resumen</p>';
+            selectors.ticketRegularPrice.textContent = formatCurrency(totalRegular);
+            selectors.ticketDiscountAmount.textContent = formatCurrency(totalDiscount);
+            selectors.ticketFinalPrice.textContent = formatCurrency(totalRegular - totalDiscount);
+            selectors.ticketProfit.textContent = formatCurrency(totalProfit);
+
+            // Update profit color
+            selectors.ticketProfit.className = totalProfit >= 0 ? 'font-medium text-green-600' : 'font-medium text-red-600';
+        };
+
+        const toggleConfig = () => {
+            selectors.configPanel.classList.toggle('hidden');
+            if (!selectors.configPanel.classList.contains('hidden')) {
+                renderCostInputs();
+            }
+        };
+
+        const renderCostInputs = () => {
+            selectors.costInputsGrid.innerHTML = defaultServices.map(service => `
+                    <div class="bg-gray-50 p-2 rounded border border-gray-200">
+                        <label class="block text-xs font-bold text-gray-500 mb-1 truncate" title="${service.name}" for="cost-${service.id}">${service.name}</label>
+                        <div class="flex items-center">
+                            <span class="text-gray-400 text-xs mr-1">S/</span>
+                            <input type="number" step="0.1" value="${serviceCosts[service.id] || service.cost}"
+                                class="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-indigo-500 outline-none"
+                                id="cost-${service.id}">
+                        </div>
+                    </div>
+                `).join('');
+        };
+
+        const saveCosts = () => {
+            defaultServices.forEach(service => {
+                const input = document.getElementById(`cost-${service.id}`);
+                if (input) {
+                    serviceCosts[service.id] = parseFloat(input.value);
+                }
+            });
+            toggleConfig();
+            renderServices();
+            updateTicket();
+
+            // Show feedback
+            const btn = selectors.saveCostsBtn;
+            const originalText = btn.textContent;
+            btn.textContent = '¡Guardado!';
+            btn.classList.add('bg-green-600');
+            setTimeout(() => {
+                btn.textContent = originalText;
+                btn.classList.remove('bg-green-600');
+            }, 2000);
+        };
+
+        const copyPromo = () => {
+            if (selectedServices.size === 0) return;
+
+            const servicesList = Array.from(selectedServices).map(id => {
+                const s = defaultServices.find(ser => ser.id === id);
+                return `• ${s.name} (${selectedMonths} Mes${selectedMonths > 1 ? 'es' : ''}): S/${(s.price * selectedMonths).toFixed(2)}`;
+            }).join('\n');
+
+            const total = selectors.ticketFinalPrice.textContent;
+            const text = `🔥 *OFERTA ESPECIAL* 🔥\n\n${servicesList}\n\n💰 *TOTAL: ${total}*\n\n✅ Garantía total\n✅ Soporte 24/7\n\n¡Pide tu cuenta ahora! 🚀`;
+
+            navigator.clipboard.writeText(text).then(() => {
+                const btn = selectors.copyPromoBtn;
+                const originalContent = btn.innerHTML;
+                btn.innerHTML = '<svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>¡Copiado!';
+                btn.classList.remove('bg-green-500', 'hover:bg-green-600');
+                btn.classList.add('bg-indigo-600', 'hover:bg-indigo-700');
+                setTimeout(() => {
+                    btn.innerHTML = originalContent;
+                    btn.classList.add('bg-green-500', 'hover:bg-green-600');
+                    btn.classList.remove('bg-indigo-600', 'hover:bg-indigo-700');
+                }, 2000);
+            }).catch(err => {
+                console.error('Error al copiar:', err);
+                alert('No se pudo copiar al portapapeles');
+            });
+        };
+
+        // Initialize Price Calculator
+        renderDurationButtons();
+        renderServices();
+
+        selectors.toggleConfigBtn.addEventListener('click', toggleConfig);
+        selectors.saveCostsBtn.addEventListener('click', saveCosts);
+        selectors.copyPromoBtn.addEventListener('click', copyPromo);
+    }
+
 
         const checkAndReleaseExpiredProfiles = async () => {
             const today = dayjs().startOf('day');
@@ -2241,8 +2429,7 @@
                     const profile = profileDoc.data();
                     if (profile.estado === 'Ocupado' && profile.fechaVencimiento) {
                         if (today.isAfter(dayjs(profile.fechaVencimiento))) {
-                            console.log(`Liberando perfil ${profile.nombre} de la cuenta ${accountDoc.data().email} por
-                    vencimiento.`);
+                            console.log(`Liberando perfil ${ profile.nombre } de la cuenta ${ accountDoc.data().email } por vencimiento.`);
                             const profileRef = doc(db, "platformAccounts", accountDoc.id, "Perfiles", profileDoc.id);
                             await updateDoc(profileRef, { estado: 'Disponible', fechaVencimiento: null, clienteId: null });
                         }
@@ -2267,8 +2454,7 @@
             const params = new URLSearchParams(window.location.search);
             if (params.has('loggedin')) {
                 const toast = document.createElement('div');
-                toast.className = 'toast fixed top-5 right-5 bg-green-500 text-white py-3 px-6 rounded-lg shadow-lg
-                    transform translate - x - full opacity - 0';
+                toast.className = 'toast fixed top-5 right-5 bg-green-500 text-white py-3 px-6 rounded-lg shadow-lg transform translate-x-full opacity-0';
                 toast.textContent = 'Bienvenido a NineStreaming. Renzo y Charitsa';
                 document.body.appendChild(toast);
 
