@@ -1123,7 +1123,7 @@
             ];
 
             let allSales = [], allExpenses = [], allPlatformAccounts = [], activePlatformFilter = 'Todos', currentSearchTerm = '', activeAccountFilter = '', activeStatusFilter = '';
-            let selectedServices = new Set(), selectedMonths = 1;
+            let selectedServices = new Map(), selectedMonths = 1;
 
             // Cargar configuración de precios desde Firestore
             try {
@@ -2569,9 +2569,22 @@
             return (yiq >= 128) ? 'black' : 'white';
         }
 
+        window.updateServiceQuantity = (serviceId, change) => {
+            const currentQty = selectedServices.get(serviceId) || 0;
+            const newQty = Math.max(0, currentQty + change);
+            if (newQty === 0) {
+                selectedServices.delete(serviceId);
+            } else {
+                selectedServices.set(serviceId, newQty);
+            }
+            renderServices();
+            updateTicket();
+        };
+
         const renderServices = () => {
             selectors.servicesGrid.innerHTML = defaultServices.map(service => {
-                const isSelected = selectedServices.has(service.id);
+                const quantity = selectedServices.get(service.id) || 0;
+                const isSelected = quantity > 0;
                 const price = service.price * selectedMonths;
                 const labelHtml = service.label ? `<span class="absolute top-3 left-3 bg-blue-500 text-white text-xs font-bold px-2 py-1 rounded-full z-20 shadow-sm">${service.label}</span>` : '';
 
@@ -2580,6 +2593,23 @@
                 const titleColor = isSelected ? 'inherit' : 'text-gray-800';
                 const priceColor = isSelected ? 'inherit' : 'text-indigo-600';
                 const subTextColor = isSelected ? 'opacity-80' : 'text-gray-500';
+
+                let controlsHtml = '';
+                if (isSelected) {
+                    controlsHtml = `
+                    <div class="flex items-center justify-center gap-3 mt-3 w-full" onclick="event.stopPropagation()">
+                         <button onclick="updateServiceQuantity('${service.id}', -1)"
+                            class="w-8 h-8 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center transition backdrop-blur-sm border border-white/40">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"></path></svg>
+                        </button>
+                        <span class="text-xl font-bold w-6 text-center">${quantity}</span>
+                        <button onclick="updateServiceQuantity('${service.id}', 1)"
+                            class="w-8 h-8 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center transition backdrop-blur-sm border border-white/40">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                        </button>
+                    </div>
+                    `;
+                }
 
                 return `
                     <div class="service-card relative group cursor-pointer transition-all duration-300 transform hover:-translate-y-1 ${isSelected ? 'shadow-xl scale-[1.02]' : 'hover:shadow-lg border border-gray-100'}"
@@ -2597,13 +2627,14 @@
                                 <div class="absolute inset-0 opacity-10 group-hover:opacity-20 transition-opacity" style="background-color: ${service.color};"></div>
                                 <span class="text-xl font-black text-center px-2 transform group-hover:scale-110 transition-transform duration-500 drop-shadow-sm" style="color: ${service.color};">${service.name}</span>
                             </div>`}
-                            <div class="p-4 flex-grow flex flex-col justify-between ${isSelected ? 'h-full justify-center' : ''}">
-                                <div>
+                            <div class="p-4 flex-grow flex flex-col justify-between ${isSelected ? 'h-full justify-center items-center' : ''}">
+                                <div class="w-full">
                                     <h3 class="font-bold mb-1 leading-tight ${titleColor} ${isSelected ? 'text-xl text-center' : ''}">${service.name}</h3>
                                     <div class="flex justify-between items-baseline ${isSelected ? 'flex-col items-center mt-2' : ''}">
                                         <span class="text-xs ${subTextColor}">${selectedMonths} Mes${selectedMonths > 1 ? 'es' : ''}</span>
                                         <span class="text-xl font-bold ${priceColor}">S/${price.toFixed(2)}</span>
                                     </div>
+                                    ${controlsHtml}
                                 </div>
                             </div>
                         </div>
@@ -2613,10 +2644,11 @@
         };
 
         window.toggleService = (serviceId) => {
-            if (selectedServices.has(serviceId)) {
-                selectedServices.delete(serviceId);
+            const currentQty = selectedServices.get(serviceId) || 0;
+            if (currentQty > 0) {
+                selectedServices.delete(serviceId); // Toggle off
             } else {
-                selectedServices.add(serviceId);
+                selectedServices.set(serviceId, 1); // Toggle on (qty 1)
             }
             renderServices();
             updateTicket();
@@ -2626,24 +2658,26 @@
             const items = [];
             let totalRegular = 0;
             let totalCost = 0;
+            let totalCount = 0;
 
             // 1. Calculate Totals
-            selectedServices.forEach(id => {
+            selectedServices.forEach((qty, id) => {
                 const service = defaultServices.find(s => s.id === id);
                 if (service) {
-                        const costTotal = service.cost;
+                    const costTotal = service.cost;
                     const costPerProfile = costTotal / service.divider;
-                    const costForDuration = costPerProfile * selectedMonths;
-                    const priceForDuration = service.price * selectedMonths;
+                    const costForDuration = costPerProfile * selectedMonths * qty;
+                    const priceForDuration = service.price * selectedMonths * qty;
 
                     totalRegular += priceForDuration;
                     totalCost += costForDuration;
+                    totalCount += qty;
 
                     items.push(`
                             <div class="flex justify-between items-center py-1 border-b border-gray-50 last:border-0">
                                 <div class="flex items-center">
                                     <div class="w-2 h-2 rounded-full mr-2" style="background-color: ${service.color}"></div>
-                                    <span class="text-gray-700 text-sm">${service.name} <span class="text-xs text-gray-400">x${selectedMonths}</span></span>
+                                    <span class="text-gray-700 text-sm">${service.name} <span class="text-xs text-gray-400">x${qty} (${selectedMonths}m)</span></span>
                                 </div>
                                 <span class="font-medium text-gray-800">S/${priceForDuration.toFixed(2)}</span>
                             </div>
@@ -2659,8 +2693,8 @@
             if (selectedMonths === 12) durationDiscount = 0.25;
 
             let comboDiscount = 0;
-            if (selectedServices.size === 2) comboDiscount = 0.05;
-            if (selectedServices.size >= 3) comboDiscount = 0.10;
+            if (totalCount === 2) comboDiscount = 0.05;
+            if (totalCount >= 3) comboDiscount = 0.10;
 
             const totalDiscountPercent = durationDiscount + comboDiscount;
             let discountAmount = totalRegular * totalDiscountPercent;
@@ -2843,9 +2877,10 @@
         const copyPromo = () => {
             if (selectedServices.size === 0) return;
 
-            const servicesList = Array.from(selectedServices).map(id => {
+            const servicesList = Array.from(selectedServices.entries()).map(([id, qty]) => {
                 const s = defaultServices.find(ser => ser.id === id);
-                return `• ${s.name} (${selectedMonths} Mes${selectedMonths > 1 ? 'es' : ''}): S/${(s.price * selectedMonths).toFixed(2)}`;
+                const price = s.price * selectedMonths * qty;
+                return `• ${s.name} ${qty > 1 ? `(x${qty})` : ''} (${selectedMonths} Mes${selectedMonths > 1 ? 'es' : ''}): S/${price.toFixed(2)}`;
             }).join('\n');
 
             const total = selectors.ticketFinalPrice.textContent;
