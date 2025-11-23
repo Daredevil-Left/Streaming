@@ -1344,8 +1344,11 @@
                 const totalEgresos = allExpenses.reduce((sum, expense) => sum + (expense.amount || 0), 0);
                 const balance = totalIngresos - totalEgresos;
                 selectors.summaryIngresos.textContent = formatCurrency(totalIngresos);
+                selectors.summaryIngresos.classList.remove('skeleton', 'skeleton-dark');
                 selectors.summaryEgresos.textContent = formatCurrency(totalEgresos);
+                selectors.summaryEgresos.classList.remove('skeleton', 'skeleton-dark');
                 selectors.summaryBalance.textContent = formatCurrency(balance);
+                selectors.summaryBalance.classList.remove('skeleton', 'skeleton-dark');
                 selectors.summaryBalance.classList.toggle('text-red-900', balance < 0);
                 selectors.summaryBalance.classList.toggle('text-blue-900', balance >= 0);
                 selectors.alertsSection.querySelectorAll('.copy-alert-btn').forEach(btn => { btn.addEventListener('click', handleCopyAlert); });
