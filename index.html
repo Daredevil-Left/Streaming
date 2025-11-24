@@ -1141,12 +1141,13 @@
     <!-- Success Sale Modal -->
     <div id="success-sale-modal"
         class="modal fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 z-50 hidden opacity-0">
-        <div class="modal-content bg-white w-full max-w-md rounded-2xl shadow-2xl p-6 transform scale-95 text-center">
-            <h2 class="text-2xl font-bold text-gray-800 mb-4">¡Venta Guardada!</h2>
-            <p class="text-gray-600 mb-4">Copia los datos de la cuenta para enviarlos al cliente.</p>
+        <div class="modal-content bg-white w-full max-w-xl rounded-2xl shadow-2xl p-6 transform scale-95 text-center border-4 border-violet-500 relative">
+            <div class="absolute top-0 left-0 right-0 h-2 bg-violet-500 rounded-t-lg"></div>
+            <h2 class="text-3xl font-bold text-gray-800 mb-4 mt-2">¡Venta Guardada!</h2>
+            <p class="text-gray-600 mb-6 text-lg">Copia los datos de la cuenta para enviarlos al cliente.</p>
 
             <textarea id="sale-success-message"
-                class="w-full h-48 p-3 border border-gray-300 rounded-lg text-sm font-mono mb-6 bg-gray-50 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                class="w-full h-48 p-4 border-2 border-violet-100 rounded-xl text-base font-mono mb-6 bg-violet-50 focus:ring-2 focus:ring-violet-500 focus:outline-none focus:border-violet-300"
                 readonly></textarea>
 
             <div class="flex flex-col gap-3">
@@ -1387,8 +1388,8 @@
                 let message = `📺 Plataforma: ${saleData.plataforma}\n`;
                 if (saleData.correo) message += `📧 Correo: ${saleData.correo}\n`;
                 if (saleData.contrasena) message += `🔑 Contraseña: ${saleData.contrasena}\n`;
-                if (profileName && profileName !== 'Selecciona una cuenta madre primero' && profileName !== 'Selecciona un perfil' && saleData.plataforma !== 'Canva') {
-                    message += `👤 Perfil: ${profileName}\n`;
+                if (saleData.plataforma !== 'Canva') {
+                    message += `👤 Perfil: ${saleData.cliente}\n`;
                 }
                 if (saleData.pin) message += `🔒 PIN: ${saleData.pin}\n`;
 
@@ -1415,7 +1416,7 @@
             };
 
             const updateFinancialSummary = () => {
-                const salesIncome = allSales.reduce((sum, sale) => sum + (sale.precio || 0), 0);
+                const salesIncome = allSales.filter(s => s.metodoPago !== 'Falta pagar').reduce((sum, sale) => sum + (sale.precio || 0), 0);
                 const totalIngresos = salesIncome;
                 const totalEgresos = allExpenses.reduce((sum, expense) => sum + (expense.amount || 0), 0);
                 const balance = totalIngresos - totalEgresos;
@@ -1462,11 +1463,11 @@
                 const today = dayjs().startOf('day');
                 const startOfMonth = dayjs().startOf('month');
                 const activeSales = allSales.filter(sale => sale.estado !== 'ARCHIVADO');
-                const salesToday = allSales.filter(sale => dayjs(sale.inicioPlan).isSame(today, 'day')).reduce((sum, sale) => sum + sale.precio, 0);
+                const salesToday = allSales.filter(sale => dayjs(sale.inicioPlan).isSame(today, 'day') && sale.metodoPago !== 'Falta pagar').reduce((sum, sale) => sum + sale.precio, 0);
                 selectors.kpiSalesToday.textContent = formatCurrency(salesToday);
                 selectors.kpiSalesToday.classList.remove('skeleton');
 
-                const salesMonth = allSales.filter(sale => dayjs(sale.inicioPlan).isAfter(startOfMonth) || dayjs(sale.inicioPlan).isSame(startOfMonth)).reduce((sum, sale) => sum + sale.precio, 0);
+                const salesMonth = allSales.filter(sale => (dayjs(sale.inicioPlan).isAfter(startOfMonth) || dayjs(sale.inicioPlan).isSame(startOfMonth)) && sale.metodoPago !== 'Falta pagar').reduce((sum, sale) => sum + sale.precio, 0);
                 selectors.kpiSalesMonth.textContent = formatCurrency(salesMonth);
                 selectors.kpiSalesMonth.classList.remove('skeleton');
 
@@ -1496,7 +1497,7 @@
                         selectors.alertsSection.appendChild(card);
                     });
                 } else { selectors.alertsSection.className = 'space-y-3'; selectors.alertsSection.innerHTML = '<p class="text-gray-500">No hay alertas de vencimiento.</p>'; }
-                const totalIngresos = allSales.reduce((sum, sale) => sum + (sale.precio || 0), 0);
+                const totalIngresos = allSales.filter(s => s.metodoPago !== 'Falta pagar').reduce((sum, sale) => sum + (sale.precio || 0), 0);
                 const totalEgresos = allExpenses.reduce((sum, expense) => sum + (expense.amount || 0), 0);
                 const balance = totalIngresos - totalEgresos;
                 selectors.summaryIngresos.textContent = formatCurrency(totalIngresos);
@@ -1681,7 +1682,13 @@
     </div>
     <div class="hidden md:block font-bold text-gray-800">${formatCurrency(sale.precio)}</div>
     <div class="hidden md:block">${getMetodoPagoBadge(sale.metodoPago) || 'N/A'}</div>
-    <div class="flex justify-end gap-3 items-center">
+    <div class="flex justify-end gap-2 items-center">
+        <button class="copy-details-btn p-1 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-full transition"
+             data-id="${sale.id}" title="Copiar Datos">
+             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path>
+             </svg>
+        </button>
         <button class="edit-btn p-1 text-indigo-600 hover:text-indigo-800 hover:bg-indigo-100 rounded-full transition"
             data-id="${sale.id}" title="Editar">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1725,6 +1732,21 @@
                     handleDeleteSale(e.currentTarget.dataset.id)));
                 selectors.salesList.querySelectorAll('.renew-btn').forEach(b => b.addEventListener('click', e =>
                     openRenewalModal(e.currentTarget.dataset.id)));
+                selectors.salesList.querySelectorAll('.copy-details-btn').forEach(b => b.addEventListener('click', e =>
+                    handleCopySaleDetails(e.currentTarget.dataset.id, e.currentTarget)));
+            };
+
+            const handleCopySaleDetails = (saleId, btn) => {
+                const sale = allSales.find(s => s.id === saleId);
+                if (!sale) return;
+                const message = generateSaleMessage(sale, ''); // profileName unused in new logic
+                navigator.clipboard.writeText(message).then(() => {
+                    const originalHtml = btn.innerHTML;
+                    btn.innerHTML = `<svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>`;
+                    setTimeout(() => {
+                         btn.innerHTML = originalHtml;
+                    }, 2000);
+                }).catch(err => console.error("Could not copy text: ", err));
             };
             const renderExpenses = () => {
                 selectors.expensesList.innerHTML = '';
