@@ -1138,6 +1138,35 @@
         </div>
     </div>
 
+    <!-- Success Sale Modal -->
+    <div id="success-sale-modal"
+        class="modal fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 z-50 hidden opacity-0">
+        <div class="modal-content bg-white w-full max-w-md rounded-2xl shadow-2xl p-6 transform scale-95 text-center">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">¡Venta Guardada!</h2>
+            <p class="text-gray-600 mb-4">Copia los datos de la cuenta para enviarlos al cliente.</p>
+
+            <textarea id="sale-success-message"
+                class="w-full h-48 p-3 border border-gray-300 rounded-lg text-sm font-mono mb-6 bg-gray-50 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                readonly></textarea>
+
+            <div class="flex flex-col gap-3">
+                <button id="copy-sale-message-btn"
+                    class="bg-blue-600 text-white font-semibold py-3 rounded-lg hover:bg-blue-700 transition flex items-center justify-center shadow-md">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3">
+                        </path>
+                    </svg>
+                    Copiar Datos
+                </button>
+                <button id="close-success-modal-btn"
+                    class="text-gray-500 hover:text-gray-700 font-medium py-2 transition">
+                    Cerrar
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script>
         function togglePasswordVisibility(inputId, button) { const input = document.getElementById(inputId), icon = button.querySelector('svg'); if (input.type === "password") { input.type = "text"; icon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7 .946-3.11 3.563-5.522 6.837-6.141M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.581 10.41A7.48 7.48 0 0119.542 12c-1.274 4.057-5.064 7-9.542 7a10.046 10.046 0 01-3.132-.475M2.458 12c.946-3.11 3.563-5.522 6.837-6.141m1.581 2.318A4.5 4.5 0 0115 12a4.5 4.5 0 01-1.07 2.828M5 5l14 14" />`; } else { input.type = "password"; icon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />`; } }
 
@@ -1293,6 +1322,10 @@
                 addCustomServiceForm: document.getElementById('add-custom-service-form'),
                 customColorInput: document.getElementById('custom-color'),
                 customColorHex: document.getElementById('custom-color-hex'),
+                successSaleModal: document.getElementById('success-sale-modal'),
+                saleSuccessMessage: document.getElementById('sale-success-message'),
+                copySaleMessageBtn: document.getElementById('copy-sale-message-btn'),
+                closeSuccessModalBtn: document.getElementById('close-success-modal-btn'),
             };
             const getSaleStatus = (finPlan) => {
                 if (dayjs().isAfter(dayjs(finPlan).endOf('day'))) { return 'Vencido'; }
@@ -1349,6 +1382,38 @@
                 modal.querySelector('.modal-content').classList.add('scale-95');
                 setTimeout(() => { modal.classList.add('hidden'); document.getElementById('archive-btn').onclick = null; document.getElementById('delete-permanently-btn').onclick = null; document.getElementById('cancel-action-btn').onclick = null; }, 300);
             };
+
+            const generateSaleMessage = (saleData, profileName) => {
+                let message = `📺 Plataforma: ${saleData.plataforma}\n`;
+                if (saleData.correo) message += `📧 Correo: ${saleData.correo}\n`;
+                if (saleData.contrasena) message += `🔑 Contraseña: ${saleData.contrasena}\n`;
+                if (profileName && profileName !== 'Selecciona una cuenta madre primero' && profileName !== 'Selecciona un perfil' && saleData.plataforma !== 'Canva') {
+                    message += `👤 Perfil: ${profileName}\n`;
+                }
+                if (saleData.pin) message += `🔒 PIN: ${saleData.pin}\n`;
+
+                message += `\n⚠️ Advertencia: La cuenta es solo para un dispositivo, en caso se use en más dispositivos se dará de baja a la cuenta`;
+
+                return message;
+            };
+
+            const openSuccessSaleModal = (message) => {
+                selectors.saleSuccessMessage.value = message;
+                selectors.successSaleModal.classList.remove('hidden');
+                setTimeout(() => {
+                    selectors.successSaleModal.classList.remove('opacity-0');
+                    selectors.successSaleModal.querySelector('.modal-content').classList.remove('scale-95');
+                }, 10);
+            };
+
+            const closeSuccessSaleModal = () => {
+                selectors.successSaleModal.classList.add('opacity-0');
+                selectors.successSaleModal.querySelector('.modal-content').classList.add('scale-95');
+                setTimeout(() => {
+                    selectors.successSaleModal.classList.add('hidden');
+                }, 300);
+            };
+
             const updateFinancialSummary = () => {
                 const salesIncome = allSales.reduce((sum, sale) => sum + (sale.precio || 0), 0);
                 const totalIngresos = salesIncome;
@@ -2291,6 +2356,12 @@
             const profileId = f['profile-select'].value;
             const plataforma = f.plataforma.value;
 
+            // Capture profile name text before it gets reset
+            let profileName = '';
+            if (f['profile-select'].selectedIndex !== -1) {
+                profileName = f['profile-select'].options[f['profile-select'].selectedIndex].text;
+            }
+
             if (plataforma !== 'Canva' && accountId && !profileId) {
                 alert('Por favor, selecciona un perfil para esta cuenta.');
                 return;
@@ -2320,6 +2391,10 @@
                     profile.estado = 'Ocupado';
                     renderPlatformAccounts();
                 }
+
+                // Generate message and open modal
+                const message = generateSaleMessage(newSale, profileName);
+                openSuccessSaleModal(message);
 
                 f.reset();
                 f.metodoPago.value = ""; // Reiniciar el select
@@ -3028,6 +3103,23 @@
         selectors.addPlatformBtn.addEventListener('click', toggleAddServiceModal);
         selectors.closeAddServiceModalBtn.addEventListener('click', toggleAddServiceModal);
         selectors.cancelAddServiceBtn.addEventListener('click', toggleAddServiceModal);
+
+        selectors.copySaleMessageBtn.addEventListener('click', () => {
+            const text = selectors.saleSuccessMessage.value;
+            navigator.clipboard.writeText(text).then(() => {
+                const originalText = selectors.copySaleMessageBtn.innerHTML;
+                selectors.copySaleMessageBtn.innerHTML = `<svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>¡Copiado!`;
+                selectors.copySaleMessageBtn.classList.remove('bg-blue-600', 'hover:bg-blue-700');
+                selectors.copySaleMessageBtn.classList.add('bg-green-600', 'hover:bg-green-700');
+
+                setTimeout(() => {
+                    selectors.copySaleMessageBtn.innerHTML = originalText;
+                    selectors.copySaleMessageBtn.classList.add('bg-blue-600', 'hover:bg-blue-700');
+                    selectors.copySaleMessageBtn.classList.remove('bg-green-600', 'hover:bg-green-700');
+                }, 2000);
+            });
+        });
+        selectors.closeSuccessModalBtn.addEventListener('click', closeSuccessSaleModal);
 
         selectors.customColorInput.addEventListener('input', (e) => {
             selectors.customColorHex.textContent = e.target.value.toUpperCase();
