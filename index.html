@@ -673,17 +673,27 @@
                 <div id="precios-view" class="view hidden max-w-7xl mx-auto">
                     <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 md:mb-8 px-2 md:px-0">
                         <h1 class="text-2xl md:text-3xl font-bold text-gray-800">Calculadora de Precios</h1>
-                        <button id="toggle-config-btn"
-                            class="mt-4 md:mt-0 flex items-center text-gray-600 hover:text-gray-900 transition">
-                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z">
-                                </path>
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                            </svg>
-                            Configurar Costos
-                        </button>
+                        <div class="flex gap-4 mt-4 md:mt-0">
+                            <button id="add-platform-btn"
+                                class="flex items-center text-blue-600 hover:text-blue-800 transition font-medium">
+                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                                </svg>
+                                Agregar Plataforma
+                            </button>
+                            <button id="toggle-config-btn"
+                                class="flex items-center text-gray-600 hover:text-gray-900 transition">
+                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z">
+                                    </path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                </svg>
+                                Configurar Costos
+                            </button>
+                        </div>
                     </div>
 
                     <!-- Config Panel -->
@@ -1048,6 +1058,64 @@
         </div>
     </div>
 
+    <!-- Add Custom Service Modal -->
+    <div id="add-custom-service-modal"
+        class="modal fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 z-50 hidden opacity-0">
+        <div class="modal-content bg-white w-full max-w-lg rounded-2xl shadow-2xl p-6 transform scale-95">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-semibold text-gray-700">Agregar Nueva Plataforma</h2>
+                <button id="close-add-service-modal" class="text-gray-400 hover:text-gray-600">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                        </path>
+                    </svg>
+                </button>
+            </div>
+            <form id="add-custom-service-form" class="space-y-4">
+                <div>
+                    <label for="custom-name" class="block text-sm font-medium text-gray-600 mb-2">Nombre de
+                        Plataforma</label>
+                    <input type="text" id="custom-name" class="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                        placeholder="Ej. Star+" required>
+                </div>
+                <div>
+                    <label for="custom-color" class="block text-sm font-medium text-gray-600 mb-2">Color de
+                        Fondo</label>
+                    <div class="flex items-center gap-4">
+                        <input type="color" id="custom-color"
+                            class="w-12 h-12 p-1 border border-gray-300 rounded cursor-pointer" value="#3b82f6">
+                        <span id="custom-color-hex" class="text-gray-500 text-sm">#3B82F6</span>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label for="custom-cost" class="block text-sm font-medium text-gray-600 mb-2">Costo Cuenta
+                            (S/)</label>
+                        <input type="number" id="custom-cost" step="0.01" min="0"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg" required>
+                    </div>
+                    <div>
+                        <label for="custom-divider" class="block text-sm font-medium text-gray-600 mb-2">Perfiles</label>
+                        <input type="number" id="custom-divider" step="1" min="1"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg" value="5" required>
+                    </div>
+                </div>
+                <div>
+                    <label for="custom-price" class="block text-sm font-medium text-gray-600 mb-2">Precio Sugerido
+                        (S/)</label>
+                    <input type="number" id="custom-price" step="0.01" min="0"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg" required>
+                </div>
+                <div class="pt-4 flex justify-end gap-3">
+                    <button type="button" id="cancel-add-service-btn"
+                        class="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 transition">Cancelar</button>
+                    <button type="submit"
+                        class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- Manage Profiles Modal -->
     <div id="manage-profiles-modal"
         class="modal fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 z-50 hidden opacity-0">
@@ -1122,24 +1190,39 @@
                 { id: 'canva', name: 'Canva Pro', cost: 8.00, price: 8.00, type: 'annual', divider: 1, logo: 'https://upload.wikimedia.org/wikipedia/commons/0/08/Canva_icon_2021.svg', color: '#8D44AD' }
             ];
 
+            let allServices = [...defaultServices];
             let allSales = [], allExpenses = [], allPlatformAccounts = [], activePlatformFilter = 'Todos', currentSearchTerm = '', activeAccountFilter = '', activeStatusFilter = '';
             let selectedServices = new Map(), selectedMonths = 1;
 
-            // Cargar configuración de precios desde Firestore
-            try {
-                const configDoc = await getDoc(doc(db, "config", "service_prices"));
-                if (configDoc.exists()) {
-                    const data = configDoc.data();
-                    defaultServices.forEach(s => {
-                        if (data[s.id]) {
-                            s.cost = data[s.id].cost !== undefined ? data[s.id].cost : s.cost;
-                            s.price = data[s.id].price !== undefined ? data[s.id].price : s.price;
-                        }
-                    });
+            // Cargar configuración y servicios personalizados
+            const loadCustomServices = async () => {
+                try {
+                    // 1. Reset to defaults
+                    allServices = [...defaultServices];
+
+                    // 2. Load Custom Services
+                    const customServicesDoc = await getDoc(doc(db, "config", "custom_services"));
+                    if (customServicesDoc.exists()) {
+                        const customServices = customServicesDoc.data().services || [];
+                        allServices = [...allServices, ...customServices];
+                    }
+
+                    // 3. Load Price Overrides
+                    const configDoc = await getDoc(doc(db, "config", "service_prices"));
+                    if (configDoc.exists()) {
+                        const data = configDoc.data();
+                        allServices.forEach(s => {
+                            if (data[s.id]) {
+                                s.cost = data[s.id].cost !== undefined ? data[s.id].cost : s.cost;
+                                s.price = data[s.id].price !== undefined ? data[s.id].price : s.price;
+                            }
+                        });
+                    }
+                } catch (error) {
+                    console.error("Error cargando configuración de precios:", error);
                 }
-            } catch (error) {
-                console.error("Error cargando precios:", error);
-            }
+            };
+            await loadCustomServices();
 
             const selectors = {
                 addSaleForm: document.getElementById('add-sale-form'),
@@ -1202,6 +1285,14 @@
                 ticketFinalPrice: document.getElementById('ticket-final-price'),
                 ticketProfit: document.getElementById('ticket-profit'),
                 copyPromoBtn: document.getElementById('copy-promo-btn'),
+                // New Selectors for Custom Services
+                addPlatformBtn: document.getElementById('add-platform-btn'),
+                addCustomServiceModal: document.getElementById('add-custom-service-modal'),
+                closeAddServiceModalBtn: document.getElementById('close-add-service-modal'),
+                cancelAddServiceBtn: document.getElementById('cancel-add-service-btn'),
+                addCustomServiceForm: document.getElementById('add-custom-service-form'),
+                customColorInput: document.getElementById('custom-color'),
+                customColorHex: document.getElementById('custom-color-hex'),
             };
             const getSaleStatus = (finPlan) => {
                 if (dayjs().isAfter(dayjs(finPlan).endOf('day'))) { return 'Vencido'; }
@@ -2585,7 +2676,7 @@
         };
 
         const renderServices = () => {
-            selectors.servicesGrid.innerHTML = defaultServices.map(service => {
+            selectors.servicesGrid.innerHTML = allServices.map(service => {
                 const quantity = selectedServices.get(service.id) || 0;
                 const isSelected = quantity > 0;
                 const price = service.price * selectedMonths;
@@ -2596,6 +2687,18 @@
                 const titleColor = isSelected ? 'inherit' : 'text-gray-800';
                 const priceColor = isSelected ? 'inherit' : 'text-indigo-600';
                 const subTextColor = isSelected ? 'opacity-80' : 'text-gray-500';
+
+                let deleteBtnHtml = '';
+                if (service.isCustom) {
+                    deleteBtnHtml = `
+                    <div class="absolute bottom-3 right-3 z-20" onclick="event.stopPropagation()">
+                         <button onclick="handleDeleteCustomService('${service.id}')"
+                            class="w-8 h-8 rounded-full bg-white text-red-600 border border-gray-200 hover:bg-red-50 flex items-center justify-center transition shadow-md" title="Eliminar Plataforma">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                        </button>
+                    </div>
+                    `;
+                }
 
                 let controlsHtml = '';
                 if (isSelected) {
@@ -2619,6 +2722,7 @@
                         style="${cardStyle}"
                         onclick="toggleService('${service.id}')">
                         ${labelHtml}
+                        ${deleteBtnHtml}
                         <div class="absolute top-3 right-3 z-10">
                             <div class="w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${isSelected ? 'bg-white border-white' : 'border-gray-300 bg-white/80 backdrop-blur-sm'}">
                                 ${isSelected ? `<svg class="w-4 h-4" style="color: ${service.color}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>` : ''}
@@ -2665,7 +2769,7 @@
 
             // 1. Calculate Totals
             selectedServices.forEach((qty, id) => {
-                const service = defaultServices.find(s => s.id === id);
+                const service = allServices.find(s => s.id === id);
                 if (service) {
                     const costTotal = service.cost;
                     const costPerProfile = costTotal / service.divider;
@@ -2743,7 +2847,7 @@
         };
 
         const renderCostInputs = () => {
-            selectors.costInputsGrid.innerHTML = defaultServices.map(service => {
+            selectors.costInputsGrid.innerHTML = allServices.map(service => {
                 const unitCost = (service.cost / service.divider).toFixed(2);
                 const estimatedProfit = ((service.price * service.divider) - service.cost).toFixed(2);
                 const profitColor = estimatedProfit >= 15 ? 'text-green-600' : 'text-orange-500';
@@ -2847,7 +2951,7 @@
             saveBtn.textContent = 'Guardando...';
             saveBtn.disabled = true;
 
-            defaultServices.forEach(service => {
+            allServices.forEach(service => {
                 const costInput = document.getElementById(`cost-${service.id}`);
                 const priceInput = document.getElementById(`price-${service.id}`);
                 if (costInput && priceInput) {
@@ -2881,7 +2985,7 @@
             if (selectedServices.size === 0) return;
 
             const servicesList = Array.from(selectedServices.entries()).map(([id, qty]) => {
-                const s = defaultServices.find(ser => ser.id === id);
+                const s = allServices.find(ser => ser.id === id);
                 const price = s.price * selectedMonths * qty;
                 return `• ${s.name} ${qty > 1 ? `(x${qty})` : ''} (${selectedMonths} Mes${selectedMonths > 1 ? 'es' : ''}): S/${price.toFixed(2)}`;
             }).join('\n');
@@ -2913,6 +3017,130 @@
         selectors.toggleConfigBtn.addEventListener('click', toggleConfig);
         selectors.saveCostsBtn.addEventListener('click', saveCosts);
         selectors.copyPromoBtn.addEventListener('click', copyPromo);
+
+        // --- Custom Services Logic ---
+        const toggleAddServiceModal = () => {
+            selectors.addCustomServiceModal.classList.toggle('hidden');
+            selectors.addCustomServiceModal.classList.toggle('opacity-0');
+            selectors.addCustomServiceModal.querySelector('.modal-content').classList.toggle('scale-95');
+        };
+
+        selectors.addPlatformBtn.addEventListener('click', toggleAddServiceModal);
+        selectors.closeAddServiceModalBtn.addEventListener('click', toggleAddServiceModal);
+        selectors.cancelAddServiceBtn.addEventListener('click', toggleAddServiceModal);
+
+        selectors.customColorInput.addEventListener('input', (e) => {
+            selectors.customColorHex.textContent = e.target.value.toUpperCase();
+        });
+
+        const handleAddCustomService = async (e) => {
+            e.preventDefault();
+            const btn = e.target.querySelector('button[type="submit"]');
+            const originalText = btn.textContent;
+            btn.disabled = true;
+            btn.textContent = 'Guardando...';
+
+            const name = document.getElementById('custom-name').value;
+            const color = document.getElementById('custom-color').value;
+            const cost = parseFloat(document.getElementById('custom-cost').value);
+            const divider = parseInt(document.getElementById('custom-divider').value);
+            const price = parseFloat(document.getElementById('custom-price').value);
+
+            if (!name || isNaN(cost) || isNaN(divider) || isNaN(price)) {
+                alert('Por favor completa todos los campos correctamente.');
+                btn.disabled = false;
+                btn.textContent = originalText;
+                return;
+            }
+
+            const id = 'custom-' + Date.now();
+            const newService = {
+                id,
+                name,
+                color,
+                cost,
+                divider,
+                price,
+                type: 'monthly',
+                isCustom: true
+            };
+
+            try {
+                // 1. Save Definition to Custom Services Document
+                // Use arrayUnion-like approach by reading full array and writing back
+                const customServicesDoc = await getDoc(doc(db, "config", "custom_services"));
+                let currentCustomServices = [];
+                if (customServicesDoc.exists()) {
+                    currentCustomServices = customServicesDoc.data().services || [];
+                }
+                currentCustomServices.push(newService);
+                await setDoc(doc(db, "config", "custom_services"), { services: currentCustomServices });
+
+                // 2. Save Initial Costs to Service Prices (optional but good for consistency)
+                await setDoc(doc(db, "config", "service_prices"), {
+                    [id]: { cost, price }
+                }, { merge: true });
+
+                // 3. Update Local State
+                allServices.push(newService);
+
+                // 4. Update UI
+                renderServices();
+                if (!selectors.configPanel.classList.contains('hidden')) {
+                    renderCostInputs();
+                }
+
+                toggleAddServiceModal();
+                selectors.addCustomServiceForm.reset();
+                selectors.customColorInput.value = '#3b82f6';
+                selectors.customColorHex.textContent = '#3B82F6';
+
+            } catch (error) {
+                console.error("Error agregando plataforma:", error);
+                alert("Hubo un error al guardar la plataforma.");
+            } finally {
+                btn.disabled = false;
+                btn.textContent = originalText;
+            }
+        };
+
+        selectors.addCustomServiceForm.addEventListener('submit', handleAddCustomService);
+
+        window.handleDeleteCustomService = (id) => {
+            showConfirmationModal(
+                'Eliminar Plataforma',
+                '¿Estás seguro de que deseas eliminar esta plataforma personalizada? Esta acción no se puede deshacer.',
+                async () => {
+                    try {
+                        // 1. Update Firestore Custom Services
+                        const serviceToDelete = allServices.find(s => s.id === id);
+                        if (!serviceToDelete) return;
+
+                        const customServicesDoc = await getDoc(doc(db, "config", "custom_services"));
+                        if (customServicesDoc.exists()) {
+                            let currentCustomServices = customServicesDoc.data().services || [];
+                            currentCustomServices = currentCustomServices.filter(s => s.id !== id);
+                            await setDoc(doc(db, "config", "custom_services"), { services: currentCustomServices });
+                        }
+
+                        // 2. Update Local State
+                        allServices = allServices.filter(s => s.id !== id);
+                        selectedServices.delete(id); // Deselect if selected
+
+                        // 3. Render
+                        renderServices();
+                        updateTicket();
+                        if (!selectors.configPanel.classList.contains('hidden')) {
+                            renderCostInputs();
+                        }
+
+                    } catch (error) {
+                        console.error("Error eliminando plataforma:", error);
+                        alert("Error al eliminar la plataforma.");
+                    }
+                }
+            );
+        };
     }
 
 
