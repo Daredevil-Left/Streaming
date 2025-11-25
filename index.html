@@ -2326,6 +2326,46 @@
             );
         };
 
+        window.handleDeleteAccount = async (accountId) => {
+            const account = allPlatformAccounts.find(acc => acc.id === accountId);
+            if (!account) {
+                console.error("Account not found for deletion:", accountId);
+                alert("Error: No se encontró la cuenta a eliminar.");
+                return;
+            }
+
+            // Check if any profile is 'Ocupado'
+            if (account.profiles && account.profiles.some(p => p.estado === 'Ocupado')) {
+                alert("No se puede eliminar la cuenta porque tiene perfiles en uso. Por favor, finalice o mueva las ventas asociadas antes de continuar.");
+                return;
+            }
+
+            // If all profiles are available, show confirmation modal
+            showConfirmationModal(
+                'Eliminar Cuenta',
+                '¿Estás seguro de que deseas eliminar esta cuenta? Todos sus perfiles serán borrados y esta acción es irreversible.',
+                async () => {
+                    try {
+                        // 1. Delete all profiles in the subcollection
+                        const profilesRef = collection(db, "platformAccounts", accountId, "Perfiles");
+                        const profilesSnapshot = await getDocs(profilesRef);
+                        const deletePromises = [];
+                        profilesSnapshot.forEach((doc) => {
+                            deletePromises.push(deleteDoc(doc.ref));
+                        });
+                        await Promise.all(deletePromises);
+
+                        // 2. Delete the main account document
+                        await deleteDoc(doc(db, "platformAccounts", accountId));
+
+                    } catch (error) {
+                        console.error("Error al eliminar la cuenta y sus perfiles:", error);
+                        alert("Error al eliminar la cuenta. Revisa la consola para más detalles.");
+                    }
+                }
+            );
+        };
+
         onSnapshot(collection(db, "sales"), (snapshot) => {
             allSales = snapshot.docs.map(d => ({
                 id: d.id,
