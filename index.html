@@ -1223,6 +1223,7 @@
             let allServices = [...defaultServices];
             let allSales = [], allExpenses = [], allPlatformAccounts = [], activePlatformFilter = 'Todos', currentSearchTerm = '', activeAccountFilter = '', activeStatusFilter = '';
             let selectedServices = new Map(), selectedMonths = 1;
+            let platformOrder = [];
 
             // Cargar configuración y servicios personalizados
             const loadCustomServices = async () => {
@@ -1804,8 +1805,22 @@
                     return acc;
                 }, {});
 
-                // 2. Iterate and render each group
-                for (const platform in groupedAccounts) {
+                // 2. Sort and Render
+                let sortedAccounts = Object.keys(groupedAccounts).sort();
+
+                if (platformOrder.length > 0) {
+                    sortedAccounts = sortedAccounts.sort((a, b) => {
+                        const indexA = platformOrder.indexOf(a);
+                        const indexB = platformOrder.indexOf(b);
+
+                        if (indexA !== -1 && indexB !== -1) return indexA - indexB;
+                        if (indexA !== -1) return -1;
+                        if (indexB !== -1) return 1;
+                        return 0; // Keep alphabetical for those not in order list
+                    });
+                }
+
+                for (const platform of sortedAccounts) {
                     const accounts = groupedAccounts[platform];
                     const platformStyle = platformStyles[platform] || platformStyles['Otro'];
 
@@ -1932,9 +1947,11 @@
                     }).join('');
 
                     const cardHtml = `
-        <div class="bg-white rounded-2xl shadow-lg mb-6 overflow-hidden border border-gray-200">
-            <div class="px-4 py-3 border-b border-gray-200" style="background-color: ${platformStyle.bg};">
-                <h3 class="text-lg font-semibold text-white">${platform}</h3>
+        <div class="bg-white rounded-2xl shadow-lg mb-6 overflow-hidden border border-gray-200 platform-card-container transition-transform duration-200"
+             draggable="true"
+             data-platform="${platform}">
+            <div class="px-4 py-3 border-b border-gray-200 cursor-move" style="background-color: ${platformStyle.bg};">
+                <h3 class="text-lg font-semibold text-white pointer-events-none select-none">${platform}</h3>
             </div>
             <ul class="divide-y divide-gray-200">
                 ${listItems}
@@ -1981,6 +1998,74 @@
                         }
                     });
                 });
+
+                // Attach Drag and Drop Event Listeners
+                let draggedItem = null;
+                const platformCards = accountsList.querySelectorAll('.platform-card-container');
+
+                platformCards.forEach(card => {
+                    card.addEventListener('dragstart', (e) => {
+                        draggedItem = card;
+                        e.dataTransfer.effectAllowed = 'move';
+                        e.dataTransfer.setData('text/plain', card.dataset.platform);
+                        setTimeout(() => card.style.opacity = '0.5', 0);
+                    });
+
+                    card.addEventListener('dragend', () => {
+                        draggedItem = null;
+                        card.style.opacity = '1';
+                        platformCards.forEach(c => c.style.borderTop = '');
+                    });
+
+                    card.addEventListener('dragover', (e) => {
+                        e.preventDefault();
+                        e.dataTransfer.dropEffect = 'move';
+
+                        const bounding = card.getBoundingClientRect();
+                        const offset = e.clientY - bounding.top + (e.clientX - bounding.left)/2; // Simple heuristic
+
+                        // We are keeping it simple for vertical list
+                        // Determine if we are dropping above or below
+                        // Actually, just preventing default is enough to allow drop
+                    });
+
+                    card.addEventListener('drop', async (e) => {
+                        e.preventDefault();
+                        if (draggedItem && draggedItem !== card) {
+                            // Find position
+                            const bounding = card.getBoundingClientRect();
+                            const offset = e.clientY - bounding.top;
+
+                            if (offset > bounding.height / 2) {
+                                card.after(draggedItem);
+                            } else {
+                                card.before(draggedItem);
+                            }
+
+                            // Save new order
+                            savePlatformOrder();
+                        }
+                    });
+                });
+            };
+
+            const savePlatformOrder = async () => {
+                const newOrder = [];
+                const cards = selectors.accountsList.querySelectorAll('.platform-card-container');
+                cards.forEach(card => {
+                    if (card.dataset.platform) {
+                        newOrder.push(card.dataset.platform);
+                    }
+                });
+
+                // Optimistic UI update already happened via DOM manipulation
+                // Now save to backend
+                try {
+                    await setDoc(doc(db, "config", "platform_order"), { order: newOrder });
+                } catch (error) {
+                    console.error("Error saving platform order:", error);
+                    alert("Error al guardar el orden de las plataformas.");
+                }
             };
 
             const populatePlatformAccountsDropdowns = (platform = null) => {
@@ -2396,6 +2481,14 @@
         }, (e) => {
             console.error("Error al cargar egresos:", e);
         });
+
+        onSnapshot(doc(db, "config", "platform_order"), (doc) => {
+            if (doc.exists()) {
+                platformOrder = doc.data().order || [];
+                renderPlatformAccounts();
+            }
+        });
+
         onSnapshot(collection(db, "platformAccounts"), async (snapshot) => {
             const accountsPromises = snapshot.docs.map(async (accountDoc) => {
                 const accountData = { id: accountDoc.id, ...accountDoc.data() };
