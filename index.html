@@ -527,8 +527,9 @@
 
                     <div class="bg-white rounded-2xl shadow-lg p-4">
                         <div
-                            class="hidden md:grid grid-cols-8 gap-4 font-semibold text-gray-600 border-b pb-3 mb-3 text-sm">
+                            class="hidden md:grid grid-cols-9 gap-4 font-semibold text-gray-600 border-b pb-3 mb-3 text-sm">
                             <div class="col-span-2">Cliente</div>
+                            <div>Vendedor</div>
                             <div>Plataforma</div>
                             <div>Vencimiento</div>
                             <div>Estado</div>
@@ -1118,28 +1119,73 @@
     <!-- Success Sale Modal -->
     <div id="success-sale-modal"
         class="modal fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 z-50 hidden opacity-0">
-        <div class="modal-content bg-white w-full max-w-xl rounded-2xl shadow-2xl p-6 transform scale-95 text-center border-4 border-violet-500 relative">
-            <div class="absolute top-0 left-0 right-0 h-2 bg-violet-500 rounded-t-lg"></div>
-            <h2 class="text-3xl font-bold text-gray-800 mb-4 mt-2">¡Venta Guardada!</h2>
-            <p class="text-gray-600 mb-6 text-lg">Copia los datos de la cuenta para enviarlos al cliente.</p>
+        <div class="modal-content bg-white w-full max-w-md rounded-2xl shadow-2xl overflow-hidden transform scale-95 transition-all">
+            <!-- Header -->
+            <div id="modal-header-bg" class="bg-gray-800 p-6 text-center transition-colors duration-300">
+                <div class="mx-auto bg-white w-16 h-16 rounded-full flex items-center justify-center shadow-md mb-2 p-2">
+                    <img id="modal-platform-logo" src="" class="w-10 h-10 object-contain" alt="Logo">
+                </div>
+                <h2 id="modal-platform-name" class="text-2xl font-bold text-white">Plataforma</h2>
+                <span class="text-white/80 text-sm font-medium">Suscripción Creada Exitosamente</span>
+            </div>
 
-            <textarea id="sale-success-message"
-                class="w-full h-48 p-4 border-2 border-violet-100 rounded-xl text-base font-mono mb-6 bg-violet-50 focus:ring-2 focus:ring-violet-500 focus:outline-none focus:border-violet-300"
-                readonly></textarea>
+            <!-- Body -->
+            <div class="p-6 space-y-4">
 
-            <div class="flex flex-col gap-3">
-                <button id="copy-sale-message-btn"
-                    class="bg-blue-600 text-white font-semibold py-3 rounded-lg hover:bg-blue-700 transition flex items-center justify-center shadow-md">
-                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3">
-                        </path>
-                    </svg>
+                <!-- Credential Box -->
+                <div class="bg-gray-50 rounded-xl p-4 border border-gray-100 space-y-3">
+                    <div class="flex items-center">
+                        <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center mr-3 flex-shrink-0">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                        </div>
+                        <div class="flex-grow min-w-0">
+                            <p class="text-xs text-gray-500 uppercase font-semibold">Correo</p>
+                            <p id="modal-email" class="text-gray-800 font-medium select-all truncate">correo@ejemplo.com</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center">
+                        <div class="w-8 h-8 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center mr-3 flex-shrink-0">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                        </div>
+                        <div class="flex-grow min-w-0">
+                            <p class="text-xs text-gray-500 uppercase font-semibold">Contraseña</p>
+                            <p id="modal-password" class="text-gray-800 font-medium select-all truncate">********</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Info Grid -->
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="bg-gray-50 p-3 rounded-xl border border-gray-100" id="modal-profile-container">
+                         <p class="text-xs text-gray-500 uppercase font-semibold mb-1">Perfil</p>
+                         <div class="flex items-center gap-2">
+                             <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                             <span id="modal-profile" class="font-bold text-gray-700 text-sm truncate">Perfil 1</span>
+                         </div>
+                    </div>
+                    <div class="bg-gray-50 p-3 rounded-xl border border-gray-100" id="modal-pin-container">
+                         <p class="text-xs text-gray-500 uppercase font-semibold mb-1">PIN</p>
+                         <div class="flex items-center gap-2">
+                             <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                             <span id="modal-pin" class="font-bold text-gray-700 text-sm">----</span>
+                         </div>
+                    </div>
+                </div>
+
+                <!-- Footer Text -->
+                <p class="text-xs text-center text-gray-400">
+                    ⚠️ Cuenta para 1 dispositivo. No compartir.
+                </p>
+
+            </div>
+
+            <!-- Footer Actions -->
+            <div class="p-4 bg-gray-50 border-t border-gray-100 flex gap-3">
+                <button id="close-success-modal-btn" class="flex-1 py-3 text-gray-600 font-semibold hover:bg-gray-100 rounded-xl transition">Cerrar</button>
+                <button id="copy-sale-message-btn" class="flex-1 py-3 bg-indigo-600 text-white font-semibold rounded-xl hover:bg-indigo-700 shadow-md transition flex items-center justify-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
                     Copiar Datos
-                </button>
-                <button id="close-success-modal-btn"
-                    class="text-gray-500 hover:text-gray-700 font-medium py-2 transition">
-                    Cerrar
                 </button>
             </div>
         </div>
@@ -1160,6 +1206,8 @@
         import { collection, addDoc, onSnapshot, doc, updateDoc, deleteDoc, getDocs, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
         import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { db, auth } from "./firebase-config.js";
+
+        let currentSeller = '';
 
         async function startApp() {
             document.getElementById('app').classList.remove('hidden');
@@ -1327,7 +1375,6 @@
                 customColorInput: document.getElementById('custom-color'),
                 customColorHex: document.getElementById('custom-color-hex'),
                 successSaleModal: document.getElementById('success-sale-modal'),
-                saleSuccessMessage: document.getElementById('sale-success-message'),
                 copySaleMessageBtn: document.getElementById('copy-sale-message-btn'),
                 closeSuccessModalBtn: document.getElementById('close-success-modal-btn'),
             };
@@ -1409,8 +1456,76 @@
                 return message;
             };
 
-            const openSuccessSaleModal = (message) => {
-                selectors.saleSuccessMessage.value = message;
+            const openSuccessSaleModal = (saleData, profileName) => {
+                // Populate Modal Data
+                const platformStyle = platformStyles[saleData.plataforma] || platformStyles['Otro'];
+
+                // Header Styling
+                const headerBg = document.getElementById('modal-header-bg');
+                headerBg.style.backgroundColor = platformStyle.bg;
+
+                // Platform Info
+                document.getElementById('modal-platform-name').textContent = saleData.plataforma;
+                const logoImg = document.getElementById('modal-platform-logo');
+                if (platformStyle.logo) {
+                    logoImg.src = platformStyle.logo;
+                    logoImg.classList.remove('hidden');
+                } else {
+                    logoImg.classList.add('hidden');
+                }
+
+                // Credentials
+                document.getElementById('modal-email').textContent = saleData.correo || 'No disponible';
+                document.getElementById('modal-password').textContent = saleData.contrasena || '********';
+
+                // Profile
+                const profileContainer = document.getElementById('modal-profile-container');
+                if (saleData.plataforma === 'Canva' || !profileName) {
+                    profileContainer.classList.add('hidden');
+                } else {
+                    profileContainer.classList.remove('hidden');
+                    document.getElementById('modal-profile').textContent = profileName;
+                }
+
+                // PIN
+                const pinContainer = document.getElementById('modal-pin-container');
+                if (!saleData.pin) {
+                    pinContainer.classList.add('hidden');
+                } else {
+                    pinContainer.classList.remove('hidden');
+                    document.getElementById('modal-pin').textContent = saleData.pin;
+                }
+
+                // Adjust grid if items are hidden
+                const grid = profileContainer.parentElement;
+                if (profileContainer.classList.contains('hidden') && pinContainer.classList.contains('hidden')) {
+                    grid.classList.add('hidden');
+                } else if (profileContainer.classList.contains('hidden') || pinContainer.classList.contains('hidden')) {
+                    grid.classList.remove('grid-cols-2');
+                    grid.classList.add('grid-cols-1');
+                } else {
+                    grid.classList.remove('grid-cols-1');
+                    grid.classList.add('grid-cols-2');
+                }
+
+                // Store data for copy button
+                selectors.copySaleMessageBtn.onclick = () => {
+                    const message = generateSaleMessage(saleData, profileName);
+                    navigator.clipboard.writeText(message).then(() => {
+                        const btn = selectors.copySaleMessageBtn;
+                        const originalHtml = btn.innerHTML;
+                        btn.innerHTML = `<svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>¡Copiado!`;
+                        btn.classList.remove('bg-indigo-600', 'hover:bg-indigo-700');
+                        btn.classList.add('bg-green-600', 'hover:bg-green-700');
+
+                        setTimeout(() => {
+                            btn.innerHTML = originalHtml;
+                            btn.classList.add('bg-indigo-600', 'hover:bg-indigo-700');
+                            btn.classList.remove('bg-green-600', 'hover:bg-green-700');
+                        }, 2000);
+                    });
+                };
+
                 selectors.successSaleModal.classList.remove('hidden');
                 setTimeout(() => {
                     selectors.successSaleModal.classList.remove('opacity-0');
@@ -1676,15 +1791,19 @@
                         const endDateForRelative = dayjs(sale.finPlan).endOf('day');
 
                         const row = document.createElement('div');
-                        row.className = `grid grid-cols-2 md:grid-cols-8 gap-4 items-center p-3 hover:bg-gray-50 transition-colors
+                        row.className = `grid grid-cols-2 md:grid-cols-9 gap-4 items-center p-3 hover:bg-gray-50 transition-colors
     duration-200 border-b last:border-b-0 border-gray-100 text-sm`;
                         row.innerHTML = `
     <div class="col-span-2 font-semibold text-gray-800">
         ${sale.cliente}
-        <div class="font-normal text-xs text-gray-500 md:hidden mt-1">
-            ${getPlatformHtml(sale.plataforma)} &middot; Vence: ${endDateForDisplay.format('DD/MM/YYYY')}
+        <div class="font-normal text-xs text-gray-500 md:hidden mt-1 flex flex-wrap gap-2 items-center">
+            <span>${getPlatformHtml(sale.plataforma)}</span>
+            ${sale.vendedor ? `<span class="bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded border border-gray-200">👤 ${sale.vendedor}</span>` : ''}
+            <span class="text-gray-400">&middot;</span>
+            <span>Vence: ${endDateForDisplay.format('DD/MM/YYYY')}</span>
         </div>
     </div>
+    <div class="hidden md:block text-gray-600">${sale.vendedor || '-'}</div>
     <div class="hidden md:block">${getPlatformHtml(sale.plataforma)}</div>
     <div class="hidden md:block">${endDateForDisplay.format('DD/MM/YYYY')} <span
             class="text-xs text-gray-500">(${endDateForRelative.fromNow()})</span></div>
@@ -2620,6 +2739,7 @@
                 pin: f.pin.value,
                 notas: f.notas.value,
                 metodoPago: f.metodoPago.value,
+                vendedor: currentSeller,
                 accountId,
                 profileId,
                 createdAt: new Date().toISOString(),
@@ -2644,8 +2764,7 @@
                 }
 
                 // Generate message and open modal
-                const message = generateSaleMessage(newSale, profileName);
-                openSuccessSaleModal(message);
+                openSuccessSaleModal(newSale, profileName);
 
                 f.reset();
                 f.metodoPago.value = ""; // Reiniciar el select
@@ -3362,21 +3481,7 @@
         selectors.closeAddServiceModalBtn.addEventListener('click', toggleAddServiceModal);
         selectors.cancelAddServiceBtn.addEventListener('click', toggleAddServiceModal);
 
-        selectors.copySaleMessageBtn.addEventListener('click', () => {
-            const text = selectors.saleSuccessMessage.value;
-            navigator.clipboard.writeText(text).then(() => {
-                const originalText = selectors.copySaleMessageBtn.innerHTML;
-                selectors.copySaleMessageBtn.innerHTML = `<svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>¡Copiado!`;
-                selectors.copySaleMessageBtn.classList.remove('bg-blue-600', 'hover:bg-blue-700');
-                selectors.copySaleMessageBtn.classList.add('bg-green-600', 'hover:bg-green-700');
-
-                setTimeout(() => {
-                    selectors.copySaleMessageBtn.innerHTML = originalText;
-                    selectors.copySaleMessageBtn.classList.add('bg-blue-600', 'hover:bg-blue-700');
-                    selectors.copySaleMessageBtn.classList.remove('bg-green-600', 'hover:bg-green-700');
-                }, 2000);
-            });
-        });
+        // (Listeners for copy button handled dynamically in openSuccessSaleModal now)
         selectors.closeSuccessModalBtn.addEventListener('click', closeSuccessSaleModal);
 
         selectors.customColorInput.addEventListener('input', (e) => {
@@ -3515,6 +3620,13 @@
 
         onAuthStateChanged(auth, (user) => {
             if (user) {
+                const email = user.email;
+                if (email === 'renzosamanamud@gmail.com') {
+                    currentSeller = 'Renzo';
+                } else if (email === 'chariph1007@gmail.com') {
+                    currentSeller = 'Charitsa';
+                }
+
                 // Start the app immediately to show the UI with skeleton loaders
                 startApp();
                 // Run the background check without blocking the UI
