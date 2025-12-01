@@ -409,8 +409,14 @@
                             <div><label for="cliente" class="block text-sm font-medium text-gray-600 mb-2">Nombre del
                                     Cliente</label><input type="text" id="cliente" name="cliente"
                                     class="w-full px-4 py-2 border border-gray-300 rounded-lg" required></div>
-                            <div><label for="celular" class="block text-sm font-medium text-gray-600 mb-2">Celular (WhatsApp)</label><input type="tel" id="celular" name="celular"
-                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="51999999999"></div>
+                            <div>
+                                <label for="celular" class="block text-sm font-medium text-gray-600 mb-2">Celular (WhatsApp)</label>
+                                <div class="flex gap-2">
+                                    <select id="celular-country" class="w-1/3 px-2 py-2 border border-gray-300 rounded-lg bg-white text-base md:text-lg"></select>
+                                    <input type="tel" id="celular" name="celular"
+                                    class="w-2/3 px-4 py-2 border border-gray-300 rounded-lg" placeholder="999999999">
+                                </div>
+                            </div>
                             <div><label for="plataforma"
                                     class="block text-sm font-medium text-gray-600 mb-2">Plataforma</label><select
                                     id="plataforma" name="plataforma"
@@ -451,8 +457,8 @@
                                 <label for="platform-account"
                                     class="block text-sm font-medium text-gray-600 mb-2">Cuenta Madre</label>
                                 <select id="platform-account" name="platform-account"
-                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white">
-                                    <option value="">Sin cuenta / Ingresar manualmente</option>
+                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white" required>
+                                    <option value="">Seleccione una cuenta madre</option>
                                 </select>
                             </div>
                             <div>
@@ -463,27 +469,6 @@
                                     required>
                                     <option value="">Selecciona una cuenta madre primero</option>
                                 </select>
-                            </div>
-                            <div class="manual-credentials">
-                                <label for="correo" class="block text-sm font-medium text-gray-600 mb-2">Correo</label>
-                                <input type="text" id="correo" name="correo"
-                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg">
-                            </div>
-                            <div class="manual-credentials relative">
-                                <label for="contrasena"
-                                    class="block text-sm font-medium text-gray-600 mb-2">Contraseña</label>
-                                <input type="password" id="contrasena" name="contrasena"
-                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg">
-                                <button type="button"
-                                    class="absolute inset-y-0 right-0 top-6 flex items-center px-3 text-gray-500"
-                                    onclick="togglePasswordVisibility('contrasena', this)">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                    </svg>
-                                </button>
                             </div>
                             <div><label for="pin" class="block text-sm font-medium text-gray-600 mb-2">PIN</label><input
                                     type="text" id="pin" name="pin"
@@ -831,9 +816,15 @@
                 <div><label for="edit-cliente" class="block text-sm font-medium text-gray-600 mb-2">Nombre del
                         Cliente</label><input type="text" id="edit-cliente" name="edit-cliente"
                         class="w-full px-4 py-2 border border-gray-300 rounded-lg" required></div>
-                <div><label for="edit-celular" class="block text-sm font-medium text-gray-600 mb-2">Celular
-                        (WhatsApp)</label><input type="tel" id="edit-celular" name="edit-celular"
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="51999999999"></div>
+                <div>
+                    <label for="edit-celular" class="block text-sm font-medium text-gray-600 mb-2">Celular
+                        (WhatsApp)</label>
+                    <div class="flex gap-2">
+                        <select id="edit-celular-country" class="w-1/3 px-2 py-2 border border-gray-300 rounded-lg bg-white text-base md:text-lg"></select>
+                        <input type="tel" id="edit-celular" name="edit-celular"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="999999999">
+                    </div>
+                </div>
                 <div><label for="edit-plataforma"
                         class="block text-sm font-medium text-gray-600 mb-2">Plataforma</label><select
                         id="edit-plataforma" name="edit-plataforma"
@@ -882,25 +873,6 @@
                         class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white">
                         <option value="">Selecciona un perfil</option>
                     </select>
-                </div>
-                <div class="edit-manual-credentials">
-                    <label for="edit-correo" class="block text-sm font-medium text-gray-600 mb-2">Correo</label>
-                    <input type="text" id="edit-correo" name="edit-correo"
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg">
-                </div>
-                <div class="edit-manual-credentials relative">
-                    <label for="edit-contrasena" class="block text-sm font-medium text-gray-600 mb-2">Contraseña</label>
-                    <input type="password" id="edit-contrasena" name="edit-contrasena"
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg">
-                    <button type="button" class="absolute inset-y-0 right-0 top-6 flex items-center px-3 text-gray-500"
-                        onclick="togglePasswordVisibility('edit-contrasena', this)">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                        </svg>
-                    </button>
                 </div>
                 <div><label for="edit-pin" class="block text-sm font-medium text-gray-600 mb-2">PIN</label><input
                         type="text" id="edit-pin" name="edit-pin"
@@ -1225,6 +1197,29 @@
                 { id: 'canva', name: 'Canva Pro', cost: 8.00, price: 8.00, type: 'annual', divider: 1, logo: 'https://upload.wikimedia.org/wikipedia/commons/0/08/Canva_icon_2021.svg', color: '#8D44AD' }
             ];
 
+            const countryCodes = [
+                { code: '+51', country: 'Perú', flag: '🇵🇪' },
+                { code: '+52', country: 'México', flag: '🇲🇽' },
+                { code: '+57', country: 'Colombia', flag: '🇨🇴' },
+                { code: '+54', country: 'Argentina', flag: '🇦🇷' },
+                { code: '+56', country: 'Chile', flag: '🇨🇱' },
+                { code: '+593', country: 'Ecuador', flag: '🇪🇨' },
+                { code: '+58', country: 'Venezuela', flag: '🇻🇪' },
+                { code: '+591', country: 'Bolivia', flag: '🇧🇴' },
+                { code: '+598', country: 'Uruguay', flag: '🇺🇾' },
+                { code: '+595', country: 'Paraguay', flag: '🇵🇾' },
+                { code: '+507', country: 'Panamá', flag: '🇵🇦' },
+                { code: '+506', country: 'Costa Rica', flag: '🇨🇷' },
+                { code: '+1', country: 'Rep. Dom.', flag: '🇩🇴' },
+                { code: '+504', country: 'Honduras', flag: '🇭🇳' },
+                { code: '+502', country: 'Guatemala', flag: '🇬🇹' },
+                { code: '+503', country: 'El Salvador', flag: '🇸🇻' },
+                { code: '+505', country: 'Nicaragua', flag: '🇳🇮' },
+                { code: '+55', country: 'Brasil', flag: '🇧🇷' },
+                { code: '+1', country: 'EE.UU.', flag: '🇺🇸' },
+                { code: '+34', country: 'España', flag: '🇪🇸' }
+            ];
+
             let allServices = [...defaultServices];
             let allSales = [], allExpenses = [], allPlatformAccounts = [], activePlatformFilter = 'Todos', currentSearchTerm = '', activeAccountFilter = '', activeStatusFilter = '';
             let selectedServices = new Map(), selectedMonths = 1;
@@ -1290,6 +1285,8 @@
                 statusFilter: document.getElementById('status-filter'),
                 profileSelect: document.getElementById('profile-select'),
                 editProfileSelect: document.getElementById('edit-profile-select'),
+                celularCountrySelect: document.getElementById('celular-country'),
+                editCelularCountrySelect: document.getElementById('edit-celular-country'),
                 accountPlatformButtons: document.getElementById('account-platform-buttons'),
                 editAccountModal: document.getElementById('edit-account-modal'),
                 editAccountForm: document.getElementById('edit-account-form'),
@@ -1334,6 +1331,14 @@
                 copySaleMessageBtn: document.getElementById('copy-sale-message-btn'),
                 closeSuccessModalBtn: document.getElementById('close-success-modal-btn'),
             };
+
+            const renderCountryOptions = () => {
+                const optionsHtml = countryCodes.map(c => `<option value="${c.code}">${c.flag} ${c.code}</option>`).join('');
+                selectors.celularCountrySelect.innerHTML = optionsHtml;
+                selectors.editCelularCountrySelect.innerHTML = optionsHtml;
+            };
+            renderCountryOptions();
+
             const getSaleStatus = (finPlan) => {
                 if (dayjs().isAfter(dayjs(finPlan).endOf('day'))) { return 'Vencido'; }
                 const today = dayjs().startOf('day');
@@ -2106,30 +2111,45 @@
                 }
             };
 
-            const populatePlatformAccountsDropdowns = (platform = null) => {
+            const populatePlatformAccountsDropdowns = (platform = null, targetSelect = selectors.platformAccountSelect, includeAccountId = null) => {
                 let accountsToDisplay = allPlatformAccounts;
                 if (platform && platform !== 'Otro') {
                     accountsToDisplay = allPlatformAccounts.filter(acc => acc.platform === platform);
+                }
+
+                // If a specific account MUST be included (e.g., during edit, even if platform doesn't match or to ensure visibility)
+                if (includeAccountId) {
+                    const includedAccount = allPlatformAccounts.find(a => a.id === includeAccountId);
+                    if (includedAccount && !accountsToDisplay.find(a => a.id === includeAccountId)) {
+                        accountsToDisplay.push(includedAccount);
+                    }
                 }
 
                 const createOption = (account) => `<option value="${account.id}">${account.platform} - ${account.email}</option>
         `;
                 const options = accountsToDisplay.map(createOption).join('');
 
-                // For the "Add Sale" form
-                selectors.platformAccountSelect.innerHTML = `<option value="">Sin cuenta / Ingresar manualmente</option>
-        ${options}`;
-
-                // For the "Edit Sale" form - we might need to show all for existing sales
-                const allOptions = allPlatformAccounts.map(createOption).join('');
-                selectors.editPlatformAccountSelect.innerHTML = `<option value="">Sin cuenta / Ingresar manualmente</option>
-        ${allOptions}`;
-
-                // For the general filter, always show all
-                selectors.accountFilter.innerHTML = `<option value="">Filtrar por cuenta...</option>${allOptions}`;
+                if (targetSelect === selectors.platformAccountSelect) {
+                    // Add Sale Form: No "Sin cuenta" option
+                    targetSelect.innerHTML = `<option value="">Seleccione una cuenta madre</option>${options}`;
+                } else if (targetSelect === selectors.editPlatformAccountSelect) {
+                    // Edit Sale Form: No "Sin cuenta" option
+                    targetSelect.innerHTML = `<option value="">Seleccione una cuenta madre</option>${options}`;
+                } else {
+                    // Filter dropdown (always shows all currently)
+                    // The filter dropdown logic in applyFiltersAndRender might need this?
+                    // No, populatePlatformAccountsDropdowns is mainly for forms.
+                    // The main account filter is populated separately below.
+                }
             };
 
-            const handlePlatformAccountChange = (select, emailInput, passwordInput, credentialsContainer, profileSelect) => {
+            // Separate population for the filter dropdown to always show all
+            const populateAccountFilterDropdown = () => {
+                 const options = allPlatformAccounts.map(account => `<option value="${account.id}">${account.platform} - ${account.email}</option>`).join('');
+                 selectors.accountFilter.innerHTML = `<option value="">Filtrar por cuenta...</option>${options}`;
+            };
+
+            const handlePlatformAccountChange = (select, profileSelect) => {
                 const accountId = select.value;
                 const account = allPlatformAccounts.find(a => a.id === accountId);
                 const profileContainer = profileSelect.parentElement;
@@ -2142,10 +2162,6 @@
 
 
                 if (account) {
-                    emailInput.value = account.email;
-                    passwordInput.value = account.password;
-                    credentialsContainer.forEach(el => el.classList.add('hidden'));
-
                     if (account.platform === 'Canva') {
                         profileContainer.classList.add('hidden');
                         profileSelect.required = false;
@@ -2169,9 +2185,6 @@
                         }
                     }
                 } else {
-                    emailInput.value = '';
-                    passwordInput.value = '';
-                    credentialsContainer.forEach(el => el.classList.remove('hidden'));
                     profileContainer.classList.remove('hidden');
                     profileSelect.required = true;
                 }
@@ -2182,15 +2195,43 @@
                 const f = selectors.editForm;
                 f['edit-sale-id'].value = sale.id;
                 f['edit-cliente'].value = sale.cliente;
-                f['edit-celular'].value = sale.celular || '';
+
+                // Parse Celular
+                if (sale.celular) {
+                    const countryCodeMatch = countryCodes.find(c => sale.celular.startsWith(c.code));
+                    if (countryCodeMatch) {
+                        selectors.editCelularCountrySelect.value = countryCodeMatch.code;
+                        f['edit-celular'].value = sale.celular.slice(countryCodeMatch.code.length);
+                    } else {
+                        // Default fallback if no code matches
+                        selectors.editCelularCountrySelect.value = '+51';
+                        f['edit-celular'].value = sale.celular;
+                    }
+                } else {
+                    selectors.editCelularCountrySelect.value = '+51';
+                    f['edit-celular'].value = '';
+                }
+
                 f['edit-precio'].value = sale.precio;
                 f['edit-inicioPlan'].value = sale.inicioPlan;
                 f['edit-finPlan'].value = sale.finPlan;
-                f['edit-correo'].value = sale.correo || '';
-                f['edit-contrasena'].value = sale.contrasena || '';
+
                 f['edit-pin'].value = sale.pin || '';
                 f['edit-notas'].value = sale.notas || '';
                 f['edit-metodoPago'].value = sale.metodoPago || '';
+
+                // Platform and Account Logic
+                const standardPlatforms = Array.from(f['edit-plataforma'].options).map(o => o.value);
+                let currentPlatform = sale.plataforma;
+                if (standardPlatforms.includes(sale.plataforma)) {
+                    f['edit-plataforma'].value = sale.plataforma;
+                } else {
+                    f['edit-plataforma'].value = 'Otro';
+                    selectors.editOtroPlataformaInput.value = sale.plataforma;
+                }
+
+                // Populate Account Dropdown with Filter + Current Included
+                populatePlatformAccountsDropdowns(currentPlatform, selectors.editPlatformAccountSelect, sale.accountId);
                 f['edit-platform-account'].value = sale.accountId || '';
 
                 // Populate and set the profile dropdown
@@ -2210,19 +2251,14 @@
                         selectors.editProfileSelect.innerHTML += `<option value="${currentProfile.id}">${currentProfile.nombre}
             (Ocupado)</option>`;
                     }
+                    selectors.editProfileSelect.disabled = false;
+                    selectors.editProfileSelect.classList.remove('bg-gray-200');
+                } else {
+                     selectors.editProfileSelect.disabled = true;
+                     selectors.editProfileSelect.classList.add('bg-gray-200');
                 }
                 f['edit-profile-select'].value = sale.profileId || '';
 
-
-                // El menú desplegable se actualiza directamente con .value
-
-                const standardPlatforms = Array.from(f['edit-plataforma'].options).map(o => o.value);
-                if (standardPlatforms.includes(sale.plataforma)) {
-                    f['edit-plataforma'].value = sale.plataforma;
-                } else {
-                    f['edit-plataforma'].value = 'Otro';
-                    selectors.editOtroPlataformaInput.value = sale.plataforma;
-                }
                 handlePlatformChange(selectors.editPlataformaSelect, selectors.editOtroPlataformaContainer,
                     selectors.editOtroPlataformaInput);
                 openModal();
@@ -2540,7 +2576,8 @@
             allPlatformAccounts = await Promise.all(accountsPromises);
 
             renderPlatformAccounts();
-            populatePlatformAccountsDropdowns();
+            populatePlatformAccountsDropdowns(selectors.plataformaSelect.value, selectors.platformAccountSelect);
+            populateAccountFilterDropdown();
             loadDashboardData();
         }, (e) => { console.error("Error al cargar cuentas:", e); });
         selectors.addSaleForm.addEventListener('submit', async (e) => {
@@ -2561,12 +2598,32 @@
                 return;
             }
 
+            // Get account details
+            const account = allPlatformAccounts.find(a => a.id === accountId);
+            const correo = account ? account.email : '';
+            const contrasena = account ? account.password : '';
+
+            // Construct full phone number
+            const countryCode = document.getElementById('celular-country').value;
+            const phoneNumber = f.celular.value.trim();
+            const fullCelular = phoneNumber ? `${countryCode}${phoneNumber}` : '';
+
             const newSale = {
-                cliente: f.cliente.value, celular: f.celular.value, plataforma: f.plataforma.value === 'Otro' ?
-                    selectors.otroPlataformaInput.value : f.plataforma.value, precio: parseFloat(f.precio.value),
-                inicioPlan: f.inicioPlan.value, finPlan: f.finPlan.value, correo: f.correo.value, contrasena:
-                    f.contrasena.value, pin: f.pin.value, notas: f.notas.value, metodoPago: f.metodoPago.value, accountId,
-                profileId, createdAt: new Date().toISOString(), estado: 'ACTIVO'
+                cliente: f.cliente.value,
+                celular: fullCelular,
+                plataforma: f.plataforma.value === 'Otro' ? selectors.otroPlataformaInput.value : f.plataforma.value,
+                precio: parseFloat(f.precio.value),
+                inicioPlan: f.inicioPlan.value,
+                finPlan: f.finPlan.value,
+                correo: correo,
+                contrasena: contrasena,
+                pin: f.pin.value,
+                notas: f.notas.value,
+                metodoPago: f.metodoPago.value,
+                accountId,
+                profileId,
+                createdAt: new Date().toISOString(),
+                estado: 'ACTIVO'
             };
 
             try {
@@ -2618,16 +2675,26 @@
                 await updateDoc(oldProfileRef, { estado: 'Disponible', fechaVencimiento: null, clienteId: null });
             }
 
+            // Construct full phone number for edit
+            const countryCode = document.getElementById('edit-celular-country').value;
+            const phoneNumber = f['edit-celular'].value.trim();
+            const fullCelular = phoneNumber ? `${countryCode}${phoneNumber}` : '';
+
+            // Get account details for edit
+            const account = allPlatformAccounts.find(a => a.id === newAccountId);
+            const correo = account ? account.email : '';
+            const contrasena = account ? account.password : '';
+
             const updatedSale = {
                 cliente: f['edit-cliente'].value,
-                celular: f['edit-celular'].value,
+                celular: fullCelular,
                 plataforma: f['edit-plataforma'].value === 'Otro' ? selectors.editOtroPlataformaInput.value :
                     f['edit-plataforma'].value,
                 precio: parseFloat(f['edit-precio'].value),
                 inicioPlan: f['edit-inicioPlan'].value,
                 finPlan: f['edit-finPlan'].value,
-                correo: f['edit-correo'].value,
-                contrasena: f['edit-contrasena'].value,
+                correo: correo,
+                contrasena: contrasena,
                 pin: f['edit-pin'].value,
                 notas: f['edit-notas'].value,
                 metodoPago: f['edit-metodoPago'].value,
@@ -2711,12 +2778,12 @@
         selectors.plataformaSelect.addEventListener('change', () => {
             handlePlatformChange(selectors.plataformaSelect, selectors.otroPlataformaContainer,
                 selectors.otroPlataformaInput);
-            populatePlatformAccountsDropdowns(selectors.plataformaSelect.value);
+            populatePlatformAccountsDropdowns(selectors.plataformaSelect.value, selectors.platformAccountSelect);
         });
         selectors.editPlataformaSelect.addEventListener('change', () => {
             handlePlatformChange(selectors.editPlataformaSelect, selectors.editOtroPlataformaContainer,
                 selectors.editOtroPlataformaInput);
-            // We don't filter the edit form dropdown to avoid issues with existing data
+            populatePlatformAccountsDropdowns(selectors.editPlataformaSelect.value, selectors.editPlatformAccountSelect, selectors.editForm['edit-sale-id'].value ? allSales.find(s => s.id === selectors.editForm['edit-sale-id'].value)?.accountId : null);
         });
         selectors.closeModalBtn.addEventListener('click', closeModal);
         selectors.cancelEditBtn.addEventListener('click', closeModal);
@@ -2804,13 +2871,9 @@
 
         document.getElementById('cancel-renewal-btn').addEventListener('click', closeRenewalModal);
         selectors.platformAccountSelect.addEventListener('change', () =>
-            handlePlatformAccountChange(selectors.platformAccountSelect, selectors.addSaleForm.correo,
-                selectors.addSaleForm.contrasena, document.querySelectorAll('.manual-credentials'),
-                selectors.profileSelect));
+            handlePlatformAccountChange(selectors.platformAccountSelect, selectors.profileSelect));
         selectors.editPlatformAccountSelect.addEventListener('change', () =>
-            handlePlatformAccountChange(selectors.editPlatformAccountSelect, selectors.editForm['edit-correo'],
-                selectors.editForm['edit-contrasena'], document.querySelectorAll('.edit-manual-credentials'),
-                selectors.editProfileSelect));
+            handlePlatformAccountChange(selectors.editPlatformAccountSelect, selectors.editProfileSelect));
         selectors.editAccountForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const form = selectors.editAccountForm;
