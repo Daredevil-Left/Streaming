@@ -21,5 +21,8 @@
   "bugs": {
     "url": "https://github.com/Daredevil-Left/Streaming/issues"
   },
-  "homepage": "https://github.com/Daredevil-Left/Streaming#readme"
+  "homepage": "https://github.com/Daredevil-Left/Streaming#readme",
+  "dependencies": {
+    "playwright": "^1.57.0"
+  }
 }
