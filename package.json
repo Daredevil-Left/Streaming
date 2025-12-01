@@ -23,6 +23,7 @@
   },
   "homepage": "https://github.com/Daredevil-Left/Streaming#readme",
   "dependencies": {
+    "@playwright/test": "^1.57.0",
     "playwright": "^1.57.0"
   }
 }
