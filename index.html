@@ -1122,7 +1122,6 @@
             <!-- Header -->
             <div id="modal-header-bg" class="bg-gray-800 p-6 text-center transition-colors duration-300">
                 <h2 id="modal-platform-name" class="text-2xl font-bold text-white">Plataforma</h2>
-                <span class="text-white/80 text-sm font-medium">Suscripción Creada Exitosamente</span>
             </div>
 
             <!-- Body -->
@@ -1131,7 +1130,7 @@
                 <!-- Credential Box -->
                 <div class="bg-gray-50 rounded-xl p-4 border border-gray-100 space-y-3">
                     <div class="flex items-center">
-                        <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center mr-3 flex-shrink-0">
+                        <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center mr-5 flex-shrink-0">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
                         </div>
                         <div class="flex-grow min-w-0">
@@ -1141,7 +1140,7 @@
                     </div>
 
                     <div class="flex items-center">
-                        <div class="w-8 h-8 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center mr-3 flex-shrink-0">
+                        <div class="w-8 h-8 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center mr-5 flex-shrink-0">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
                         </div>
                         <div class="flex-grow min-w-0">
@@ -1162,7 +1161,6 @@
                     <div class="bg-gray-50 p-3 rounded-xl border border-gray-100" id="modal-pin-container">
                          <p class="text-xs text-gray-500 uppercase font-semibold mb-1">PIN</p>
                          <div class="flex items-center gap-2">
-                             <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
                              <span id="modal-pin" class="font-bold text-gray-700 text-sm">----</span>
                          </div>
                     </div>
@@ -1460,7 +1458,9 @@
                 headerBg.style.backgroundColor = platformStyle.bg;
 
                 // Platform Info
-                document.getElementById('modal-platform-name').textContent = saleData.plataforma;
+            const platformNameEl = document.getElementById('modal-platform-name');
+            platformNameEl.textContent = saleData.plataforma;
+            platformNameEl.style.color = getContrastYIQ(platformStyle.bg);
 
                 // Credentials
                 document.getElementById('modal-email').textContent = saleData.correo || 'No disponible';
