@@ -411,11 +411,8 @@
                                     class="w-full px-4 py-2 border border-gray-300 rounded-lg" required></div>
                             <div>
                                 <label for="celular" class="block text-sm font-medium text-gray-600 mb-2">Celular (WhatsApp)</label>
-                                <div class="flex gap-2">
-                                    <select id="celular-country" class="w-1/3 px-2 py-2 border border-gray-300 rounded-lg bg-white text-base md:text-lg"></select>
-                                    <input type="tel" id="celular" name="celular"
-                                    class="w-2/3 px-4 py-2 border border-gray-300 rounded-lg" placeholder="999999999">
-                                </div>
+                                <input type="tel" id="celular" name="celular"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="999999999">
                             </div>
                             <div><label for="plataforma"
                                     class="block text-sm font-medium text-gray-600 mb-2">Plataforma</label><select
@@ -819,11 +816,8 @@
                 <div>
                     <label for="edit-celular" class="block text-sm font-medium text-gray-600 mb-2">Celular
                         (WhatsApp)</label>
-                    <div class="flex gap-2">
-                        <select id="edit-celular-country" class="w-1/3 px-2 py-2 border border-gray-300 rounded-lg bg-white text-base md:text-lg"></select>
-                        <input type="tel" id="edit-celular" name="edit-celular"
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="999999999">
-                    </div>
+                    <input type="tel" id="edit-celular" name="edit-celular"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="999999999">
                 </div>
                 <div><label for="edit-plataforma"
                         class="block text-sm font-medium text-gray-600 mb-2">Plataforma</label><select
@@ -1238,29 +1232,6 @@
                 { id: 'canva', name: 'Canva Pro', cost: 8.00, price: 8.00, type: 'annual', divider: 1, logo: 'https://upload.wikimedia.org/wikipedia/commons/0/08/Canva_icon_2021.svg', color: '#8D44AD' }
             ];
 
-            const countryCodes = [
-                { code: '+51', country: 'Perú', flag: '🇵🇪' },
-                { code: '+52', country: 'México', flag: '🇲🇽' },
-                { code: '+57', country: 'Colombia', flag: '🇨🇴' },
-                { code: '+54', country: 'Argentina', flag: '🇦🇷' },
-                { code: '+56', country: 'Chile', flag: '🇨🇱' },
-                { code: '+593', country: 'Ecuador', flag: '🇪🇨' },
-                { code: '+58', country: 'Venezuela', flag: '🇻🇪' },
-                { code: '+591', country: 'Bolivia', flag: '🇧🇴' },
-                { code: '+598', country: 'Uruguay', flag: '🇺🇾' },
-                { code: '+595', country: 'Paraguay', flag: '🇵🇾' },
-                { code: '+507', country: 'Panamá', flag: '🇵🇦' },
-                { code: '+506', country: 'Costa Rica', flag: '🇨🇷' },
-                { code: '+1', country: 'Rep. Dom.', flag: '🇩🇴' },
-                { code: '+504', country: 'Honduras', flag: '🇭🇳' },
-                { code: '+502', country: 'Guatemala', flag: '🇬🇹' },
-                { code: '+503', country: 'El Salvador', flag: '🇸🇻' },
-                { code: '+505', country: 'Nicaragua', flag: '🇳🇮' },
-                { code: '+55', country: 'Brasil', flag: '🇧🇷' },
-                { code: '+1', country: 'EE.UU.', flag: '🇺🇸' },
-                { code: '+34', country: 'España', flag: '🇪🇸' }
-            ];
-
             let allServices = [...defaultServices];
             let allSales = [], allExpenses = [], allPlatformAccounts = [], activePlatformFilter = 'Todos', currentSearchTerm = '', activeAccountFilter = '', activeStatusFilter = '';
             let selectedServices = new Map(), selectedMonths = 1;
@@ -1326,8 +1297,6 @@
                 statusFilter: document.getElementById('status-filter'),
                 profileSelect: document.getElementById('profile-select'),
                 editProfileSelect: document.getElementById('edit-profile-select'),
-                celularCountrySelect: document.getElementById('celular-country'),
-                editCelularCountrySelect: document.getElementById('edit-celular-country'),
                 accountPlatformButtons: document.getElementById('account-platform-buttons'),
                 editAccountModal: document.getElementById('edit-account-modal'),
                 editAccountForm: document.getElementById('edit-account-form'),
@@ -1371,13 +1340,6 @@
                 copySaleMessageBtn: document.getElementById('copy-sale-message-btn'),
                 closeSuccessModalBtn: document.getElementById('close-success-modal-btn'),
             };
-
-            const renderCountryOptions = () => {
-                const optionsHtml = countryCodes.map(c => `<option value="${c.code}">${c.flag} ${c.code}</option>`).join('');
-                selectors.celularCountrySelect.innerHTML = optionsHtml;
-                selectors.editCelularCountrySelect.innerHTML = optionsHtml;
-            };
-            renderCountryOptions();
 
             const getSaleStatus = (finPlan) => {
                 if (dayjs().isAfter(dayjs(finPlan).endOf('day'))) { return 'Vencido'; }
@@ -2305,17 +2267,9 @@
 
                 // Parse Celular
                 if (sale.celular) {
-                    const countryCodeMatch = countryCodes.find(c => sale.celular.startsWith(c.code));
-                    if (countryCodeMatch) {
-                        selectors.editCelularCountrySelect.value = countryCodeMatch.code;
-                        f['edit-celular'].value = sale.celular.slice(countryCodeMatch.code.length);
-                    } else {
-                        // Default fallback if no code matches
-                        selectors.editCelularCountrySelect.value = '+51';
-                        f['edit-celular'].value = sale.celular;
-                    }
+                    // Remove +51 prefix for display if present, otherwise show as is
+                    f['edit-celular'].value = sale.celular.startsWith('+51') ? sale.celular.slice(3) : sale.celular;
                 } else {
-                    selectors.editCelularCountrySelect.value = '+51';
                     f['edit-celular'].value = '';
                 }
 
@@ -2651,8 +2605,10 @@
             applyFiltersAndRender(activeSales);
             updateFinancialSummary();
             loadDashboardData();
+            selectors.loadingState.classList.add('hidden');
         }, (e) => {
             console.error("Error al cargar ventas:", e);
+            selectors.loadingState.classList.add('hidden');
         });
         onSnapshot(collection(db, "expenses"), (snapshot) => {
             allExpenses = snapshot.docs.map(d => ({
@@ -2711,9 +2667,11 @@
             const contrasena = account ? account.password : '';
 
             // Construct full phone number
-            const countryCode = document.getElementById('celular-country').value;
-            const phoneNumber = f.celular.value.trim();
-            const fullCelular = phoneNumber ? `${countryCode}${phoneNumber}` : '';
+            let phoneNumber = f.celular.value.trim();
+            if (phoneNumber && !phoneNumber.startsWith('+')) {
+                phoneNumber = '+51' + phoneNumber;
+            }
+            const fullCelular = phoneNumber;
 
             const newSale = {
                 cliente: f.cliente.value,
@@ -2783,9 +2741,11 @@
             }
 
             // Construct full phone number for edit
-            const countryCode = document.getElementById('edit-celular-country').value;
-            const phoneNumber = f['edit-celular'].value.trim();
-            const fullCelular = phoneNumber ? `${countryCode}${phoneNumber}` : '';
+            let phoneNumber = f['edit-celular'].value.trim();
+            if (phoneNumber && !phoneNumber.startsWith('+')) {
+                phoneNumber = '+51' + phoneNumber;
+            }
+            const fullCelular = phoneNumber;
 
             // Get account details for edit
             const account = allPlatformAccounts.find(a => a.id === newAccountId);
