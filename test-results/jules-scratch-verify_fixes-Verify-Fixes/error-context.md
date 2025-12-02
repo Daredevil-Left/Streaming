@@ -1,0 +1,74 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+  - generic [ref=e3]:
+    - img "Logo" [ref=e5]
+    - navigation [ref=e6]:
+      - link "Dashboard" [ref=e7] [cursor=pointer]:
+        - /url: "#"
+        - img [ref=e8]
+        - generic [ref=e9]: Dashboard
+      - link "Cuentas" [ref=e10] [cursor=pointer]:
+        - /url: "#"
+        - img [ref=e11]
+        - generic [ref=e13]: Cuentas
+      - link "Ventas" [active] [ref=e14] [cursor=pointer]:
+        - /url: "#"
+        - img [ref=e15]
+        - generic [ref=e16]: Ventas
+      - link "Finanzas" [ref=e17] [cursor=pointer]:
+        - /url: "#"
+        - img [ref=e18]
+        - generic [ref=e20]: Finanzas
+      - link "Precios" [ref=e21] [cursor=pointer]:
+        - /url: "#"
+        - img [ref=e22]
+        - generic [ref=e23]: Precios
+    - button "Cerrar Sesión" [ref=e25] [cursor=pointer]:
+      - img [ref=e26]
+      - generic [ref=e27]: Cerrar Sesión
+  - main [ref=e29]:
+    - generic [ref=e30]:
+      - heading "Dashboard" [level=1] [ref=e31]
+      - generic [ref=e32]:
+        - generic [ref=e33]:
+          - img [ref=e35]
+          - generic [ref=e36]:
+            - heading "Ventas de Hoy" [level=3] [ref=e37]
+            - paragraph [ref=e38]
+        - generic [ref=e39]:
+          - img [ref=e41]
+          - generic [ref=e42]:
+            - heading "Ventas del Mes" [level=3] [ref=e43]
+            - paragraph [ref=e44]
+        - generic [ref=e45]:
+          - img [ref=e47]
+          - generic [ref=e49]:
+            - heading "Clientes Activos" [level=3] [ref=e50]
+            - paragraph [ref=e51]
+      - generic [ref=e52]:
+        - generic [ref=e53]:
+          - generic [ref=e54]:
+            - heading "Alertas de Vencimiento" [level=3] [ref=e55]
+            - paragraph [ref=e57]: No hay vencimientos próximos.
+          - generic [ref=e58]:
+            - heading "Alertas de Cuentas" [level=3] [ref=e59]
+            - paragraph [ref=e61]: No hay cuentas por vencer.
+        - generic [ref=e62]:
+          - generic [ref=e63]:
+            - heading "Accesos Rápidos" [level=3] [ref=e64]
+            - generic [ref=e65]:
+              - button "Añadir Nueva Venta" [ref=e66] [cursor=pointer]:
+                - img [ref=e67]
+                - text: Añadir Nueva Venta
+              - button "Añadir Egreso" [ref=e69] [cursor=pointer]:
+                - img [ref=e70]
+                - text: Añadir Egreso
+          - generic [ref=e71]:
+            - heading "Resumen Financiero" [level=3] [ref=e72]
+            - generic [ref=e73]:
+              - generic [ref=e75]: "Ingresos:"
+              - generic [ref=e78]: "Egresos:"
+              - generic [ref=e81]: "Balance:"
+```
