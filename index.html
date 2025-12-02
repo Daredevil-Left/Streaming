@@ -2060,9 +2060,8 @@
 
                     const cardHtml = `
         <div class="bg-white rounded-2xl shadow-lg mb-6 overflow-hidden border border-gray-200 platform-card-container transition-transform duration-200"
-             draggable="true"
              data-platform="${platform}">
-            <div class="px-4 py-3 border-b border-gray-200 cursor-move" style="background-color: ${platformStyle.bg};">
+            <div class="px-4 py-3 border-b border-gray-200 cursor-move platform-card-header" draggable="true" style="background-color: ${platformStyle.bg};">
                 <h3 class="text-lg font-semibold text-white pointer-events-none select-none">${platform}</h3>
             </div>
             <ul class="divide-y divide-gray-200">
@@ -2116,14 +2115,16 @@
                 const platformCards = accountsList.querySelectorAll('.platform-card-container');
 
                 platformCards.forEach(card => {
-                    card.addEventListener('dragstart', (e) => {
+                    const header = card.querySelector('.platform-card-header');
+
+                    header.addEventListener('dragstart', (e) => {
                         draggedItem = card;
                         e.dataTransfer.effectAllowed = 'move';
                         e.dataTransfer.setData('text/plain', card.dataset.platform);
                         setTimeout(() => card.style.opacity = '0.5', 0);
                     });
 
-                    card.addEventListener('dragend', () => {
+                    header.addEventListener('dragend', () => {
                         draggedItem = null;
                         card.style.opacity = '1';
                         platformCards.forEach(c => c.style.borderTop = '');
