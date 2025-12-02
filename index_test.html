@@ -3608,25 +3608,12 @@
             }
         };
 
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                const email = user.email;
-                if (email === 'renzosamanamud@gmail.com') {
-                    currentSeller = 'Renzo';
-                } else if (email === 'chariph1007@gmail.com') {
-                    currentSeller = 'Charitsa';
-                }
-
-                // Start the app immediately to show the UI with skeleton loaders
-                startApp();
-                // Run the background check without blocking the UI
-                checkAndReleaseExpiredProfiles().catch(err => {
-                    console.error("Error checking expired profiles in background:", err);
-                });
-            } else {
-                window.location.href = 'login.html';
-            }
-        });
+        // MOCK AUTH for testing
+        setTimeout(() => {
+            console.log("Simulating auth...");
+            currentSeller = 'Renzo';
+            startApp();
+        }, 100);
         window.startApp = startApp;
 
         // Toast notification logic
