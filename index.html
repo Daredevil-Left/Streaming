@@ -412,9 +412,9 @@
                             <div>
                                 <label for="celular" class="block text-sm font-medium text-gray-600 mb-2">Celular (WhatsApp)</label>
                                 <div class="flex gap-2">
-                                    <select id="celular-country" class="w-1/3 px-2 py-2 border border-gray-300 rounded-lg bg-white text-base md:text-lg"></select>
+                                    <select id="celular-country" class="w-24 px-1 py-2 border border-gray-300 rounded-lg bg-white text-sm md:text-base"></select>
                                     <input type="tel" id="celular" name="celular"
-                                    class="w-2/3 px-4 py-2 border border-gray-300 rounded-lg" placeholder="999999999">
+                                    class="flex-1 min-w-0 px-4 py-2 border border-gray-300 rounded-lg" placeholder="999999999">
                                 </div>
                             </div>
                             <div><label for="plataforma"
@@ -820,9 +820,9 @@
                     <label for="edit-celular" class="block text-sm font-medium text-gray-600 mb-2">Celular
                         (WhatsApp)</label>
                     <div class="flex gap-2">
-                        <select id="edit-celular-country" class="w-1/3 px-2 py-2 border border-gray-300 rounded-lg bg-white text-base md:text-lg"></select>
+                        <select id="edit-celular-country" class="w-24 px-1 py-2 border border-gray-300 rounded-lg bg-white text-sm md:text-base"></select>
                         <input type="tel" id="edit-celular" name="edit-celular"
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="999999999">
+                        class="flex-1 min-w-0 px-4 py-2 border border-gray-300 rounded-lg" placeholder="999999999">
                     </div>
                 </div>
                 <div><label for="edit-plataforma"
@@ -2651,8 +2651,10 @@
             applyFiltersAndRender(activeSales);
             updateFinancialSummary();
             loadDashboardData();
+            selectors.loadingState.classList.add('hidden');
         }, (e) => {
             console.error("Error al cargar ventas:", e);
+            selectors.loadingState.classList.add('hidden');
         });
         onSnapshot(collection(db, "expenses"), (snapshot) => {
             allExpenses = snapshot.docs.map(d => ({
