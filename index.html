@@ -418,20 +418,7 @@
                                     class="block text-sm font-medium text-gray-600 mb-2">Plataforma</label><select
                                     id="plataforma" name="plataforma"
                                     class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white">
-                                    <option>Netflix</option>
-                                    <option>Spotify</option>
-                                    <option>Disney+</option>
-                                    <option>HBO Max</option>
-                                    <option>Amazon Prime Video</option>
-                                    <option>YouTube Premium</option>
-                                    <option>Movistar Play</option>
-                                    <option>Apple TV+</option>
-                                    <option>Crunchyroll</option>
-                                    <option>Canva</option>
-                                    <option>IPTV Premium</option>
-                                    <option>Vix+</option>
-                                    <option>Paramount+</option>
-                                    <option>Otro</option>
+                                    <option value="" disabled selected>Cargando...</option>
                                 </select></div>
                             <div id="otro-plataforma-container" class="hidden"><label for="otro-plataforma"
                                     class="block text-sm font-medium text-gray-600 mb-2">Especificar
@@ -823,20 +810,7 @@
                         class="block text-sm font-medium text-gray-600 mb-2">Plataforma</label><select
                         id="edit-plataforma" name="edit-plataforma"
                         class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white">
-                        <option>Netflix</option>
-                        <option>Spotify</option>
-                        <option>Disney+</option>
-                        <option>HBO Max</option>
-                        <option>Amazon Prime Video</option>
-                        <option>YouTube Premium</option>
-                                    <option>Movistar Play</option>
-                        <option>Apple TV+</option>
-                        <option>Crunchyroll</option>
-                        <option>Canva</option>
-                        <option>IPTV Premium</option>
-                        <option>Vix+</option>
-                        <option>Paramount+</option>
-                        <option>Otro</option>
+                        <option value="" disabled selected>Cargando...</option>
                     </select></div>
                 <div id="edit-otro-plataforma-container" class="hidden"><label for="edit-otro-plataforma"
                         class="block text-sm font-medium text-gray-600 mb-2">Especificar Plataforma</label><input
@@ -1209,7 +1183,6 @@
                 'HBO Max': { color: 'text-purple-600', bg: '#8A2BE2', logo: 'https://logo.clearbit.com/hbomax.com' },
                 'Amazon Prime Video': { color: 'text-blue-400', bg: '#00A8E1', logo: 'https://logo.clearbit.com/primevideo.com' },
                 'YouTube Premium': { color: 'text-red-500', bg: '#FF0000', logo: 'https://logo.clearbit.com/youtube.com' },
-                'Movistar Play': { color: 'text-blue-500', bg: '#019DF4', logo: 'https://logo.clearbit.com/movistar.com' },
                 'Apple TV+': { color: 'text-gray-800', bg: '#000000', logo: 'https://logo.clearbit.com/tv.apple.com' },
                 'Crunchyroll': { color: 'text-orange-500', bg: '#F47521', logo: 'https://logo.clearbit.com/crunchyroll.com' },
                 'Canva': { color: 'text-purple-500', bg: '#8D44AD', logo: 'https://logo.clearbit.com/canva.com' },
@@ -1278,6 +1251,7 @@
                 }
             };
             await loadCustomServices();
+            renderPlatformSelects();
 
             const selectors = {
                 addSaleForm: document.getElementById('add-sale-form'),
@@ -1645,6 +1619,19 @@
                     selectors.platformFilters.appendChild(btn);
                 });
             };
+
+            function renderPlatformSelects() {
+                const platforms = Object.keys(platformStyles).filter(p => p !== 'Otro').sort();
+                platforms.push('Otro');
+
+                const optionsHtml = platforms.map(p => `<option value="${p}">${p}</option>`).join('');
+
+                const addSaleSelect = document.getElementById('plataforma');
+                const editSaleSelect = document.getElementById('edit-plataforma');
+
+                if (addSaleSelect) addSaleSelect.innerHTML = optionsHtml;
+                if (editSaleSelect) editSaleSelect.innerHTML = optionsHtml;
+            }
 
             const renderAccountPlatformButtons = () => {
                 const platformNames = Object.keys(platformStyles).filter(p => p !== 'Otro');
@@ -3535,6 +3522,7 @@
                     renderCostInputs();
                 }
 
+                renderPlatformSelects();
                 toggleAddServiceModal();
                 selectors.addCustomServiceForm.reset();
                 selectors.customColorInput.value = '#3b82f6';
@@ -3578,6 +3566,7 @@
                         if (!selectors.configPanel.classList.contains('hidden')) {
                             renderCostInputs();
                         }
+                        renderPlatformSelects();
 
                     } catch (error) {
                         console.error("Error eliminando plataforma:", error);
