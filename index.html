@@ -424,7 +424,7 @@
                                     <option>HBO Max</option>
                                     <option>Amazon Prime Video</option>
                                     <option>YouTube Premium</option>
-                                    <option>Apple Music</option>
+                                    <option>Movistar Play</option>
                                     <option>Apple TV+</option>
                                     <option>Crunchyroll</option>
                                     <option>Canva</option>
@@ -829,7 +829,7 @@
                         <option>HBO Max</option>
                         <option>Amazon Prime Video</option>
                         <option>YouTube Premium</option>
-                        <option>Apple Music</option>
+                                    <option>Movistar Play</option>
                         <option>Apple TV+</option>
                         <option>Crunchyroll</option>
                         <option>Canva</option>
@@ -1209,7 +1209,7 @@
                 'HBO Max': { color: 'text-purple-600', bg: '#8A2BE2', logo: 'https://logo.clearbit.com/hbomax.com' },
                 'Amazon Prime Video': { color: 'text-blue-400', bg: '#00A8E1', logo: 'https://logo.clearbit.com/primevideo.com' },
                 'YouTube Premium': { color: 'text-red-500', bg: '#FF0000', logo: 'https://logo.clearbit.com/youtube.com' },
-                'Apple Music': { color: 'text-pink-500', bg: '#FA243C', logo: 'https://logo.clearbit.com/music.apple.com' },
+                'Movistar Play': { color: 'text-blue-500', bg: '#019DF4', logo: 'https://logo.clearbit.com/movistar.com' },
                 'Apple TV+': { color: 'text-gray-800', bg: '#000000', logo: 'https://logo.clearbit.com/tv.apple.com' },
                 'Crunchyroll': { color: 'text-orange-500', bg: '#F47521', logo: 'https://logo.clearbit.com/crunchyroll.com' },
                 'Canva': { color: 'text-purple-500', bg: '#8D44AD', logo: 'https://logo.clearbit.com/canva.com' },
@@ -1248,6 +1248,18 @@
                     if (customServicesDoc.exists()) {
                         const customServices = customServicesDoc.data().services || [];
                         allServices = [...allServices, ...customServices];
+
+                        // Merge into platformStyles
+                        customServices.forEach(s => {
+                            if (!platformStyles[s.name]) {
+                                platformStyles[s.name] = {
+                                    color: 'text-gray-800', // Default, handled by inline style in getPlatformHtml
+                                    bg: s.color,
+                                    logo: '',
+                                    isCustom: true
+                                };
+                            }
+                        });
                     }
 
                     // 3. Load Price Overrides
@@ -1351,7 +1363,13 @@
                 return 'Activo';
             };
             const formatCurrency = (amount) => `S/${(amount || 0).toFixed(2)}`;
-            const getPlatformHtml = (platformName) => { const style = platformStyles[platformName] || platformStyles['Otro']; return `<span class="font-bold ${style.color}">${platformName}</span>` };
+            const getPlatformHtml = (platformName) => {
+                const style = platformStyles[platformName] || platformStyles['Otro'];
+                if (style.isCustom) {
+                    return `<span class="font-bold" style="color: ${style.bg}">${platformName}</span>`;
+                }
+                return `<span class="font-bold ${style.color}">${platformName}</span>`;
+            };
             const getMetodoPagoBadge = (metodo) => {
                 const styles = { 'BCP': 'bg-orange-400 text-white', 'Falta pagar': 'bg-red-500 text-white', 'Gratis': 'bg-green-500 text-white' };
                 const style = styles[metodo] || 'bg-gray-400 text-white';
@@ -1666,6 +1684,19 @@
                     });
                     selectors.accountPlatformButtons.appendChild(btn);
                 });
+
+                // Add Custom Platform Button
+                const addPlatformBtn = document.createElement('button');
+                addPlatformBtn.type = 'button';
+                addPlatformBtn.className = `px-4 py-2 rounded-lg border-2 border-dashed border-gray-400 text-gray-500 font-bold text-sm transition-all duration-200 ease-in-out transform hover:scale-105 hover:border-gray-600 hover:text-gray-700 focus:outline-none flex items-center gap-1`;
+                addPlatformBtn.innerHTML = `
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                    Agregar
+                `;
+                addPlatformBtn.addEventListener('click', () => {
+                    toggleAddServiceModal();
+                });
+                selectors.accountPlatformButtons.appendChild(addPlatformBtn);
 
                 const otroBtn = document.createElement('button');
                 const otroStyle = platformStyles['Otro'];
@@ -3488,8 +3519,18 @@
                 // 3. Update Local State
                 allServices.push(newService);
 
+                // Update platformStyles for Accounts view
+                platformStyles[newService.name] = {
+                    color: 'text-gray-800',
+                    bg: newService.color,
+                    logo: '',
+                    isCustom: true
+                };
+
                 // 4. Update UI
                 renderServices();
+                renderAccountPlatformButtons(); // Refresh account buttons
+
                 if (!selectors.configPanel.classList.contains('hidden')) {
                     renderCostInputs();
                 }
