@@ -1510,7 +1510,7 @@
                 const recentIncome = allSales
                     .filter(sale => {
                         const date = sale.createdAt ? dayjs(sale.createdAt) : dayjs(sale.inicioPlan);
-                        return date.isAfter(dayjs().subtract(5, 'day').startOf('day'));
+                        return date.isAfter(dayjs().subtract(10, 'day').startOf('day'));
                     })
                     .sort((a, b) => {
                         const dateA = a.createdAt ? new Date(a.createdAt) : new Date(a.inicioPlan);
@@ -1538,7 +1538,7 @@
                     <div class="flex-grow min-w-0">
                         <p class="font-medium text-gray-800 truncate">${sale.plataforma} - ${sale.cliente}</p>
                         <p class="text-sm text-gray-500 truncate">${sale.correo || 'Cuenta no especificada'}</p>
-                        <p class="text-xs text-gray-400">${dateDisplay.format('DD [de] MMM, HH:mm')}</p>
+                        <p class="text-xs text-gray-400">${dateDisplay.format('DD [de] MMM, HH:mm')}${sale.vendedor ? ' • ' + sale.vendedor : ''}</p>
                     </div>
                     <div class="text-right mx-2 flex-shrink-0">
                         <p class="font-semibold text-green-600 text-base">${formatCurrency(sale.precio)}</p>
