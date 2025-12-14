@@ -2524,18 +2524,32 @@
                     selectors.profilesContentArea.innerHTML = `
             <div class="text-center p-8">
                 <p class="text-gray-600 mb-4">Esta cuenta aún no tiene perfiles configurados.</p>
-                <button id="create-profiles-btn" data-account-id="${accountId}"
-                    class="bg-teal-600 text-white font-semibold px-6 py-3 rounded-lg hover:bg-teal-700 transition">
-                    Crear 5 Perfiles Iniciales
-                </button>
+                <div id="initial-actions" class="flex flex-col gap-3 justify-center items-center">
+                    <button id="create-standard-profiles-btn" class="bg-teal-600 text-white font-semibold px-6 py-3 rounded-lg hover:bg-teal-700 transition w-full md:w-auto">
+                        Crear 5 Perfiles (Estándar)
+                    </button>
+                    <button id="show-custom-profiles-btn" class="text-teal-600 font-medium hover:text-teal-800 underline transition">
+                        Personalizar cantidad
+                    </button>
+                </div>
+                <div id="custom-profiles-form" class="hidden mt-4">
+                    <label class="block text-sm text-gray-600 mb-2">Cantidad de perfiles (Máx. 10):</label>
+                    <div class="flex gap-2 justify-center">
+                         <input type="number" id="custom-profile-qty" min="1" max="10" value="1" class="border border-gray-300 rounded-lg px-3 py-2 w-20 text-center">
+                         <button id="create-custom-profiles-btn" class="bg-teal-600 text-white font-semibold px-4 py-2 rounded-lg hover:bg-teal-700 transition">
+                            Crear
+                         </button>
+                    </div>
+                    <button id="cancel-custom-btn" class="text-sm text-gray-500 mt-2 hover:text-gray-700">Cancelar</button>
+                </div>
             </div>
             `;
-                    document.getElementById('create-profiles-btn').addEventListener('click', async (e) => {
-                        const btn = e.currentTarget;
+
+                    const createProfiles = async (qty, btn) => {
                         btn.disabled = true;
                         btn.textContent = 'Creando...';
 
-                        const newProfiles = await createInitialProfiles(accountId);
+                        const newProfiles = await createInitialProfiles(accountId, qty);
 
                         // Manually update the in-memory state
                         const accountIndex = allPlatformAccounts.findIndex(acc => acc.id === accountId);
@@ -2548,7 +2562,32 @@
 
                         // Refresh the modal content
                         await handleManageProfiles(accountId);
+                    };
+
+                    document.getElementById('create-standard-profiles-btn').addEventListener('click', (e) => {
+                        createProfiles(5, e.currentTarget);
                     });
+
+                    document.getElementById('show-custom-profiles-btn').addEventListener('click', () => {
+                        document.getElementById('initial-actions').classList.add('hidden');
+                        document.getElementById('custom-profiles-form').classList.remove('hidden');
+                    });
+
+                    document.getElementById('cancel-custom-btn').addEventListener('click', () => {
+                        document.getElementById('custom-profiles-form').classList.add('hidden');
+                        document.getElementById('initial-actions').classList.remove('hidden');
+                    });
+
+                    document.getElementById('create-custom-profiles-btn').addEventListener('click', (e) => {
+                        const qtyInput = document.getElementById('custom-profile-qty');
+                        const qty = parseInt(qtyInput.value);
+                        if (isNaN(qty) || qty < 1 || qty > 10) {
+                            alert('Por favor ingresa una cantidad válida (1-10).');
+                            return;
+                        }
+                        createProfiles(qty, e.currentTarget);
+                    });
+
                 } else {
                     let profilesHtml = '<ul class="space-y-3">';
                     const profiles = profilesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })).sort((a, b) =>
@@ -2591,14 +2630,27 @@
                 openProfilesModal();
             };
 
-        const createInitialProfiles = async (accountId) => {
+        const createInitialProfiles = async (accountId, count = 5) => {
             const profilesRef = collection(db, "platformAccounts", accountId, "Perfiles");
             const createdProfiles = [];
-            for (let i = 1; i <= 5; i++) {
+
+            // Limit count to 10 max
+            const safeCount = Math.min(Math.max(1, count), 10);
+
+            for (let i = 1; i <= safeCount; i++) {
+                let name = `Perfil ${i}`;
+                if (safeCount === 1) {
+                    name = "Perfil Único";
+                }
+
                 const profileDoc = {
-                    nombre: `Perfil ${i}`, estado: 'Disponible',
-                    fechaVencimiento: null, clienteId: null, pin: ''
-                }; const docRef = await addDoc(profilesRef, profileDoc);
+                    nombre: name,
+                    estado: 'Disponible',
+                    fechaVencimiento: null,
+                    clienteId: null,
+                    pin: ''
+                };
+                const docRef = await addDoc(profilesRef, profileDoc);
                 createdProfiles.push({ id: docRef.id, ...profileDoc });
             } return createdProfiles;
         }; const
