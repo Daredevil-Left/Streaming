@@ -24,6 +24,7 @@
   "homepage": "https://github.com/Daredevil-Left/Streaming#readme",
   "dependencies": {
     "@playwright/test": "^1.57.0",
+    "dayjs": "^1.11.19",
     "playwright": "^1.57.0"
   }
 }
