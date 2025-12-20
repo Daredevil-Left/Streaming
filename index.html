@@ -1574,22 +1574,43 @@
                         const isExpired = status === 'Vencido';
                         const isToday = status === 'Vence hoy';
 
-                        const borderColor = isExpired ? 'bg-red-500' : 'bg-yellow-500';
-                        const cardBg = isExpired ? 'bg-red-50' : 'bg-white';
+                        let gradientClass = '';
+                        let badgeClass = '';
+                        let dotClass = '';
+                        let textClass = '';
+                        let counterColor = '';
+                        let statusText = '';
 
-                        // Status Badge
-                        let statusBadgeHtml = '';
-                        let dateText = '';
+                        // Calculate days remaining/elapsed
+                        const diffDays = dayjs(sale.finPlan).endOf('day').diff(dayjs(), 'day');
+                        let daysDisplay = '';
+                        let daysLabel = 'Restante';
 
                         if (isExpired) {
-                             statusBadgeHtml = `<span class="inline-block px-2 py-0.5 rounded text-[10px] font-bold tracking-wide uppercase bg-red-100 text-red-600 border border-red-200">Vencido</span>`;
-                             dateText = dayjs(sale.finPlan).fromNow();
+                             gradientClass = 'bg-gradient-to-r from-red-500 to-pink-600';
+                             badgeClass = 'bg-red-50 border-red-100 text-red-600';
+                             dotClass = 'bg-red-500';
+                             textClass = 'text-red-600';
+                             counterColor = 'text-red-500';
+                             statusText = 'Vencido';
+                             daysDisplay = Math.abs(diffDays) + 'd';
+                             daysLabel = 'Hace';
                         } else if (isToday) {
-                             statusBadgeHtml = `<span class="inline-block px-2 py-0.5 rounded text-[10px] font-bold tracking-wide uppercase bg-red-100 text-red-600 border border-red-200">Hoy</span>`;
-                             dateText = 'Vence hoy';
+                             gradientClass = 'bg-gradient-to-r from-orange-400 to-amber-500';
+                             badgeClass = 'bg-orange-50 border-orange-100 text-orange-600';
+                             dotClass = 'bg-orange-500';
+                             textClass = 'text-orange-600';
+                             counterColor = 'text-orange-500';
+                             statusText = 'Hoy';
+                             daysDisplay = '0d';
                         } else {
-                             statusBadgeHtml = `<span class="inline-block px-2 py-0.5 rounded text-[10px] font-bold tracking-wide uppercase bg-yellow-100 text-yellow-700 border border-yellow-200">Próximo</span>`;
-                             dateText = dayjs(sale.finPlan).endOf('day').fromNow();
+                             gradientClass = 'bg-gradient-to-r from-yellow-400 to-orange-400';
+                             badgeClass = 'bg-yellow-50 border-yellow-100 text-yellow-700';
+                             dotClass = 'bg-yellow-500';
+                             textClass = 'text-yellow-700';
+                             counterColor = 'text-yellow-600';
+                             statusText = 'Próximo';
+                             daysDisplay = diffDays + 'd';
                         }
 
                         let motherAccountEmail = '';
@@ -1599,39 +1620,51 @@
                         }
 
                         const card = document.createElement('div');
-                        // Modern Card Design
-                        card.className = `relative group bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-300 border border-gray-100 overflow-hidden`;
+                        // Futuristic Minimalist Card Design
+                        card.className = `relative group bg-white rounded-2xl p-5 border border-gray-100 shadow-[0_2px_10px_-3px_rgba(0,0,0,0.05)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] transition-all duration-300 overflow-hidden`;
 
                         card.innerHTML = `
-                            <div class="absolute top-0 left-0 w-1.5 h-full ${borderColor}"></div>
-                            <div class="p-4 pl-5">
-                                <div class="flex justify-between items-start mb-2">
-                                    <div class="flex-grow min-w-0 pr-2">
-                                        <div class="flex items-center gap-2 mb-1">
-                                            ${statusBadgeHtml}
-                                            <span class="text-[10px] text-gray-400 font-medium ml-auto md:ml-0">${dayjs(sale.finPlan).format('DD MMM')}</span>
-                                        </div>
-                                        <h4 class="font-bold text-gray-800 text-lg truncate leading-tight mb-0.5" title="${sale.cliente}">${sale.cliente}</h4>
-                                        <div class="text-sm">${getPlatformHtml(sale.plataforma)}</div>
-                                        ${motherAccountEmail ? `
-                                        <div class="mt-1 text-gray-400 text-xs truncate font-medium group-hover:text-gray-500 transition-colors" title="${motherAccountEmail}">
-                                            ${motherAccountEmail}
-                                        </div>` : ''}
+                            <!-- Top Gradient Line -->
+                            <div class="absolute top-0 left-0 w-full h-1 ${gradientClass}"></div>
+
+                            <!-- Subtle Glow Background on Hover -->
+                            <div class="absolute inset-0 bg-gradient-to-br ${gradientClass} opacity-0 group-hover:opacity-[0.03] transition-opacity duration-500 pointer-events-none"></div>
+
+                            <div class="relative z-10 flex justify-between items-start mb-3">
+                                <!-- Left Side info -->
+                                <div class="flex-grow min-w-0 pr-3">
+                                    <!-- Minimalist Badge -->
+                                    <div class="inline-flex items-center gap-1.5 mb-2 px-2 py-0.5 rounded-full border ${badgeClass}">
+                                        <div class="w-1.5 h-1.5 rounded-full ${dotClass} ${isToday ? 'animate-pulse' : ''}"></div>
+                                        <span class="text-[10px] font-bold uppercase tracking-wider">${statusText}</span>
                                     </div>
-                                    <div class="flex flex-col items-end flex-shrink-0">
-                                        <span class="text-xs font-bold ${isExpired ? 'text-red-500' : 'text-yellow-600'} text-right leading-tight max-w-[80px]">${dateText}</span>
-                                    </div>
+
+                                    <h4 class="font-bold text-gray-800 text-lg truncate leading-tight tracking-tight mb-0.5" title="${sale.cliente}">${sale.cliente}</h4>
+                                    <div class="text-xs text-gray-400 font-medium">${getPlatformHtml(sale.plataforma)}</div>
+                                    ${motherAccountEmail ? `
+                                    <div class="mt-1.5 text-xs text-gray-300 group-hover:text-gray-400 transition-colors truncate font-mono" title="${motherAccountEmail}">
+                                        ${motherAccountEmail}
+                                    </div>` : ''}
                                 </div>
 
-                                <div class="grid grid-cols-2 gap-2 mt-4 pt-3 border-t border-gray-50">
-                                    <button onclick="window.goToSale('${sale.cliente}')"
-                                        class="flex items-center justify-center gap-1.5 w-full bg-indigo-50 hover:bg-indigo-100 text-indigo-600 text-xs font-bold py-2 rounded-lg transition-colors group-hover:bg-indigo-100">
-                                        Ir a Ventas
-                                    </button>
-                                    <button class="copy-alert-btn flex items-center justify-center w-full bg-gray-50 hover:bg-gray-100 text-gray-600 text-xs font-bold py-2 rounded-lg transition-colors border border-gray-200" data-sale-id="${sale.id}">
-                                        Copiar Aviso
-                                    </button>
+                                <!-- Right Side Counter -->
+                                <div class="text-right flex-shrink-0 bg-gray-50 rounded-lg p-2 border border-gray-100 group-hover:border-gray-200 transition-colors">
+                                     <span class="block text-2xl font-mono font-bold tracking-tighter leading-none ${counterColor}">${daysDisplay}</span>
+                                     <span class="text-[9px] text-gray-400 font-bold uppercase tracking-wide block mt-0.5">${daysLabel}</span>
                                 </div>
+                            </div>
+
+                            <!-- Actions -->
+                            <div class="flex items-center gap-3 mt-4 pt-3 border-t border-gray-50">
+                                <button onclick="window.goToSale('${sale.cliente}')"
+                                    class="flex-1 text-xs font-semibold text-gray-500 hover:text-indigo-600 transition-colors py-2 rounded-lg hover:bg-indigo-50 flex items-center justify-center gap-1 group/btn">
+                                    Ir a Ventas
+                                    <span class="group-hover/btn:translate-x-0.5 transition-transform">→</span>
+                                </button>
+                                <div class="w-px h-4 bg-gray-200"></div>
+                                <button class="copy-alert-btn flex-1 text-xs font-semibold text-gray-500 hover:text-gray-900 transition-colors py-2 rounded-lg hover:bg-gray-100" data-sale-id="${sale.id}">
+                                    Copiar Aviso
+                                </button>
                             </div>
                         `;
 
