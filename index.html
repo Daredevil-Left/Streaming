@@ -301,27 +301,6 @@
                         </div>
                         <div class="space-y-6 lg:col-span-1">
                             <div class="bg-white p-6 rounded-2xl shadow-lg">
-                                <h3 class="text-lg font-semibold text-gray-700 mb-4">Accesos Rápidos</h3>
-                                <div class="flex flex-col space-y-3">
-                                    <button id="quick-add-sale"
-                                        class="w-full flex items-center justify-center bg-blue-600 text-white font-semibold px-4 py-3 rounded-lg hover:bg-blue-700 transition">
-                                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-                                        </svg>
-                                        Añadir Nueva Venta
-                                    </button>
-                                    <button id="quick-add-expense"
-                                        class="w-full flex items-center justify-center bg-red-500 text-white font-semibold px-4 py-3 rounded-lg hover:bg-red-600 transition">
-                                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M18 12H6"></path>
-                                        </svg>
-                                        Añadir Egreso
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="bg-white p-6 rounded-2xl shadow-lg">
                                 <h3 class="text-lg font-semibold text-gray-700 mb-4">Resumen Financiero</h3>
                                 <div class="space-y-3">
                                     <div class="flex justify-between items-center"><span
@@ -1609,11 +1588,26 @@
                     selectors.alertsSection.className = 'grid grid-cols-1 md:grid-cols-2 gap-4';
                     expirationAlerts.forEach(sale => {
                         const status = getSaleStatus(sale.finPlan);
-                        const borderColor = status === 'Vencido' ? 'border-red-500' : 'border-yellow-500';
-                        const card = document.createElement('div');
-                        card.className = `bg-white p-4 rounded-lg shadow-md border-l-4 ${borderColor} flex flex-col justify-between`;
-                        let statusText, statusColor;
-                        if (status === 'Vencido') { statusText = 'Venció ' + dayjs(sale.finPlan).fromNow(); statusColor = 'text-red-600'; } else if (status === 'Vence hoy') { statusText = 'Vence hoy'; statusColor = 'text-yellow-700'; } else { statusText = 'Vence ' + dayjs(sale.finPlan).endOf('day').fromNow(); statusColor = 'text-yellow-600'; }
+                        const isExpired = status === 'Vencido';
+                        const isToday = status === 'Vence hoy';
+
+                        const borderColor = isExpired ? 'bg-red-500' : 'bg-yellow-500';
+                        const cardBg = isExpired ? 'bg-red-50' : 'bg-white';
+
+                        // Status Badge
+                        let statusBadgeHtml = '';
+                        let dateText = '';
+
+                        if (isExpired) {
+                             statusBadgeHtml = `<span class="inline-block px-2 py-0.5 rounded text-[10px] font-bold tracking-wide uppercase bg-red-100 text-red-600 border border-red-200">Vencido</span>`;
+                             dateText = dayjs(sale.finPlan).fromNow();
+                        } else if (isToday) {
+                             statusBadgeHtml = `<span class="inline-block px-2 py-0.5 rounded text-[10px] font-bold tracking-wide uppercase bg-red-100 text-red-600 border border-red-200">Hoy</span>`;
+                             dateText = 'Vence hoy';
+                        } else {
+                             statusBadgeHtml = `<span class="inline-block px-2 py-0.5 rounded text-[10px] font-bold tracking-wide uppercase bg-yellow-100 text-yellow-700 border border-yellow-200">Próximo</span>`;
+                             dateText = dayjs(sale.finPlan).endOf('day').fromNow();
+                        }
 
                         let motherAccountEmail = '';
                         if (sale.accountId) {
@@ -1621,41 +1615,48 @@
                             if (account) motherAccountEmail = account.email;
                         }
 
+                        const card = document.createElement('div');
+                        // Modern Card Design
+                        card.className = `relative group bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-300 border border-gray-100 overflow-hidden`;
+
                         card.innerHTML = `
-                            <div>
-                                <div class="flex justify-between items-start">
-                                    <div>
-                                        <p class="font-bold text-gray-800">${sale.cliente}</p>
-                                        <p class="text-sm text-gray-500">${getPlatformHtml(sale.plataforma)}</p>
-                                        ${motherAccountEmail ? `<p class="text-xs text-gray-400 mt-1 truncate max-w-[150px]" title="${motherAccountEmail}">📩 ${motherAccountEmail}</p>` : ''}
+                            <div class="absolute top-0 left-0 w-1.5 h-full ${borderColor}"></div>
+                            <div class="p-4 pl-5">
+                                <div class="flex justify-between items-start mb-2">
+                                    <div class="flex-grow min-w-0 pr-2">
+                                        <div class="flex items-center gap-2 mb-1">
+                                            ${statusBadgeHtml}
+                                            <span class="text-[10px] text-gray-400 font-medium ml-auto md:ml-0">${dayjs(sale.finPlan).format('DD MMM')}</span>
+                                        </div>
+                                        <h4 class="font-bold text-gray-800 text-lg truncate leading-tight mb-0.5" title="${sale.cliente}">${sale.cliente}</h4>
+                                        <div class="text-sm">${getPlatformHtml(sale.plataforma)}</div>
+                                        ${motherAccountEmail ? `
+                                        <div class="flex items-center gap-1.5 mt-2 text-gray-400 text-xs truncate group-hover:text-gray-500 transition-colors" title="${motherAccountEmail}">
+                                            <svg class="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                                            <span class="truncate font-medium">${motherAccountEmail}</span>
+                                        </div>` : ''}
                                     </div>
-                                    <div class="text-right">
-                                        <p class="font-semibold text-sm ${statusColor}">${statusText}</p>
-                                        <p class="text-xs text-gray-500">${dayjs(sale.finPlan).format('DD [de] MMMM')}</p>
+                                    <div class="flex flex-col items-end flex-shrink-0">
+                                        <span class="text-xs font-bold ${isExpired ? 'text-red-500' : 'text-yellow-600'} text-right leading-tight max-w-[80px]">${dateText}</span>
                                     </div>
                                 </div>
-                            </div>`;
 
-                        const actionsDiv = document.createElement('div');
-                        actionsDiv.className = "mt-4 flex justify-end gap-2";
-
-                        const goToSaleBtn = document.createElement('button');
-                        goToSaleBtn.className = "bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-xs font-semibold py-1 px-3 rounded-md transition-colors";
-                        goToSaleBtn.textContent = "Ir a Ventas";
-                        goToSaleBtn.onclick = () => window.goToSale(sale.cliente);
-
-                        const copyBtn = document.createElement('button');
-                        copyBtn.className = "copy-alert-btn bg-gray-200 hover:bg-gray-300 text-gray-700 text-xs font-semibold py-1 px-3 rounded-md transition-colors";
-                        copyBtn.textContent = "Copiar Aviso";
-                        copyBtn.dataset.saleId = sale.id;
-
-                        actionsDiv.appendChild(goToSaleBtn);
-                        actionsDiv.appendChild(copyBtn);
-                        card.appendChild(actionsDiv);
+                                <div class="grid grid-cols-2 gap-2 mt-4 pt-3 border-t border-gray-50">
+                                    <button onclick="window.goToSale('${sale.cliente}')"
+                                        class="flex items-center justify-center gap-1.5 w-full bg-indigo-50 hover:bg-indigo-100 text-indigo-600 text-xs font-bold py-2 rounded-lg transition-colors group-hover:bg-indigo-100">
+                                        Ir a Ventas
+                                    </button>
+                                    <button class="copy-alert-btn flex items-center justify-center gap-1.5 w-full bg-gray-50 hover:bg-gray-100 text-gray-600 text-xs font-bold py-2 rounded-lg transition-colors border border-gray-200" data-sale-id="${sale.id}">
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
+                                        Copiar
+                                    </button>
+                                </div>
+                            </div>
+                        `;
 
                         selectors.alertsSection.appendChild(card);
                     });
-                } else { selectors.alertsSection.className = 'space-y-3'; selectors.alertsSection.innerHTML = '<p class="text-gray-500">No hay alertas de vencimiento.</p>'; }
+                } else { selectors.alertsSection.className = 'space-y-3'; selectors.alertsSection.innerHTML = '<div class="bg-gray-50 rounded-xl p-8 text-center border border-gray-100"><p class="text-gray-400 text-sm font-medium">✨ Todo en orden. No hay vencimientos próximos.</p></div>'; }
                 const totalIngresos = allSales.filter(s => s.metodoPago !== 'Falta pagar').reduce((sum, sale) => sum + (sale.precio || 0), 0);
                 const totalEgresos = allExpenses.reduce((sum, expense) => sum + (expense.amount || 0), 0);
                 const balance = totalIngresos - totalEgresos;
@@ -3187,13 +3188,6 @@
         document.getElementById('nav-dashboard').click();
 
 
-        // Quick Access button listeners
-        document.getElementById('quick-add-sale').addEventListener('click', () => {
-            document.getElementById('nav-ventas').click();
-        });
-        document.getElementById('quick-add-expense').addEventListener('click', () => {
-            document.getElementById('nav-finanzas').click();
-        });
 
 
         // --- Price Calculator Logic ---
