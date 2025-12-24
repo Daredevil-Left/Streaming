@@ -291,7 +291,7 @@
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
                         <!-- PIN Search -->
                         <div class="bg-white p-6 rounded-2xl shadow-lg tilt-card">
-                            <h3 class="text-lg font-semibold text-gray-700 mb-4">Buscador de PIN</h3>
+                            <h3 class="text-lg font-semibold text-gray-700 mb-4">Buscar Perfil</h3>
                             <div class="relative">
                                 <input type="text" id="pin-search-input" placeholder="Ingrese nombre del cliente..."
                                     class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500">
@@ -1376,7 +1376,7 @@
                 });
             };
 
-            // PIN Search Logic
+            // Profile Search Logic
             selectors.pinSearchInput.addEventListener('input', (e) => {
                 const term = e.target.value.toLowerCase().trim();
                 const resultContainer = selectors.pinSearchResult;
@@ -1400,20 +1400,30 @@
                 resultContainer.classList.remove('hidden');
                 matches.forEach(sale => {
                     const item = document.createElement('div');
-                    item.className = 'p-3 bg-white border border-gray-200 rounded-lg shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2';
+                    item.className = 'p-3 bg-white border border-gray-200 rounded-lg shadow-sm flex justify-between items-center gap-2';
 
-                    const pinDisplay = sale.pin ? `<span class="font-mono font-bold text-indigo-600 bg-indigo-50 px-2 py-1 rounded select-all">${sale.pin}</span>` : `<span class="text-gray-400 text-xs italic">Sin PIN</span>`;
+                    let profileName = null;
+                    if (sale.accountId && sale.profileId) {
+                        const account = allPlatformAccounts.find(a => a.id === sale.accountId);
+                        if (account && account.profiles) {
+                            const profile = account.profiles.find(p => p.id === sale.profileId);
+                            if (profile) profileName = profile.nombre;
+                        }
+                    }
 
                     item.innerHTML = `
-                        <div>
-                            <p class="font-bold text-gray-800 text-sm">${sale.cliente}</p>
+                        <div class="flex-grow min-w-0">
+                            <p class="font-bold text-gray-800 text-sm truncate">${sale.cliente}</p>
                             <p class="text-xs text-gray-500">${getPlatformHtml(sale.plataforma)}</p>
                         </div>
-                        <div class="flex items-center gap-2">
-                             <span class="text-xs text-gray-500 uppercase tracking-wide">PIN:</span>
-                             ${pinDisplay}
-                        </div>
                     `;
+
+                    const viewBtn = document.createElement('button');
+                    viewBtn.className = 'bg-indigo-50 text-indigo-600 hover:bg-indigo-100 hover:text-indigo-800 px-3 py-1.5 rounded-md text-xs font-bold transition-colors flex-shrink-0';
+                    viewBtn.textContent = 'Ver Datos';
+                    viewBtn.onclick = () => openSuccessSaleModal(sale, profileName);
+
+                    item.appendChild(viewBtn);
                     resultContainer.appendChild(item);
                 });
             });
