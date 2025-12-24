@@ -287,6 +287,32 @@
                         </div>
                     </div>
 
+                    <!-- Search PIN and Available Accounts -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                        <!-- PIN Search -->
+                        <div class="bg-white p-6 rounded-2xl shadow-lg tilt-card">
+                            <h3 class="text-lg font-semibold text-gray-700 mb-4">Buscador de PIN</h3>
+                            <div class="relative">
+                                <input type="text" id="pin-search-input" placeholder="Ingrese nombre del cliente..."
+                                    class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500">
+                                <svg class="w-5 h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                </svg>
+                            </div>
+                            <div id="pin-search-result" class="mt-4 space-y-2 hidden max-h-48 overflow-y-auto">
+                                <!-- Result will be injected here -->
+                            </div>
+                        </div>
+
+                        <!-- Available Accounts -->
+                        <div class="bg-white p-6 rounded-2xl shadow-lg tilt-card">
+                            <h3 class="text-lg font-semibold text-gray-700 mb-4">Perfiles Disponibles</h3>
+                            <div id="available-accounts-grid" class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                                <p class="text-gray-500 col-span-full">Cargando disponibilidad...</p>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Alerts and Quick Access -->
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
                         <div class="bg-white p-6 rounded-2xl shadow-lg tilt-card">
@@ -1299,7 +1325,98 @@
                 successSaleModal: document.getElementById('success-sale-modal'),
                 copySaleMessageBtn: document.getElementById('copy-sale-message-btn'),
                 closeSuccessModalBtn: document.getElementById('close-success-modal-btn'),
+                // New Selectors for PIN Search and Available Accounts
+                pinSearchInput: document.getElementById('pin-search-input'),
+                pinSearchResult: document.getElementById('pin-search-result'),
+                availableAccountsGrid: document.getElementById('available-accounts-grid'),
             };
+
+            const renderAvailableAccounts = () => {
+                const availability = {};
+
+                // Initialize counts for all platforms to 0
+                Object.keys(platformStyles).forEach(p => {
+                    if (p !== 'Otro') availability[p] = 0;
+                });
+
+                allPlatformAccounts.forEach(account => {
+                    if (account.platform === 'Canva') return; // Skip Canva as it doesn't have standard profile management
+
+                    if (account.profiles && Array.isArray(account.profiles)) {
+                        const availableCount = account.profiles.filter(p => p.estado === 'Disponible').length;
+                        const platform = account.platform || 'Otro';
+                        availability[platform] = (availability[platform] || 0) + availableCount;
+                    }
+                });
+
+                selectors.availableAccountsGrid.innerHTML = '';
+
+                // Sort platforms: Prioritize those with availability, then alphabetical
+                const sortedPlatforms = Object.keys(availability).filter(p => availability[p] > 0).sort();
+
+                if (sortedPlatforms.length === 0) {
+                     selectors.availableAccountsGrid.innerHTML = '<p class="text-gray-500 col-span-full text-sm">No hay perfiles disponibles.</p>';
+                     return;
+                }
+
+                sortedPlatforms.forEach(platform => {
+                    const count = availability[platform];
+                    const style = platformStyles[platform] || platformStyles['Otro'];
+
+                    const badge = document.createElement('div');
+                    badge.className = 'flex items-center justify-between p-3 rounded-lg border shadow-sm bg-white';
+                    // Inline styles for brand color border or text
+                    badge.style.borderLeft = `4px solid ${style.bg}`;
+
+                    badge.innerHTML = `
+                        <span class="font-semibold text-gray-700 text-sm truncate mr-2" title="${platform}">${platform}</span>
+                        <span class="bg-green-100 text-green-800 text-xs font-bold px-2 py-1 rounded-full">${count}</span>
+                    `;
+                    selectors.availableAccountsGrid.appendChild(badge);
+                });
+            };
+
+            // PIN Search Logic
+            selectors.pinSearchInput.addEventListener('input', (e) => {
+                const term = e.target.value.toLowerCase().trim();
+                const resultContainer = selectors.pinSearchResult;
+                resultContainer.innerHTML = '';
+
+                if (term.length === 0) {
+                    resultContainer.classList.add('hidden');
+                    return;
+                }
+
+                const matches = allSales.filter(sale =>
+                    sale.cliente.toLowerCase().includes(term) && sale.estado !== 'ARCHIVADO'
+                );
+
+                if (matches.length === 0) {
+                    resultContainer.classList.remove('hidden');
+                    resultContainer.innerHTML = '<p class="text-gray-500 text-sm">No se encontraron resultados.</p>';
+                    return;
+                }
+
+                resultContainer.classList.remove('hidden');
+                matches.forEach(sale => {
+                    const item = document.createElement('div');
+                    item.className = 'p-3 bg-white border border-gray-200 rounded-lg shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2';
+
+                    const pinDisplay = sale.pin ? `<span class="font-mono font-bold text-indigo-600 bg-indigo-50 px-2 py-1 rounded select-all">${sale.pin}</span>` : `<span class="text-gray-400 text-xs italic">Sin PIN</span>`;
+
+                    item.innerHTML = `
+                        <div>
+                            <p class="font-bold text-gray-800 text-sm">${sale.cliente}</p>
+                            <p class="text-xs text-gray-500">${getPlatformHtml(sale.plataforma)}</p>
+                        </div>
+                        <div class="flex items-center gap-2">
+                             <span class="text-xs text-gray-500 uppercase tracking-wide">PIN:</span>
+                             ${pinDisplay}
+                        </div>
+                    `;
+                    resultContainer.appendChild(item);
+                });
+            });
 
             const getSaleStatus = (finPlan) => {
                 if (dayjs().isAfter(dayjs(finPlan).endOf('day'))) { return 'Vencido'; }
@@ -2754,6 +2871,7 @@
             allPlatformAccounts = await Promise.all(accountsPromises);
 
             renderPlatformAccounts();
+            renderAvailableAccounts();
             populatePlatformAccountsDropdowns(selectors.plataformaSelect.value, selectors.platformAccountSelect);
             populateAccountFilterDropdown();
             loadDashboardData();
