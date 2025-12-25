@@ -1697,7 +1697,7 @@
                 }).filter(sale => {
                     const expirationDate = dayjs(sale.finPlan).startOf('day');
                     const diffDays = expirationDate.diff(today, 'day');
-                    return diffDays <= 3;
+                    return diffDays <= 2;
                 }).sort((a, b) => new Date(a.finPlan) - new Date(b.finPlan));
                 selectors.alertsSection.innerHTML = '';
                 if (expirationAlerts.length > 0) {
