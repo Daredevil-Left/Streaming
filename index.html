@@ -141,6 +141,26 @@
         transform-style: preserve-3d;
         will-change: transform;
     }
+
+    /* Masonry Layout Support */
+    #contenedor-cuentas-agrupadas {
+        column-count: 1;
+        column-gap: 1.5rem;
+    }
+
+    @media (min-width: 1024px) {
+        #contenedor-cuentas-agrupadas {
+            column-count: 3;
+        }
+    }
+
+    .break-inside-avoid {
+        break-inside: avoid;
+        page-break-inside: avoid;
+        -webkit-column-break-inside: avoid;
+        display: inline-block;
+        width: 100%;
+    }
 </style>
 </head>
 
@@ -388,7 +408,7 @@
                             </form>
                         </div>
                     </div>
-                    <div id="contenedor-cuentas-agrupadas" class="grid grid-cols-1 lg:grid-cols-3 gap-6 max-w-7xl mx-auto"></div>
+                    <div id="contenedor-cuentas-agrupadas" class="max-w-7xl mx-auto"></div>
                 </div>
 
                 <!-- Ventas View -->
@@ -2254,7 +2274,7 @@
                     }).join('');
 
                     const cardHtml = `
-        <div class="bg-white rounded-2xl shadow-lg mb-6 overflow-hidden border border-gray-200 platform-card-container transition-transform duration-200"
+        <div class="bg-white rounded-2xl shadow-lg mb-6 overflow-hidden border border-gray-200 platform-card-container transition-transform duration-200 break-inside-avoid"
              data-platform="${platform}">
             <div class="px-4 py-3 border-b border-gray-200 cursor-move platform-card-header" draggable="true" style="background-color: ${platformStyle.bg};">
                 <h3 class="text-lg font-semibold text-white pointer-events-none select-none">${platform}</h3>
