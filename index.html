@@ -141,6 +141,26 @@
         transform-style: preserve-3d;
         will-change: transform;
     }
+
+    /* Masonry Layout Support */
+    #contenedor-cuentas-agrupadas {
+        column-count: 1;
+        column-gap: 1.5rem;
+    }
+
+    @media (min-width: 1024px) {
+        #contenedor-cuentas-agrupadas {
+            column-count: 3;
+        }
+    }
+
+    .break-inside-avoid {
+        break-inside: avoid;
+        page-break-inside: avoid;
+        -webkit-column-break-inside: avoid;
+        display: inline-block;
+        width: 100%;
+    }
 </style>
 </head>
 
@@ -335,7 +355,7 @@
                 <!-- Cuentas View -->
                 <div id="cuentas-view" class="view">
                     <h1 class="text-2xl md:text-3xl font-bold text-gray-800 mb-6 md:mb-8 px-2 md:px-0">Cuentas</h1>
-                    <div class="bg-white p-3 md:p-6 rounded-2xl shadow mb-8 max-w-5xl mx-auto">
+                    <div class="bg-white p-3 md:p-6 rounded-2xl shadow mb-8 max-w-7xl mx-auto">
                         <h2 class="text-xl md:text-2xl font-semibold text-gray-700 mb-4 md:mb-6">Añadir Cuenta de Plataforma</h2>
                         <div id="collapsible-accounts-content" class="mt-6">
                             <form id="add-account-form" class="space-y-6 mb-6">
@@ -386,9 +406,9 @@
                                         Cuenta</button>
                                 </div>
                             </form>
-                            <div id="contenedor-cuentas-agrupadas"></div>
                         </div>
                     </div>
+                    <div id="contenedor-cuentas-agrupadas" class="max-w-7xl mx-auto"></div>
                 </div>
 
                 <!-- Ventas View -->
@@ -2201,18 +2221,18 @@
                             : '';
 
                         return `
-        <li class="list-group-item flex flex-col md:flex-row justify-between items-start md:items-center py-4 px-4 md:px-6 border-b last:border-b-0 border-gray-100">
-            <div class="w-full md:w-auto mb-4 md:mb-0 pr-0 md:pr-4">
+        <li class="list-group-item flex flex-col justify-between items-start py-4 px-4 border-b last:border-b-0 border-gray-100">
+            <div class="w-full mb-4">
                 <div class="flex flex-col">
-                    <span class="font-semibold text-gray-800 break-all text-base md:text-lg">${account.email}</span>
+                    <span class="font-semibold text-gray-800 break-all text-base">${account.email}</span>
                     ${profilesIndicatorHtml}
                     ${fechaPagoHtml}
                 </div>
             </div>
-            <div class="w-full md:w-auto flex flex-wrap items-center gap-3 justify-end">
-                <div class="flex items-center w-full md:w-auto">
+            <div class="w-full flex flex-col gap-3">
+                <div class="flex items-center w-full">
                      <input type="password" value="${account.password}"
-                        class="w-full md:w-40 bg-gray-100 border-gray-200 text-sm rounded-l-md px-3 py-2 focus:outline-none" readonly>
+                        class="w-full bg-gray-100 border-gray-200 text-sm rounded-l-md px-3 py-2 focus:outline-none" readonly>
                     <button
                         class="toggle-password-btn bg-gray-200 hover:bg-gray-300 text-gray-600 p-2 rounded-r-md transition h-[38px]"
                         title="Mostrar/Ocultar contraseña">
@@ -2226,7 +2246,7 @@
                     </button>
                 </div>
 
-                <div class="flex items-center gap-2 mt-2 md:mt-0 justify-end w-full md:w-auto">
+                <div class="flex items-center gap-2 justify-end w-full">
                     ${manageProfilesBtnHtml}
                     <button
                         class="edit-account-btn p-2 bg-indigo-50 text-indigo-600 hover:bg-indigo-100 rounded-lg transition"
@@ -2254,7 +2274,7 @@
                     }).join('');
 
                     const cardHtml = `
-        <div class="bg-white rounded-2xl shadow-lg mb-6 overflow-hidden border border-gray-200 platform-card-container transition-transform duration-200"
+        <div class="bg-white rounded-2xl shadow-lg mb-6 overflow-hidden border border-gray-200 platform-card-container transition-transform duration-200 break-inside-avoid"
              data-platform="${platform}">
             <div class="px-4 py-3 border-b border-gray-200 cursor-move platform-card-header" draggable="true" style="background-color: ${platformStyle.bg};">
                 <h3 class="text-lg font-semibold text-white pointer-events-none select-none">${platform}</h3>
