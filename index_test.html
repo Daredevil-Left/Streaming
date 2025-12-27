@@ -1199,15 +1199,26 @@
     </script>
 
     <script type="module">
-        import { collection, addDoc, onSnapshot, doc, updateDoc, deleteDoc, getDocs, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-        import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { db, auth } from "./firebase-config.js";
+        // MOCK imports for testing
+        const collection = () => {};
+        const addDoc = async () => {};
+        const onSnapshot = () => {};
+        const doc = () => {};
+        const updateDoc = async () => {};
+        const deleteDoc = async () => {};
+        const getDocs = async () => ({ docs: [], empty: true });
+        const setDoc = async () => {};
+        const getDoc = async () => ({ exists: () => false });
+        const onAuthStateChanged = (auth, cb) => cb({ email: 'test@example.com' });
+        const signOut = async () => {};
+        const db = {};
+        const auth = {};
 
         let currentSeller = '';
 
         async function startApp() {
             document.getElementById('app').classList.remove('hidden');
-            document.getElementById('logout-btn').addEventListener('click', () => { signOut(auth).catch((error) => console.error("Error al cerrar sesión", error)); });
+            // document.getElementById('logout-btn').addEventListener('click', () => { signOut(auth).catch((error) => console.error("Error al cerrar sesión", error)); });
 
             dayjs.extend(dayjs_plugin_relativeTime);
             dayjs.locale('es');
@@ -2946,23 +2957,36 @@
             }
         });
 
-        onSnapshot(collection(db, "platformAccounts"), async (snapshot) => {
-            const accountsPromises = snapshot.docs.map(async (accountDoc) => {
-                const accountData = { id: accountDoc.id, ...accountDoc.data() };
-                const profilesRef = collection(db, "platformAccounts", accountDoc.id, "Perfiles");
-                const profilesSnapshot = await getDocs(profilesRef);
-                accountData.profiles = profilesSnapshot.docs.map(d => ({ id: d.id, ...d.data() }));
-                return accountData;
-            });
-
-            allPlatformAccounts = await Promise.all(accountsPromises);
-
+        // Mock data loading for testing
+        setTimeout(() => {
+             allPlatformAccounts = [
+                {
+                    id: 'acc1',
+                    platform: 'Netflix',
+                    email: 'netflix@test.com',
+                    password: 'pass',
+                    profiles: [
+                        { id: 'p1', nombre: 'Perfil 1', estado: 'Disponible' },
+                        { id: 'p2', nombre: 'Perfil 2', estado: 'Ocupado' }
+                    ]
+                },
+                 {
+                    id: 'acc2',
+                    platform: 'Disney+',
+                    email: 'disney@test.com',
+                    password: 'pass',
+                    profiles: [
+                        { id: 'p3', nombre: 'Perfil 1', estado: 'Ocupado' }
+                    ]
+                }
+            ];
             renderPlatformAccounts();
             renderAvailableAccounts();
             populatePlatformAccountsDropdowns(selectors.plataformaSelect.value, selectors.platformAccountSelect);
             populateAccountFilterDropdown();
             loadDashboardData();
-        }, (e) => { console.error("Error al cargar cuentas:", e); });
+            selectors.loadingState.classList.add('hidden');
+        }, 500);
         const handleSaveSale = async (e, keepClientData = false) => {
             e.preventDefault();
             const f = selectors.addSaleForm;
@@ -3945,25 +3969,8 @@
             }
         };
 
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                const email = user.email;
-                if (email === 'renzosamanamud@gmail.com') {
-                    currentSeller = 'Renzo';
-                } else if (email === 'chariph1007@gmail.com') {
-                    currentSeller = 'Charitsa';
-                }
-
-                // Start the app immediately to show the UI with skeleton loaders
-                startApp();
-                // Run the background check without blocking the UI
-                checkAndReleaseExpiredProfiles().catch(err => {
-                    console.error("Error checking expired profiles in background:", err);
-                });
-            } else {
-                window.location.href = 'login.html';
-            }
-        });
+        // Manual start for test
+        startApp();
 
         // 3D Tilt Effect Initialization
         function init3DTilt() {
