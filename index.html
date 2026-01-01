@@ -1576,6 +1576,11 @@
                 }
                 if (saleData.pin) message += `🔒 PIN: ${saleData.pin}\n`;
 
+                if (saleData.finPlan) {
+                    const vigencia = dayjs(saleData.finPlan).format('DD/MM/YYYY');
+                    message += `📅 Vigencia: ${vigencia}\n`;
+                }
+
                 message += `\n⚠️ Advertencia: La cuenta es solo para un dispositivo, en caso se use en más dispositivos se dará de baja a la cuenta`;
 
                 return message;
@@ -2508,7 +2513,7 @@
                             if (availableProfiles.length > 0) {
                                 profileSelect.innerHTML = '<option value="">Selecciona un perfil</option>';
                                 availableProfiles.forEach(p => {
-                                    profileSelect.innerHTML += `<option value="${p.id}">${p.nombre}</option>`;
+                                    profileSelect.innerHTML += `<option value="${p.id}" data-pin="${p.pin || ''}">${p.nombre}</option>`;
                                 });
                                 profileSelect.disabled = false;
                                 profileSelect.classList.remove('bg-gray-200');
@@ -2570,12 +2575,12 @@
 
                     // Add available profiles first
                     availableProfiles.forEach(p => {
-                        selectors.editProfileSelect.innerHTML += `<option value="${p.id}">${p.nombre}</option>`;
+                        selectors.editProfileSelect.innerHTML += `<option value="${p.id}" data-pin="${p.pin || ''}">${p.nombre}</option>`;
                     });
 
                     // Add the currently assigned profile if it's not already in the list (i.e., it's 'Ocupado')
                     if (currentProfile && !availableProfiles.some(p => p.id === currentProfile.id)) {
-                        selectors.editProfileSelect.innerHTML += `<option value="${currentProfile.id}">${currentProfile.nombre}
+                        selectors.editProfileSelect.innerHTML += `<option value="${currentProfile.id}" data-pin="${currentProfile.pin || ''}">${currentProfile.nombre}
             (Ocupado)</option>`;
                     }
                     selectors.editProfileSelect.disabled = false;
@@ -2809,7 +2814,10 @@
 
                         profilesHtml += `
                 <li class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                    <span class="font-semibold text-gray-700">${profile.nombre}</span>
+                    <div class="flex flex-col">
+                        <span class="font-semibold text-gray-700">${profile.nombre}</span>
+                        ${profile.pin ? `<span class="text-xs text-gray-500 font-mono mt-0.5">PIN: ${profile.pin}</span>` : ''}
+                    </div>
                     <span class="px-3 py-1 text-xs font-bold rounded-full ${statusColor} flex items-center gap-1">
                         ${statusIcon}
                         ${statusText}
@@ -2827,6 +2835,7 @@
         const createInitialProfiles = async (accountId, count = 5) => {
             const profilesRef = collection(db, "platformAccounts", accountId, "Perfiles");
             const createdProfiles = [];
+            const generatedPins = new Set();
 
             // Limit count to 10 max
             const safeCount = Math.min(Math.max(1, count), 10);
@@ -2837,12 +2846,18 @@
                     name = "Perfil Único";
                 }
 
+                let pin;
+                do {
+                    pin = Math.floor(1000 + Math.random() * 9000).toString();
+                } while (generatedPins.has(pin));
+                generatedPins.add(pin);
+
                 const profileDoc = {
                     nombre: name,
                     estado: 'Disponible',
                     fechaVencimiento: null,
                     clienteId: null,
-                    pin: ''
+                    pin: pin
                 };
                 const docRef = await addDoc(profilesRef, profileDoc);
                 createdProfiles.push({ id: docRef.id, ...profileDoc });
@@ -3285,6 +3300,19 @@
             handlePlatformAccountChange(selectors.platformAccountSelect, selectors.profileSelect));
         selectors.editPlatformAccountSelect.addEventListener('change', () =>
             handlePlatformAccountChange(selectors.editPlatformAccountSelect, selectors.editProfileSelect));
+
+        // Auto-fill PIN logic
+        const handleProfileChange = (selectElement, pinInputElementId) => {
+            const selectedOption = selectElement.options[selectElement.selectedIndex];
+            const pin = selectedOption.getAttribute('data-pin');
+            const pinInput = document.getElementById(pinInputElementId);
+            if (pin && pinInput) {
+                pinInput.value = pin;
+            }
+        };
+
+        selectors.profileSelect.addEventListener('change', (e) => handleProfileChange(e.target, 'pin'));
+        selectors.editProfileSelect.addEventListener('change', (e) => handleProfileChange(e.target, 'edit-pin'));
         selectors.editAccountForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const form = selectors.editAccountForm;
