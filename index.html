@@ -1574,7 +1574,8 @@
                 if (saleData.correo) message += `📧 Correo: ${saleData.correo}\n`;
                 if (saleData.contrasena) message += `🔑 Contraseña: ${saleData.contrasena}\n`;
                 if (saleData.plataforma !== 'Canva') {
-                    message += `👤 Perfil: ${saleData.cliente}\n`;
+                const displayProfile = profileName || saleData.cliente;
+                message += `👤 Perfil: ${displayProfile}\n`;
                 }
                 if (saleData.pin) message += `🔒 PIN: ${saleData.pin}\n`;
 
@@ -2135,7 +2136,17 @@
             const handleCopySaleDetails = (saleId, btn) => {
                 const sale = allSales.find(s => s.id === saleId);
                 if (!sale) return;
-                const message = generateSaleMessage(sale, ''); // profileName unused in new logic
+
+                let profileName = '';
+                if (sale.accountId && sale.profileId) {
+                    const account = allPlatformAccounts.find(a => a.id === sale.accountId);
+                    if (account && account.profiles) {
+                        const profile = account.profiles.find(p => p.id === sale.profileId);
+                        if (profile) profileName = profile.nombre;
+                    }
+                }
+
+                const message = generateSaleMessage(sale, profileName);
                 navigator.clipboard.writeText(message).then(() => {
                     const originalHtml = btn.innerHTML;
                     btn.innerHTML = `<svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>`;
