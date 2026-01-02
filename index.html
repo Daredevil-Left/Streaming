@@ -1177,8 +1177,11 @@
             </div>
 
             <!-- Footer Actions -->
-            <div class="p-4 bg-gray-50 border-t border-gray-100 flex gap-3">
-                <button id="close-success-modal-btn" class="flex-1 py-3 text-gray-600 font-semibold hover:bg-gray-100 rounded-xl transition">Cerrar</button>
+            <div class="p-4 bg-gray-50 border-t border-gray-100 flex flex-col sm:flex-row gap-3">
+                <a id="modal-open-link-btn" href="#" target="_blank" class="hidden flex-1 py-3 bg-blue-50 text-blue-600 font-semibold rounded-xl hover:bg-blue-100 transition flex items-center justify-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                    Abrir Enlace
+                </a>
                 <button id="copy-sale-message-btn" class="flex-1 py-3 bg-indigo-600 text-white font-semibold rounded-xl hover:bg-indigo-700 shadow-md transition flex items-center justify-center gap-2">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
                     Copiar Datos
@@ -1357,7 +1360,6 @@
                 customColorHex: document.getElementById('custom-color-hex'),
                 successSaleModal: document.getElementById('success-sale-modal'),
                 copySaleMessageBtn: document.getElementById('copy-sale-message-btn'),
-                closeSuccessModalBtn: document.getElementById('close-success-modal-btn'),
                 // New Selectors for PIN Search and Available Accounts
                 pinSearchInput: document.getElementById('pin-search-input'),
                 pinSearchResult: document.getElementById('pin-search-result'),
@@ -1631,6 +1633,17 @@
                 } else {
                     grid.classList.remove('grid-cols-1');
                     grid.classList.add('grid-cols-2');
+                }
+
+                // Link Button Logic
+                const linkBtn = document.getElementById('modal-open-link-btn');
+                const account = allPlatformAccounts.find(a => a.id === saleData.accountId);
+                if (account && account.enlace) {
+                    linkBtn.href = account.enlace;
+                    linkBtn.classList.remove('hidden');
+                } else {
+                    linkBtn.classList.add('hidden');
+                    linkBtn.href = '#';
                 }
 
                 // Store data for copy button
@@ -3801,7 +3814,12 @@
         selectors.cancelAddServiceBtn.addEventListener('click', toggleAddServiceModal);
 
         // (Listeners for copy button handled dynamically in openSuccessSaleModal now)
-        selectors.closeSuccessModalBtn.addEventListener('click', closeSuccessSaleModal);
+        // Click outside to close
+        selectors.successSaleModal.addEventListener('click', (e) => {
+            if (e.target === selectors.successSaleModal) {
+                closeSuccessSaleModal();
+            }
+        });
 
         // Listeners for individual copy buttons in modal
         document.querySelectorAll('.copy-field-btn').forEach(btn => {
