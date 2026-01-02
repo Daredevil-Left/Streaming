@@ -1202,17 +1202,26 @@
     </script>
 
     <script type="module">
-        import { collection, addDoc, onSnapshot, doc, updateDoc, deleteDoc, getDocs, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-        import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { db, auth } from "./firebase-config.js";
+        // Mock Imports
+        // import { collection, addDoc, onSnapshot, doc, updateDoc, deleteDoc, getDocs, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        // import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        // import { db, auth } from "./firebase-config.js";
 
-        let currentSeller = '';
+        const db = {}; // Mock DB
+        const auth = {}; // Mock Auth
+
+        // Helper to mimic Firebase addDoc etc if needed, but we mainly need to populate data
+        const collection = () => {};
+        const doc = () => {};
+        const onSnapshot = () => {};
+
+        let currentSeller = 'TestUser';
 
         async function startApp() {
             document.getElementById('app').classList.remove('hidden');
-            document.getElementById('logout-btn').addEventListener('click', () => { signOut(auth).catch((error) => console.error("Error al cerrar sesión", error)); });
+            // document.getElementById('logout-btn').addEventListener('click', () => { signOut(auth).catch((error) => console.error("Error al cerrar sesión", error)); });
 
-            dayjs.extend(dayjs_plugin_relativeTime);
+            dayjs.extend(window.dayjs_plugin_relativeTime);
             dayjs.locale('es');
             const platformStyles = {
                 'Netflix': { color: 'text-red-600', bg: '#E50914', logo: 'https://logo.clearbit.com/netflix.com' },
@@ -2944,64 +2953,39 @@
             );
         };
 
-        onSnapshot(collection(db, "sales"), (snapshot) => {
-            allSales = snapshot.docs.map(d => ({
-                id: d.id,
-                ...d.data()
-            }));
+        // MOCK DATA INJECTION
+        const today = dayjs();
 
-            const activeSales = allSales.filter(sale => sale.estado !== 'ARCHIVADO');
+        // Mock Sales
+        allSales = [
+            { id: '1', cliente: 'Expired', plataforma: 'Netflix', finPlan: today.subtract(1, 'day').format('YYYY-MM-DD'), estado: 'ACTIVO', precio: 10, metodoPago: 'BCP' },
+            { id: '2', cliente: 'Today', plataforma: 'Disney+', finPlan: today.format('YYYY-MM-DD'), estado: 'ACTIVO', precio: 10, metodoPago: 'BCP' },
+            { id: '3', cliente: 'Tomorrow', plataforma: 'HBO Max', finPlan: today.add(1, 'day').format('YYYY-MM-DD'), estado: 'ACTIVO', precio: 10, metodoPago: 'BCP' },
+            { id: '4', cliente: 'In 2 Days', plataforma: 'Spotify', finPlan: today.add(2, 'day').format('YYYY-MM-DD'), estado: 'ACTIVO', precio: 10, metodoPago: 'BCP' },
+            { id: '5', cliente: 'In 3 Days (Should Hide)', plataforma: 'Prime', finPlan: today.add(3, 'day').format('YYYY-MM-DD'), estado: 'ACTIVO', precio: 10, metodoPago: 'BCP' },
+        ];
 
-            if (activeSales.length === 0) {
-                selectors.emptyState.classList.remove('hidden');
-            } else {
-                selectors.emptyState.classList.add('hidden');
-            }
-            renderPlatformFilters();
-            renderAccountPlatformButtons();
-            applyFiltersAndRender(activeSales);
-            updateFinancialSummary();
-            loadDashboardData();
-            renderRecentIncome();
-            selectors.loadingState.classList.add('hidden');
-        }, (e) => {
-            console.error("Error al cargar ventas:", e);
-            selectors.loadingState.classList.add('hidden');
-        });
-        onSnapshot(collection(db, "expenses"), (snapshot) => {
-            allExpenses = snapshot.docs.map(d => ({
-                id: d.id,
-                ...d.data()
-            })); allExpenses.sort((a, b) => new Date(b.date) - new Date(a.date)); renderExpenses();
-            updateFinancialSummary(); loadDashboardData();
-        }, (e) => {
-            console.error("Error al cargar egresos:", e);
-        });
+        // Mock Accounts
+        allPlatformAccounts = [
+            { id: 'acc1', platform: 'Netflix', email: 'expired@test.com', fechaPago: today.subtract(1, 'day').format('YYYY-MM-DD'), profiles: [] },
+            { id: 'acc2', platform: 'Disney+', email: 'today@test.com', fechaPago: today.format('YYYY-MM-DD'), profiles: [] },
+            { id: 'acc3', platform: 'HBO Max', email: 'tomorrow@test.com', fechaPago: today.add(1, 'day').format('YYYY-MM-DD'), profiles: [] },
+            { id: 'acc4', platform: 'Spotify', email: 'in2days@test.com', fechaPago: today.add(2, 'day').format('YYYY-MM-DD'), profiles: [] },
+            { id: 'acc5', platform: 'Prime', email: 'in3days@test.com', fechaPago: today.add(3, 'day').format('YYYY-MM-DD'), profiles: [] },
+        ];
 
-        onSnapshot(doc(db, "config", "platform_order"), (doc) => {
-            if (doc.exists()) {
-                platformOrder = doc.data().order || [];
-                renderPlatformAccounts();
-            }
-        });
+        // Trigger Renders
+        renderPlatformFilters();
+        renderAccountPlatformButtons();
+        applyFiltersAndRender(allSales);
+        updateFinancialSummary();
+        renderPlatformAccounts();
+        renderAvailableAccounts();
 
-        onSnapshot(collection(db, "platformAccounts"), async (snapshot) => {
-            const accountsPromises = snapshot.docs.map(async (accountDoc) => {
-                const accountData = { id: accountDoc.id, ...accountDoc.data() };
-                const profilesRef = collection(db, "platformAccounts", accountDoc.id, "Perfiles");
-                const profilesSnapshot = await getDocs(profilesRef);
-                accountData.profiles = profilesSnapshot.docs.map(d => ({ id: d.id, ...d.data() }));
-                return accountData;
-            });
+        // IMPORTANT: Load Dashboard Data to trigger alerts
+        loadDashboardData();
 
-            allPlatformAccounts = await Promise.all(accountsPromises);
-
-            renderPlatformAccounts();
-            renderAvailableAccounts();
-            populatePlatformAccountsDropdowns(selectors.plataformaSelect.value, selectors.platformAccountSelect);
-            populateAccountFilterDropdown();
-            loadDashboardData();
-        }, (e) => { console.error("Error al cargar cuentas:", e); });
+        selectors.loadingState.classList.add('hidden');
         const handleSaveSale = async (e, keepClientData = false) => {
             e.preventDefault();
             const f = selectors.addSaleForm;
@@ -4002,25 +3986,8 @@
             }
         };
 
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                const email = user.email;
-                if (email === 'renzosamanamud@gmail.com') {
-                    currentSeller = 'Renzo';
-                } else if (email === 'chariph1007@gmail.com') {
-                    currentSeller = 'Charitsa';
-                }
-
-                // Start the app immediately to show the UI with skeleton loaders
-                startApp();
-                // Run the background check without blocking the UI
-                checkAndReleaseExpiredProfiles().catch(err => {
-                    console.error("Error checking expired profiles in background:", err);
-                });
-            } else {
-                window.location.href = 'login.html';
-            }
-        });
+        // Initialize App directly
+        startApp();
 
         // 3D Tilt Effect Initialization
         function init3DTilt() {
