@@ -356,8 +356,16 @@
                 <div id="cuentas-view" class="view">
                     <h1 class="text-2xl md:text-3xl font-bold text-gray-800 mb-6 md:mb-8 px-2 md:px-0">Cuentas</h1>
                     <div class="bg-white p-3 md:p-6 rounded-2xl shadow mb-8 max-w-7xl mx-auto">
-                        <h2 class="text-xl md:text-2xl font-semibold text-gray-700 mb-4 md:mb-6">Añadir Cuenta de Plataforma</h2>
-                        <div id="collapsible-accounts-content" class="mt-6">
+                        <div class="flex justify-between items-center mb-4 md:mb-6">
+                            <h2 class="text-xl md:text-2xl font-semibold text-gray-700">Añadir Cuenta de Plataforma</h2>
+                            <button id="toggle-add-account-btn" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition flex items-center gap-2 text-sm font-medium">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                                </svg>
+                                Nueva Cuenta
+                            </button>
+                        </div>
+                        <div id="collapsible-accounts-content" class="mt-6 hidden transition-all duration-300 ease-in-out">
                             <form id="add-account-form" class="space-y-6 mb-6">
                                 <div>
                                     <label class="block text-sm font-medium text-gray-600 mb-2">Plataforma</label>
@@ -408,6 +416,7 @@
                             </form>
                         </div>
                     </div>
+                    <div id="account-view-filters" class="max-w-7xl mx-auto mb-6 flex flex-wrap gap-2 justify-center md:justify-start"></div>
                     <div id="contenedor-cuentas-agrupadas" class="max-w-7xl mx-auto"></div>
                 </div>
 
@@ -1248,6 +1257,7 @@
 
             let allServices = [...defaultServices];
             let allSales = [], allExpenses = [], allPlatformAccounts = [], activePlatformFilter = 'Todos', currentSearchTerm = '', activeAccountFilter = '', activeStatusFilter = '';
+            let activeAccountViewFilter = 'Todos';
             let selectedServices = new Map(), selectedMonths = 1;
             let platformOrder = [];
 
@@ -1367,6 +1377,86 @@
                 pinSearchInput: document.getElementById('pin-search-input'),
                 pinSearchResult: document.getElementById('pin-search-result'),
                 availableAccountsGrid: document.getElementById('available-accounts-grid'),
+                accountViewFilters: document.getElementById('account-view-filters'),
+                toggleAddAccountBtn: document.getElementById('toggle-add-account-btn'),
+                collapsibleAccountsContent: document.getElementById('collapsible-accounts-content'),
+            };
+
+            selectors.toggleAddAccountBtn.addEventListener('click', () => {
+                const content = selectors.collapsibleAccountsContent;
+                const isHidden = content.classList.contains('hidden');
+
+                if (isHidden) {
+                    content.classList.remove('hidden');
+                    selectors.toggleAddAccountBtn.innerHTML = `
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                        Cancelar
+                    `;
+                    selectors.toggleAddAccountBtn.classList.replace('bg-indigo-600', 'bg-red-500');
+                    selectors.toggleAddAccountBtn.classList.replace('hover:bg-indigo-700', 'hover:bg-red-600');
+                } else {
+                    content.classList.add('hidden');
+                    selectors.toggleAddAccountBtn.innerHTML = `
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                        </svg>
+                        Nueva Cuenta
+                    `;
+                    selectors.toggleAddAccountBtn.classList.replace('bg-red-500', 'bg-indigo-600');
+                    selectors.toggleAddAccountBtn.classList.replace('hover:bg-red-600', 'hover:bg-indigo-700');
+                }
+            });
+
+            const renderAccountViewFilters = () => {
+                selectors.accountViewFilters.innerHTML = '';
+
+                // Get unique platforms from existing accounts
+                const platforms = new Set(['Todos']);
+                allPlatformAccounts.forEach(acc => platforms.add(acc.platform));
+
+                // Convert to array and sort (Todos first)
+                const sortedPlatforms = Array.from(platforms).sort((a, b) => {
+                    if (a === 'Todos') return -1;
+                    if (b === 'Todos') return 1;
+                    return a.localeCompare(b);
+                });
+
+                sortedPlatforms.forEach(platform => {
+                    const btn = document.createElement('button');
+                    const style = platformStyles[platform] || platformStyles['Otro'];
+                    const isSelected = activeAccountViewFilter === platform;
+
+                    btn.className = `px-4 py-2 rounded-full font-bold text-sm transition-all duration-200 transform hover:scale-105 focus:outline-none shadow-sm flex items-center gap-2`;
+
+                    if (isSelected) {
+                        // Selected State: Solid Brand Color
+                        if (style.bgGradient) {
+                            btn.style.background = style.bgGradient;
+                        } else {
+                            btn.style.backgroundColor = style.bg;
+                        }
+                        btn.style.color = getContrastYIQ(style.bg);
+                        btn.classList.add('ring-2', 'ring-offset-2', 'ring-indigo-200');
+                    } else {
+                        // Unselected State: White bg, Brand Color text/border
+                        btn.style.backgroundColor = 'white';
+                        btn.style.color = style.bg;
+                        btn.style.border = `1px solid ${style.bg}`;
+                        btn.classList.add('hover:shadow-md');
+                    }
+
+                    btn.textContent = platform;
+
+                    btn.addEventListener('click', () => {
+                        activeAccountViewFilter = platform;
+                        renderAccountViewFilters(); // Re-render buttons to update state styles
+                        renderPlatformAccounts(); // Re-render accounts list
+                    });
+
+                    selectors.accountViewFilters.appendChild(btn);
+                });
             };
 
             const prefillSaleFromAvailable = (platformName) => {
@@ -2188,13 +2278,20 @@
                 const { accountsList } = selectors;
                 accountsList.innerHTML = '';
 
-                if (allPlatformAccounts.length === 0) {
-                    accountsList.innerHTML = '<p class="text-sm text-gray-400">No hay cuentas de plataforma registradas.</p>';
+                let accountsToRender = allPlatformAccounts;
+
+                // Filter based on selected view filter
+                if (activeAccountViewFilter !== 'Todos') {
+                    accountsToRender = accountsToRender.filter(acc => acc.platform === activeAccountViewFilter);
+                }
+
+                if (accountsToRender.length === 0) {
+                    accountsList.innerHTML = '<p class="text-sm text-gray-400">No hay cuentas de plataforma registradas para esta selección.</p>';
                     return;
                 }
 
                 // 1. Group accounts by platform
-                const groupedAccounts = allPlatformAccounts.reduce((acc, account) => {
+                const groupedAccounts = accountsToRender.reduce((acc, account) => {
                     const { platform } = account;
                     if (!acc[platform]) {
                         acc[platform] = [];
@@ -2989,6 +3086,7 @@
             allPlatformAccounts = await Promise.all(accountsPromises);
 
             renderPlatformAccounts();
+            renderAccountViewFilters();
             renderAvailableAccounts();
             populatePlatformAccountsDropdowns(selectors.plataformaSelect.value, selectors.platformAccountSelect);
             populateAccountFilterDropdown();
