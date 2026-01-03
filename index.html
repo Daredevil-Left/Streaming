@@ -356,8 +356,16 @@
                 <div id="cuentas-view" class="view">
                     <h1 class="text-2xl md:text-3xl font-bold text-gray-800 mb-6 md:mb-8 px-2 md:px-0">Cuentas</h1>
                     <div class="bg-white p-3 md:p-6 rounded-2xl shadow mb-8 max-w-7xl mx-auto">
-                        <h2 class="text-xl md:text-2xl font-semibold text-gray-700 mb-4 md:mb-6">Añadir Cuenta de Plataforma</h2>
-                        <div id="collapsible-accounts-content" class="mt-6">
+                        <div class="flex justify-between items-center mb-4 md:mb-6">
+                            <h2 class="text-xl md:text-2xl font-semibold text-gray-700">Añadir Cuenta de Plataforma</h2>
+                            <button id="toggle-add-account-btn" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition flex items-center gap-2 text-sm font-medium">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                                </svg>
+                                Nueva Cuenta
+                            </button>
+                        </div>
+                        <div id="collapsible-accounts-content" class="mt-6 hidden transition-all duration-300 ease-in-out">
                             <form id="add-account-form" class="space-y-6 mb-6">
                                 <div>
                                     <label class="block text-sm font-medium text-gray-600 mb-2">Plataforma</label>
@@ -408,6 +416,7 @@
                             </form>
                         </div>
                     </div>
+                    <div id="account-view-filters" class="max-w-7xl mx-auto mb-6 flex flex-wrap gap-2 justify-center md:justify-start"></div>
                     <div id="contenedor-cuentas-agrupadas" class="max-w-7xl mx-auto"></div>
                 </div>
 
@@ -1248,6 +1257,7 @@
 
             let allServices = [...defaultServices];
             let allSales = [], allExpenses = [], allPlatformAccounts = [], activePlatformFilter = 'Todos', currentSearchTerm = '', activeAccountFilter = '', activeStatusFilter = '';
+            let activeAccountViewFilter = 'Todos';
             let selectedServices = new Map(), selectedMonths = 1;
             let platformOrder = [];
 
@@ -1367,6 +1377,86 @@
                 pinSearchInput: document.getElementById('pin-search-input'),
                 pinSearchResult: document.getElementById('pin-search-result'),
                 availableAccountsGrid: document.getElementById('available-accounts-grid'),
+                accountViewFilters: document.getElementById('account-view-filters'),
+                toggleAddAccountBtn: document.getElementById('toggle-add-account-btn'),
+                collapsibleAccountsContent: document.getElementById('collapsible-accounts-content'),
+            };
+
+            selectors.toggleAddAccountBtn.addEventListener('click', () => {
+                const content = selectors.collapsibleAccountsContent;
+                const isHidden = content.classList.contains('hidden');
+
+                if (isHidden) {
+                    content.classList.remove('hidden');
+                    selectors.toggleAddAccountBtn.innerHTML = `
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                        Cancelar
+                    `;
+                    selectors.toggleAddAccountBtn.classList.replace('bg-indigo-600', 'bg-red-500');
+                    selectors.toggleAddAccountBtn.classList.replace('hover:bg-indigo-700', 'hover:bg-red-600');
+                } else {
+                    content.classList.add('hidden');
+                    selectors.toggleAddAccountBtn.innerHTML = `
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                        </svg>
+                        Nueva Cuenta
+                    `;
+                    selectors.toggleAddAccountBtn.classList.replace('bg-red-500', 'bg-indigo-600');
+                    selectors.toggleAddAccountBtn.classList.replace('hover:bg-red-600', 'hover:bg-indigo-700');
+                }
+            });
+
+            const renderAccountViewFilters = () => {
+                selectors.accountViewFilters.innerHTML = '';
+
+                // Get unique platforms from existing accounts
+                const platforms = new Set(['Todos']);
+                allPlatformAccounts.forEach(acc => platforms.add(acc.platform));
+
+                // Convert to array and sort (Todos first)
+                const sortedPlatforms = Array.from(platforms).sort((a, b) => {
+                    if (a === 'Todos') return -1;
+                    if (b === 'Todos') return 1;
+                    return a.localeCompare(b);
+                });
+
+                sortedPlatforms.forEach(platform => {
+                    const btn = document.createElement('button');
+                    const style = platformStyles[platform] || platformStyles['Otro'];
+                    const isSelected = activeAccountViewFilter === platform;
+
+                    btn.className = `px-4 py-2 rounded-full font-bold text-sm transition-all duration-200 transform hover:scale-105 focus:outline-none shadow-sm flex items-center gap-2`;
+
+                    if (isSelected) {
+                        // Selected State: Solid Brand Color
+                        if (style.bgGradient) {
+                            btn.style.background = style.bgGradient;
+                        } else {
+                            btn.style.backgroundColor = style.bg;
+                        }
+                        btn.style.color = getContrastYIQ(style.bg);
+                        btn.classList.add('ring-2', 'ring-offset-2', 'ring-indigo-200');
+                    } else {
+                        // Unselected State: White bg, Brand Color text/border
+                        btn.style.backgroundColor = 'white';
+                        btn.style.color = style.bg;
+                        btn.style.border = `1px solid ${style.bg}`;
+                        btn.classList.add('hover:shadow-md');
+                    }
+
+                    btn.textContent = platform;
+
+                    btn.addEventListener('click', () => {
+                        activeAccountViewFilter = platform;
+                        renderAccountViewFilters(); // Re-render buttons to update state styles
+                        renderPlatformAccounts(); // Re-render accounts list
+                    });
+
+                    selectors.accountViewFilters.appendChild(btn);
+                });
             };
 
             const prefillSaleFromAvailable = (platformName) => {
@@ -2188,177 +2278,275 @@
                 const { accountsList } = selectors;
                 accountsList.innerHTML = '';
 
-                if (allPlatformAccounts.length === 0) {
-                    accountsList.innerHTML = '<p class="text-sm text-gray-400">No hay cuentas de plataforma registradas.</p>';
-                    return;
-                }
+                let accountsToRender = allPlatformAccounts;
 
-                // 1. Group accounts by platform
-                const groupedAccounts = allPlatformAccounts.reduce((acc, account) => {
-                    const { platform } = account;
-                    if (!acc[platform]) {
-                        acc[platform] = [];
+                // Filter based on selected view filter
+                if (activeAccountViewFilter !== 'Todos') {
+                    accountsToRender = accountsToRender.filter(acc => acc.platform === activeAccountViewFilter);
+
+                    // GRID LAYOUT FOR FILTERED VIEW
+                    accountsList.removeAttribute('style'); // Clear any previous inline styles
+                    accountsList.style.columnCount = 'auto';
+                    accountsList.style.display = 'grid';
+                    accountsList.className = 'max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6';
+
+                    if (accountsToRender.length === 0) {
+                        accountsList.innerHTML = '<p class="text-sm text-gray-400 col-span-full">No hay cuentas registradas para esta plataforma.</p>';
+                        return;
                     }
-                    acc[platform].push(account);
-                    return acc;
-                }, {});
 
-                // 2. Sort and Render
-                let sortedAccounts = Object.keys(groupedAccounts).sort();
+                    const cardsHtml = accountsToRender.map(account => {
+                        const platformStyle = platformStyles[account.platform] || platformStyles['Otro'];
+                        const headerBgStyle = platformStyle.bgGradient ? `background: ${platformStyle.bgGradient};` : `background-color: ${platformStyle.bg};`;
+                        const headerTextColor = getContrastYIQ(platformStyle.bg);
 
-                if (platformOrder.length > 0) {
-                    sortedAccounts = sortedAccounts.sort((a, b) => {
-                        const indexA = platformOrder.indexOf(a);
-                        const indexB = platformOrder.indexOf(b);
-
-                        if (indexA !== -1 && indexB !== -1) return indexA - indexB;
-                        if (indexA !== -1) return -1;
-                        if (indexB !== -1) return 1;
-                        return 0; // Keep alphabetical for those not in order list
-                    });
-                }
-
-                for (const platform of sortedAccounts) {
-                    const accounts = groupedAccounts[platform];
-                    const platformStyle = platformStyles[platform] || platformStyles['Otro'];
-
-                    const listItems = accounts.map(account => {
+                        // Calculate Date Status
                         let fechaPagoHtml = '';
                         if (account.fechaPago) {
                             const fechaPago = dayjs(account.fechaPago);
                             const hoy = dayjs().startOf('day');
                             const diffDays = fechaPago.diff(hoy, 'day');
-
-                            const statusClasses = diffDays <= 5 ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800';
-                            fechaPagoHtml = `<div class="mt-1"><span class="px-2 py-1 text-xs font-semibold rounded-lg ${statusClasses}">Próx.
-            Pago: ${fechaPago.format('DD/MM/YYYY')}</span></div>`;
+                            const statusClasses = diffDays <= 5 ? 'bg-red-100 text-red-800 border-red-200' : 'bg-green-100 text-green-800 border-green-200';
+                            const label = diffDays < 0 ? 'Vencido' : 'Próx. Pago';
+                            fechaPagoHtml = `<span class="px-2 py-1 rounded-md ${statusClasses} font-semibold text-xs border truncate">${label}: ${fechaPago.format('DD/MM/YYYY')}</span>`;
                         }
 
-                        const enlaceBtnHtml = account.enlace
-                            ? `<a href="${account.enlace}" target="_blank"
-            class="p-1 text-blue-600 hover:text-blue-800 hover:bg-blue-100 rounded-full transition"
-            title="Abrir enlace">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1">
-                </path>
-            </svg>
-        </a>`
-                            : `<span class="p-1 text-gray-400 cursor-not-allowed rounded-full" title="No hay enlace">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1">
-                </path>
-            </svg>
-        </span>`;
-
-                        const userIconSvg = `<svg class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
-            <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
-        </svg>`;
-                        let profilesIndicatorHtml = '';
-
+                        // Profiles
+                        const userIconSvg = `<svg class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" /></svg>`;
+                        let profilesHtml = '<div class="flex flex-wrap gap-1 mb-4">';
                         if (account.platform !== 'Canva') {
-                            profilesIndicatorHtml = '<div class="flex flex-wrap items-center gap-1.5 mt-2">';
-                            if (account.profiles && account.profiles.length > 0) {
+                             if (account.profiles && account.profiles.length > 0) {
                                 const sortedProfiles = account.profiles.sort((a, b) => a.nombre.localeCompare(b.nombre));
                                 sortedProfiles.forEach(profile => {
                                     const color = profile.estado === 'Disponible' ? 'text-green-500' : 'text-red-500';
-                                    profilesIndicatorHtml += `<span class="${color}"
-                title="${profile.nombre}: ${profile.estado}">${userIconSvg}</span>`;
+                                    const title = `${profile.nombre}: ${profile.estado}`;
+                                    profilesHtml += `<span class="${color}" title="${title}">${userIconSvg}</span>`;
                                 });
                             } else {
+                                // Empty slots placeholders
                                 for (let i = 0; i < 5; i++) {
-                                    profilesIndicatorHtml += `<span class="text-gray-300"
-                title="Perfil no configurado">${userIconSvg}</span>`;
+                                    profilesHtml += `<span class="text-gray-300" title="No configurado">${userIconSvg}</span>`;
                                 }
                             }
-                            profilesIndicatorHtml += '</div>';
                         }
+                        profilesHtml += '</div>';
 
+                        // Link Button
+                        const enlaceBtnHtml = account.enlace
+                            ? `<a href="${account.enlace}" target="_blank" class="text-blue-600 hover:text-blue-800 transition bg-blue-50 hover:bg-blue-100 p-1 rounded-full" title="Abrir enlace"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg></a>`
+                            : `<span class="p-1 text-gray-300 cursor-not-allowed rounded-full"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg></span>`;
+
+                        // Manage Profiles Button
                         const manageProfilesBtnHtml = account.platform !== 'Canva'
-                            ? `<button
-            class="manage-profiles-btn p-1 text-teal-600 hover:text-teal-800 hover:bg-teal-100 rounded-full transition"
-            data-id="${account.id}" title="Gestionar Perfiles">
-            <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
-                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-                <circle cx="9" cy="7" r="4" />
-                <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
-                <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-            </svg>
-        </button>`
+                            ? `<button class="manage-profiles-btn p-2 text-teal-600 hover:bg-teal-50 rounded-lg transition" data-id="${account.id}" title="Gestionar Perfiles"><svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M22 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" /></svg></button>`
                             : '';
 
                         return `
-        <li class="list-group-item flex flex-col justify-between items-start py-4 px-4 border-b last:border-b-0 border-gray-100">
-            <div class="w-full mb-4">
-                <div class="flex flex-col">
-                    <span class="font-semibold text-gray-800 break-all text-base">${account.email}</span>
-                    ${profilesIndicatorHtml}
-                    ${fechaPagoHtml}
-                </div>
-            </div>
-            <div class="w-full flex flex-col gap-3">
-                <div class="flex items-center w-full">
-                     <input type="password" value="${account.password}"
-                        class="w-full bg-gray-100 border-gray-200 text-sm rounded-l-md px-3 py-2 focus:outline-none" readonly>
-                    <button
-                        class="toggle-password-btn bg-gray-200 hover:bg-gray-300 text-gray-600 p-2 rounded-r-md transition h-[38px]"
-                        title="Mostrar/Ocultar contraseña">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z">
-                            </path>
-                        </svg>
-                    </button>
-                </div>
-
-                <div class="flex items-center gap-2 justify-end w-full">
-                    ${manageProfilesBtnHtml}
-                    <button
-                        class="edit-account-btn p-2 bg-indigo-50 text-indigo-600 hover:bg-indigo-100 rounded-lg transition"
-                        data-id="${account.id}" title="Editar Cuenta">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                            xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L16.732 3.732z">
-                            </path>
-                        </svg>
-                    </button>
-                    ${enlaceBtnHtml}
-                    <button
-                        class="delete-account-btn p-2 bg-red-50 text-red-600 hover:bg-red-100 rounded-lg transition"
-                        data-id="${account.id}" title="Eliminar">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
-                            </path>
-                        </svg>
-                    </button>
-                </div>
-            </div>
-        </li>`;
+                        <div class="bg-white rounded-2xl shadow-md overflow-hidden border border-gray-200 hover:shadow-xl transition-shadow duration-300 flex flex-col h-full">
+                            <div class="px-4 py-3 flex justify-between items-center" style="${headerBgStyle}">
+                                <h3 class="font-bold text-lg truncate flex-1" style="color: ${headerTextColor}" title="${account.email}">${account.email}</h3>
+                            </div>
+                            <div class="p-4 flex flex-col gap-3 flex-grow justify-between">
+                                <div>
+                                    <div class="flex justify-between items-start mb-3">
+                                         ${fechaPagoHtml}
+                                         ${enlaceBtnHtml}
+                                    </div>
+                                    ${profilesHtml}
+                                    <div class="flex items-center w-full mb-1">
+                                         <input type="password" value="${account.password}" class="w-full bg-gray-50 border border-gray-200 text-sm rounded-l-md px-3 py-2 focus:outline-none text-gray-700 font-mono" readonly>
+                                         <button class="toggle-password-btn bg-gray-100 hover:bg-gray-200 text-gray-600 p-2 rounded-r-md transition h-[38px] border border-l-0 border-gray-200 flex items-center justify-center" title="Mostrar/Ocultar">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                                         </button>
+                                    </div>
+                                </div>
+                                <div class="flex justify-end gap-2 pt-3 border-t border-gray-100 mt-2">
+                                    ${manageProfilesBtnHtml}
+                                    <button class="edit-account-btn p-2 text-indigo-600 hover:bg-indigo-50 rounded-lg transition" data-id="${account.id}" title="Editar"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L16.732 3.732z"></path></svg></button>
+                                    <button class="delete-account-btn p-2 text-red-600 hover:bg-red-50 rounded-lg transition" data-id="${account.id}" title="Eliminar"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button>
+                                </div>
+                            </div>
+                        </div>`;
                     }).join('');
 
-                    const cardHtml = `
-        <div class="bg-white rounded-2xl shadow-lg mb-6 overflow-hidden border border-gray-200 platform-card-container transition-transform duration-200 break-inside-avoid"
-             data-platform="${platform}">
-            <div class="px-4 py-3 border-b border-gray-200 cursor-move platform-card-header" draggable="true" style="${platformStyle.bgGradient ? `background: ${platformStyle.bgGradient};` : `background-color: ${platformStyle.bg};`}">
-                <h3 class="text-lg font-semibold text-white pointer-events-none select-none">${platform}</h3>
+                    accountsList.innerHTML = cardsHtml;
+
+                } else {
+                    // MASONRY LAYOUT FOR 'TODOS' VIEW (Existing Logic)
+                    accountsList.removeAttribute('style'); // Reset inline styles
+                    accountsList.className = 'max-w-7xl mx-auto'; // Reset classes to default
+
+                    if (accountsToRender.length === 0) {
+                        accountsList.innerHTML = '<p class="text-sm text-gray-400">No hay cuentas de plataforma registradas.</p>';
+                        return;
+                    }
+
+                    // 1. Group accounts by platform
+                    const groupedAccounts = accountsToRender.reduce((acc, account) => {
+                        const { platform } = account;
+                        if (!acc[platform]) {
+                            acc[platform] = [];
+                        }
+                        acc[platform].push(account);
+                        return acc;
+                    }, {});
+
+                    // 2. Sort and Render
+                    let sortedAccounts = Object.keys(groupedAccounts).sort();
+
+                    if (platformOrder.length > 0) {
+                        sortedAccounts = sortedAccounts.sort((a, b) => {
+                            const indexA = platformOrder.indexOf(a);
+                            const indexB = platformOrder.indexOf(b);
+
+                            if (indexA !== -1 && indexB !== -1) return indexA - indexB;
+                            if (indexA !== -1) return -1;
+                            if (indexB !== -1) return 1;
+                            return 0; // Keep alphabetical for those not in order list
+                        });
+                    }
+
+                    for (const platform of sortedAccounts) {
+                        const accounts = groupedAccounts[platform];
+                        const platformStyle = platformStyles[platform] || platformStyles['Otro'];
+
+                        const listItems = accounts.map(account => {
+                            let fechaPagoHtml = '';
+                            if (account.fechaPago) {
+                                const fechaPago = dayjs(account.fechaPago);
+                                const hoy = dayjs().startOf('day');
+                                const diffDays = fechaPago.diff(hoy, 'day');
+
+                                const statusClasses = diffDays <= 5 ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800';
+                                fechaPagoHtml = `<div class="mt-1"><span class="px-2 py-1 text-xs font-semibold rounded-lg ${statusClasses}">Próx. Pago: ${fechaPago.format('DD/MM/YYYY')}</span></div>`;
+                            }
+
+                            const enlaceBtnHtml = account.enlace
+                                ? `<a href="${account.enlace}" target="_blank"
+                class="p-1 text-blue-600 hover:text-blue-800 hover:bg-blue-100 rounded-full transition"
+                title="Abrir enlace">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1">
+                    </path>
+                </svg>
+            </a>`
+                                : `<span class="p-1 text-gray-400 cursor-not-allowed rounded-full" title="No hay enlace">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1">
+                    </path>
+                </svg>
+            </span>`;
+
+                            const userIconSvg = `<svg class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
+            </svg>`;
+                            let profilesIndicatorHtml = '';
+
+                            if (account.platform !== 'Canva') {
+                                profilesIndicatorHtml = '<div class="flex flex-wrap items-center gap-1.5 mt-2">';
+                                if (account.profiles && account.profiles.length > 0) {
+                                    const sortedProfiles = account.profiles.sort((a, b) => a.nombre.localeCompare(b.nombre));
+                                    sortedProfiles.forEach(profile => {
+                                        const color = profile.estado === 'Disponible' ? 'text-green-500' : 'text-red-500';
+                                        profilesIndicatorHtml += `<span class="${color}"
+                    title="${profile.nombre}: ${profile.estado}">${userIconSvg}</span>`;
+                                    });
+                                } else {
+                                    for (let i = 0; i < 5; i++) {
+                                        profilesIndicatorHtml += `<span class="text-gray-300"
+                    title="Perfil no configurado">${userIconSvg}</span>`;
+                                    }
+                                }
+                                profilesIndicatorHtml += '</div>';
+                            }
+
+                            const manageProfilesBtnHtml = account.platform !== 'Canva'
+                                ? `<button
+                class="manage-profiles-btn p-1 text-teal-600 hover:text-teal-800 hover:bg-teal-100 rounded-full transition"
+                data-id="${account.id}" title="Gestionar Perfiles">
+                <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                    <circle cx="9" cy="7" r="4" />
+                    <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                </svg>
+            </button>`
+                                : '';
+
+                            return `
+            <li class="list-group-item flex flex-col justify-between items-start py-4 px-4 border-b last:border-b-0 border-gray-100">
+                <div class="w-full mb-4">
+                    <div class="flex flex-col">
+                        <span class="font-semibold text-gray-800 break-all text-base">${account.email}</span>
+                        ${profilesIndicatorHtml}
+                        ${fechaPagoHtml}
+                    </div>
+                </div>
+                <div class="w-full flex flex-col gap-3">
+                    <div class="flex items-center w-full">
+                        <input type="password" value="${account.password}"
+                            class="w-full bg-gray-100 border-gray-200 text-sm rounded-l-md px-3 py-2 focus:outline-none" readonly>
+                        <button
+                            class="toggle-password-btn bg-gray-200 hover:bg-gray-300 text-gray-600 p-2 rounded-r-md transition h-[38px]"
+                            title="Mostrar/Ocultar contraseña">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z">
+                                </path>
+                            </svg>
+                        </button>
+                    </div>
+
+                    <div class="flex items-center gap-2 justify-end w-full">
+                        ${manageProfilesBtnHtml}
+                        <button
+                            class="edit-account-btn p-2 bg-indigo-50 text-indigo-600 hover:bg-indigo-100 rounded-lg transition"
+                            data-id="${account.id}" title="Editar Cuenta">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L16.732 3.732z">
+                                </path>
+                            </svg>
+                        </button>
+                        ${enlaceBtnHtml}
+                        <button
+                            class="delete-account-btn p-2 bg-red-50 text-red-600 hover:bg-red-100 rounded-lg transition"
+                            data-id="${account.id}" title="Eliminar">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
+                                </path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </li>`;
+                        }).join('');
+
+                        const cardHtml = `
+            <div class="bg-white rounded-2xl shadow-lg mb-6 overflow-hidden border border-gray-200 platform-card-container transition-transform duration-200 break-inside-avoid"
+                data-platform="${platform}">
+                <div class="px-4 py-3 border-b border-gray-200 cursor-move platform-card-header" draggable="true" style="${platformStyle.bgGradient ? `background: ${platformStyle.bgGradient};` : `background-color: ${platformStyle.bg};`}">
+                    <h3 class="text-lg font-semibold text-white pointer-events-none select-none">${platform}</h3>
+                </div>
+                <ul class="divide-y divide-gray-200">
+                    ${listItems}
+                </ul>
             </div>
-            <ul class="divide-y divide-gray-200">
-                ${listItems}
-            </ul>
-        </div>
-        `;
-                    accountsList.innerHTML += cardHtml;
+            `;
+                        accountsList.innerHTML += cardHtml;
+                    }
                 }
 
-                // 3. Add Event Listeners after rendering
+                // 3. Add Event Listeners (Common logic remains mostly the same, re-attaching to new elements)
                 accountsList.querySelectorAll('.delete-account-btn').forEach(btn => {
                     btn.addEventListener('click', e => handleDeleteAccount(e.currentTarget.dataset.id));
                 });
@@ -2379,73 +2567,73 @@
                             if (passwordInput.type === 'password') {
                                 passwordInput.type = 'text';
                                 icon.innerHTML = `
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7 .946-3.11 3.563-5.522 6.837-6.141M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M17.581 10.41A7.48 7.48 0 0119.542 12c-1.274 4.057-5.064 7-9.542 7a10.046 10.046 0 01-3.132-.475M2.458 12c.946-3.11 3.563-5.522 6.837-6.141m1.581 2.318A4.5 4.5 0 0115 12a4.5 4.5 0 01-1.07 2.828M5 5l14 14" />
-        `;
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7 .946-3.11 3.563-5.522 6.837-6.141M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M17.581 10.41A7.48 7.48 0 0119.542 12c-1.274 4.057-5.064 7-9.542 7a10.046 10.046 0 01-3.132-.475M2.458 12c.946-3.11 3.563-5.522 6.837-6.141m1.581 2.318A4.5 4.5 0 0115 12a4.5 4.5 0 01-1.07 2.828M5 5l14 14" />
+            `;
                             } else {
                                 passwordInput.type = 'password';
                                 icon.innerHTML = `
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-        `;
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+            `;
                             }
                         }
                     });
                 });
 
-                // Attach Drag and Drop Event Listeners
-                let draggedItem = null;
-                const platformCards = accountsList.querySelectorAll('.platform-card-container');
+                // Attach Drag and Drop Event Listeners ONLY for 'Todos'
+                if (activeAccountViewFilter === 'Todos') {
+                    let draggedItem = null;
+                    const platformCards = accountsList.querySelectorAll('.platform-card-container');
 
-                platformCards.forEach(card => {
-                    const header = card.querySelector('.platform-card-header');
+                    platformCards.forEach(card => {
+                        const header = card.querySelector('.platform-card-header');
 
-                    header.addEventListener('dragstart', (e) => {
-                        draggedItem = card;
-                        e.dataTransfer.effectAllowed = 'move';
-                        e.dataTransfer.setData('text/plain', card.dataset.platform);
-                        setTimeout(() => card.style.opacity = '0.5', 0);
-                    });
+                        header.addEventListener('dragstart', (e) => {
+                            draggedItem = card;
+                            e.dataTransfer.effectAllowed = 'move';
+                            e.dataTransfer.setData('text/plain', card.dataset.platform);
+                            setTimeout(() => card.style.opacity = '0.5', 0);
+                        });
 
-                    header.addEventListener('dragend', () => {
-                        draggedItem = null;
-                        card.style.opacity = '1';
-                        platformCards.forEach(c => c.style.borderTop = '');
-                    });
+                        header.addEventListener('dragend', () => {
+                            draggedItem = null;
+                            card.style.opacity = '1';
+                            platformCards.forEach(c => c.style.borderTop = '');
+                        });
 
-                    card.addEventListener('dragover', (e) => {
-                        e.preventDefault();
-                        e.dataTransfer.dropEffect = 'move';
+                        card.addEventListener('dragover', (e) => {
+                            e.preventDefault();
+                            e.dataTransfer.dropEffect = 'move';
 
-                        const bounding = card.getBoundingClientRect();
-                        const offset = e.clientY - bounding.top + (e.clientX - bounding.left)/2; // Simple heuristic
-
-                        // We are keeping it simple for vertical list
-                        // Determine if we are dropping above or below
-                        // Actually, just preventing default is enough to allow drop
-                    });
-
-                    card.addEventListener('drop', async (e) => {
-                        e.preventDefault();
-                        if (draggedItem && draggedItem !== card) {
-                            // Find position
                             const bounding = card.getBoundingClientRect();
-                            const offset = e.clientY - bounding.top;
+                            const offset = e.clientY - bounding.top + (e.clientX - bounding.left)/2;
 
-                            if (offset > bounding.height / 2) {
-                                card.after(draggedItem);
-                            } else {
-                                card.before(draggedItem);
+                            // We are keeping it simple for vertical list
+                        });
+
+                        card.addEventListener('drop', async (e) => {
+                            e.preventDefault();
+                            if (draggedItem && draggedItem !== card) {
+                                // Find position
+                                const bounding = card.getBoundingClientRect();
+                                const offset = e.clientY - bounding.top;
+
+                                if (offset > bounding.height / 2) {
+                                    card.after(draggedItem);
+                                } else {
+                                    card.before(draggedItem);
+                                }
+
+                                // Save new order
+                                savePlatformOrder();
                             }
-
-                            // Save new order
-                            savePlatformOrder();
-                        }
+                        });
                     });
-                });
+                }
             };
 
             const savePlatformOrder = async () => {
@@ -2989,6 +3177,7 @@
             allPlatformAccounts = await Promise.all(accountsPromises);
 
             renderPlatformAccounts();
+            renderAccountViewFilters();
             renderAvailableAccounts();
             populatePlatformAccountsDropdowns(selectors.plataformaSelect.value, selectors.platformAccountSelect);
             populateAccountFilterDropdown();
