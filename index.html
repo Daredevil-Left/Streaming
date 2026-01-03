@@ -1218,7 +1218,8 @@
                 'Netflix': { color: 'text-red-600', bg: '#E50914', logo: 'https://logo.clearbit.com/netflix.com' },
                 'Spotify': { color: 'text-green-500', bg: '#1DB954', logo: 'https://logo.clearbit.com/spotify.com' },
                 'Disney+': { color: 'text-blue-900', bg: '#01153E', logo: 'https://logo.clearbit.com/disneyplus.com' },
-                'HBO Max': { color: 'text-purple-600', bg: '#8A2BE2', logo: 'https://logo.clearbit.com/hbomax.com' },
+                'HBO Max Estándar': { color: 'text-purple-600', bg: '#8A2BE2', logo: 'https://logo.clearbit.com/hbomax.com' },
+                'HBO Max Platinium': { color: 'text-blue-900', bg: '#1e3a8a', bgGradient: 'linear-gradient(to right, #000428, #004e92)', logo: 'https://logo.clearbit.com/hbomax.com' },
                 'Amazon Prime Video': { color: 'text-blue-400', bg: '#00A8E1', logo: 'https://logo.clearbit.com/primevideo.com' },
                 'YouTube Premium': { color: 'text-red-500', bg: '#FF0000', logo: 'https://logo.clearbit.com/youtube.com' },
                 'Apple TV+': { color: 'text-gray-800', bg: '#000000', logo: 'https://logo.clearbit.com/tv.apple.com' },
@@ -1229,11 +1230,13 @@
                 'Paramount+': { color: 'text-blue-800', bg: '#0064FF', logo: 'https://logo.clearbit.com/paramountplus.com' },
                 'Otro': { color: 'text-gray-500', bg: '#6B7280', logo: '' }
             };
+            platformStyles['HBO Max'] = platformStyles['HBO Max Estándar'];
+
             const defaultServices = [
                 { id: 'netflix', name: 'Netflix', cost: 38.00, price: 12.00, type: 'monthly', divider: 5, logo: 'https://upload.wikimedia.org/wikipedia/commons/0/08/Netflix_2015_logo.svg', color: '#E50914' },
                 { id: 'disney', name: 'Disney+', cost: 18.00, price: 8.00, type: 'monthly', divider: 5, logo: 'https://upload.wikimedia.org/wikipedia/commons/3/3e/Disney%2B_logo.svg', color: '#01153E' },
-                { id: 'max_plat', name: 'Max Platino', cost: 17.00, price: 8.00, type: 'monthly', divider: 5, logo: 'https://upload.wikimedia.org/wikipedia/commons/c/ce/Max_logo.svg', color: '#8A2BE2' },
-                { id: 'max_bas', name: 'Max Básico', cost: 10.20, price: 6.00, type: 'monthly', divider: 5, label: 'Básico', logo: 'https://upload.wikimedia.org/wikipedia/commons/c/ce/Max_logo.svg', color: '#8A2BE2' },
+                { id: 'max_plat', name: 'HBO Max Platinium', cost: 17.00, price: 8.00, type: 'monthly', divider: 5, logo: 'https://upload.wikimedia.org/wikipedia/commons/c/ce/Max_logo.svg', color: '#1e3a8a', bgGradient: 'linear-gradient(to right, #000428, #004e92)' },
+                { id: 'max_bas', name: 'HBO Max Estándar', cost: 10.20, price: 6.00, type: 'monthly', divider: 5, label: 'Estándar', logo: 'https://upload.wikimedia.org/wikipedia/commons/c/ce/Max_logo.svg', color: '#8A2BE2' },
                 { id: 'prime', name: 'Amazon Prime', cost: 11.00, price: 6.00, type: 'monthly', divider: 5, logo: 'https://upload.wikimedia.org/wikipedia/commons/1/11/Amazon_Prime_Video_logo.svg', color: '#00A8E1' },
                 { id: 'plex', name: 'Plex', cost: 14.00, price: 9.00, type: 'monthly', divider: 4, logo: 'https://upload.wikimedia.org/wikipedia/commons/7/7b/Plex_logo_2022.svg', color: '#e5a00d' },
                 { id: 'paramount', name: 'Paramount+', cost: 8.50, price: 6.00, type: 'monthly', divider: 5, logo: 'https://upload.wikimedia.org/wikipedia/commons/a/a5/Paramount_Plus.svg', color: '#0064FF' },
@@ -1438,7 +1441,12 @@
                     const btn = document.createElement('div');
                     // Styling: Card-like button, solid background
                     btn.className = 'flex items-center justify-between p-4 rounded-xl shadow-md cursor-pointer transition-all transform hover:scale-105 hover:shadow-lg active:scale-95';
-                    btn.style.backgroundColor = bgColor;
+
+                    if (style.bgGradient) {
+                        btn.style.background = style.bgGradient;
+                    } else {
+                        btn.style.backgroundColor = bgColor;
+                    }
                     btn.style.color = textColor;
 
                     // Badge color: White with brand text
@@ -1595,7 +1603,11 @@
 
                 // Header Styling
                 const headerBg = document.getElementById('modal-header-bg');
-                headerBg.style.backgroundColor = platformStyle.bg;
+                if (platformStyle.bgGradient) {
+                    headerBg.style.background = platformStyle.bgGradient;
+                } else {
+                    headerBg.style.backgroundColor = platformStyle.bg;
+                }
 
                 // Platform Info
             const platformNameEl = document.getElementById('modal-platform-name');
@@ -1887,7 +1899,7 @@
             };
 
             function renderPlatformSelects() {
-                const platforms = Object.keys(platformStyles).filter(p => p !== 'Otro').sort();
+                const platforms = Object.keys(platformStyles).filter(p => p !== 'Otro' && p !== 'HBO Max').sort();
                 platforms.push('Otro');
 
                 const optionsHtml = platforms.map(p => `<option value="${p}">${p}</option>`).join('');
@@ -1900,7 +1912,7 @@
             }
 
             const renderAccountPlatformButtons = () => {
-                const platformNames = Object.keys(platformStyles).filter(p => p !== 'Otro');
+                const platformNames = Object.keys(platformStyles).filter(p => p !== 'Otro' && p !== 'HBO Max');
                 selectors.accountPlatformButtons.innerHTML = '';
 
                 const resetButtons = () => {
@@ -1950,26 +1962,6 @@
                     toggleAddServiceModal();
                 });
                 selectors.accountPlatformButtons.appendChild(addPlatformBtn);
-
-                const otroBtn = document.createElement('button');
-                const otroStyle = platformStyles['Otro'];
-                otroBtn.type = 'button';
-                otroBtn.dataset.platformName = 'Otro';
-                otroBtn.className = `px-4 py-2 rounded-lg border-2 font-bold text-sm transition-all duration-200 ease-in-out transform hover:scale-105 focus:outline-none`;
-
-                otroBtn.style.backgroundColor = 'white';
-                otroBtn.style.borderColor = otroStyle.bg;
-                otroBtn.style.color = otroStyle.bg;
-                otroBtn.textContent = 'Otro';
-
-                otroBtn.addEventListener('click', () => {
-                    selectors.addAccountForm['account-platform'].value = 'Otro';
-                    resetButtons();
-                    otroBtn.style.backgroundColor = otroStyle.bg;
-                    otroBtn.style.color = 'white';
-                    otroBtn.classList.add('scale-110', 'shadow-md');
-                });
-                selectors.accountPlatformButtons.appendChild(otroBtn);
             };
 
             const renderSales = (sales) => {
@@ -2355,7 +2347,7 @@
                     const cardHtml = `
         <div class="bg-white rounded-2xl shadow-lg mb-6 overflow-hidden border border-gray-200 platform-card-container transition-transform duration-200 break-inside-avoid"
              data-platform="${platform}">
-            <div class="px-4 py-3 border-b border-gray-200 cursor-move platform-card-header" draggable="true" style="background-color: ${platformStyle.bg};">
+            <div class="px-4 py-3 border-b border-gray-200 cursor-move platform-card-header" draggable="true" style="${platformStyle.bgGradient ? `background: ${platformStyle.bgGradient};` : `background-color: ${platformStyle.bg};`}">
                 <h3 class="text-lg font-semibold text-white pointer-events-none select-none">${platform}</h3>
             </div>
             <ul class="divide-y divide-gray-200">
@@ -3477,7 +3469,16 @@
                 const price = service.price * selectedMonths;
                 const labelHtml = service.label ? `<span class="absolute top-3 left-3 bg-blue-500 text-white text-xs font-bold px-2 py-1 rounded-full z-20 shadow-sm">${service.label}</span>` : '';
 
-                const cardStyle = isSelected ? `background-color: ${service.color}; color: ${getContrastYIQ(service.color)}` : '';
+                let cardBgStyle = '';
+                if (isSelected) {
+                    if (service.bgGradient) {
+                        cardBgStyle = `background: ${service.bgGradient};`;
+                    } else {
+                        cardBgStyle = `background-color: ${service.color};`;
+                    }
+                }
+
+                const cardStyle = isSelected ? `${cardBgStyle} color: ${getContrastYIQ(service.color)}` : '';
                 const textColor = isSelected ? getContrastYIQ(service.color) : '';
                 const titleColor = isSelected ? 'inherit' : 'text-gray-800';
                 const priceColor = isSelected ? 'inherit' : 'text-indigo-600';
