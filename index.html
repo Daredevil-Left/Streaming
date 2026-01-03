@@ -1899,7 +1899,7 @@
             };
 
             function renderPlatformSelects() {
-                const platforms = Object.keys(platformStyles).filter(p => p !== 'Otro').sort();
+                const platforms = Object.keys(platformStyles).filter(p => p !== 'Otro' && p !== 'HBO Max').sort();
                 platforms.push('Otro');
 
                 const optionsHtml = platforms.map(p => `<option value="${p}">${p}</option>`).join('');
@@ -1912,7 +1912,7 @@
             }
 
             const renderAccountPlatformButtons = () => {
-                const platformNames = Object.keys(platformStyles).filter(p => p !== 'Otro');
+                const platformNames = Object.keys(platformStyles).filter(p => p !== 'Otro' && p !== 'HBO Max');
                 selectors.accountPlatformButtons.innerHTML = '';
 
                 const resetButtons = () => {
@@ -1962,26 +1962,6 @@
                     toggleAddServiceModal();
                 });
                 selectors.accountPlatformButtons.appendChild(addPlatformBtn);
-
-                const otroBtn = document.createElement('button');
-                const otroStyle = platformStyles['Otro'];
-                otroBtn.type = 'button';
-                otroBtn.dataset.platformName = 'Otro';
-                otroBtn.className = `px-4 py-2 rounded-lg border-2 font-bold text-sm transition-all duration-200 ease-in-out transform hover:scale-105 focus:outline-none`;
-
-                otroBtn.style.backgroundColor = 'white';
-                otroBtn.style.borderColor = otroStyle.bg;
-                otroBtn.style.color = otroStyle.bg;
-                otroBtn.textContent = 'Otro';
-
-                otroBtn.addEventListener('click', () => {
-                    selectors.addAccountForm['account-platform'].value = 'Otro';
-                    resetButtons();
-                    otroBtn.style.backgroundColor = otroStyle.bg;
-                    otroBtn.style.color = 'white';
-                    otroBtn.classList.add('scale-110', 'shadow-md');
-                });
-                selectors.accountPlatformButtons.appendChild(otroBtn);
             };
 
             const renderSales = (sales) => {
