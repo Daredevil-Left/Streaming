@@ -1211,7 +1211,7 @@
     </script>
 
     <script type="module">
-        import { collection, addDoc, onSnapshot, doc, updateDoc, deleteDoc, getDocs, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { collection, addDoc, onSnapshot, doc, updateDoc, deleteDoc, getDocs, setDoc, getDoc, deleteField } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
         import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { db, auth } from "./firebase-config.js";
 
@@ -3113,8 +3113,9 @@
                 const docRef = await addDoc(profilesRef, profileDoc);
                 createdProfiles.push({ id: docRef.id, ...profileDoc });
             } return createdProfiles;
-        }; const
-            handleDeleteSale = (id) => showArchiveDeleteModal(id);
+        };
+
+        const handleDeleteSale = (id) => showArchiveDeleteModal(id);
 
         const handleDeleteExpense = (id) => {
             showConfirmationModal(
