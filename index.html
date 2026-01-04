@@ -532,7 +532,13 @@
                                 </select>
                             </div>
                         </div>
-                        <div id="platform-filters" class="flex flex-wrap justify-center gap-3 sm:gap-4"></div>
+                        <div id="platform-filters" class="flex flex-wrap justify-center gap-3 sm:gap-4 mb-4"></div>
+                        <div class="flex justify-end">
+                            <button id="view-maintenance-btn" class="text-yellow-600 font-medium hover:text-yellow-800 underline transition flex items-center gap-1">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                                Ver Clientes en Mantenimiento
+                            </button>
+                        </div>
                     </div>
 
                     <div class="bg-white rounded-2xl shadow-lg p-4">
@@ -904,6 +910,23 @@
             </form>
         </div>
     </div>
+    <div id="maintenance-modal"
+        class="modal fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 z-50 hidden opacity-0">
+        <div class="modal-content bg-white w-full max-w-4xl rounded-2xl shadow-2xl p-6 transform scale-95 flex flex-col max-h-[90vh]">
+            <div class="flex justify-between items-center mb-6 flex-shrink-0">
+                <h2 class="text-2xl font-semibold text-gray-700">Clientes en Mantenimiento</h2>
+                <button id="close-maintenance-modal" class="text-gray-400 hover:text-gray-600">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+            <div class="overflow-y-auto flex-grow">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="maintenance-list">
+                    <!-- Items injected via JS -->
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div id="archive-delete-modal"
         class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden opacity-0">
         <div class="modal-content bg-white w-full max-w-lg rounded-2xl shadow-2xl p-8 transform scale-95 text-center">
@@ -1380,6 +1403,18 @@
                 accountViewFilters: document.getElementById('account-view-filters'),
                 toggleAddAccountBtn: document.getElementById('toggle-add-account-btn'),
                 collapsibleAccountsContent: document.getElementById('collapsible-accounts-content'),
+                maintenanceModal: document.getElementById('maintenance-modal'),
+                closeMaintenanceModalBtn: document.getElementById('close-maintenance-modal'),
+                maintenanceList: document.getElementById('maintenance-list'),
+                viewMaintenanceBtn: document.getElementById('view-maintenance-btn'),
+                editSaleStatus: document.getElementById('edit-sale-status') || (() => {
+                    const input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.id = 'edit-sale-status';
+                    input.name = 'edit-sale-status';
+                    document.getElementById('edit-sale-form').appendChild(input);
+                    return input;
+                })(), // Ensure hidden input exists
             };
 
             selectors.toggleAddAccountBtn.addEventListener('click', () => {
@@ -2803,6 +2838,9 @@
                 f['edit-notas'].value = sale.notas || '';
                 f['edit-metodoPago'].value = sale.metodoPago || '';
 
+                // Reset status flag (default to current status or ignore if not restoring)
+                if (selectors.editSaleStatus) selectors.editSaleStatus.value = '';
+
                 // Platform and Account Logic
                 const standardPlatforms = Array.from(f['edit-plataforma'].options).map(o => o.value);
                 let currentPlatform = sale.plataforma;
@@ -3117,6 +3155,92 @@
 
         const handleDeleteSale = (id) => showArchiveDeleteModal(id);
 
+        const toggleMaintenanceModal = () => {
+            const modal = selectors.maintenanceModal;
+            if (modal.classList.contains('hidden')) {
+                renderMaintenanceSales();
+                modal.classList.remove('hidden');
+                setTimeout(() => {
+                    modal.classList.remove('opacity-0');
+                    modal.querySelector('.modal-content').classList.remove('scale-95');
+                }, 10);
+            } else {
+                modal.classList.add('opacity-0');
+                modal.querySelector('.modal-content').classList.add('scale-95');
+                setTimeout(() => modal.classList.add('hidden'), 300);
+            }
+        };
+
+        const renderMaintenanceSales = () => {
+            const maintenanceSales = allSales.filter(s => s.estado === 'EN_MANTENIMIENTO');
+            selectors.maintenanceList.innerHTML = '';
+
+            if (maintenanceSales.length === 0) {
+                selectors.maintenanceList.innerHTML = '<p class="text-gray-500 col-span-full text-center">No hay clientes en mantenimiento.</p>';
+                return;
+            }
+
+            maintenanceSales.forEach(sale => {
+                const card = document.createElement('div');
+                card.className = 'bg-gray-50 p-4 rounded-xl border border-gray-200 flex flex-col justify-between';
+
+                const remainingDays = sale.diasRestantes !== undefined ? sale.diasRestantes : 0;
+
+                card.innerHTML = `
+                    <div class="mb-4">
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="font-bold text-gray-800">${sale.cliente}</h3>
+                            <span class="bg-yellow-100 text-yellow-800 text-xs font-semibold px-2 py-1 rounded-full">En Mantenimiento</span>
+                        </div>
+                        <p class="text-sm text-gray-600 mb-1">${getPlatformHtml(sale.plataforma)}</p>
+                        <p class="text-sm text-gray-500">Días restantes guardados: <span class="font-bold text-gray-800">${remainingDays}</span></p>
+                        ${sale.notas ? `<p class="text-xs text-gray-400 mt-2 italic">"${sale.notas}"</p>` : ''}
+                    </div>
+                    <button class="restore-sale-btn w-full bg-indigo-600 text-white font-semibold py-2 rounded-lg hover:bg-indigo-700 transition" data-id="${sale.id}">
+                        Reactivar Servicio
+                    </button>
+                `;
+                selectors.maintenanceList.appendChild(card);
+            });
+
+            selectors.maintenanceList.querySelectorAll('.restore-sale-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => handleRestoreSale(e.currentTarget.dataset.id));
+            });
+        };
+
+        const handleRestoreSale = (id) => {
+            const sale = allSales.find(s => s.id === id);
+            if (!sale) return;
+
+            toggleMaintenanceModal(); // Close maintenance list
+            handleEdit(id); // Open edit modal with data
+
+            // Override dates
+            const today = dayjs().format('YYYY-MM-DD');
+            const remainingDays = sale.diasRestantes !== undefined ? sale.diasRestantes : 0;
+            const newEndDate = dayjs().add(remainingDays, 'day').format('YYYY-MM-DD');
+
+            document.getElementById('edit-inicioPlan').value = today;
+            document.getElementById('edit-finPlan').value = newEndDate;
+
+            // Reset Profile Selection to force new assignment
+            const accountSelect = document.getElementById('edit-platform-account');
+            const profileSelect = document.getElementById('edit-profile-select');
+
+            accountSelect.value = "";
+            profileSelect.innerHTML = '<option value="">Seleccione cuenta y perfil</option>';
+            profileSelect.disabled = true;
+            profileSelect.classList.add('bg-gray-200');
+
+            // Set restoration flag
+            if (selectors.editSaleStatus) selectors.editSaleStatus.value = 'ACTIVO';
+
+            alert(`Reactivando cliente. Días restantes: ${remainingDays}. \nPor favor asigne una nueva cuenta y perfil.`);
+        };
+
+        selectors.viewMaintenanceBtn.addEventListener('click', toggleMaintenanceModal);
+        selectors.closeMaintenanceModalBtn.addEventListener('click', toggleMaintenanceModal);
+
         const handleMoveToMaintenance = (id) => {
             const sale = allSales.find(s => s.id === id);
             if (!sale) return;
@@ -3429,6 +3553,12 @@
                 accountId: newAccountId,
                 profileId: newProfileId
             };
+
+            // Apply status update if flag is set (e.g. Restore)
+            if (selectors.editSaleStatus && selectors.editSaleStatus.value === 'ACTIVO') {
+                updatedSale.estado = 'ACTIVO';
+                updatedSale.diasRestantes = deleteField(); // Remove stored days
+            }
 
             try {
                 await updateDoc(doc(db, "sales", saleId), updatedSale);
