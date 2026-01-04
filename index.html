@@ -3117,6 +3117,55 @@
 
         const handleDeleteSale = (id) => showArchiveDeleteModal(id);
 
+        const handleMoveToMaintenance = (id) => {
+            const sale = allSales.find(s => s.id === id);
+            if (!sale) return;
+
+            showConfirmationModal(
+                'Mover a Mantenimiento',
+                '¿Estás seguro de mover esta venta a mantenimiento? El perfil asociado se liberará y se guardarán los días restantes.',
+                async () => {
+                    try {
+                        // 1. Release profile if exists
+                        if (sale.accountId && sale.profileId) {
+                            const account = allPlatformAccounts.find(a => a.id === sale.accountId);
+                            if (account && account.platform !== 'Canva') {
+                                const profileRef = doc(db, "platformAccounts", sale.accountId, "Perfiles", sale.profileId);
+                                await updateDoc(profileRef, { estado: 'Disponible', fechaVencimiento: null, clienteId: null });
+
+                                // Update local state for immediate feedback
+                                if (account.profiles) {
+                                    const profile = account.profiles.find(p => p.id === sale.profileId);
+                                    if (profile) {
+                                        profile.estado = 'Disponible';
+                                        profile.fechaVencimiento = null;
+                                        profile.clienteId = null;
+                                    }
+                                }
+                                renderPlatformAccounts();
+                            }
+                        }
+
+                        // 2. Calculate remaining days
+                        const today = dayjs().startOf('day');
+                        const end = dayjs(sale.finPlan).startOf('day');
+                        const remainingDays = end.diff(today, 'day');
+
+                        // 3. Update sale
+                        await updateDoc(doc(db, "sales", id), {
+                            estado: 'EN_MANTENIMIENTO',
+                            diasRestantes: remainingDays,
+                            profileId: null
+                        });
+
+                    } catch (error) {
+                        console.error("Error al mover a mantenimiento:", error);
+                        alert("Error al mover a mantenimiento.");
+                    }
+                }
+            );
+        };
+
         const handleDeleteExpense = (id) => {
             showConfirmationModal(
                 'Eliminar Gasto',
