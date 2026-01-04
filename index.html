@@ -2344,7 +2344,10 @@
                         return `
                         <div class="bg-white rounded-2xl shadow-md overflow-hidden border border-gray-200 hover:shadow-xl transition-shadow duration-300 flex flex-col h-full">
                             <div class="px-4 py-3 flex justify-between items-center" style="${headerBgStyle}">
-                                <h3 class="font-bold text-lg truncate flex-1" style="color: ${headerTextColor}" title="${account.email}">${account.email}</h3>
+                                <h3 class="font-bold text-lg truncate flex-1 mr-2" style="color: ${headerTextColor}" title="${account.email}">${account.email}</h3>
+                                <button class="copy-account-email-btn p-1 rounded hover:bg-white/20 transition flex-shrink-0" data-text="${account.email}" style="color: ${headerTextColor}" title="Copiar Correo">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
+                                </button>
                             </div>
                             <div class="p-4 flex flex-col gap-3 flex-grow justify-between">
                                 <div>
@@ -2355,8 +2358,11 @@
                                     ${profilesHtml}
                                     <div class="flex items-center w-full mb-1">
                                          <input type="password" value="${account.password}" class="w-full bg-gray-50 border border-gray-200 text-sm rounded-l-md px-3 py-2 focus:outline-none text-gray-700 font-mono" readonly>
-                                         <button class="toggle-password-btn bg-gray-100 hover:bg-gray-200 text-gray-600 p-2 rounded-r-md transition h-[38px] border border-l-0 border-gray-200 flex items-center justify-center" title="Mostrar/Ocultar">
+                                         <button class="toggle-password-btn bg-gray-100 hover:bg-gray-200 text-gray-600 p-2 transition h-[38px] border-y border-r border-gray-200 flex items-center justify-center" title="Mostrar/Ocultar">
                                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                                         </button>
+                                         <button class="copy-account-password-btn bg-gray-100 hover:bg-gray-200 text-gray-600 p-2 rounded-r-md transition h-[38px] border border-l-0 border-gray-200 flex items-center justify-center" data-text="${account.password}" title="Copiar Contraseña">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
                                          </button>
                                     </div>
                                 </div>
@@ -2370,6 +2376,39 @@
                     }).join('');
 
                     accountsList.innerHTML = cardsHtml;
+
+                    // Add Event Listeners for Copy Buttons (Specific to Grid View)
+                    const handleCopyBtn = (btn) => {
+                        const text = btn.dataset.text;
+                        navigator.clipboard.writeText(text).then(() => {
+                            const icon = btn.querySelector('svg');
+                            // Hardcoded original path for restore
+                            const originalPath = btn.classList.contains('copy-account-email-btn')
+                                ? '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path>'
+                                : '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path>';
+
+                            icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>';
+
+                            // Visual feedback
+                            if (btn.classList.contains('copy-account-password-btn')) {
+                                btn.classList.add('text-green-600');
+                                setTimeout(() => {
+                                    icon.innerHTML = originalPath;
+                                    btn.classList.remove('text-green-600');
+                                }, 2000);
+                            } else {
+                                // For email button (in header), might be white or black text.
+                                // Changing text color might be invisible if background is green.
+                                // Let's just change icon.
+                                setTimeout(() => {
+                                    icon.innerHTML = originalPath;
+                                }, 2000);
+                            }
+                        });
+                    };
+
+                    accountsList.querySelectorAll('.copy-account-email-btn').forEach(btn => btn.addEventListener('click', (e) => handleCopyBtn(e.currentTarget)));
+                    accountsList.querySelectorAll('.copy-account-password-btn').forEach(btn => btn.addEventListener('click', (e) => handleCopyBtn(e.currentTarget)));
 
                 } else {
                     // MASONRY LAYOUT FOR 'TODOS' VIEW (Existing Logic)
