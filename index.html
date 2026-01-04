@@ -2165,6 +2165,12 @@
                 </path>
             </svg>
         </button>
+        <button class="maintenance-btn p-1 text-yellow-600 hover:text-yellow-800 hover:bg-yellow-100 rounded-full transition"
+            data-id="${sale.id}" title="Mantenimiento">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+            </svg>
+        </button>
     </div>
     <div class="md:hidden col-span-2 mt-2 pt-2 border-t flex justify-between items-center text-xs">
         <span
@@ -2185,6 +2191,8 @@
                     handleDeleteSale(e.currentTarget.dataset.id)));
                 selectors.salesList.querySelectorAll('.renew-btn').forEach(b => b.addEventListener('click', e =>
                     openRenewalModal(e.currentTarget.dataset.id)));
+                selectors.salesList.querySelectorAll('.maintenance-btn').forEach(b => b.addEventListener('click', e =>
+                    handleMoveToMaintenance(e.currentTarget.dataset.id)));
                 selectors.salesList.querySelectorAll('.copy-details-btn').forEach(b => b.addEventListener('click', e =>
                     handleCopySaleDetails(e.currentTarget.dataset.id, e.currentTarget)));
                 selectors.salesList.querySelectorAll('.whatsapp-btn').forEach(b => b.addEventListener('click', e =>
