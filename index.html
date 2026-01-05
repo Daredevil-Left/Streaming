@@ -533,12 +533,6 @@
                             </div>
                         </div>
                         <div id="platform-filters" class="flex flex-wrap justify-center gap-3 sm:gap-4 mb-4"></div>
-                        <div class="flex justify-end">
-                            <button id="view-maintenance-btn" class="text-yellow-600 font-medium hover:text-yellow-800 underline transition flex items-center gap-1">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
-                                Mantenimiento
-                            </button>
-                        </div>
                     </div>
 
                     <div class="bg-white rounded-2xl shadow-lg p-4">
@@ -1407,7 +1401,6 @@
                 maintenanceModal: document.getElementById('maintenance-modal'),
                 closeMaintenanceModalBtn: document.getElementById('close-maintenance-modal'),
                 maintenanceList: document.getElementById('maintenance-list'),
-                viewMaintenanceBtn: document.getElementById('view-maintenance-btn'),
                 editSaleStatus: document.getElementById('edit-sale-status') || (() => {
                     const input = document.createElement('input');
                     input.type = 'hidden';
@@ -2015,13 +2008,28 @@
                     if (platform === 'Todos') { btn.textContent = 'Todos'; } else { btn.innerHTML = getPlatformHtml(platform); }
                     btn.addEventListener('click', () => {
                         activePlatformFilter = platform;
-                        document.querySelectorAll('#platform-filters button').forEach(b => { b.className = `p-2 rounded-lg border-2 transition-all duration-200 font-semibold ${inactiveClasses}`; });
+                        document.querySelectorAll('#platform-filters button').forEach(b => {
+                            if (!b.id || b.id !== 'view-maintenance-btn') {
+                                b.className = `p-2 rounded-lg border-2 transition-all duration-200 font-semibold ${inactiveClasses}`;
+                            }
+                        });
                         btn.className = `p-2 rounded-lg border-2 transition-all duration-200 font-semibold ${activeClasses}`;
                         const activeSales = allSales.filter(sale => sale.estado !== 'ARCHIVADO');
                         applyFiltersAndRender(activeSales);
                     });
                     selectors.platformFilters.appendChild(btn);
                 });
+
+                // Maintenance Button
+                const maintenanceBtn = document.createElement('button');
+                maintenanceBtn.id = 'view-maintenance-btn';
+                maintenanceBtn.className = 'text-yellow-600 font-medium hover:text-yellow-800 underline transition flex items-center gap-1 p-2 ml-2';
+                maintenanceBtn.innerHTML = `
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                    Mantenimiento
+                `;
+                maintenanceBtn.addEventListener('click', toggleMaintenanceModal);
+                selectors.platformFilters.appendChild(maintenanceBtn);
             };
 
             function renderPlatformSelects() {
@@ -3272,7 +3280,6 @@
             alert(`Reactivando cliente. Días restantes: ${remainingDays}. \nPor favor asigne una nueva cuenta y perfil.`);
         };
 
-        selectors.viewMaintenanceBtn.addEventListener('click', toggleMaintenanceModal);
         selectors.closeMaintenanceModalBtn.addEventListener('click', toggleMaintenanceModal);
 
         const handleMoveToMaintenance = (id) => {
