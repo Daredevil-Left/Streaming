@@ -978,8 +978,9 @@
                 <input type="hidden" id="edit-account-id">
                 <div>
                     <label class="block text-sm font-medium text-gray-600 mb-2">Plataforma</label>
-                    <input type="text" id="edit-account-platform"
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100" readonly>
+                    <select id="edit-account-platform"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white">
+                    </select>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
@@ -2991,6 +2992,25 @@
 
                 const form = selectors.editAccountForm;
                 form['edit-account-id'].value = account.id;
+
+                // Populate platform select
+                const platformSelect = document.getElementById('edit-account-platform');
+                platformSelect.innerHTML = '';
+                const sortedPlatforms = allServices.map(s => s.name).sort();
+                if (!sortedPlatforms.includes('Otro')) sortedPlatforms.push('Otro');
+
+                // If current platform is custom/not in list, add it temporarily
+                if (!sortedPlatforms.includes(account.platform)) {
+                    sortedPlatforms.push(account.platform);
+                }
+
+                sortedPlatforms.forEach(p => {
+                    const option = document.createElement('option');
+                    option.value = p;
+                    option.textContent = p;
+                    platformSelect.appendChild(option);
+                });
+
                 form['edit-account-platform'].value = account.platform;
                 form['edit-account-email'].value = account.email;
                 form['edit-account-enlace'].value = account.enlace || '';
@@ -3752,7 +3772,9 @@
             const account = allPlatformAccounts.find(acc => acc.id === id);
             if (!account) return;
 
+            const newPlatform = form['edit-account-platform'].value;
             const updatedData = {
+                platform: newPlatform,
                 email: form['edit-account-email'].value,
                 enlace: form['edit-account-enlace'].value,
                 fechaPago: form['edit-account-fechaPago'].value,
@@ -3765,6 +3787,16 @@
 
             try {
                 await updateDoc(doc(db, "platformAccounts", id), updatedData);
+
+                // Cascade update if platform changed
+                if (newPlatform !== account.platform) {
+                    const salesToUpdate = allSales.filter(s => s.accountId === id);
+                    const updatePromises = salesToUpdate.map(sale =>
+                        updateDoc(doc(db, "sales", sale.id), { plataforma: newPlatform })
+                    );
+                    await Promise.all(updatePromises);
+                }
+
                 closeEditAccountModal();
             } catch (err) {
                 console.error("Error al actualizar la cuenta:", err);
