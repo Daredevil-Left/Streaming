@@ -1634,7 +1634,8 @@
                 });
             });
 
-            const getSaleStatus = (finPlan) => {
+            const getSaleStatus = (finPlan, estado) => {
+                if (estado === 'EN_MANTENIMIENTO') return 'Mantenimiento';
                 if (dayjs().isAfter(dayjs(finPlan).endOf('day'))) { return 'Vencido'; }
                 const today = dayjs().startOf('day');
                 const expirationDate = dayjs(finPlan).startOf('day');
@@ -1914,7 +1915,7 @@
                 selectors.kpiActiveClients.classList.remove('skeleton');
 
                 const expirationAlerts = activeSales.filter(sale => {
-                    const status = getSaleStatus(sale.finPlan);
+                    const status = getSaleStatus(sale.finPlan, sale.estado);
                     return status === 'Vencido' || status === 'Vence hoy' || status === 'Próximo a Vencer';
                 }).filter(sale => {
                     const expirationDate = dayjs(sale.finPlan).startOf('day');
@@ -1925,7 +1926,7 @@
                 if (expirationAlerts.length > 0) {
                     selectors.alertsSection.className = 'grid grid-cols-1 md:grid-cols-2 gap-4';
                     expirationAlerts.forEach(sale => {
-                        const status = getSaleStatus(sale.finPlan);
+                        const status = getSaleStatus(sale.finPlan, sale.estado);
                         const borderColor = status === 'Vencido' ? 'border-red-500' : 'border-yellow-500';
                         const card = document.createElement('div');
                         card.className = `bg-white p-4 rounded-lg shadow-md border-l-4 ${borderColor} flex flex-col justify-between`;
@@ -1982,7 +1983,7 @@
                 const saleId = button.dataset.saleId;
                 const sale = allSales.find(s => s.id === saleId);
                 if (!sale) return;
-                const status = getSaleStatus(sale.finPlan);
+                const status = getSaleStatus(sale.finPlan, sale.estado);
                 let message = '';
                 if (status === 'Vencido') { message = `Buenas tardes 👋🏻, se le informa que su cuenta de "${sale.plataforma}" ya venció. Si desea renovar me avisa, por favor, para evitar el corte del servicio. Gracias por su preferencia 💯`; } else if (status === 'Vence hoy') { message = `Buenas tardes 👋🏻, se le informa que su cuenta de "${sale.plataforma}" vence el día de hoy a la medianoche ‼. Si desea renovar me avisa, por favor. Gracias por su preferencia 💯`; } else { const daysLeft = dayjs(sale.finPlan).endOf('day').diff(dayjs(), 'day'); const dayText = daysLeft === 0 ? 'mañana' : `en ${daysLeft + 1} días`; message = `Buenas tardes 👋🏻, se le informa que su cuenta de "${sale.plataforma}" vence ${dayText}. Si desea renovar me avisa, por favor. Gracias por su preferencia 💯`; }
                 navigator.clipboard.writeText(message).then(() => { const originalText = button.textContent; button.textContent = '¡Copiado!'; button.classList.add('bg-green-500', 'text-white'); setTimeout(() => { button.textContent = originalText; button.classList.remove('bg-green-500', 'text-white'); }, 2000); }).catch(err => { console.error('Error al copiar texto: ', err); alert('No se pudo copiar el texto.'); });
@@ -1993,7 +1994,7 @@
                 if (activePlatformFilter !== 'Todos') { filteredSales = filteredSales.filter(sale => sale.plataforma === activePlatformFilter); }
                 if (currentSearchTerm) { const term = currentSearchTerm.toLowerCase(); filteredSales = filteredSales.filter(sale => sale.cliente.toLowerCase().includes(term) || sale.plataforma.toLowerCase().includes(term) || (sale.correo && sale.correo.toLowerCase().includes(term))); }
                 if (activeAccountFilter) { const account = allPlatformAccounts.find(a => a.id === activeAccountFilter); if (account) { filteredSales = filteredSales.filter(sale => sale.correo === account.email && sale.contrasena === account.password); } }
-                if (activeStatusFilter) { filteredSales = filteredSales.filter(sale => getSaleStatus(sale.finPlan) === activeStatusFilter); }
+                if (activeStatusFilter) { filteredSales = filteredSales.filter(sale => getSaleStatus(sale.finPlan, sale.estado) === activeStatusFilter); }
                 renderSales(filteredSales);
             };
             const renderPlatformFilters = () => {
@@ -2140,12 +2141,13 @@
                     salesRowsContainer.className = 'bg-white rounded-b-lg shadow-sm border border-t-0 border-gray-200';
 
                     salesInGroup.forEach(sale => {
-                        const statusText = getSaleStatus(sale.finPlan);
+                        const statusText = getSaleStatus(sale.finPlan, sale.estado);
                         const statusInfo = {
-                            'Vencido': { color: 'orange' }, 'Vence hoy': { color: 'red' }, 'Próximo a Vencer': {
-                                color:
-                                    'yellow'
-                            }, 'Activo': { color: 'green' }
+                            'Vencido': { color: 'orange' },
+                            'Vence hoy': { color: 'red' },
+                            'Próximo a Vencer': { color: 'yellow' },
+                            'Activo': { color: 'green' },
+                            'Mantenimiento': { color: 'gray' }
                         }[statusText];
                         const endDateForDisplay = dayjs(sale.finPlan);
                         const endDateForRelative = dayjs(sale.finPlan).endOf('day');
