@@ -3135,7 +3135,12 @@
                 <li class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                     <div class="flex flex-col">
                         <span class="font-semibold text-gray-700">${profile.nombre}</span>
-                        ${profile.pin ? `<span class="text-xs text-gray-500 font-mono mt-0.5">PIN: ${profile.pin}</span>` : ''}
+                        <div class="flex items-center gap-2 mt-0.5">
+                            <span class="text-xs text-gray-500 font-mono">PIN: ${profile.pin || '<span class="italic text-gray-400">Sin PIN</span>'}</span>
+                            <button class="edit-pin-btn p-1 text-blue-500 hover:text-blue-700 bg-blue-50 hover:bg-blue-100 rounded-full transition border border-blue-100 shadow-sm" data-profile-id="${profile.id}" data-current-pin="${profile.pin || ''}" title="Editar PIN">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L16.732 3.732z"></path></svg>
+                            </button>
+                        </div>
                     </div>
                     <span class="px-3 py-1 text-xs font-bold rounded-full ${statusColor} flex items-center gap-1">
                         ${statusIcon}
@@ -3146,9 +3151,45 @@
                     });
                     profilesHtml += '</ul>';
                     selectors.profilesContentArea.innerHTML = profilesHtml;
+
+                    // Add Event Listeners for Edit PIN buttons
+                    selectors.profilesContentArea.querySelectorAll('.edit-pin-btn').forEach(btn => {
+                        btn.addEventListener('click', (e) => {
+                            const profileId = e.currentTarget.dataset.profileId;
+                            const currentPin = e.currentTarget.dataset.currentPin;
+                            const newPin = prompt("Ingrese el nuevo PIN para este perfil:", currentPin);
+
+                            if (newPin !== null) {
+                                handleEditProfilePin(accountId, profileId, newPin);
+                            }
+                        });
+                    });
                 }
 
                 openProfilesModal();
+            };
+
+            const handleEditProfilePin = async (accountId, profileId, newPin) => {
+                try {
+                    const profileRef = doc(db, "platformAccounts", accountId, "Perfiles", profileId);
+                    await updateDoc(profileRef, { pin: newPin });
+
+                    // Update local state immediately
+                    const account = allPlatformAccounts.find(a => a.id === accountId);
+                    if (account && account.profiles) {
+                        const profile = account.profiles.find(p => p.id === profileId);
+                        if (profile) {
+                            profile.pin = newPin;
+                        }
+                    }
+
+                    // Re-render
+                    handleManageProfiles(accountId);
+
+                } catch (error) {
+                    console.error("Error updating PIN:", error);
+                    alert("Error al actualizar el PIN.");
+                }
             };
 
         const createInitialProfiles = async (accountId, count = 5) => {
