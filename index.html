@@ -4497,25 +4497,6 @@
     }
 
 
-        const checkAndReleaseExpiredProfiles = async () => {
-            const today = dayjs().startOf('day');
-            const accountsSnapshot = await getDocs(collection(db, "platformAccounts"));
-            for (const accountDoc of accountsSnapshot.docs) {
-                const profilesRef = collection(db, "platformAccounts", accountDoc.id, "Perfiles");
-                const profilesSnapshot = await getDocs(profilesRef);
-                for (const profileDoc of profilesSnapshot.docs) {
-                    const profile = profileDoc.data();
-                    if (profile.estado === 'Ocupado' && profile.fechaVencimiento) {
-                        if (today.isAfter(dayjs(profile.fechaVencimiento))) {
-                            console.log(`Liberando perfil ${ profile.nombre } de la cuenta ${ accountDoc.data().email } por vencimiento.`);
-                            const profileRef = doc(db, "platformAccounts", accountDoc.id, "Perfiles", profileDoc.id);
-                            await updateDoc(profileRef, { estado: 'Disponible', fechaVencimiento: null, clienteId: null });
-                        }
-                    }
-                }
-            }
-        };
-
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 const email = user.email;
@@ -4527,10 +4508,6 @@
 
                 // Start the app immediately to show the UI with skeleton loaders
                 startApp();
-                // Run the background check without blocking the UI
-                checkAndReleaseExpiredProfiles().catch(err => {
-                    console.error("Error checking expired profiles in background:", err);
-                });
             } else {
                 window.location.href = 'login.html';
             }
