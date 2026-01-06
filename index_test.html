@@ -1223,13 +1223,7 @@
 
         async function startApp() {
             document.getElementById('app').classList.remove('hidden');
-
-            const handleLogout = () => { signOut(auth).catch((error) => console.error("Error al cerrar sesión", error)); };
-            const logoutBtn = document.getElementById('logout-btn');
-            const mobileLogoutBtn = document.getElementById('mobile-logout-btn');
-
-            if (logoutBtn) logoutBtn.addEventListener('click', handleLogout);
-            if (mobileLogoutBtn) mobileLogoutBtn.addEventListener('click', handleLogout);
+            document.getElementById('logout-btn').addEventListener('click', () => { signOut(auth).catch((error) => console.error("Error al cerrar sesión", error)); });
 
             dayjs.extend(dayjs_plugin_relativeTime);
             dayjs.locale('es');
@@ -4554,25 +4548,9 @@
             }
         };
 
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                const email = user.email;
-                if (email === 'renzosamanamud@gmail.com') {
-                    currentSeller = 'Renzo';
-                } else if (email === 'chariph1007@gmail.com') {
-                    currentSeller = 'Charitsa';
-                }
-
-                // Start the app immediately to show the UI with skeleton loaders
-                startApp();
-                // Run the background check without blocking the UI
-                checkAndReleaseExpiredProfiles().catch(err => {
-                    console.error("Error checking expired profiles in background:", err);
-                });
-            } else {
-                window.location.href = 'login.html';
-            }
-        });
+        // Mock auth for testing
+        currentSeller = 'Tester';
+        startApp();
 
         // 3D Tilt Effect Initialization
         function init3DTilt() {
