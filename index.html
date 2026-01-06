@@ -1519,6 +1519,7 @@
                     const availableProfile = availableAccount.profiles.find(p => p.estado === 'Disponible');
                     if (availableProfile) {
                         selectors.profileSelect.value = availableProfile.id;
+                        selectors.profileSelect.dispatchEvent(new Event('change'));
                     }
                 }
             };
