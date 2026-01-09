@@ -423,10 +423,13 @@
                 <!-- Ventas View -->
                 <div id="ventas-view" class="view hidden">
                     <h1 class="text-2xl md:text-3xl font-bold text-gray-800 mb-6 md:mb-8 px-2 md:px-0">Ventas</h1>
-                    <div class="bg-white p-3 md:p-6 rounded-2xl shadow-lg mb-8 max-w-5xl mx-auto">
-                        <h2 class="text-xl md:text-2xl font-semibold text-gray-700 mb-4 md:mb-6">Añadir Nueva Venta</h2>
-                        <form id="add-sale-form"
-                            class="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6 lg:grid-cols-3 xl:grid-cols-4">
+                    <div class="w-full max-w-[98%] mx-auto mb-8">
+                        <div class="flex flex-col md:flex-row gap-4">
+                            <!-- Form Container -->
+                            <div class="flex-grow bg-white p-3 md:p-6 rounded-2xl shadow-lg">
+                                <h2 class="text-xl md:text-2xl font-semibold text-gray-700 mb-4 md:mb-6">Añadir Nueva Venta</h2>
+                                <form id="add-sale-form"
+                                    class="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6 lg:grid-cols-3 xl:grid-cols-4">
                             <div><label for="cliente" class="block text-sm font-medium text-gray-600 mb-2">Nombre del
                                     Cliente</label><input type="text" id="cliente" name="cliente"
                                     class="w-full px-4 py-2 border border-gray-300 rounded-lg" required></div>
@@ -503,6 +506,44 @@
                             </div>
                         </form>
                     </div>
+
+                    <!-- Info Card Container -->
+                    <div id="account-detail-card-container" class="hidden w-full md:w-64 lg:w-72 flex-shrink-0 transition-all duration-300 ease-in-out">
+                        <div id="account-detail-card" class="bg-white p-4 rounded-xl shadow-lg border-2 sticky top-4 transition-all duration-300">
+                            <h3 class="font-bold text-gray-800 text-base mb-3 flex items-center gap-2">
+                                <svg class="w-4 h-4" style="width: 16px; height: 16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                Datos de Cuenta Madre
+                            </h3>
+                            <div class="space-y-3">
+                                <div>
+                                    <label class="block text-[10px] font-bold text-gray-400 uppercase mb-0.5">Correo</label>
+                                    <div class="flex items-center gap-1 bg-gray-50 rounded-lg p-1 border border-gray-100">
+                                        <input type="text" id="info-card-email" class="flex-grow bg-transparent border-none text-xs font-medium text-gray-700 focus:ring-0 truncate" readonly value="">
+                                        <button class="text-gray-400 hover:text-indigo-600 transition p-1.5 rounded-md hover:bg-white copy-info-btn" data-target="info-card-email" title="Copiar">
+                                            <svg class="w-4 h-4" style="width: 16px; height: 16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-bold text-gray-400 uppercase mb-0.5">Contraseña</label>
+                                    <div class="flex items-center gap-1 bg-gray-50 rounded-lg p-1 border border-gray-100">
+                                        <input type="text" id="info-card-password" class="flex-grow bg-transparent border-none text-xs font-medium text-gray-700 focus:ring-0 truncate" readonly value="">
+                                        <button class="text-gray-400 hover:text-indigo-600 transition p-1.5 rounded-md hover:bg-white copy-info-btn" data-target="info-card-password" title="Copiar">
+                                            <svg class="w-4 h-4" style="width: 16px; height: 16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div id="info-card-link-container" class="pt-1">
+                                    <a id="info-card-link" href="#" target="_blank" class="flex items-center justify-center gap-1 w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-2 rounded-lg transition text-xs">
+                                        <svg class="w-4 h-4" style="width: 16px; height: 16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                                        Ir a la cuenta
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
                     <div class="bg-white p-4 rounded-2xl shadow-lg mb-8">
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
@@ -2793,6 +2834,37 @@
                 const account = allPlatformAccounts.find(a => a.id === accountId);
                 const profileContainer = profileSelect.parentElement;
 
+                // Update Info Card (Side Panel)
+                const infoCardContainer = document.getElementById('account-detail-card-container');
+                const infoCard = document.getElementById('account-detail-card');
+
+                // Only update if this is the main add-sale form (check select ID)
+                if (select.id === 'platform-account' && infoCardContainer) {
+                    if (account) {
+                        infoCardContainer.classList.remove('hidden');
+
+                        // Update Content
+                        document.getElementById('info-card-email').value = account.email || '';
+                        document.getElementById('info-card-password').value = account.password || '';
+
+                        const linkBtn = document.getElementById('info-card-link');
+                        if (account.enlace) {
+                            linkBtn.href = account.enlace;
+                            linkBtn.parentElement.classList.remove('hidden');
+                        } else {
+                            linkBtn.parentElement.classList.add('hidden');
+                        }
+
+                        // Update Border Color
+                        const platformName = account.platform || 'Otro';
+                        const style = platformStyles[platformName] || platformStyles['Otro'];
+                        infoCard.style.borderColor = style.bg; // Set border color dynamically
+
+                    } else {
+                        infoCardContainer.classList.add('hidden');
+                    }
+                }
+
                 // Reset profile dropdown
                 profileSelect.innerHTML = '<option value="">Selecciona una cuenta madre primero</option>';
                 profileSelect.disabled = true;
@@ -4542,6 +4614,31 @@
 
         // Initialize tilt effect after DOM load (or immediately if inside module and DOM is ready)
         init3DTilt();
+
+        // Listener for Info Card Copy Buttons
+        document.querySelectorAll('.copy-info-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault(); // Prevent form submission if inside form (it's outside now, but good practice)
+                const targetId = btn.dataset.target;
+                const input = document.getElementById(targetId);
+                if (!input || !input.value) return;
+
+                navigator.clipboard.writeText(input.value).then(() => {
+                    const icon = btn.querySelector('svg');
+                    const originalPath = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path>';
+
+                    icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>';
+                    btn.classList.add('text-green-600');
+                    btn.classList.remove('text-gray-400', 'hover:text-indigo-600');
+
+                    setTimeout(() => {
+                        icon.innerHTML = originalPath;
+                        btn.classList.remove('text-green-600');
+                        btn.classList.add('text-gray-400', 'hover:text-indigo-600');
+                    }, 2000);
+                });
+            });
+        });
 
         window.startApp = startApp;
 
