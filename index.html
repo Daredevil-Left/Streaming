@@ -423,10 +423,11 @@
                 <!-- Ventas View -->
                 <div id="ventas-view" class="view hidden">
                     <h1 class="text-2xl md:text-3xl font-bold text-gray-800 mb-6 md:mb-8 px-2 md:px-0">Ventas</h1>
-                    <div class="bg-white p-3 md:p-6 rounded-2xl shadow-lg mb-8 max-w-5xl mx-auto">
-                        <h2 class="text-xl md:text-2xl font-semibold text-gray-700 mb-4 md:mb-6">Añadir Nueva Venta</h2>
-                        <form id="add-sale-form"
-                            class="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6 lg:grid-cols-3 xl:grid-cols-4">
+                    <div class="max-w-7xl mx-auto mb-8 flex flex-col lg:flex-row gap-6">
+                        <div class="bg-white p-3 md:p-6 rounded-2xl shadow-lg flex-grow">
+                            <h2 class="text-xl md:text-2xl font-semibold text-gray-700 mb-4 md:mb-6">Añadir Nueva Venta</h2>
+                            <form id="add-sale-form"
+                                class="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6 lg:grid-cols-3 xl:grid-cols-4">
                             <div><label for="cliente" class="block text-sm font-medium text-gray-600 mb-2">Nombre del
                                     Cliente</label><input type="text" id="cliente" name="cliente"
                                     class="w-full px-4 py-2 border border-gray-300 rounded-lg" required></div>
@@ -502,6 +503,44 @@
                                     Venta</button>
                             </div>
                         </form>
+                        </div>
+
+                        <!-- Mother Account Info Card -->
+                        <div id="mother-account-card" class="w-full lg:w-80 bg-white rounded-2xl shadow-lg border border-gray-100 sticky top-4 h-fit transition-all duration-300 overflow-hidden mt-6 lg:mt-0">
+                            <div id="mac-header" class="bg-gray-100 p-4 border-b border-gray-200">
+                                <h3 id="mac-platform" class="font-bold text-gray-700 text-center">Cuenta Madre</h3>
+                            </div>
+                            <div class="p-5 space-y-4">
+                                <div id="mac-placeholder" class="text-center text-gray-500 py-4 text-sm">
+                                    Seleccione una cuenta madre para ver los detalles.
+                                </div>
+                                <div id="mac-content" class="hidden space-y-4">
+                                    <div>
+                                        <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Correo</label>
+                                        <div class="flex items-center bg-gray-50 rounded-lg border border-gray-200 p-2">
+                                            <span id="mac-email" class="text-sm text-gray-800 font-medium truncate flex-grow select-all"></span>
+                                            <button class="ml-2 p-1.5 text-gray-400 hover:text-indigo-600 hover:bg-white rounded-md transition-colors copy-mac-btn" data-target="mac-email" title="Copiar Correo">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Contraseña</label>
+                                        <div class="flex items-center bg-gray-50 rounded-lg border border-gray-200 p-2">
+                                            <span id="mac-password" class="text-sm text-gray-800 font-mono truncate flex-grow select-all"></span>
+                                            <button class="ml-2 p-1.5 text-gray-400 hover:text-indigo-600 hover:bg-white rounded-md transition-colors copy-mac-btn" data-target="mac-password" title="Copiar Contraseña">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div id="mac-link-container" class="hidden">
+                                        <a id="mac-link" href="#" target="_blank" class="block w-full text-center py-2 px-4 bg-blue-50 text-blue-600 font-semibold rounded-lg hover:bg-blue-100 transition-colors text-sm">
+                                            Abrir Enlace
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="bg-white p-4 rounded-2xl shadow-lg mb-8">
@@ -1409,7 +1448,84 @@
                     document.getElementById('edit-sale-form').appendChild(input);
                     return input;
                 })(), // Ensure hidden input exists
+                // New selectors for Mother Account Card
+                motherAccountCard: document.getElementById('mother-account-card'),
+                macHeader: document.getElementById('mac-header'),
+                macPlatform: document.getElementById('mac-platform'),
+                macPlaceholder: document.getElementById('mac-placeholder'),
+                macContent: document.getElementById('mac-content'),
+                macEmail: document.getElementById('mac-email'),
+                macPassword: document.getElementById('mac-password'),
+                macLinkContainer: document.getElementById('mac-link-container'),
+                macLink: document.getElementById('mac-link'),
             };
+
+            // Mother Account Info Card Logic
+            const renderMotherAccountCard = (accountId) => {
+                const account = allPlatformAccounts.find(a => a.id === accountId);
+
+                if (account) {
+                    const platformStyle = platformStyles[account.platform] || platformStyles['Otro'];
+
+                    // Header Styling
+                    if (platformStyle.bgGradient) {
+                        selectors.macHeader.style.background = platformStyle.bgGradient;
+                    } else {
+                        selectors.macHeader.style.backgroundColor = platformStyle.bg;
+                    }
+                    const textColor = getContrastYIQ(platformStyle.bg);
+                    selectors.macPlatform.style.color = textColor;
+                    selectors.macPlatform.textContent = account.platform;
+
+                    // Content
+                    selectors.macEmail.textContent = account.email || 'N/A';
+                    selectors.macPassword.textContent = account.password || '********';
+
+                    if (account.enlace) {
+                        selectors.macLink.href = account.enlace;
+                        selectors.macLinkContainer.classList.remove('hidden');
+                    } else {
+                        selectors.macLinkContainer.classList.add('hidden');
+                    }
+
+                    // Visibility Toggle
+                    selectors.macPlaceholder.classList.add('hidden');
+                    selectors.macContent.classList.remove('hidden');
+                } else {
+                    // Reset to Placeholder
+                    selectors.macHeader.style.background = '';
+                    selectors.macHeader.style.backgroundColor = '#f3f4f6'; // Gray-100
+                    selectors.macPlatform.style.color = '#374151'; // Gray-700
+                    selectors.macPlatform.textContent = 'Cuenta Madre';
+
+                    selectors.macPlaceholder.classList.remove('hidden');
+                    selectors.macContent.classList.add('hidden');
+                }
+            };
+
+            // Copy buttons for Mother Account Card
+            document.querySelectorAll('.copy-mac-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.preventDefault(); // Prevent form submission if inside form
+                    const targetId = btn.getAttribute('data-target');
+                    const text = document.getElementById(targetId).textContent;
+
+                    navigator.clipboard.writeText(text).then(() => {
+                        const icon = btn.querySelector('svg');
+                        const originalPath = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path>';
+
+                        icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>';
+                        btn.classList.add('text-green-500');
+                        btn.classList.remove('text-gray-400', 'hover:text-indigo-600');
+
+                        setTimeout(() => {
+                            icon.innerHTML = originalPath;
+                            btn.classList.remove('text-green-500');
+                            btn.classList.add('text-gray-400', 'hover:text-indigo-600');
+                        }, 2000);
+                    });
+                });
+            });
 
             selectors.toggleAddAccountBtn.addEventListener('click', () => {
                 const content = selectors.collapsibleAccountsContent;
@@ -2793,6 +2909,12 @@
                 const account = allPlatformAccounts.find(a => a.id === accountId);
                 const profileContainer = profileSelect.parentElement;
 
+                // Update Info Card if this is the Add Sale form (check by ID logic or context)
+                // Since this function is shared, we check if the select is the one in Add Form
+                if (select.id === 'platform-account') {
+                    renderMotherAccountCard(accountId);
+                }
+
                 // Reset profile dropdown
                 profileSelect.innerHTML = '<option value="">Selecciona una cuenta madre primero</option>';
                 profileSelect.disabled = true;
@@ -3952,17 +4074,6 @@
                 selectors.searchInput.dispatchEvent(new Event('input'));
             }
         };
-
-        // Helper para contraste de color (YIQ)
-        function getContrastYIQ(hexcolor){
-            hexcolor = hexcolor.replace("#", "");
-            if (hexcolor.length === 3) hexcolor = hexcolor.split('').map(c => c+c).join('');
-            var r = parseInt(hexcolor.substr(0,2),16);
-            var g = parseInt(hexcolor.substr(2,2),16);
-            var b = parseInt(hexcolor.substr(4,2),16);
-            var yiq = ((r*299)+(g*587)+(b*114))/1000;
-            return (yiq >= 128) ? 'black' : 'white';
-        }
 
         window.updateServiceQuantity = (serviceId, change) => {
             const currentQty = selectedServices.get(serviceId) || 0;
