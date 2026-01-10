@@ -423,109 +423,88 @@
                 <!-- Ventas View -->
                 <div id="ventas-view" class="view hidden">
                     <h1 class="text-2xl md:text-3xl font-bold text-gray-800 mb-6 md:mb-8 px-2 md:px-0">Ventas</h1>
-                    <div class="bg-white p-6 rounded-2xl shadow-xl border border-gray-200 mb-8 max-w-5xl mx-auto">
-                        <h2 class="text-xl md:text-2xl font-semibold text-gray-700 mb-4 md:mb-6">Añadir Nueva Venta</h2>
-                        <form id="add-sale-form"
-                            class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    <div class="bg-white p-6 rounded-2xl shadow-xl border border-gray-200 mb-8 max-w-7xl mx-auto">
+                        <h2 class="text-xl md:text-2xl font-semibold text-gray-700 mb-6">Añadir Nueva Venta</h2>
+                        <form id="add-sale-form" class="grid grid-cols-1 md:grid-cols-12 gap-6">
 
-                            <!-- Cliente -->
-                            <div><label for="cliente" class="block text-sm font-medium text-gray-600 mb-2">Nombre del
-                                    Cliente</label><input type="text" id="cliente" name="cliente"
-                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 bg-gray-50" required></div>
-
-                            <!-- Celular -->
-                            <div>
+                            <!-- Fila 1 -->
+                            <div class="md:col-span-4">
+                                <label for="cliente" class="block text-sm font-medium text-gray-600 mb-2">Nombre del Cliente</label>
+                                <input type="text" id="cliente" name="cliente" class="w-full h-11 px-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 bg-gray-50 transition-all" required>
+                            </div>
+                            <div class="md:col-span-4">
                                 <label for="celular" class="block text-sm font-medium text-gray-600 mb-2">Celular (WhatsApp)</label>
-                                <input type="tel" id="celular" name="celular"
-                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 bg-gray-50" placeholder="999999999">
+                                <input type="tel" id="celular" name="celular" class="w-full h-11 px-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 bg-gray-50 transition-all" placeholder="999999999">
+                            </div>
+                            <div class="md:col-span-4">
+                                <label for="plataforma" class="block text-sm font-medium text-gray-600 mb-2">Plataforma</label>
+                                <select id="plataforma" name="plataforma" class="w-full h-11 px-4 border border-gray-300 rounded-lg bg-gray-50 focus:ring-2 focus:ring-indigo-500 transition-all">
+                                    <option value="" disabled selected>Cargando...</option>
+                                </select>
+                                <div id="otro-plataforma-container" class="hidden mt-2">
+                                    <input type="text" id="otro-plataforma" name="otro-plataforma" class="w-full h-11 px-4 border border-gray-300 rounded-lg bg-gray-50" placeholder="Especificar...">
+                                </div>
                             </div>
 
-                            <!-- Plataforma -->
-                            <div><label for="plataforma"
-                                    class="block text-sm font-medium text-gray-600 mb-2">Plataforma</label><select
-                                    id="plataforma" name="plataforma"
-                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-50 focus:ring-2 focus:ring-indigo-500">
-                                    <option value="" disabled selected>Cargando...</option>
-                                </select></div>
-                            <div id="otro-plataforma-container" class="hidden"><label for="otro-plataforma"
-                                    class="block text-sm font-medium text-gray-600 mb-2">Especificar
-                                    Plataforma</label><input type="text" id="otro-plataforma" name="otro-plataforma"
-                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-50"></div>
-
-                            <!-- Cuenta Madre -->
-                            <div class="relative">
-                                <label for="platform-account"
-                                    class="block text-sm font-medium text-gray-600 mb-2">Cuenta Madre</label>
-                                <select id="platform-account" name="platform-account"
-                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-50 focus:ring-2 focus:ring-indigo-500" required>
+                            <!-- Fila 2 -->
+                            <div class="md:col-span-6">
+                                <label for="platform-account" class="block text-sm font-medium text-gray-600 mb-2">Cuenta Madre</label>
+                                <select id="platform-account" name="platform-account" class="w-full h-11 px-4 border border-gray-300 rounded-lg bg-gray-50 focus:ring-2 focus:ring-indigo-500 transition-all" required>
                                     <option value="">Seleccione una cuenta madre</option>
                                 </select>
-                                <div id="mother-account-details" class="mt-2"></div>
+                                <div id="mother-account-details" class="mt-3 space-y-2"></div>
                             </div>
-
-                            <!-- Perfil -->
-                            <div>
-                                <label for="profile-select"
-                                    class="block text-sm font-medium text-gray-600 mb-2">Perfil</label>
-                                <select id="profile-select" name="profile-select"
-                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-200" disabled
-                                    required>
+                            <div class="md:col-span-6">
+                                <label for="profile-select" class="block text-sm font-medium text-gray-600 mb-2">Perfil</label>
+                                <select id="profile-select" name="profile-select" class="w-full h-11 px-4 border border-gray-300 rounded-lg bg-gray-200 focus:ring-2 focus:ring-indigo-500 transition-all" disabled required>
                                     <option value="">Selecciona una cuenta madre primero</option>
                                 </select>
                             </div>
 
-                            <!-- Precio -->
-                            <div><label for="precio" class="block text-sm font-medium text-gray-600 mb-2">Precio Pagado
-                                    (S/)</label><input type="number" id="precio" name="precio" min="0" step="0.01"
-                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-50" required></div>
+                            <!-- Fila 3 -->
+                            <div class="md:col-span-2">
+                                <label for="precio" class="block text-sm font-medium text-gray-600 mb-2">Precio (S/)</label>
+                                <input type="number" id="precio" name="precio" min="0" step="0.01" class="w-full h-11 px-4 border border-gray-300 rounded-lg bg-gray-50 focus:ring-2 focus:ring-indigo-500 transition-all" required>
+                            </div>
 
-                            <!-- Fechas (Grouped) -->
-                            <div class="md:col-span-2 lg:col-span-2">
+                            <div class="md:col-span-2">
+                                <label for="pin" class="block text-sm font-medium text-gray-600 mb-2">PIN</label>
+                                <input type="text" id="pin" name="pin" maxlength="5" class="w-full h-11 px-4 border border-gray-300 rounded-lg bg-gray-50 text-center tracking-widest font-mono transition-all">
+                            </div>
+
+                            <div class="md:col-span-3">
+                                <label for="metodoPago" class="block text-sm font-medium text-gray-600 mb-2">Método de Pago</label>
+                                <select id="metodoPago" name="metodoPago" class="w-full h-11 px-4 border border-gray-300 rounded-lg bg-gray-50 focus:ring-2 focus:ring-indigo-500 transition-all" required>
+                                    <option value="" disabled selected>Seleccionar...</option>
+                                    <option value="BCP">BCP</option>
+                                    <option value="Falta pagar">Falta pagar</option>
+                                    <option value="Gratis">Gratis</option>
+                                </select>
+                            </div>
+
+                            <div class="md:col-span-5">
                                 <label class="block text-sm font-medium text-gray-600 mb-2">Vigencia del Plan</label>
-                                <div class="flex flex-wrap items-end gap-3">
-                                    <div class="flex-grow max-w-[160px]">
-                                        <span class="text-xs text-gray-500 mb-1 block">Inicio</span>
-                                        <input type="date" id="inicioPlan" name="inicioPlan"
-                                        class="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 focus:ring-2 focus:ring-indigo-500 text-sm" required>
+                                <div class="grid grid-cols-12 gap-2">
+                                    <div class="col-span-5">
+                                        <input type="date" id="inicioPlan" name="inicioPlan" class="w-full h-11 px-2 border border-gray-300 rounded-lg bg-gray-50 focus:ring-2 focus:ring-indigo-500 text-sm transition-all" required>
                                     </div>
-                                    <div class="w-20">
-                                        <span class="text-xs text-gray-500 mb-1 block">Días</span>
-                                        <input type="number" id="diasPlan" name="diasPlan"
-                                        class="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-center text-sm">
+                                    <div class="col-span-2">
+                                        <input type="number" id="diasPlan" name="diasPlan" class="w-full h-11 px-1 border border-gray-300 rounded-lg bg-gray-50 text-center text-sm transition-all" placeholder="Días">
                                     </div>
-                                    <div class="flex-grow max-w-[160px]">
-                                        <span class="text-xs text-gray-500 mb-1 block">Fin</span>
-                                        <input type="date" id="finPlan" name="finPlan"
-                                        class="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-100 text-sm" readonly>
+                                    <div class="col-span-5">
+                                        <input type="date" id="finPlan" name="finPlan" class="w-full h-11 px-2 border border-gray-300 rounded-lg bg-gray-100 text-sm transition-all" readonly>
                                     </div>
                                 </div>
                             </div>
 
-                            <!-- PIN & Payment (Grouped or Small) -->
-                            <div class="md:col-span-2 lg:col-span-2 flex flex-wrap gap-6">
-                                <div>
-                                    <label for="pin" class="block text-sm font-medium text-gray-600 mb-2">PIN</label>
-                                    <input type="text" id="pin" name="pin" maxlength="5"
-                                        class="w-24 px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-center tracking-widest font-mono">
-                                </div>
-                                <div>
-                                    <label for="metodoPago" class="block text-sm font-medium text-gray-600 mb-2">Método de Pago</label>
-                                    <select id="metodoPago" name="metodoPago"
-                                        class="w-48 px-3 py-2 border border-gray-300 rounded-lg bg-gray-50" required>
-                                        <option value="" disabled selected>Seleccionar...</option>
-                                        <option value="BCP">BCP</option>
-                                        <option value="Falta pagar">Falta pagar</option>
-                                        <option value="Gratis">Gratis</option>
-                                    </select>
-                                </div>
+                            <!-- Fila 4 -->
+                            <div class="col-span-12">
+                                <label for="notas" class="block text-sm font-medium text-gray-600 mb-2">Notas Adicionales</label>
+                                <input type="text" id="notas" name="notas" class="w-full h-11 px-4 border border-gray-300 rounded-lg bg-gray-50 focus:ring-2 focus:ring-indigo-500 transition-all">
                             </div>
 
-                            <!-- Notas -->
-                            <div class="md:col-span-2 lg:col-span-3 xl:col-span-4"><label for="notas" class="block text-sm font-medium text-gray-600 mb-2">Notas
-                                    Adicionales</label><input type="text" id="notas" name="notas"
-                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-50"></div>
-
-                            <div class="md:col-span-2 lg:col-span-3 xl:col-span-4 text-right self-end flex flex-col md:flex-row gap-4 justify-end mt-4">
+                            <!-- Botones -->
+                            <div class="col-span-12 flex flex-col md:flex-row gap-4 justify-end mt-2">
                                 <button type="button" id="save-and-add-btn"
                                     style="background: linear-gradient(to right, #f97316, #dc2626);"
                                     class="text-white font-semibold px-6 py-3 rounded-lg hover:opacity-90 focus:outline-none focus:ring-4 focus:ring-orange-500 focus:ring-opacity-50 transition-transform transform hover:scale-105 w-full md:w-auto shadow-md">Guardar
@@ -2826,41 +2805,32 @@
                 const account = allPlatformAccounts.find(a => a.id === accountId);
                 const profileContainer = profileSelect.parentElement;
 
-                // Logic for mother account info card
+                // Logic for mother account info card - Styled as Form Inputs
                 const detailsContainer = document.getElementById('mother-account-details');
                 if (detailsContainer) {
                     detailsContainer.innerHTML = ''; // Clear previous content
 
                     if (account) {
-                        const card = document.createElement('div');
-                        card.className = "bg-gray-50 border border-gray-200 rounded-lg p-3 mt-2 flex flex-col gap-2 text-sm shadow-sm";
-
-                        // Email Row
-                        const emailRow = document.createElement('div');
-                        emailRow.className = "flex justify-between items-center";
-                        emailRow.innerHTML = `
-                            <div class="flex items-center min-w-0">
-                                <span class="text-gray-500 mr-2 flex-shrink-0">📧</span>
-                                <span class="font-medium text-gray-700 truncate" title="${account.email}">${account.email}</span>
-                            </div>
-                            <button class="text-gray-400 hover:text-indigo-600 transition flex-shrink-0 p-1" onclick="navigator.clipboard.writeText('${account.email}')" title="Copiar Email" type="button">
+                        // Email Field (Read Only)
+                        const emailGroup = document.createElement('div');
+                        emailGroup.className = "relative";
+                        emailGroup.innerHTML = `
+                            <input type="text" value="${account.email}" readonly class="w-full h-10 pl-3 pr-10 border border-gray-200 rounded-lg bg-gray-50 text-gray-600 text-sm focus:outline-none cursor-default" title="Correo de Cuenta Madre">
+                            <button type="button" class="absolute right-2 top-2 text-gray-400 hover:text-indigo-600 transition p-1" onclick="navigator.clipboard.writeText('${account.email}')" title="Copiar Email">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
                             </button>
                         `;
 
-                        // Password Row
-                        const passRow = document.createElement('div');
-                        passRow.className = "flex justify-between items-center";
+                        // Password Field (Read Only, Masked)
+                        const passGroup = document.createElement('div');
+                        passGroup.className = "relative";
 
                         // Random ID for toggle
                         const inputId = 'mother-pass-' + Math.random().toString(36).substr(2, 9);
 
-                        passRow.innerHTML = `
-                            <div class="flex items-center min-w-0 flex-grow mr-2">
-                                <span class="text-gray-500 mr-2 flex-shrink-0">🔑</span>
-                                <input id="${inputId}" type="password" value="${account.password}" readonly class="bg-transparent border-none p-0 text-gray-700 font-mono w-full focus:ring-0 text-sm h-5">
-                            </div>
-                            <div class="flex items-center gap-1">
+                        passGroup.innerHTML = `
+                            <input id="${inputId}" type="password" value="${account.password}" readonly class="w-full h-10 pl-3 pr-16 border border-gray-200 rounded-lg bg-gray-50 text-gray-600 text-sm font-mono focus:outline-none cursor-default" title="Contraseña de Cuenta Madre">
+                            <div class="absolute right-2 top-2 flex gap-1">
                                 <button type="button" class="text-gray-400 hover:text-gray-600 transition p-1" onclick="const i=document.getElementById('${inputId}'); i.type = i.type==='password'?'text':'password';">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
                                 </button>
@@ -2870,9 +2840,8 @@
                             </div>
                         `;
 
-                        card.appendChild(emailRow);
-                        card.appendChild(passRow);
-                        detailsContainer.appendChild(card);
+                        detailsContainer.appendChild(emailGroup);
+                        detailsContainer.appendChild(passGroup);
                     }
                 }
 
