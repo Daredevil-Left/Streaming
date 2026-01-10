@@ -425,7 +425,6 @@
                     <h1 class="text-2xl md:text-3xl font-bold text-gray-800 mb-6 md:mb-8 px-2 md:px-0">Ventas</h1>
                     <div class="relative bg-gradient-to-br from-white to-slate-50 p-3 md:p-6 rounded-2xl shadow-xl border border-gray-100 mb-8 max-w-5xl mx-auto">
                         <h2 class="text-xl md:text-2xl font-semibold text-gray-700 mb-4 md:mb-6">Añadir Nueva Venta</h2>
-                        <div id="account-credentials-container" class="hidden absolute top-0 right-0 mt-16 mr-4 md:mr-8 z-20 w-72 transition-all duration-300 ease-out transform translate-x-0"></div>
                         <form id="add-sale-form"
                             class="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6 lg:grid-cols-3 xl:grid-cols-4">
                             <div><label for="cliente" class="block text-sm font-medium text-gray-600 mb-2">Nombre del
@@ -459,13 +458,14 @@
                                     Plan</label><input type="date" id="finPlan" name="finPlan"
                                     class="w-full px-4 py-1 h-9 border border-gray-300 rounded-lg bg-gray-100" readonly>
                             </div>
-                            <div>
+                            <div id="mother-account-wrapper" class="relative">
                                 <label for="platform-account"
                                     class="block text-sm font-medium text-gray-600 mb-2">Cuenta Madre</label>
                                 <select id="platform-account" name="platform-account"
                                     class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white" required>
                                     <option value="">Seleccione una cuenta madre</option>
                                 </select>
+                                <div id="account-credentials-bubble" class="hidden absolute z-50 transition-all duration-300 ease-out transform translate-y-0 opacity-0"></div>
                             </div>
                             <div>
                                 <label for="profile-select"
@@ -2791,47 +2791,56 @@
             };
 
             const renderAccountCredentials = (accountId) => {
-                const container = document.getElementById('account-credentials-container');
+                const container = document.getElementById('account-credentials-bubble');
                 container.innerHTML = '';
 
                 if (!accountId) {
-                    container.classList.add('hidden');
+                    container.classList.add('hidden', 'opacity-0', 'translate-y-2');
+                    container.classList.remove('opacity-100', 'translate-y-0');
                     return;
                 }
 
                 const account = allPlatformAccounts.find(a => a.id === accountId);
                 if (!account) {
-                    container.classList.add('hidden');
+                    container.classList.add('hidden', 'opacity-0', 'translate-y-2');
+                    container.classList.remove('opacity-100', 'translate-y-0');
                     return;
                 }
 
-                container.classList.remove('hidden');
+                container.classList.remove('hidden', 'opacity-0', 'translate-y-2');
+                container.classList.add('opacity-100', 'translate-y-0');
+
+                // Responsive positioning classes:
+                // Mobile: below input (top-full left-0 w-full mt-2)
+                // Desktop: right of input (md:left-full md:top-0 md:ml-4 md:w-72 md:mt-0)
+                container.className = "absolute z-50 transition-all duration-300 ease-out transform opacity-100 translate-y-0 top-full left-0 w-full mt-2 md:left-full md:top-0 md:ml-4 md:w-72 md:mt-0";
 
                 const maskedPassword = '••••••••';
                 const hasPassword = !!account.password;
 
                 const card = document.createElement('div');
-                card.className = "bg-green-600 text-white p-3 rounded-xl shadow-2xl border border-green-500 flex flex-col gap-2 relative";
-
-                // Optional: A little arrow pointing left or top if needed, but 'globo' implies bubble.
-                // We'll keep it simple as a card.
+                // Red Theme: White bg, Red border, Shadow
+                card.className = "bg-white text-gray-700 p-3 rounded-xl shadow-xl border border-red-200 flex flex-col gap-2 relative";
 
                 card.innerHTML = `
-                    <div class="flex flex-col gap-2">
-                        <div class="flex items-center justify-between gap-3 bg-white/10 p-2 rounded-lg">
-                            <span class="text-xs font-mono truncate select-all">${account.email}</span>
-                            <button type="button" id="copy-email-${accountId}" class="p-1 hover:bg-white/20 rounded transition-colors text-white" title="Copiar Correo">
+                    <div class="absolute -left-2 top-4 w-4 h-4 bg-white border-b border-l border-red-200 transform rotate-45 hidden md:block"></div>
+                    <div class="absolute -top-2 left-6 w-4 h-4 bg-white border-t border-l border-red-200 transform rotate-45 md:hidden"></div>
+
+                    <div class="flex flex-col gap-2 relative z-10">
+                        <div class="flex items-center justify-between gap-3 bg-red-50 p-2 rounded-lg border border-red-100">
+                            <span class="text-xs font-mono font-medium truncate select-all text-red-900">${account.email}</span>
+                            <button type="button" id="copy-email-${accountId}" class="p-1 hover:bg-red-100 rounded transition-colors text-red-500" title="Copiar Correo">
                                 <svg class="w-4 h-4" style="width: 16px; height: 16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
                             </button>
                         </div>
                         ${hasPassword ? `
-                        <div class="flex items-center justify-between gap-3 bg-white/10 p-2 rounded-lg">
-                            <span class="text-xs font-mono truncate" id="card-pass-text-${accountId}">${maskedPassword}</span>
+                        <div class="flex items-center justify-between gap-3 bg-white p-2 rounded-lg border border-gray-100">
+                            <span class="text-xs font-mono text-gray-500 truncate" id="card-pass-text-${accountId}">${maskedPassword}</span>
                             <div class="flex gap-1">
-                                <button type="button" id="toggle-pass-${accountId}" class="p-1 hover:bg-white/20 rounded transition-colors text-white" title="Ver/Ocultar">
+                                <button type="button" id="toggle-pass-${accountId}" class="p-1 hover:bg-gray-100 rounded transition-colors text-gray-400 hover:text-gray-600" title="Ver/Ocultar">
                                     <svg class="w-4 h-4" style="width: 16px; height: 16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
                                 </button>
-                                <button type="button" id="copy-pass-${accountId}" class="p-1 hover:bg-white/20 rounded transition-colors text-white" title="Copiar Contraseña">
+                                <button type="button" id="copy-pass-${accountId}" class="p-1 hover:bg-red-50 rounded transition-colors text-red-500" title="Copiar Contraseña">
                                     <svg class="w-4 h-4" style="width: 16px; height: 16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
                                 </button>
                             </div>
