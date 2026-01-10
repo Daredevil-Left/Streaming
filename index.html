@@ -2026,12 +2026,13 @@
                 // Maintenance Button
                 const maintenanceBtn = document.createElement('button');
                 maintenanceBtn.id = 'view-maintenance-btn';
+                maintenanceBtn.type = 'button';
+                maintenanceBtn.setAttribute('onclick', 'window.toggleMaintenanceModal()');
                 maintenanceBtn.className = 'text-yellow-600 font-medium hover:text-yellow-800 underline transition flex items-center gap-1 p-2 ml-2';
                 maintenanceBtn.innerHTML = `
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
                     Mantenimiento
                 `;
-                maintenanceBtn.addEventListener('click', toggleMaintenanceModal);
                 selectors.platformFilters.appendChild(maintenanceBtn);
             };
 
@@ -2213,8 +2214,8 @@
                 </path>
             </svg>
         </button>
-        <button class="maintenance-btn p-1 text-yellow-600 hover:text-yellow-800 hover:bg-yellow-100 rounded-full transition"
-            data-id="${sale.id}" title="Mantenimiento">
+        <button type="button" class="maintenance-btn p-1 text-yellow-600 hover:text-yellow-800 hover:bg-yellow-100 rounded-full transition"
+            data-id="${sale.id}" title="Mantenimiento" onclick="event.stopPropagation(); window.handleMoveToMaintenance('${sale.id}')">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065zM15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
             </svg>
@@ -2239,8 +2240,7 @@
                     handleDeleteSale(e.currentTarget.dataset.id)));
                 selectors.salesList.querySelectorAll('.renew-btn').forEach(b => b.addEventListener('click', e =>
                     openRenewalModal(e.currentTarget.dataset.id)));
-                selectors.salesList.querySelectorAll('.maintenance-btn').forEach(b => b.addEventListener('click', e =>
-                    handleMoveToMaintenance(e.currentTarget.dataset.id)));
+                // Maintenance btn listener removed in favor of inline onclick to prevent race conditions
                 selectors.salesList.querySelectorAll('.copy-details-btn').forEach(b => b.addEventListener('click', e =>
                     handleCopySaleDetails(e.currentTarget.dataset.id, e.currentTarget)));
                 selectors.salesList.querySelectorAll('.whatsapp-btn').forEach(b => b.addEventListener('click', e =>
@@ -3327,6 +3327,8 @@
 
         selectors.closeMaintenanceModalBtn.addEventListener('click', toggleMaintenanceModal);
 
+        window.toggleMaintenanceModal = toggleMaintenanceModal;
+
         const handleMoveToMaintenance = (id) => {
             const sale = allSales.find(s => s.id === id);
             if (!sale) return;
@@ -3375,6 +3377,8 @@
                 }
             );
         };
+
+        window.handleMoveToMaintenance = handleMoveToMaintenance;
 
         const handleDeleteExpense = (id) => {
             showConfirmationModal(
