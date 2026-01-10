@@ -423,8 +423,9 @@
                 <!-- Ventas View -->
                 <div id="ventas-view" class="view hidden">
                     <h1 class="text-2xl md:text-3xl font-bold text-gray-800 mb-6 md:mb-8 px-2 md:px-0">Ventas</h1>
-                    <div class="bg-gradient-to-br from-white to-slate-50 p-3 md:p-6 rounded-2xl shadow-xl border border-gray-100 mb-8 max-w-5xl mx-auto">
+                    <div class="relative bg-gradient-to-br from-white to-slate-50 p-3 md:p-6 rounded-2xl shadow-xl border border-gray-100 mb-8 max-w-5xl mx-auto">
                         <h2 class="text-xl md:text-2xl font-semibold text-gray-700 mb-4 md:mb-6">Añadir Nueva Venta</h2>
+                        <div id="account-credentials-container" class="hidden absolute top-0 right-0 mt-16 mr-4 md:mr-8 z-20 w-72 transition-all duration-300 ease-out transform translate-x-0"></div>
                         <form id="add-sale-form"
                             class="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6 lg:grid-cols-3 xl:grid-cols-4">
                             <div><label for="cliente" class="block text-sm font-medium text-gray-600 mb-2">Nombre del
@@ -465,7 +466,6 @@
                                     class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white" required>
                                     <option value="">Seleccione una cuenta madre</option>
                                 </select>
-                                <div id="account-credentials-container" class="mt-2 flex flex-wrap gap-2 min-h-8"></div>
                             </div>
                             <div>
                                 <label for="profile-select"
@@ -2794,75 +2794,90 @@
                 const container = document.getElementById('account-credentials-container');
                 container.innerHTML = '';
 
+                if (!accountId) {
+                    container.classList.add('hidden');
+                    return;
+                }
+
                 const account = allPlatformAccounts.find(a => a.id === accountId);
-                if (!account) return;
+                if (!account) {
+                    container.classList.add('hidden');
+                    return;
+                }
 
-                // Email Chip
-                const emailChip = document.createElement('div');
-                emailChip.className = "inline-flex items-center px-3 py-1.5 rounded-full text-xs font-medium bg-white text-gray-700 border border-gray-200 shadow-sm transition-all hover:bg-gray-50";
-                emailChip.innerHTML = `
-                    <span class="mr-2 truncate max-w-[150px] font-mono">${account.email}</span>
-                    <button type="button" class="p-1 text-gray-400 hover:text-indigo-600 focus:outline-none transition-colors" title="Copiar Correo">
-                        <svg class="w-4 h-4" style="width: 16px; height: 16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
-                    </button>
-                `;
-                emailChip.querySelector('button').onclick = (e) => {
-                    navigator.clipboard.writeText(account.email).then(() => {
-                        const btn = e.currentTarget;
-                        const originalHtml = btn.innerHTML;
-                        btn.innerHTML = `<svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>`;
-                        setTimeout(() => btn.innerHTML = originalHtml, 2000);
-                    });
-                };
-                container.appendChild(emailChip);
+                container.classList.remove('hidden');
 
-                // Password Chip
-                if (account.password) {
-                    const passwordChip = document.createElement('div');
-                    passwordChip.className = "inline-flex items-center px-3 py-1.5 rounded-full text-xs font-medium bg-white text-gray-700 border border-gray-200 shadow-sm transition-all hover:bg-gray-50 group";
+                const maskedPassword = '••••••••';
+                const hasPassword = !!account.password;
 
-                    const maskedPassword = '••••••••';
+                const card = document.createElement('div');
+                card.className = "bg-green-600 text-white p-3 rounded-xl shadow-2xl border border-green-500 flex flex-col gap-2 relative";
 
-                    passwordChip.innerHTML = `
-                        <span class="mr-2 font-mono" id="chip-pass-text-${accountId}">${maskedPassword}</span>
-                        <div class="flex items-center gap-1">
-                            <button type="button" id="toggle-pass-${accountId}" class="p-1 text-gray-400 hover:text-gray-600 focus:outline-none transition-colors" title="Ver/Ocultar">
-                                <svg class="w-4 h-4" style="width: 16px; height: 16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
-                            </button>
-                            <button type="button" id="copy-pass-${accountId}" class="p-1 text-gray-400 hover:text-indigo-600 focus:outline-none transition-colors ml-1" title="Copiar Contraseña">
+                // Optional: A little arrow pointing left or top if needed, but 'globo' implies bubble.
+                // We'll keep it simple as a card.
+
+                card.innerHTML = `
+                    <div class="flex flex-col gap-2">
+                        <div class="flex items-center justify-between gap-3 bg-white/10 p-2 rounded-lg">
+                            <span class="text-xs font-mono truncate select-all">${account.email}</span>
+                            <button type="button" id="copy-email-${accountId}" class="p-1 hover:bg-white/20 rounded transition-colors text-white" title="Copiar Correo">
                                 <svg class="w-4 h-4" style="width: 16px; height: 16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
                             </button>
                         </div>
-                    `;
+                        ${hasPassword ? `
+                        <div class="flex items-center justify-between gap-3 bg-white/10 p-2 rounded-lg">
+                            <span class="text-xs font-mono truncate" id="card-pass-text-${accountId}">${maskedPassword}</span>
+                            <div class="flex gap-1">
+                                <button type="button" id="toggle-pass-${accountId}" class="p-1 hover:bg-white/20 rounded transition-colors text-white" title="Ver/Ocultar">
+                                    <svg class="w-4 h-4" style="width: 16px; height: 16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+                                </button>
+                                <button type="button" id="copy-pass-${accountId}" class="p-1 hover:bg-white/20 rounded transition-colors text-white" title="Copiar Contraseña">
+                                    <svg class="w-4 h-4" style="width: 16px; height: 16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
+                                </button>
+                            </div>
+                        </div>` : ''}
+                    </div>
+                `;
 
-                    // Toggle logic
+                // Logic Events
+                const copyIconHtml = `<svg class="w-4 h-4" style="width: 16px; height: 16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>`;
+                const checkIconHtml = `<svg class="w-4 h-4" style="width: 16px; height: 16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>`;
+
+                const handleCopy = (text, btnId) => {
+                    navigator.clipboard.writeText(text).then(() => {
+                        const btn = document.getElementById(btnId);
+                        if(btn) {
+                            btn.innerHTML = checkIconHtml;
+                            setTimeout(() => { if(btn) btn.innerHTML = copyIconHtml; }, 2000);
+                        }
+                    });
+                };
+
+                card.querySelector(`#copy-email-${accountId}`).addEventListener('click', () => handleCopy(account.email, `copy-email-${accountId}`));
+
+                if (hasPassword) {
                     let isVisible = false;
-                    passwordChip.querySelector(`#toggle-pass-${accountId}`).onclick = (e) => {
+                    const toggleBtn = card.querySelector(`#toggle-pass-${accountId}`);
+                    const textSpan = card.querySelector(`#card-pass-text-${accountId}`);
+
+                    toggleBtn.addEventListener('click', () => {
                         isVisible = !isVisible;
-                        const textSpan = passwordChip.querySelector(`#chip-pass-text-${accountId}`);
-                        const icon = e.currentTarget.querySelector('svg');
+                        const eyeOpen = `<svg class="w-4 h-4" style="width: 16px; height: 16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>`;
+                        const eyeClosed = `<svg class="w-4 h-4" style="width: 16px; height: 16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7 .946-3.11 3.563-5.522 6.837-6.141M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.581 10.41A7.48 7.48 0 0119.542 12c-1.274 4.057-5.064 7-9.542 7a10.046 10.046 0 01-3.132-.475M2.458 12c.946-3.11 3.563-5.522 6.837-6.141m1.581 2.318A4.5 4.5 0 0115 12a4.5 4.5 0 01-1.07 2.828M5 5l14 14" /></svg>`;
 
                         if (isVisible) {
                             textSpan.textContent = account.password;
-                            icon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7 .946-3.11 3.563-5.522 6.837-6.141M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.581 10.41A7.48 7.48 0 0119.542 12c-1.274 4.057-5.064 7-9.542 7a10.046 10.046 0 01-3.132-.475M2.458 12c.946-3.11 3.563-5.522 6.837-6.141m1.581 2.318A4.5 4.5 0 0115 12a4.5 4.5 0 01-1.07 2.828M5 5l14 14" />`;
+                            toggleBtn.innerHTML = eyeClosed;
                         } else {
                             textSpan.textContent = maskedPassword;
-                            icon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />`;
+                            toggleBtn.innerHTML = eyeOpen;
                         }
-                    };
+                    });
 
-                    // Copy logic
-                    passwordChip.querySelector(`#copy-pass-${accountId}`).onclick = (e) => {
-                        navigator.clipboard.writeText(account.password).then(() => {
-                            const btn = e.currentTarget;
-                            const originalHtml = btn.innerHTML;
-                            btn.innerHTML = `<svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>`;
-                            setTimeout(() => btn.innerHTML = originalHtml, 2000);
-                        });
-                    };
-
-                    container.appendChild(passwordChip);
+                    card.querySelector(`#copy-pass-${accountId}`).addEventListener('click', () => handleCopy(account.password, `copy-pass-${accountId}`));
                 }
+
+                container.appendChild(card);
             };
 
             const handlePlatformAccountChange = (select, profileSelect) => {
