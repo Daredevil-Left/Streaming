@@ -1875,7 +1875,7 @@
                     const expirationDate = dayjs(fechaPago).startOf('day');
                     const diffDays = expirationDate.diff(today, 'day');
                     if (diffDays === 0) return 'Vence hoy';
-                    if (diffDays <= 5) return 'Próximo a Vencer';
+                    if (diffDays <= 1) return 'Próximo a Vencer';
                     return 'Activo';
                 };
                 const alerts = allPlatformAccounts.filter(acc => {
@@ -1921,7 +1921,7 @@
                 }).filter(sale => {
                     const expirationDate = dayjs(sale.finPlan).startOf('day');
                     const diffDays = expirationDate.diff(today, 'day');
-                    return diffDays <= 3;
+                    return diffDays <= 1;
                 }).sort((a, b) => new Date(a.finPlan) - new Date(b.finPlan));
                 selectors.alertsSection.innerHTML = '';
                 if (expirationAlerts.length > 0) {
