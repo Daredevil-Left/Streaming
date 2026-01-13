@@ -1229,9 +1229,69 @@
     </script>
 
     <script type="module">
-        import { collection, addDoc, onSnapshot, doc, updateDoc, deleteDoc, getDocs, setDoc, getDoc, deleteField } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-        import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { db, auth } from "./firebase-config.js";
+        // MOCK FIREBASE INJECTIONS
+        const mockDb = {};
+        const mockAuth = { currentUser: { email: 'renzosamanamud@gmail.com' } };
+
+        // Mock Data
+        const today = dayjs();
+        const mockSales = [
+            { id: '1', cliente: 'Expired Sale', plataforma: 'Netflix', finPlan: today.subtract(1, 'day').format('YYYY-MM-DD'), estado: 'ACTIVO', precio: 10 },
+            { id: '2', cliente: 'Expires Today', plataforma: 'Netflix', finPlan: today.format('YYYY-MM-DD'), estado: 'ACTIVO', precio: 10 },
+            { id: '3', cliente: 'Expires +1 Day', plataforma: 'Netflix', finPlan: today.add(1, 'day').format('YYYY-MM-DD'), estado: 'ACTIVO', precio: 10 },
+            { id: '4', cliente: 'Expires +2 Days', plataforma: 'Netflix', finPlan: today.add(2, 'day').format('YYYY-MM-DD'), estado: 'ACTIVO', precio: 10 },
+            { id: '5', cliente: 'Expires +3 Days', plataforma: 'Netflix', finPlan: today.add(3, 'day').format('YYYY-MM-DD'), estado: 'ACTIVO', precio: 10 },
+            { id: '6', cliente: 'Expires +4 Days', plataforma: 'Netflix', finPlan: today.add(4, 'day').format('YYYY-MM-DD'), estado: 'ACTIVO', precio: 10 }
+        ];
+
+        const mockAccounts = [
+            { id: 'a1', platform: 'Netflix', email: 'expired@test.com', fechaPago: today.subtract(1, 'day').format('YYYY-MM-DD') },
+            { id: 'a2', platform: 'Netflix', email: 'today@test.com', fechaPago: today.format('YYYY-MM-DD') },
+            { id: 'a3', platform: 'Netflix', email: 'plus1@test.com', fechaPago: today.add(1, 'day').format('YYYY-MM-DD') },
+            { id: 'a4', platform: 'Netflix', email: 'plus2@test.com', fechaPago: today.add(2, 'day').format('YYYY-MM-DD') },
+            { id: 'a5', platform: 'Netflix', email: 'plus3@test.com', fechaPago: today.add(3, 'day').format('YYYY-MM-DD') },
+            { id: 'a6', platform: 'Netflix', email: 'plus5@test.com', fechaPago: today.add(5, 'day').format('YYYY-MM-DD') },
+            { id: 'a7', platform: 'Netflix', email: 'plus6@test.com', fechaPago: today.add(6, 'day').format('YYYY-MM-DD') }
+        ];
+
+        const collection = (db, name) => {
+             // Handle simple collection names
+             if (name === 'sales' || name === 'expenses' || name === 'platformAccounts') return name;
+             // Handle nested collections logic if needed, but for onSnapshot usually it's top level
+             return name;
+        };
+        const onSnapshot = (ref, callback, errorCallback) => {
+            if (ref === 'sales') {
+                 setTimeout(() => callback({ docs: mockSales.map(s => ({ id: s.id, data: () => s })) }), 100);
+            } else if (ref === 'platformAccounts') {
+                 setTimeout(() => callback({ docs: mockAccounts.map(a => ({ id: a.id, data: () => a })) }), 100);
+            } else if (ref === 'expenses') {
+                callback({ docs: [] });
+            } else if (ref && ref.path === 'config/platform_order') {
+                 // do nothing
+            }
+            return () => {};
+        };
+        const doc = (db, col, id) => {
+            if (id === undefined && typeof col === 'string' && col.startsWith('config/')) {
+                 return { path: col };
+            }
+            return { id };
+        };
+        const getDocs = async (ref) => ({ docs: [], empty: true, forEach: () => {} });
+        const getDoc = async (ref) => ({ exists: () => false, data: () => ({}) });
+        const addDoc = async () => {};
+        const updateDoc = async () => {};
+        const deleteDoc = async () => {};
+        const setDoc = async () => {};
+        const deleteField = () => {};
+        const onAuthStateChanged = (auth, cb) => {
+            setTimeout(() => cb(auth.currentUser), 50);
+            return () => {};
+        };
+        const signOut = async () => {};
+        const db = mockDb;
+        const auth = mockAuth;
 
         let currentSeller = '';
 
