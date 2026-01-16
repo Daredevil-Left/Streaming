@@ -1596,7 +1596,7 @@
                 }
 
                 const matches = allSales.filter(sale =>
-                    sale.cliente.toLowerCase().includes(term) && sale.estado !== 'ARCHIVADO'
+                    (sale.cliente || '').toLowerCase().includes(term) && sale.estado !== 'ARCHIVADO'
                 );
 
                 if (matches.length === 0) {
@@ -3246,7 +3246,7 @@
 
         const renderMaintenanceSales = () => {
             const maintenanceSales = allSales.filter(s => s.estado === 'EN_MANTENIMIENTO')
-                .sort((a, b) => a.cliente.localeCompare(b.cliente)); // Sorted by Name
+                .sort((a, b) => (a.cliente || '').localeCompare(b.cliente || '')); // Sorted by Name
 
             selectors.maintenanceList.innerHTML = '';
             // Change container layout from grid to stack
