@@ -1449,6 +1449,7 @@
             };
 
             const checkDailyClosure = async () => {
+                if (currentSeller === 'Renzo') return;
                 const yesterday = dayjs().subtract(1, 'day').format('YYYY-MM-DD');
                 try {
                     const docRef = doc(db, "daily_closures", yesterday);
@@ -1928,14 +1929,33 @@
                         item.className = 'flex items-center py-2 border-b border-gray-100 last:border-b-0';
                         const dateDisplay = sale.createdAt ? dayjs(sale.createdAt) : dayjs(sale.inicioPlan);
 
+                        let transferButtonHtml = '';
+                        if (currentSeller === 'Renzo' && sale.vendedor === 'Renzo') {
+                            const isTransferred = sale.transferida === true;
+                            const btnColor = isTransferred
+                                ? 'text-green-600 bg-green-100 hover:bg-green-200 border border-transparent'
+                                : 'text-gray-500 bg-white hover:bg-gray-50 border border-gray-300 shadow-sm';
+                            const icon = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>';
+
+                            transferButtonHtml = `
+                                <button onclick="handleToggleTransfer('${sale.id}', ${isTransferred})"
+                                    class="ml-2 p-1 rounded-full transition-colors ${btnColor} flex items-center justify-center"
+                                    style="min-width: 28px; min-height: 28px;"
+                                    title="${isTransferred ? 'Transferencia confirmada' : 'Confirmar transferencia'}">
+                                    ${icon}
+                                </button>
+                            `;
+                        }
+
                         item.innerHTML = `
                         <div class="flex-grow min-w-0 mr-2">
                             <p class="font-bold text-gray-700 text-sm truncate">${sale.plataforma}</p>
                             <p class="text-xs text-gray-500 truncate">${sale.cliente}</p>
                             <p class="text-[10px] text-gray-400">${dateDisplay.format('DD MMM, HH:mm')}</p>
                         </div>
-                        <div class="text-right flex-shrink-0">
+                        <div class="text-right flex-shrink-0 flex items-center justify-end gap-1">
                             <p class="font-bold text-green-600 text-sm">${formatCurrency(sale.precio)}</p>
+                            ${transferButtonHtml}
                         </div>
                         `;
                         container.appendChild(item);
@@ -4624,6 +4644,16 @@
 
         // Initialize tilt effect after DOM load (or immediately if inside module and DOM is ready)
         init3DTilt();
+
+        window.handleToggleTransfer = async (saleId, currentStatus) => {
+            try {
+                const saleRef = doc(db, "sales", saleId);
+                await updateDoc(saleRef, { transferida: !currentStatus });
+            } catch (error) {
+                console.error("Error updating transfer status:", error);
+                alert("Error al actualizar el estado.");
+            }
+        };
 
         window.startApp = startApp;
 
