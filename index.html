@@ -2403,6 +2403,9 @@
                 allExpenses.forEach(expense => {
                     const item = document.createElement('div');
                     item.className = 'flex items-center py-3 border-b border-gray-100 last:border-b-0';
+                    const time = expense.createdAt ? dayjs(expense.createdAt).format('HH:mm') : '';
+                    const userHtml = expense.createdBy ? `<p class="text-xs text-indigo-500 font-medium mt-0.5">${expense.createdBy}</p>` : '';
+
                     item.innerHTML = `
     <div class="p-3 bg-red-50 rounded-full mr-4">
         <svg class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -2411,7 +2414,11 @@
     </div>
     <div class="flex-grow">
         <p class="font-medium text-gray-800">${expense.description}</p>
-        <p class="text-sm text-gray-500">${dayjs(expense.date).format('DD [de] MMMM, YYYY')}</p>
+        <p class="text-sm text-gray-500">
+            ${dayjs(expense.date).format('DD [de] MMMM')}
+            ${time ? `<span class="text-gray-400">• ${time}</span>` : ''}
+        </p>
+        ${userHtml}
     </div>
     <div class="text-right mx-4">
         <p class="font-semibold text-red-600 text-base">${formatCurrency(expense.amount)}</p>
@@ -3785,7 +3792,10 @@
                         || isNaN(amount) || amount <= 0) return; try {
                             await addDoc(collection(db, "expenses"), {
                                 description,
-                                amount, date
+                                amount,
+                                date,
+                                createdBy: currentSeller || 'Desconocido',
+                                createdAt: new Date().toISOString()
                             }); f.reset(); f['expense-date'].value = dayjs().format('YYYY-MM-DD');
                         } catch (err) {
                             console.error("Error al añadir egreso:", err);
