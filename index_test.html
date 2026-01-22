@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Environment</title>
+    <!-- Use Tailwind CSS CDN for visual verification -->
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+    <div id="app">
+        <!-- Minimal subset of HTML for testing -->
+        <div id="ventas-view">
+            <h1 class="text-2xl md:text-3xl font-bold text-gray-800 mb-6 md:mb-8 px-2 md:px-0">Ventas</h1>
+            <div class="bg-white p-3 md:p-6 rounded-2xl shadow-lg mb-8 max-w-[98%] mx-auto">
+                <h2 class="text-xl md:text-2xl font-semibold text-gray-700 mb-4 md:mb-6">Añadir Nueva Venta</h2>
+                <div class="flex flex-col lg:flex-row gap-6">
+                    <div class="flex-grow">
+                        <form id="add-sale-form" class="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6 lg:grid-cols-3 xl:grid-cols-4">
+                            <div><label for="cliente">Nombre del Cliente</label><input type="text" id="cliente" name="cliente" class="w-full px-4 py-2 border border-gray-300 rounded-lg"></div>
+                            <div>
+                                <label for="platform-account">Cuenta Madre</label>
+                                <select id="platform-account" name="platform-account" class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white" required>
+                                    <option value="">Seleccione una cuenta madre</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="profile-select">Perfil</label>
+                                <select id="profile-select" name="profile-select" class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-200" disabled>
+                                    <option value="">Selecciona una cuenta madre primero</option>
+                                </select>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Side Panel for Account Details -->
+                    <div id="account-details-panel" class="hidden lg:block w-full lg:w-80 flex-shrink-0">
+                            <div id="account-details-card" class="bg-gray-50 rounded-xl p-5 shadow-md border border-gray-200 sticky top-4 transition-colors duration-300">
+                                <h3 class="font-bold text-lg mb-4 text-gray-700 border-b pb-2" id="account-details-title">Detalles de Cuenta</h3>
+                                <div id="account-details-content" class="space-y-4 text-sm">
+                                    <p class="text-gray-400 italic text-center py-4">Seleccione una cuenta madre para ver la información.</p>
+                                </div>
+                            </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Load Day.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.11.10/dayjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.11.10/plugin/relativeTime.js"></script>
+    <script>
+        dayjs.extend(window.dayjs_plugin_relativeTime);
+    </script>
+
+    <script>
+        // Mock Data and Helper Functions
+        const platformStyles = {
+            'Netflix': { color: 'text-red-600', bg: '#E50914' },
+            'Disney+': { color: 'text-blue-900', bg: '#01153E' },
+            'Otro': { color: 'text-gray-500', bg: '#6B7280' }
+        };
+
+        const allPlatformAccounts = [
+            { id: 'acc1', platform: 'Netflix', email: 'test@netflix.com', password: 'password123', enlace: 'http://netflix.com', fechaPago: '2023-12-31' },
+            { id: 'acc2', platform: 'Disney+', email: 'test@disney.com', password: 'password456', enlace: null, fechaPago: '2024-01-15' }
+        ];
+
+        function getContrastYIQ(hexcolor){
+            hexcolor = hexcolor.replace("#", "");
+            if (hexcolor.length === 3) hexcolor = hexcolor.split('').map(c => c+c).join('');
+            var r = parseInt(hexcolor.substr(0,2),16);
+            var g = parseInt(hexcolor.substr(2,2),16);
+            var b = parseInt(hexcolor.substr(4,2),16);
+            var yiq = ((r*299)+(g*587)+(b*114))/1000;
+            return (yiq >= 128) ? 'black' : 'white';
+        }
+
+        // --- Logic extracted from index.html ---
+        const updateAccountDetailsCard = (account) => {
+            const card = document.getElementById('account-details-card');
+            const content = document.getElementById('account-details-content');
+            const title = document.getElementById('account-details-title');
+
+            if (!account) {
+                card.style.background = '#f9fafb';
+                card.style.borderColor = '#e5e7eb';
+                title.style.color = '#374151';
+                content.innerHTML = '<p class="text-gray-400 italic text-center py-4">Seleccione una cuenta madre para ver la información.</p>';
+                return;
+            }
+
+            const style = platformStyles[account.platform] || platformStyles['Otro'];
+
+            if (style.bgGradient) {
+                card.style.background = style.bgGradient;
+            } else {
+                card.style.backgroundColor = style.bg;
+            }
+
+            const textColor = getContrastYIQ(style.bg);
+            title.style.color = textColor;
+            title.style.borderColor = textColor === 'white' ? 'rgba(255,255,255,0.3)' : 'rgba(0,0,0,0.1)';
+
+            const linkHtml = account.enlace
+                ? `<a href="${account.enlace}" target="_blank" class="underline hover:opacity-80 break-all">${account.enlace}</a>`
+                : '<span class="italic opacity-75">No hay enlace</span>';
+
+            content.innerHTML = `
+                <div class="space-y-1">
+                    <p class="text-xs uppercase font-bold opacity-75" style="color: ${textColor}">Correo</p>
+                    <div class="flex items-center gap-2">
+                            <p class="font-medium text-base truncate select-all" style="color: ${textColor}">${account.email}</p>
+                    </div>
+                </div>
+
+                <div class="space-y-1">
+                    <p class="text-xs uppercase font-bold opacity-75" style="color: ${textColor}">Contraseña</p>
+                    <div class="flex items-center gap-2">
+                            <p class="font-medium text-base truncate select-all font-mono" style="color: ${textColor}">${account.password}</p>
+                    </div>
+                </div>
+
+                <div class="space-y-1">
+                    <p class="text-xs uppercase font-bold opacity-75" style="color: ${textColor}">Enlace</p>
+                    <div class="flex items-center gap-2" style="color: ${textColor}">
+                            ${linkHtml}
+                    </div>
+                </div>
+
+                <div class="pt-2 border-t" style="border-color: ${textColor === 'white' ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.1)'}">
+                        <div class="flex justify-between items-center" style="color: ${textColor}">
+                            <span class="text-xs">Fecha Pago:</span>
+                            <span class="font-bold text-xs">${account.fechaPago ? dayjs(account.fechaPago).format('DD/MM/YYYY') : 'N/A'}</span>
+                        </div>
+                </div>
+            `;
+        };
+
+        const handlePlatformAccountChange = (select, profileSelect) => {
+            const accountId = select.value;
+            const account = allPlatformAccounts.find(a => a.id === accountId);
+            const profileContainer = profileSelect.parentElement;
+
+            if (select.id === 'platform-account') {
+                updateAccountDetailsCard(account);
+            }
+
+            profileSelect.innerHTML = '<option value="">Selecciona una cuenta madre primero</option>';
+            profileSelect.disabled = true;
+            profileSelect.classList.add('bg-gray-200');
+            profileContainer.classList.remove('hidden');
+
+            if (account) {
+                profileSelect.disabled = false;
+                profileSelect.classList.remove('bg-gray-200');
+                profileSelect.innerHTML = '<option value="prof1">Perfil 1</option>';
+            }
+        };
+
+        // Initialize Dropdown
+        const select = document.getElementById('platform-account');
+        allPlatformAccounts.forEach(acc => {
+            const opt = document.createElement('option');
+            opt.value = acc.id;
+            opt.text = `${acc.platform} - ${acc.email}`;
+            select.appendChild(opt);
+        });
+
+        const profileSelect = document.getElementById('profile-select');
+        select.addEventListener('change', () => handlePlatformAccountChange(select, profileSelect));
+
+        // Initial state
+        updateAccountDetailsCard(null);
+    </script>
+</body>
+</html>
