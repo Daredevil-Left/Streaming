@@ -620,41 +620,9 @@
 
                     <!-- Add Expense, Recent Income, and Recent Expenses -->
                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                        <!-- Recent Income List -->
-                        <div class="lg:col-span-2">
+                        <!-- Add Expense Form -->
+                        <div class="lg:col-span-1">
                             <div class="bg-white p-6 rounded-2xl shadow-lg h-full">
-                                <h3 class="text-xl font-semibold text-gray-700 mb-6">Últimos Ingresos</h3>
-                                <div class="grid grid-cols-2 gap-4 h-full">
-                                    <!-- Charitsa -->
-                                    <div class="flex flex-col h-full overflow-hidden">
-                                        <h4 class="text-sm font-bold text-gray-500 mb-2 uppercase tracking-wide">Charitsa</h4>
-                                        <div id="recent-income-charitsa" class="space-y-4 pr-2 -mr-2 flex-grow overflow-y-auto max-h-80">
-                                            <p class="text-gray-400 text-sm">Cargando...</p>
-                                        </div>
-                                    </div>
-                                    <!-- Renzo -->
-                                    <div class="flex flex-col h-full overflow-hidden border-l border-gray-100 pl-4">
-                                        <h4 class="text-sm font-bold text-gray-500 mb-2 uppercase tracking-wide">Renzo</h4>
-                                        <div id="recent-income-renzo" class="space-y-4 pr-2 -mr-2 flex-grow overflow-y-auto max-h-80">
-                                            <p class="text-gray-400 text-sm">Cargando...</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Right Column: Recent Expenses & Add Expense -->
-                        <div class="lg:col-span-1 flex flex-col gap-8">
-                            <!-- Recent Expenses List -->
-                            <div id="expenses-list-container" class="bg-white p-6 rounded-2xl shadow-lg">
-                                <h3 class="text-xl font-semibold text-gray-700 mb-6">Últimos Egresos</h3>
-                                <div id="expenses-list" class="space-y-4 pr-2 -mr-2 max-h-96 overflow-y-auto">
-                                    <p class="text-gray-500">No hay egresos registrados.</p>
-                                </div>
-                            </div>
-
-                            <!-- Add Expense Form -->
-                            <div class="bg-white p-6 rounded-2xl shadow-lg">
                                 <h3 class="text-xl font-semibold text-gray-700 mb-6">Añadir Egreso</h3>
                                 <form id="add-expense-form" class="space-y-6">
                                     <div>
@@ -683,6 +651,26 @@
                                         class="w-full bg-gradient-to-r from-red-500 to-orange-500 text-white font-bold py-3 px-4 rounded-lg hover:from-red-600 hover:to-orange-600 transition-all duration-300 transform hover:scale-105 shadow-md">Añadir
                                         Gasto</button>
                                 </form>
+                            </div>
+                        </div>
+
+                        <!-- Recent Income List -->
+                        <div class="lg:col-span-1">
+                            <div class="bg-white p-6 rounded-2xl shadow-lg h-full">
+                                <h3 class="text-xl font-semibold text-gray-700 mb-6">Últimos Ingresos</h3>
+                                <div id="recent-income-list" class="space-y-4 pr-2 -mr-2 max-h-96 overflow-y-auto">
+                                    <p class="text-gray-500">Cargando ingresos...</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Recent Expenses List -->
+                        <div id="expenses-list-container" class="lg:col-span-1">
+                            <div class="bg-white p-6 rounded-2xl shadow-lg h-full">
+                                <h3 class="text-xl font-semibold text-gray-700 mb-6">Últimos Egresos</h3>
+                                <div id="expenses-list" class="space-y-4 pr-2 -mr-2 max-h-96 overflow-y-auto">
+                                    <p class="text-gray-500">No hay egresos registrados.</p>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -1150,27 +1138,6 @@
     </div>
 
     <!-- Success Sale Modal -->
-    <div id="daily-closure-modal"
-        class="modal fixed inset-0 bg-gray-900 bg-opacity-95 flex items-center justify-center p-4 z-[60] hidden">
-        <div class="modal-content bg-white w-full max-w-md rounded-2xl shadow-2xl p-8 text-center transform scale-100">
-            <div class="mb-6">
-                <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-yellow-100 mb-4">
-                    <svg class="h-10 w-10 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
-                    </svg>
-                </div>
-                <h2 class="text-2xl font-bold text-gray-800">Cierre Diario Obligatorio</h2>
-                <p id="daily-closure-message" class="text-gray-600 mt-2">
-                    Por favor, confirma el depósito en cuenta BCP del día anterior para continuar.
-                </p>
-            </div>
-            <button id="confirm-daily-deposit-btn"
-                class="w-full bg-indigo-600 text-white font-bold py-3 px-4 rounded-xl hover:bg-indigo-700 transition transform hover:scale-105 shadow-lg">
-                Confirmar Depósito
-            </button>
-        </div>
-    </div>
-
     <div id="success-sale-modal"
         class="modal fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 z-50 hidden opacity-0">
         <div class="modal-content bg-white w-full max-w-md rounded-2xl shadow-2xl overflow-hidden transform scale-95 transition-all">
@@ -1262,9 +1229,69 @@
     </script>
 
     <script type="module">
-        import { collection, addDoc, onSnapshot, doc, updateDoc, deleteDoc, getDocs, setDoc, getDoc, deleteField } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-        import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { db, auth } from "./firebase-config.js";
+        // MOCK FIREBASE INJECTIONS
+        const mockDb = {};
+        const mockAuth = { currentUser: { email: 'renzosamanamud@gmail.com' } };
+
+        // Mock Data
+        const today = dayjs();
+        const mockSales = [
+            { id: '1', cliente: 'Expired Sale', plataforma: 'Netflix', finPlan: today.subtract(1, 'day').format('YYYY-MM-DD'), estado: 'ACTIVO', precio: 10 },
+            { id: '2', cliente: 'Expires Today', plataforma: 'Netflix', finPlan: today.format('YYYY-MM-DD'), estado: 'ACTIVO', precio: 10 },
+            { id: '3', cliente: 'Expires +1 Day', plataforma: 'Netflix', finPlan: today.add(1, 'day').format('YYYY-MM-DD'), estado: 'ACTIVO', precio: 10 },
+            { id: '4', cliente: 'Expires +2 Days', plataforma: 'Netflix', finPlan: today.add(2, 'day').format('YYYY-MM-DD'), estado: 'ACTIVO', precio: 10 },
+            { id: '5', cliente: 'Expires +3 Days', plataforma: 'Netflix', finPlan: today.add(3, 'day').format('YYYY-MM-DD'), estado: 'ACTIVO', precio: 10 },
+            { id: '6', cliente: 'Expires +4 Days', plataforma: 'Netflix', finPlan: today.add(4, 'day').format('YYYY-MM-DD'), estado: 'ACTIVO', precio: 10 }
+        ];
+
+        const mockAccounts = [
+            { id: 'a1', platform: 'Netflix', email: 'expired@test.com', fechaPago: today.subtract(1, 'day').format('YYYY-MM-DD') },
+            { id: 'a2', platform: 'Netflix', email: 'today@test.com', fechaPago: today.format('YYYY-MM-DD') },
+            { id: 'a3', platform: 'Netflix', email: 'plus1@test.com', fechaPago: today.add(1, 'day').format('YYYY-MM-DD') },
+            { id: 'a4', platform: 'Netflix', email: 'plus2@test.com', fechaPago: today.add(2, 'day').format('YYYY-MM-DD') },
+            { id: 'a5', platform: 'Netflix', email: 'plus3@test.com', fechaPago: today.add(3, 'day').format('YYYY-MM-DD') },
+            { id: 'a6', platform: 'Netflix', email: 'plus5@test.com', fechaPago: today.add(5, 'day').format('YYYY-MM-DD') },
+            { id: 'a7', platform: 'Netflix', email: 'plus6@test.com', fechaPago: today.add(6, 'day').format('YYYY-MM-DD') }
+        ];
+
+        const collection = (db, name) => {
+             // Handle simple collection names
+             if (name === 'sales' || name === 'expenses' || name === 'platformAccounts') return name;
+             // Handle nested collections logic if needed, but for onSnapshot usually it's top level
+             return name;
+        };
+        const onSnapshot = (ref, callback, errorCallback) => {
+            if (ref === 'sales') {
+                 setTimeout(() => callback({ docs: mockSales.map(s => ({ id: s.id, data: () => s })) }), 100);
+            } else if (ref === 'platformAccounts') {
+                 setTimeout(() => callback({ docs: mockAccounts.map(a => ({ id: a.id, data: () => a })) }), 100);
+            } else if (ref === 'expenses') {
+                callback({ docs: [] });
+            } else if (ref && ref.path === 'config/platform_order') {
+                 // do nothing
+            }
+            return () => {};
+        };
+        const doc = (db, col, id) => {
+            if (id === undefined && typeof col === 'string' && col.startsWith('config/')) {
+                 return { path: col };
+            }
+            return { id };
+        };
+        const getDocs = async (ref) => ({ docs: [], empty: true, forEach: () => {} });
+        const getDoc = async (ref) => ({ exists: () => false, data: () => ({}) });
+        const addDoc = async () => {};
+        const updateDoc = async () => {};
+        const deleteDoc = async () => {};
+        const setDoc = async () => {};
+        const deleteField = () => {};
+        const onAuthStateChanged = (auth, cb) => {
+            setTimeout(() => cb(auth.currentUser), 50);
+            return () => {};
+        };
+        const signOut = async () => {};
+        const db = mockDb;
+        const auth = mockAuth;
 
         let currentSeller = '';
 
@@ -1377,8 +1404,7 @@
                 balanceTotal: document.getElementById('balance-total'),
                 addExpenseForm: document.getElementById('add-expense-form'),
                 expensesList: document.getElementById('expenses-list'),
-                recentIncomeCharitsa: document.getElementById('recent-income-charitsa'),
-                recentIncomeRenzo: document.getElementById('recent-income-renzo'),
+                recentIncomeList: document.getElementById('recent-income-list'),
                 addAccountForm: document.getElementById('add-account-form'),
                 accountsList: document.getElementById('contenedor-cuentas-agrupadas'),
                 platformAccountSelect: document.getElementById('platform-account'),
@@ -1435,8 +1461,6 @@
                 maintenanceModal: document.getElementById('maintenance-modal'),
                 closeMaintenanceModalBtn: document.getElementById('close-maintenance-modal'),
                 maintenanceList: document.getElementById('maintenance-list'),
-                dailyClosureModal: document.getElementById('daily-closure-modal'),
-                confirmDailyDepositBtn: document.getElementById('confirm-daily-deposit-btn'),
                 editSaleStatus: document.getElementById('edit-sale-status') || (() => {
                     const input = document.createElement('input');
                     input.type = 'hidden';
@@ -1446,49 +1470,6 @@
                     return input;
                 })(), // Ensure hidden input exists
             };
-
-            const checkDailyClosure = async () => {
-                if (currentSeller === 'Renzo') return;
-                const yesterday = dayjs().subtract(1, 'day').format('YYYY-MM-DD');
-                try {
-                    const docRef = doc(db, "daily_closures", yesterday);
-                    const docSnap = await getDoc(docRef);
-
-                    if (!docSnap.exists()) {
-                        selectors.dailyClosureModal.classList.remove('hidden');
-                        document.getElementById('daily-closure-message').textContent = `Por favor, confirma el depósito en cuenta BCP del día ${dayjs().subtract(1, 'day').format('DD/MM/YYYY')} para continuar.`;
-                    }
-                } catch (error) {
-                    console.error("Error checking daily closure:", error);
-                }
-            };
-
-            const handleConfirmDailyDeposit = async () => {
-                const btn = selectors.confirmDailyDepositBtn;
-                btn.disabled = true;
-                btn.textContent = 'Confirmando...';
-                const yesterday = dayjs().subtract(1, 'day').format('YYYY-MM-DD');
-
-                try {
-                    await setDoc(doc(db, "daily_closures", yesterday), {
-                        confirmed: true,
-                        confirmedBy: currentSeller || 'Unknown',
-                        confirmedAt: new Date().toISOString()
-                    });
-                    selectors.dailyClosureModal.classList.add('hidden');
-                } catch (error) {
-                    console.error("Error confirming deposit:", error);
-                    alert("Error al confirmar depósito.");
-                } finally {
-                    btn.disabled = false;
-                    btn.textContent = 'Confirmar Depósito';
-                }
-            };
-
-            selectors.confirmDailyDepositBtn.addEventListener('click', handleConfirmDailyDeposit);
-
-            // Check immediately on startup
-            checkDailyClosure();
 
             selectors.toggleAddAccountBtn.addEventListener('click', () => {
                 const content = selectors.collapsibleAccountsContent;
@@ -1916,56 +1897,34 @@
                         return dateB - dateA;
                     });
 
-                const renderColumn = (container, items) => {
-                    container.innerHTML = '';
-                    if (items.length === 0) {
-                        container.innerHTML = '<p class="text-gray-400 text-xs text-center py-4">Sin ingresos recientes.</p>';
-                        return;
-                    }
+                selectors.recentIncomeList.innerHTML = '';
+                if (recentIncome.length === 0) {
+                    selectors.recentIncomeList.innerHTML = '<p class="text-gray-500 text-center py-4">No hay ingresos recientes.</p>';
+                    return;
+                }
 
-                    items.forEach(sale => {
-                        const item = document.createElement('div');
-                        item.className = 'flex items-center py-2 border-b border-gray-100 last:border-b-0';
-                        const dateDisplay = sale.createdAt ? dayjs(sale.createdAt) : dayjs(sale.inicioPlan);
+                recentIncome.forEach(sale => {
+                    const item = document.createElement('div');
+                    item.className = 'flex items-center py-3 border-b border-gray-100 last:border-b-0';
+                    const dateDisplay = sale.createdAt ? dayjs(sale.createdAt) : dayjs(sale.inicioPlan);
 
-                        let transferButtonHtml = '';
-                        if (currentSeller === 'Renzo' && sale.vendedor === 'Renzo') {
-                            const isTransferred = sale.transferida === true;
-                            const btnColor = isTransferred
-                                ? 'text-green-600 bg-green-100 hover:bg-green-200 border border-transparent'
-                                : 'text-gray-500 bg-white hover:bg-gray-50 border border-gray-300 shadow-sm';
-                            const icon = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>';
-
-                            transferButtonHtml = `
-                                <button onclick="handleToggleTransfer('${sale.id}', ${isTransferred})"
-                                    class="ml-2 p-1 rounded-full transition-colors ${btnColor} flex items-center justify-center"
-                                    style="min-width: 28px; min-height: 28px;"
-                                    title="${isTransferred ? 'Transferencia confirmada' : 'Confirmar transferencia'}">
-                                    ${icon}
-                                </button>
-                            `;
-                        }
-
-                        item.innerHTML = `
-                        <div class="flex-grow min-w-0 mr-2">
-                            <p class="font-bold text-gray-700 text-sm truncate">${sale.plataforma}</p>
-                            <p class="text-xs text-gray-500 truncate">${sale.cliente}</p>
-                            <p class="text-[10px] text-gray-400">${dateDisplay.format('DD MMM, HH:mm')}</p>
-                        </div>
-                        <div class="text-right flex-shrink-0 flex items-center justify-end gap-1">
-                            <p class="font-bold text-green-600 text-sm">${formatCurrency(sale.precio)}</p>
-                            ${transferButtonHtml}
-                        </div>
-                        `;
-                        container.appendChild(item);
-                    });
-                };
-
-                const charitsaIncome = recentIncome.filter(s => s.vendedor === 'Charitsa');
-                const renzoIncome = recentIncome.filter(s => s.vendedor === 'Renzo');
-
-                renderColumn(selectors.recentIncomeCharitsa, charitsaIncome);
-                renderColumn(selectors.recentIncomeRenzo, renzoIncome);
+                    item.innerHTML = `
+                    <div class="p-3 bg-green-50 rounded-full mr-4 flex-shrink-0">
+                        <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                        </svg>
+                    </div>
+                    <div class="flex-grow min-w-0">
+                        <p class="font-medium text-gray-800 truncate">${sale.plataforma} - ${sale.cliente}</p>
+                        <p class="text-sm text-gray-500 truncate">${sale.correo || 'Cuenta no especificada'}</p>
+                        <p class="text-xs text-gray-400">${dateDisplay.format('DD [de] MMM, HH:mm')}${sale.vendedor ? ' • ' + sale.vendedor : ''}</p>
+                    </div>
+                    <div class="text-right mx-2 flex-shrink-0">
+                        <p class="font-semibold text-green-600 text-base">${formatCurrency(sale.precio)}</p>
+                    </div>
+                    `;
+                    selectors.recentIncomeList.appendChild(item);
+                });
             };
 
             const renderPlatformAccountAlerts = () => {
@@ -2403,9 +2362,6 @@
                 allExpenses.forEach(expense => {
                     const item = document.createElement('div');
                     item.className = 'flex items-center py-3 border-b border-gray-100 last:border-b-0';
-                    const time = expense.createdAt ? dayjs(expense.createdAt).format('HH:mm') : '';
-                    const userHtml = expense.createdBy ? `<p class="text-xs text-indigo-500 font-medium mt-0.5">${expense.createdBy}</p>` : '';
-
                     item.innerHTML = `
     <div class="p-3 bg-red-50 rounded-full mr-4">
         <svg class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -2414,11 +2370,7 @@
     </div>
     <div class="flex-grow">
         <p class="font-medium text-gray-800">${expense.description}</p>
-        <p class="text-sm text-gray-500">
-            ${dayjs(expense.date).format('DD [de] MMMM')}
-            ${time ? `<span class="text-gray-400">• ${time}</span>` : ''}
-        </p>
-        ${userHtml}
+        <p class="text-sm text-gray-500">${dayjs(expense.date).format('DD [de] MMMM, YYYY')}</p>
     </div>
     <div class="text-right mx-4">
         <p class="font-semibold text-red-600 text-base">${formatCurrency(expense.amount)}</p>
@@ -3792,10 +3744,7 @@
                         || isNaN(amount) || amount <= 0) return; try {
                             await addDoc(collection(db, "expenses"), {
                                 description,
-                                amount,
-                                date,
-                                createdBy: currentSeller || 'Desconocido',
-                                createdAt: new Date().toISOString()
+                                amount, date
                             }); f.reset(); f['expense-date'].value = dayjs().format('YYYY-MM-DD');
                         } catch (err) {
                             console.error("Error al añadir egreso:", err);
@@ -4653,16 +4602,6 @@
 
         // Initialize tilt effect after DOM load (or immediately if inside module and DOM is ready)
         init3DTilt();
-
-        window.handleToggleTransfer = async (saleId, currentStatus) => {
-            try {
-                const saleRef = doc(db, "sales", saleId);
-                await updateDoc(saleRef, { transferida: !currentStatus });
-            } catch (error) {
-                console.error("Error updating transfer status:", error);
-                alert("Error al actualizar el estado.");
-            }
-        };
 
         window.startApp = startApp;
 
