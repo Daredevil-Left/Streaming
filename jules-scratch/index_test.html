@@ -356,16 +356,8 @@
                 <div id="cuentas-view" class="view">
                     <h1 class="text-2xl md:text-3xl font-bold text-gray-800 mb-6 md:mb-8 px-2 md:px-0">Cuentas</h1>
                     <div class="bg-white p-3 md:p-6 rounded-2xl shadow mb-8 max-w-7xl mx-auto">
-                        <div class="flex justify-between items-center mb-4 md:mb-6">
-                            <h2 class="text-xl md:text-2xl font-semibold text-gray-700">Añadir Cuenta de Plataforma</h2>
-                            <button id="toggle-add-account-btn" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition flex items-center gap-2 text-sm font-medium">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-                                </svg>
-                                Nueva Cuenta
-                            </button>
-                        </div>
-                        <div id="collapsible-accounts-content" class="mt-6 hidden transition-all duration-300 ease-in-out">
+                        <h2 class="text-xl md:text-2xl font-semibold text-gray-700 mb-4 md:mb-6">Añadir Cuenta de Plataforma</h2>
+                        <div id="collapsible-accounts-content" class="mt-6">
                             <form id="add-account-form" class="space-y-6 mb-6">
                                 <div>
                                     <label class="block text-sm font-medium text-gray-600 mb-2">Plataforma</label>
@@ -416,7 +408,6 @@
                             </form>
                         </div>
                     </div>
-                    <div id="account-view-filters" class="max-w-7xl mx-auto mb-6 flex flex-wrap gap-2 justify-center md:justify-start"></div>
                     <div id="contenedor-cuentas-agrupadas" class="max-w-7xl mx-auto"></div>
                 </div>
 
@@ -532,7 +523,7 @@
                                 </select>
                             </div>
                         </div>
-                        <div id="platform-filters" class="flex flex-wrap justify-center gap-3 sm:gap-4 mb-4"></div>
+                        <div id="platform-filters" class="flex flex-wrap justify-center gap-3 sm:gap-4"></div>
                     </div>
 
                     <div class="bg-white rounded-2xl shadow-lg p-4">
@@ -620,41 +611,9 @@
 
                     <!-- Add Expense, Recent Income, and Recent Expenses -->
                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                        <!-- Recent Income List -->
-                        <div class="lg:col-span-2">
+                        <!-- Add Expense Form -->
+                        <div class="lg:col-span-1">
                             <div class="bg-white p-6 rounded-2xl shadow-lg h-full">
-                                <h3 class="text-xl font-semibold text-gray-700 mb-6">Últimos Ingresos</h3>
-                                <div class="grid grid-cols-2 gap-4 h-full">
-                                    <!-- Charitsa -->
-                                    <div class="flex flex-col h-full overflow-hidden">
-                                        <h4 class="text-sm font-bold text-gray-500 mb-2 uppercase tracking-wide">Charitsa</h4>
-                                        <div id="recent-income-charitsa" class="space-y-4 pr-2 -mr-2 flex-grow overflow-y-auto max-h-80">
-                                            <p class="text-gray-400 text-sm">Cargando...</p>
-                                        </div>
-                                    </div>
-                                    <!-- Renzo -->
-                                    <div class="flex flex-col h-full overflow-hidden border-l border-gray-100 pl-4">
-                                        <h4 class="text-sm font-bold text-gray-500 mb-2 uppercase tracking-wide">Renzo</h4>
-                                        <div id="recent-income-renzo" class="space-y-4 pr-2 -mr-2 flex-grow overflow-y-auto max-h-80">
-                                            <p class="text-gray-400 text-sm">Cargando...</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Right Column: Recent Expenses & Add Expense -->
-                        <div class="lg:col-span-1 flex flex-col gap-8">
-                            <!-- Recent Expenses List -->
-                            <div id="expenses-list-container" class="bg-white p-6 rounded-2xl shadow-lg">
-                                <h3 class="text-xl font-semibold text-gray-700 mb-6">Últimos Egresos</h3>
-                                <div id="expenses-list" class="space-y-4 pr-2 -mr-2 max-h-96 overflow-y-auto">
-                                    <p class="text-gray-500">No hay egresos registrados.</p>
-                                </div>
-                            </div>
-
-                            <!-- Add Expense Form -->
-                            <div class="bg-white p-6 rounded-2xl shadow-lg">
                                 <h3 class="text-xl font-semibold text-gray-700 mb-6">Añadir Egreso</h3>
                                 <form id="add-expense-form" class="space-y-6">
                                     <div>
@@ -683,6 +642,26 @@
                                         class="w-full bg-gradient-to-r from-red-500 to-orange-500 text-white font-bold py-3 px-4 rounded-lg hover:from-red-600 hover:to-orange-600 transition-all duration-300 transform hover:scale-105 shadow-md">Añadir
                                         Gasto</button>
                                 </form>
+                            </div>
+                        </div>
+
+                        <!-- Recent Income List -->
+                        <div class="lg:col-span-1">
+                            <div class="bg-white p-6 rounded-2xl shadow-lg h-full">
+                                <h3 class="text-xl font-semibold text-gray-700 mb-6">Últimos Ingresos</h3>
+                                <div id="recent-income-list" class="space-y-4 pr-2 -mr-2 max-h-96 overflow-y-auto">
+                                    <p class="text-gray-500">Cargando ingresos...</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Recent Expenses List -->
+                        <div id="expenses-list-container" class="lg:col-span-1">
+                            <div class="bg-white p-6 rounded-2xl shadow-lg h-full">
+                                <h3 class="text-xl font-semibold text-gray-700 mb-6">Últimos Egresos</h3>
+                                <div id="expenses-list" class="space-y-4 pr-2 -mr-2 max-h-96 overflow-y-auto">
+                                    <p class="text-gray-500">No hay egresos registrados.</p>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -916,23 +895,6 @@
             </form>
         </div>
     </div>
-    <div id="maintenance-modal"
-        class="modal fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 z-50 hidden opacity-0">
-        <div class="modal-content bg-white w-full max-w-4xl rounded-2xl shadow-2xl p-6 transform scale-95 flex flex-col max-h-[90vh]">
-            <div class="flex justify-between items-center mb-6 flex-shrink-0">
-                <h2 class="text-2xl font-semibold text-gray-700">Clientes en Mantenimiento</h2>
-                <button id="close-maintenance-modal" class="text-gray-400 hover:text-gray-600">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                </button>
-            </div>
-            <div class="overflow-y-auto flex-grow">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="maintenance-list">
-                    <!-- Items injected via JS -->
-                </div>
-            </div>
-        </div>
-    </div>
-
     <div id="archive-delete-modal"
         class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden opacity-0">
         <div class="modal-content bg-white w-full max-w-lg rounded-2xl shadow-2xl p-8 transform scale-95 text-center">
@@ -984,9 +946,8 @@
                 <input type="hidden" id="edit-account-id">
                 <div>
                     <label class="block text-sm font-medium text-gray-600 mb-2">Plataforma</label>
-                    <select id="edit-account-platform"
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white">
-                    </select>
+                    <input type="text" id="edit-account-platform"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100" readonly>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
@@ -1150,27 +1111,6 @@
     </div>
 
     <!-- Success Sale Modal -->
-    <div id="daily-closure-modal"
-        class="modal fixed inset-0 bg-gray-900 bg-opacity-95 flex items-center justify-center p-4 z-[60] hidden">
-        <div class="modal-content bg-white w-full max-w-md rounded-2xl shadow-2xl p-8 text-center transform scale-100">
-            <div class="mb-6">
-                <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-yellow-100 mb-4">
-                    <svg class="h-10 w-10 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
-                    </svg>
-                </div>
-                <h2 class="text-2xl font-bold text-gray-800">Cierre Diario Obligatorio</h2>
-                <p id="daily-closure-message" class="text-gray-600 mt-2">
-                    Por favor, confirma el depósito en cuenta BCP del día anterior para continuar.
-                </p>
-            </div>
-            <button id="confirm-daily-deposit-btn"
-                class="w-full bg-indigo-600 text-white font-bold py-3 px-4 rounded-xl hover:bg-indigo-700 transition transform hover:scale-105 shadow-lg">
-                Confirmar Depósito
-            </button>
-        </div>
-    </div>
-
     <div id="success-sale-modal"
         class="modal fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 z-50 hidden opacity-0">
         <div class="modal-content bg-white w-full max-w-md rounded-2xl shadow-2xl overflow-hidden transform scale-95 transition-all">
@@ -1262,24 +1202,32 @@
     </script>
 
     <script type="module">
-        import { collection, addDoc, onSnapshot, doc, updateDoc, deleteDoc, getDocs, setDoc, getDoc, deleteField } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-        import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { db, auth } from "./firebase-config.js";
+        // Mock Imports
+        // import { collection, addDoc, onSnapshot, doc, updateDoc, deleteDoc, getDocs, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        // import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        // import { db, auth } from "./firebase-config.js";
 
-        let currentSeller = '';
+        const db = {}; // Mock DB
+        const auth = {}; // Mock Auth
+
+        // Helper to mimic Firebase addDoc etc if needed, but we mainly need to populate data
+        const collection = () => {};
+        const doc = () => {};
+        const onSnapshot = () => {};
+
+        let currentSeller = 'TestUser';
 
         async function startApp() {
             document.getElementById('app').classList.remove('hidden');
-            document.getElementById('logout-btn').addEventListener('click', () => { signOut(auth).catch((error) => console.error("Error al cerrar sesión", error)); });
+            // document.getElementById('logout-btn').addEventListener('click', () => { signOut(auth).catch((error) => console.error("Error al cerrar sesión", error)); });
 
-            dayjs.extend(dayjs_plugin_relativeTime);
+            dayjs.extend(window.dayjs_plugin_relativeTime);
             dayjs.locale('es');
             const platformStyles = {
                 'Netflix': { color: 'text-red-600', bg: '#E50914', logo: 'https://logo.clearbit.com/netflix.com' },
                 'Spotify': { color: 'text-green-500', bg: '#1DB954', logo: 'https://logo.clearbit.com/spotify.com' },
                 'Disney+': { color: 'text-blue-900', bg: '#01153E', logo: 'https://logo.clearbit.com/disneyplus.com' },
-                'HBO Max Estándar': { color: 'text-purple-600', bg: '#8A2BE2', logo: 'https://logo.clearbit.com/hbomax.com' },
-                'HBO Max Platinium': { color: 'text-blue-900', bg: '#1e3a8a', bgGradient: 'linear-gradient(to right, #000428, #004e92)', logo: 'https://logo.clearbit.com/hbomax.com' },
+                'HBO Max': { color: 'text-purple-600', bg: '#8A2BE2', logo: 'https://logo.clearbit.com/hbomax.com' },
                 'Amazon Prime Video': { color: 'text-blue-400', bg: '#00A8E1', logo: 'https://logo.clearbit.com/primevideo.com' },
                 'YouTube Premium': { color: 'text-red-500', bg: '#FF0000', logo: 'https://logo.clearbit.com/youtube.com' },
                 'Apple TV+': { color: 'text-gray-800', bg: '#000000', logo: 'https://logo.clearbit.com/tv.apple.com' },
@@ -1290,13 +1238,11 @@
                 'Paramount+': { color: 'text-blue-800', bg: '#0064FF', logo: 'https://logo.clearbit.com/paramountplus.com' },
                 'Otro': { color: 'text-gray-500', bg: '#6B7280', logo: '' }
             };
-            platformStyles['HBO Max'] = platformStyles['HBO Max Estándar'];
-
             const defaultServices = [
                 { id: 'netflix', name: 'Netflix', cost: 38.00, price: 12.00, type: 'monthly', divider: 5, logo: 'https://upload.wikimedia.org/wikipedia/commons/0/08/Netflix_2015_logo.svg', color: '#E50914' },
                 { id: 'disney', name: 'Disney+', cost: 18.00, price: 8.00, type: 'monthly', divider: 5, logo: 'https://upload.wikimedia.org/wikipedia/commons/3/3e/Disney%2B_logo.svg', color: '#01153E' },
-                { id: 'max_plat', name: 'HBO Max Platinium', cost: 17.00, price: 8.00, type: 'monthly', divider: 5, logo: 'https://upload.wikimedia.org/wikipedia/commons/c/ce/Max_logo.svg', color: '#1e3a8a', bgGradient: 'linear-gradient(to right, #000428, #004e92)' },
-                { id: 'max_bas', name: 'HBO Max Estándar', cost: 10.20, price: 6.00, type: 'monthly', divider: 5, label: 'Estándar', logo: 'https://upload.wikimedia.org/wikipedia/commons/c/ce/Max_logo.svg', color: '#8A2BE2' },
+                { id: 'max_plat', name: 'Max Platino', cost: 17.00, price: 8.00, type: 'monthly', divider: 5, logo: 'https://upload.wikimedia.org/wikipedia/commons/c/ce/Max_logo.svg', color: '#8A2BE2' },
+                { id: 'max_bas', name: 'Max Básico', cost: 10.20, price: 6.00, type: 'monthly', divider: 5, label: 'Básico', logo: 'https://upload.wikimedia.org/wikipedia/commons/c/ce/Max_logo.svg', color: '#8A2BE2' },
                 { id: 'prime', name: 'Amazon Prime', cost: 11.00, price: 6.00, type: 'monthly', divider: 5, logo: 'https://upload.wikimedia.org/wikipedia/commons/1/11/Amazon_Prime_Video_logo.svg', color: '#00A8E1' },
                 { id: 'plex', name: 'Plex', cost: 14.00, price: 9.00, type: 'monthly', divider: 4, logo: 'https://upload.wikimedia.org/wikipedia/commons/7/7b/Plex_logo_2022.svg', color: '#e5a00d' },
                 { id: 'paramount', name: 'Paramount+', cost: 8.50, price: 6.00, type: 'monthly', divider: 5, logo: 'https://upload.wikimedia.org/wikipedia/commons/a/a5/Paramount_Plus.svg', color: '#0064FF' },
@@ -1308,7 +1254,6 @@
 
             let allServices = [...defaultServices];
             let allSales = [], allExpenses = [], allPlatformAccounts = [], activePlatformFilter = 'Todos', currentSearchTerm = '', activeAccountFilter = '', activeStatusFilter = '';
-            let activeAccountViewFilter = 'Todos';
             let selectedServices = new Map(), selectedMonths = 1;
             let platformOrder = [];
 
@@ -1377,8 +1322,7 @@
                 balanceTotal: document.getElementById('balance-total'),
                 addExpenseForm: document.getElementById('add-expense-form'),
                 expensesList: document.getElementById('expenses-list'),
-                recentIncomeCharitsa: document.getElementById('recent-income-charitsa'),
-                recentIncomeRenzo: document.getElementById('recent-income-renzo'),
+                recentIncomeList: document.getElementById('recent-income-list'),
                 addAccountForm: document.getElementById('add-account-form'),
                 accountsList: document.getElementById('contenedor-cuentas-agrupadas'),
                 platformAccountSelect: document.getElementById('platform-account'),
@@ -1429,142 +1373,6 @@
                 pinSearchInput: document.getElementById('pin-search-input'),
                 pinSearchResult: document.getElementById('pin-search-result'),
                 availableAccountsGrid: document.getElementById('available-accounts-grid'),
-                accountViewFilters: document.getElementById('account-view-filters'),
-                toggleAddAccountBtn: document.getElementById('toggle-add-account-btn'),
-                collapsibleAccountsContent: document.getElementById('collapsible-accounts-content'),
-                maintenanceModal: document.getElementById('maintenance-modal'),
-                closeMaintenanceModalBtn: document.getElementById('close-maintenance-modal'),
-                maintenanceList: document.getElementById('maintenance-list'),
-                dailyClosureModal: document.getElementById('daily-closure-modal'),
-                confirmDailyDepositBtn: document.getElementById('confirm-daily-deposit-btn'),
-                editSaleStatus: document.getElementById('edit-sale-status') || (() => {
-                    const input = document.createElement('input');
-                    input.type = 'hidden';
-                    input.id = 'edit-sale-status';
-                    input.name = 'edit-sale-status';
-                    document.getElementById('edit-sale-form').appendChild(input);
-                    return input;
-                })(), // Ensure hidden input exists
-            };
-
-            const checkDailyClosure = async () => {
-                if (currentSeller === 'Renzo') return;
-                const yesterday = dayjs().subtract(1, 'day').format('YYYY-MM-DD');
-                try {
-                    const docRef = doc(db, "daily_closures", yesterday);
-                    const docSnap = await getDoc(docRef);
-
-                    if (!docSnap.exists()) {
-                        selectors.dailyClosureModal.classList.remove('hidden');
-                        document.getElementById('daily-closure-message').textContent = `Por favor, confirma el depósito en cuenta BCP del día ${dayjs().subtract(1, 'day').format('DD/MM/YYYY')} para continuar.`;
-                    }
-                } catch (error) {
-                    console.error("Error checking daily closure:", error);
-                }
-            };
-
-            const handleConfirmDailyDeposit = async () => {
-                const btn = selectors.confirmDailyDepositBtn;
-                btn.disabled = true;
-                btn.textContent = 'Confirmando...';
-                const yesterday = dayjs().subtract(1, 'day').format('YYYY-MM-DD');
-
-                try {
-                    await setDoc(doc(db, "daily_closures", yesterday), {
-                        confirmed: true,
-                        confirmedBy: currentSeller || 'Unknown',
-                        confirmedAt: new Date().toISOString()
-                    });
-                    selectors.dailyClosureModal.classList.add('hidden');
-                } catch (error) {
-                    console.error("Error confirming deposit:", error);
-                    alert("Error al confirmar depósito.");
-                } finally {
-                    btn.disabled = false;
-                    btn.textContent = 'Confirmar Depósito';
-                }
-            };
-
-            selectors.confirmDailyDepositBtn.addEventListener('click', handleConfirmDailyDeposit);
-
-            // Check immediately on startup
-            checkDailyClosure();
-
-            selectors.toggleAddAccountBtn.addEventListener('click', () => {
-                const content = selectors.collapsibleAccountsContent;
-                const isHidden = content.classList.contains('hidden');
-
-                if (isHidden) {
-                    content.classList.remove('hidden');
-                    selectors.toggleAddAccountBtn.innerHTML = `
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                        </svg>
-                        Cancelar
-                    `;
-                    selectors.toggleAddAccountBtn.classList.replace('bg-indigo-600', 'bg-red-500');
-                    selectors.toggleAddAccountBtn.classList.replace('hover:bg-indigo-700', 'hover:bg-red-600');
-                } else {
-                    content.classList.add('hidden');
-                    selectors.toggleAddAccountBtn.innerHTML = `
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-                        </svg>
-                        Nueva Cuenta
-                    `;
-                    selectors.toggleAddAccountBtn.classList.replace('bg-red-500', 'bg-indigo-600');
-                    selectors.toggleAddAccountBtn.classList.replace('hover:bg-red-600', 'hover:bg-indigo-700');
-                }
-            });
-
-            const renderAccountViewFilters = () => {
-                selectors.accountViewFilters.innerHTML = '';
-
-                // Get unique platforms from existing accounts
-                const platforms = new Set(['Todos']);
-                allPlatformAccounts.forEach(acc => platforms.add(acc.platform));
-
-                // Convert to array and sort (Todos first)
-                const sortedPlatforms = Array.from(platforms).sort((a, b) => {
-                    if (a === 'Todos') return -1;
-                    if (b === 'Todos') return 1;
-                    return a.localeCompare(b);
-                });
-
-                sortedPlatforms.forEach(platform => {
-                    const btn = document.createElement('button');
-                    const style = platformStyles[platform] || platformStyles['Otro'];
-                    const isSelected = activeAccountViewFilter === platform;
-
-                    btn.className = `px-4 py-2 rounded-full font-bold text-sm transition-all duration-200 transform hover:scale-105 focus:outline-none shadow-sm flex items-center gap-2`;
-
-                    if (isSelected) {
-                        // Selected State: Solid Brand Color
-                        if (style.bgGradient) {
-                            btn.style.background = style.bgGradient;
-                        } else {
-                            btn.style.backgroundColor = style.bg;
-                        }
-                        btn.style.color = getContrastYIQ(style.bg);
-                        btn.classList.add('ring-2', 'ring-offset-2', 'ring-indigo-200');
-                    } else {
-                        // Unselected State: White bg, Brand Color text/border
-                        btn.style.backgroundColor = 'white';
-                        btn.style.color = style.bg;
-                        btn.style.border = `1px solid ${style.bg}`;
-                        btn.classList.add('hover:shadow-md');
-                    }
-
-                    btn.textContent = platform;
-
-                    btn.addEventListener('click', () => {
-                        activeAccountViewFilter = platform;
-                        renderAccountViewFilters(); // Re-render buttons to update state styles
-                        renderPlatformAccounts(); // Re-render accounts list
-                    });
-
-                    selectors.accountViewFilters.appendChild(btn);
-                });
             };
 
             const prefillSaleFromAvailable = (platformName) => {
@@ -1598,7 +1406,6 @@
                     const availableProfile = availableAccount.profiles.find(p => p.estado === 'Disponible');
                     if (availableProfile) {
                         selectors.profileSelect.value = availableProfile.id;
-                        selectors.profileSelect.dispatchEvent(new Event('change'));
                     }
                 }
             };
@@ -1640,12 +1447,7 @@
                     const btn = document.createElement('div');
                     // Styling: Card-like button, solid background
                     btn.className = 'flex items-center justify-between p-4 rounded-xl shadow-md cursor-pointer transition-all transform hover:scale-105 hover:shadow-lg active:scale-95';
-
-                    if (style.bgGradient) {
-                        btn.style.background = style.bgGradient;
-                    } else {
-                        btn.style.backgroundColor = bgColor;
-                    }
+                    btn.style.backgroundColor = bgColor;
                     btn.style.color = textColor;
 
                     // Badge color: White with brand text
@@ -1714,8 +1516,7 @@
                 });
             });
 
-            const getSaleStatus = (finPlan, estado) => {
-                if (estado === 'EN_MANTENIMIENTO') return 'Mantenimiento';
+            const getSaleStatus = (finPlan) => {
                 if (dayjs().isAfter(dayjs(finPlan).endOf('day'))) { return 'Vencido'; }
                 const today = dayjs().startOf('day');
                 const expirationDate = dayjs(finPlan).startOf('day');
@@ -1803,11 +1604,7 @@
 
                 // Header Styling
                 const headerBg = document.getElementById('modal-header-bg');
-                if (platformStyle.bgGradient) {
-                    headerBg.style.background = platformStyle.bgGradient;
-                } else {
-                    headerBg.style.backgroundColor = platformStyle.bg;
-                }
+                headerBg.style.backgroundColor = platformStyle.bg;
 
                 // Platform Info
             const platformNameEl = document.getElementById('modal-platform-name');
@@ -1916,56 +1713,34 @@
                         return dateB - dateA;
                     });
 
-                const renderColumn = (container, items) => {
-                    container.innerHTML = '';
-                    if (items.length === 0) {
-                        container.innerHTML = '<p class="text-gray-400 text-xs text-center py-4">Sin ingresos recientes.</p>';
-                        return;
-                    }
+                selectors.recentIncomeList.innerHTML = '';
+                if (recentIncome.length === 0) {
+                    selectors.recentIncomeList.innerHTML = '<p class="text-gray-500 text-center py-4">No hay ingresos recientes.</p>';
+                    return;
+                }
 
-                    items.forEach(sale => {
-                        const item = document.createElement('div');
-                        item.className = 'flex items-center py-2 border-b border-gray-100 last:border-b-0';
-                        const dateDisplay = sale.createdAt ? dayjs(sale.createdAt) : dayjs(sale.inicioPlan);
+                recentIncome.forEach(sale => {
+                    const item = document.createElement('div');
+                    item.className = 'flex items-center py-3 border-b border-gray-100 last:border-b-0';
+                    const dateDisplay = sale.createdAt ? dayjs(sale.createdAt) : dayjs(sale.inicioPlan);
 
-                        let transferButtonHtml = '';
-                        if (currentSeller === 'Renzo' && sale.vendedor === 'Renzo') {
-                            const isTransferred = sale.transferida === true;
-                            const btnColor = isTransferred
-                                ? 'text-green-600 bg-green-100 hover:bg-green-200 border border-transparent'
-                                : 'text-gray-500 bg-white hover:bg-gray-50 border border-gray-300 shadow-sm';
-                            const icon = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>';
-
-                            transferButtonHtml = `
-                                <button onclick="handleToggleTransfer('${sale.id}', ${isTransferred})"
-                                    class="ml-2 p-1 rounded-full transition-colors ${btnColor} flex items-center justify-center"
-                                    style="min-width: 28px; min-height: 28px;"
-                                    title="${isTransferred ? 'Transferencia confirmada' : 'Confirmar transferencia'}">
-                                    ${icon}
-                                </button>
-                            `;
-                        }
-
-                        item.innerHTML = `
-                        <div class="flex-grow min-w-0 mr-2">
-                            <p class="font-bold text-gray-700 text-sm truncate">${sale.plataforma}</p>
-                            <p class="text-xs text-gray-500 truncate">${sale.cliente}</p>
-                            <p class="text-[10px] text-gray-400">${dateDisplay.format('DD MMM, HH:mm')}</p>
-                        </div>
-                        <div class="text-right flex-shrink-0 flex items-center justify-end gap-1">
-                            <p class="font-bold text-green-600 text-sm">${formatCurrency(sale.precio)}</p>
-                            ${transferButtonHtml}
-                        </div>
-                        `;
-                        container.appendChild(item);
-                    });
-                };
-
-                const charitsaIncome = recentIncome.filter(s => s.vendedor === 'Charitsa');
-                const renzoIncome = recentIncome.filter(s => s.vendedor === 'Renzo');
-
-                renderColumn(selectors.recentIncomeCharitsa, charitsaIncome);
-                renderColumn(selectors.recentIncomeRenzo, renzoIncome);
+                    item.innerHTML = `
+                    <div class="p-3 bg-green-50 rounded-full mr-4 flex-shrink-0">
+                        <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                        </svg>
+                    </div>
+                    <div class="flex-grow min-w-0">
+                        <p class="font-medium text-gray-800 truncate">${sale.plataforma} - ${sale.cliente}</p>
+                        <p class="text-sm text-gray-500 truncate">${sale.correo || 'Cuenta no especificada'}</p>
+                        <p class="text-xs text-gray-400">${dateDisplay.format('DD [de] MMM, HH:mm')}${sale.vendedor ? ' • ' + sale.vendedor : ''}</p>
+                    </div>
+                    <div class="text-right mx-2 flex-shrink-0">
+                        <p class="font-semibold text-green-600 text-base">${formatCurrency(sale.precio)}</p>
+                    </div>
+                    `;
+                    selectors.recentIncomeList.appendChild(item);
+                });
             };
 
             const renderPlatformAccountAlerts = () => {
@@ -2017,7 +1792,7 @@
                 selectors.kpiActiveClients.classList.remove('skeleton');
 
                 const expirationAlerts = activeSales.filter(sale => {
-                    const status = getSaleStatus(sale.finPlan, sale.estado);
+                    const status = getSaleStatus(sale.finPlan);
                     return status === 'Vencido' || status === 'Vence hoy' || status === 'Próximo a Vencer';
                 }).filter(sale => {
                     const expirationDate = dayjs(sale.finPlan).startOf('day');
@@ -2028,7 +1803,7 @@
                 if (expirationAlerts.length > 0) {
                     selectors.alertsSection.className = 'grid grid-cols-1 md:grid-cols-2 gap-4';
                     expirationAlerts.forEach(sale => {
-                        const status = getSaleStatus(sale.finPlan, sale.estado);
+                        const status = getSaleStatus(sale.finPlan);
                         const borderColor = status === 'Vencido' ? 'border-red-500' : 'border-yellow-500';
                         const card = document.createElement('div');
                         card.className = `bg-white p-4 rounded-lg shadow-md border-l-4 ${borderColor} flex flex-col justify-between`;
@@ -2048,7 +1823,6 @@
                                         <p class="font-bold text-gray-800">${sale.cliente}</p>
                                         <p class="text-sm text-gray-500">${getPlatformHtml(sale.plataforma)}</p>
                                         ${motherAccountEmail ? `<p class="text-xs text-gray-400 mt-1 truncate max-w-[150px]" title="${motherAccountEmail}">📩 ${motherAccountEmail}</p>` : ''}
-                                        <p class="text-sm text-gray-700 font-medium mt-1">👤 ${sale.vendedor || 'N/A'}</p>
                                     </div>
                                     <div class="text-right">
                                         <p class="font-semibold text-sm ${statusColor}">${statusText}</p>
@@ -2086,7 +1860,7 @@
                 const saleId = button.dataset.saleId;
                 const sale = allSales.find(s => s.id === saleId);
                 if (!sale) return;
-                const status = getSaleStatus(sale.finPlan, sale.estado);
+                const status = getSaleStatus(sale.finPlan);
                 let message = '';
                 if (status === 'Vencido') { message = `Buenas tardes 👋🏻, se le informa que su cuenta de "${sale.plataforma}" ya venció. Si desea renovar me avisa, por favor, para evitar el corte del servicio. Gracias por su preferencia 💯`; } else if (status === 'Vence hoy') { message = `Buenas tardes 👋🏻, se le informa que su cuenta de "${sale.plataforma}" vence el día de hoy a la medianoche ‼. Si desea renovar me avisa, por favor. Gracias por su preferencia 💯`; } else { const daysLeft = dayjs(sale.finPlan).endOf('day').diff(dayjs(), 'day'); const dayText = daysLeft === 0 ? 'mañana' : `en ${daysLeft + 1} días`; message = `Buenas tardes 👋🏻, se le informa que su cuenta de "${sale.plataforma}" vence ${dayText}. Si desea renovar me avisa, por favor. Gracias por su preferencia 💯`; }
                 navigator.clipboard.writeText(message).then(() => { const originalText = button.textContent; button.textContent = '¡Copiado!'; button.classList.add('bg-green-500', 'text-white'); setTimeout(() => { button.textContent = originalText; button.classList.remove('bg-green-500', 'text-white'); }, 2000); }).catch(err => { console.error('Error al copiar texto: ', err); alert('No se pudo copiar el texto.'); });
@@ -2097,7 +1871,7 @@
                 if (activePlatformFilter !== 'Todos') { filteredSales = filteredSales.filter(sale => sale.plataforma === activePlatformFilter); }
                 if (currentSearchTerm) { const term = currentSearchTerm.toLowerCase(); filteredSales = filteredSales.filter(sale => sale.cliente.toLowerCase().includes(term) || sale.plataforma.toLowerCase().includes(term) || (sale.correo && sale.correo.toLowerCase().includes(term))); }
                 if (activeAccountFilter) { const account = allPlatformAccounts.find(a => a.id === activeAccountFilter); if (account) { filteredSales = filteredSales.filter(sale => sale.correo === account.email && sale.contrasena === account.password); } }
-                if (activeStatusFilter) { filteredSales = filteredSales.filter(sale => getSaleStatus(sale.finPlan, sale.estado) === activeStatusFilter); }
+                if (activeStatusFilter) { filteredSales = filteredSales.filter(sale => getSaleStatus(sale.finPlan) === activeStatusFilter); }
                 renderSales(filteredSales);
             };
             const renderPlatformFilters = () => {
@@ -2112,32 +1886,17 @@
                     if (platform === 'Todos') { btn.textContent = 'Todos'; } else { btn.innerHTML = getPlatformHtml(platform); }
                     btn.addEventListener('click', () => {
                         activePlatformFilter = platform;
-                        document.querySelectorAll('#platform-filters button').forEach(b => {
-                            if (!b.id || b.id !== 'view-maintenance-btn') {
-                                b.className = `p-2 rounded-lg border-2 transition-all duration-200 font-semibold ${inactiveClasses}`;
-                            }
-                        });
+                        document.querySelectorAll('#platform-filters button').forEach(b => { b.className = `p-2 rounded-lg border-2 transition-all duration-200 font-semibold ${inactiveClasses}`; });
                         btn.className = `p-2 rounded-lg border-2 transition-all duration-200 font-semibold ${activeClasses}`;
                         const activeSales = allSales.filter(sale => sale.estado !== 'ARCHIVADO');
                         applyFiltersAndRender(activeSales);
                     });
                     selectors.platformFilters.appendChild(btn);
                 });
-
-                // Maintenance Button
-                const maintenanceBtn = document.createElement('button');
-                maintenanceBtn.id = 'view-maintenance-btn';
-                maintenanceBtn.className = 'text-yellow-600 font-medium hover:text-yellow-800 underline transition flex items-center gap-1 p-2 ml-2';
-                maintenanceBtn.innerHTML = `
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
-                    Mantenimiento
-                `;
-                maintenanceBtn.addEventListener('click', toggleMaintenanceModal);
-                selectors.platformFilters.appendChild(maintenanceBtn);
             };
 
             function renderPlatformSelects() {
-                const platforms = Object.keys(platformStyles).filter(p => p !== 'Otro' && p !== 'HBO Max').sort();
+                const platforms = Object.keys(platformStyles).filter(p => p !== 'Otro').sort();
                 platforms.push('Otro');
 
                 const optionsHtml = platforms.map(p => `<option value="${p}">${p}</option>`).join('');
@@ -2150,7 +1909,7 @@
             }
 
             const renderAccountPlatformButtons = () => {
-                const platformNames = Object.keys(platformStyles).filter(p => p !== 'Otro' && p !== 'HBO Max');
+                const platformNames = Object.keys(platformStyles).filter(p => p !== 'Otro');
                 selectors.accountPlatformButtons.innerHTML = '';
 
                 const resetButtons = () => {
@@ -2200,6 +1959,26 @@
                     toggleAddServiceModal();
                 });
                 selectors.accountPlatformButtons.appendChild(addPlatformBtn);
+
+                const otroBtn = document.createElement('button');
+                const otroStyle = platformStyles['Otro'];
+                otroBtn.type = 'button';
+                otroBtn.dataset.platformName = 'Otro';
+                otroBtn.className = `px-4 py-2 rounded-lg border-2 font-bold text-sm transition-all duration-200 ease-in-out transform hover:scale-105 focus:outline-none`;
+
+                otroBtn.style.backgroundColor = 'white';
+                otroBtn.style.borderColor = otroStyle.bg;
+                otroBtn.style.color = otroStyle.bg;
+                otroBtn.textContent = 'Otro';
+
+                otroBtn.addEventListener('click', () => {
+                    selectors.addAccountForm['account-platform'].value = 'Otro';
+                    resetButtons();
+                    otroBtn.style.backgroundColor = otroStyle.bg;
+                    otroBtn.style.color = 'white';
+                    otroBtn.classList.add('scale-110', 'shadow-md');
+                });
+                selectors.accountPlatformButtons.appendChild(otroBtn);
             };
 
             const renderSales = (sales) => {
@@ -2244,13 +2023,12 @@
                     salesRowsContainer.className = 'bg-white rounded-b-lg shadow-sm border border-t-0 border-gray-200';
 
                     salesInGroup.forEach(sale => {
-                        const statusText = getSaleStatus(sale.finPlan, sale.estado);
+                        const statusText = getSaleStatus(sale.finPlan);
                         const statusInfo = {
-                            'Vencido': { color: 'orange' },
-                            'Vence hoy': { color: 'red' },
-                            'Próximo a Vencer': { color: 'yellow' },
-                            'Activo': { color: 'green' },
-                            'Mantenimiento': { color: 'gray' }
+                            'Vencido': { color: 'orange' }, 'Vence hoy': { color: 'red' }, 'Próximo a Vencer': {
+                                color:
+                                    'yellow'
+                            }, 'Activo': { color: 'green' }
                         }[statusText];
                         const endDateForDisplay = dayjs(sale.finPlan);
                         const endDateForRelative = dayjs(sale.finPlan).endOf('day');
@@ -2314,12 +2092,6 @@
                 </path>
             </svg>
         </button>
-        <button class="maintenance-btn p-1 text-yellow-600 hover:text-yellow-800 hover:bg-yellow-100 rounded-full transition"
-            data-id="${sale.id}" title="Mantenimiento">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065zM15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-            </svg>
-        </button>
     </div>
     <div class="md:hidden col-span-2 mt-2 pt-2 border-t flex justify-between items-center text-xs">
         <span
@@ -2340,8 +2112,6 @@
                     handleDeleteSale(e.currentTarget.dataset.id)));
                 selectors.salesList.querySelectorAll('.renew-btn').forEach(b => b.addEventListener('click', e =>
                     openRenewalModal(e.currentTarget.dataset.id)));
-                selectors.salesList.querySelectorAll('.maintenance-btn').forEach(b => b.addEventListener('click', e =>
-                    handleMoveToMaintenance(e.currentTarget.dataset.id)));
                 selectors.salesList.querySelectorAll('.copy-details-btn').forEach(b => b.addEventListener('click', e =>
                     handleCopySaleDetails(e.currentTarget.dataset.id, e.currentTarget)));
                 selectors.salesList.querySelectorAll('.whatsapp-btn').forEach(b => b.addEventListener('click', e =>
@@ -2403,9 +2173,6 @@
                 allExpenses.forEach(expense => {
                     const item = document.createElement('div');
                     item.className = 'flex items-center py-3 border-b border-gray-100 last:border-b-0';
-                    const time = expense.createdAt ? dayjs(expense.createdAt).format('HH:mm') : '';
-                    const userHtml = expense.createdBy ? `<p class="text-xs text-indigo-500 font-medium mt-0.5">${expense.createdBy}</p>` : '';
-
                     item.innerHTML = `
     <div class="p-3 bg-red-50 rounded-full mr-4">
         <svg class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -2414,11 +2181,7 @@
     </div>
     <div class="flex-grow">
         <p class="font-medium text-gray-800">${expense.description}</p>
-        <p class="text-sm text-gray-500">
-            ${dayjs(expense.date).format('DD [de] MMMM')}
-            ${time ? `<span class="text-gray-400">• ${time}</span>` : ''}
-        </p>
-        ${userHtml}
+        <p class="text-sm text-gray-500">${dayjs(expense.date).format('DD [de] MMMM, YYYY')}</p>
     </div>
     <div class="text-right mx-4">
         <p class="font-semibold text-red-600 text-base">${formatCurrency(expense.amount)}</p>
@@ -2442,314 +2205,177 @@
                 const { accountsList } = selectors;
                 accountsList.innerHTML = '';
 
-                let accountsToRender = allPlatformAccounts;
+                if (allPlatformAccounts.length === 0) {
+                    accountsList.innerHTML = '<p class="text-sm text-gray-400">No hay cuentas de plataforma registradas.</p>';
+                    return;
+                }
 
-                // Filter based on selected view filter
-                if (activeAccountViewFilter !== 'Todos') {
-                    accountsToRender = accountsToRender.filter(acc => acc.platform === activeAccountViewFilter);
-
-                    // GRID LAYOUT FOR FILTERED VIEW
-                    accountsList.removeAttribute('style'); // Clear any previous inline styles
-                    accountsList.style.columnCount = 'auto';
-                    accountsList.style.display = 'grid';
-                    accountsList.className = 'max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6';
-
-                    if (accountsToRender.length === 0) {
-                        accountsList.innerHTML = '<p class="text-sm text-gray-400 col-span-full">No hay cuentas registradas para esta plataforma.</p>';
-                        return;
+                // 1. Group accounts by platform
+                const groupedAccounts = allPlatformAccounts.reduce((acc, account) => {
+                    const { platform } = account;
+                    if (!acc[platform]) {
+                        acc[platform] = [];
                     }
+                    acc[platform].push(account);
+                    return acc;
+                }, {});
 
-                    const cardsHtml = accountsToRender.map(account => {
-                        const platformStyle = platformStyles[account.platform] || platformStyles['Otro'];
-                        const headerBgStyle = platformStyle.bgGradient ? `background: ${platformStyle.bgGradient};` : `background-color: ${platformStyle.bg};`;
-                        const headerTextColor = getContrastYIQ(platformStyle.bg);
+                // 2. Sort and Render
+                let sortedAccounts = Object.keys(groupedAccounts).sort();
 
-                        // Calculate Date Status
+                if (platformOrder.length > 0) {
+                    sortedAccounts = sortedAccounts.sort((a, b) => {
+                        const indexA = platformOrder.indexOf(a);
+                        const indexB = platformOrder.indexOf(b);
+
+                        if (indexA !== -1 && indexB !== -1) return indexA - indexB;
+                        if (indexA !== -1) return -1;
+                        if (indexB !== -1) return 1;
+                        return 0; // Keep alphabetical for those not in order list
+                    });
+                }
+
+                for (const platform of sortedAccounts) {
+                    const accounts = groupedAccounts[platform];
+                    const platformStyle = platformStyles[platform] || platformStyles['Otro'];
+
+                    const listItems = accounts.map(account => {
                         let fechaPagoHtml = '';
                         if (account.fechaPago) {
                             const fechaPago = dayjs(account.fechaPago);
                             const hoy = dayjs().startOf('day');
                             const diffDays = fechaPago.diff(hoy, 'day');
-                            const statusClasses = diffDays <= 5 ? 'bg-red-100 text-red-800 border-red-200' : 'bg-green-100 text-green-800 border-green-200';
-                            const label = diffDays < 0 ? 'Vencido' : 'Próx. Pago';
-                            fechaPagoHtml = `<span class="px-2 py-1 rounded-md ${statusClasses} font-semibold text-xs border truncate">${label}: ${fechaPago.format('DD/MM/YYYY')}</span>`;
+
+                            const statusClasses = diffDays <= 5 ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800';
+                            fechaPagoHtml = `<div class="mt-1"><span class="px-2 py-1 text-xs font-semibold rounded-lg ${statusClasses}">Próx.
+            Pago: ${fechaPago.format('DD/MM/YYYY')}</span></div>`;
                         }
 
-                        // Profiles
-                        const userIconSvg = `<svg class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" /></svg>`;
-                        let profilesHtml = '<div class="flex flex-wrap gap-1 mb-4">';
+                        const enlaceBtnHtml = account.enlace
+                            ? `<a href="${account.enlace}" target="_blank"
+            class="p-1 text-blue-600 hover:text-blue-800 hover:bg-blue-100 rounded-full transition"
+            title="Abrir enlace">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1">
+                </path>
+            </svg>
+        </a>`
+                            : `<span class="p-1 text-gray-400 cursor-not-allowed rounded-full" title="No hay enlace">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1">
+                </path>
+            </svg>
+        </span>`;
+
+                        const userIconSvg = `<svg class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
+        </svg>`;
+                        let profilesIndicatorHtml = '';
+
                         if (account.platform !== 'Canva') {
-                             if (account.profiles && account.profiles.length > 0) {
+                            profilesIndicatorHtml = '<div class="flex flex-wrap items-center gap-1.5 mt-2">';
+                            if (account.profiles && account.profiles.length > 0) {
                                 const sortedProfiles = account.profiles.sort((a, b) => a.nombre.localeCompare(b.nombre));
                                 sortedProfiles.forEach(profile => {
                                     const color = profile.estado === 'Disponible' ? 'text-green-500' : 'text-red-500';
-                                    const title = `${profile.nombre}: ${profile.estado}`;
-                                    profilesHtml += `<span class="${color}" title="${title}">${userIconSvg}</span>`;
+                                    profilesIndicatorHtml += `<span class="${color}"
+                title="${profile.nombre}: ${profile.estado}">${userIconSvg}</span>`;
                                 });
                             } else {
-                                // Empty slots placeholders
                                 for (let i = 0; i < 5; i++) {
-                                    profilesHtml += `<span class="text-gray-300" title="No configurado">${userIconSvg}</span>`;
+                                    profilesIndicatorHtml += `<span class="text-gray-300"
+                title="Perfil no configurado">${userIconSvg}</span>`;
                                 }
                             }
+                            profilesIndicatorHtml += '</div>';
                         }
-                        profilesHtml += '</div>';
 
-                        // Link Button
-                        const enlaceBtnHtml = account.enlace
-                            ? `<a href="${account.enlace}" target="_blank" class="text-blue-600 hover:text-blue-800 transition bg-blue-50 hover:bg-blue-100 p-1 rounded-full" title="Abrir enlace"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg></a>`
-                            : `<span class="p-1 text-gray-300 cursor-not-allowed rounded-full"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg></span>`;
-
-                        // Manage Profiles Button
                         const manageProfilesBtnHtml = account.platform !== 'Canva'
-                            ? `<button class="manage-profiles-btn p-2 text-teal-600 hover:bg-teal-50 rounded-lg transition" data-id="${account.id}" title="Gestionar Perfiles"><svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M22 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" /></svg></button>`
+                            ? `<button
+            class="manage-profiles-btn p-1 text-teal-600 hover:text-teal-800 hover:bg-teal-100 rounded-full transition"
+            data-id="${account.id}" title="Gestionar Perfiles">
+            <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                <circle cx="9" cy="7" r="4" />
+                <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+                <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+            </svg>
+        </button>`
                             : '';
 
                         return `
-                        <div class="bg-white rounded-2xl shadow-md overflow-hidden border border-gray-200 hover:shadow-xl transition-shadow duration-300 flex flex-col h-full">
-                            <div class="px-4 py-3 flex justify-between items-center" style="${headerBgStyle}">
-                                <h3 class="font-bold text-lg truncate flex-1 mr-2" style="color: ${headerTextColor}" title="${account.email}">${account.email}</h3>
-                                <button class="copy-account-email-btn p-1 rounded hover:bg-white/20 transition flex-shrink-0" data-text="${account.email}" style="color: ${headerTextColor}" title="Copiar Correo">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
-                                </button>
-                            </div>
-                            <div class="p-4 flex flex-col gap-3 flex-grow justify-between">
-                                <div>
-                                    <div class="flex justify-between items-start mb-3">
-                                         ${fechaPagoHtml}
-                                         ${enlaceBtnHtml}
-                                    </div>
-                                    ${profilesHtml}
-                                    <div class="flex items-center w-full mb-1">
-                                         <input type="password" value="${account.password}" class="w-full bg-gray-50 border border-gray-200 text-sm rounded-l-md px-3 py-2 focus:outline-none text-gray-700 font-mono" readonly>
-                                         <button class="toggle-password-btn bg-gray-100 hover:bg-gray-200 text-gray-600 p-2 transition h-[38px] border-y border-r border-gray-200 flex items-center justify-center" title="Mostrar/Ocultar">
-                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
-                                         </button>
-                                         <button class="copy-account-password-btn bg-gray-100 hover:bg-gray-200 text-gray-600 p-2 rounded-r-md transition h-[38px] border border-l-0 border-gray-200 flex items-center justify-center" data-text="${account.password}" title="Copiar Contraseña">
-                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
-                                         </button>
-                                    </div>
-                                </div>
-                                <div class="flex justify-end gap-2 pt-3 border-t border-gray-100 mt-2">
-                                    ${manageProfilesBtnHtml}
-                                    <button class="edit-account-btn p-2 text-indigo-600 hover:bg-indigo-50 rounded-lg transition" data-id="${account.id}" title="Editar"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L16.732 3.732z"></path></svg></button>
-                                    <button class="delete-account-btn p-2 text-red-600 hover:bg-red-50 rounded-lg transition" data-id="${account.id}" title="Eliminar"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button>
-                                </div>
-                            </div>
-                        </div>`;
+        <li class="list-group-item flex flex-col justify-between items-start py-4 px-4 border-b last:border-b-0 border-gray-100">
+            <div class="w-full mb-4">
+                <div class="flex flex-col">
+                    <span class="font-semibold text-gray-800 break-all text-base">${account.email}</span>
+                    ${profilesIndicatorHtml}
+                    ${fechaPagoHtml}
+                </div>
+            </div>
+            <div class="w-full flex flex-col gap-3">
+                <div class="flex items-center w-full">
+                     <input type="password" value="${account.password}"
+                        class="w-full bg-gray-100 border-gray-200 text-sm rounded-l-md px-3 py-2 focus:outline-none" readonly>
+                    <button
+                        class="toggle-password-btn bg-gray-200 hover:bg-gray-300 text-gray-600 p-2 rounded-r-md transition h-[38px]"
+                        title="Mostrar/Ocultar contraseña">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z">
+                            </path>
+                        </svg>
+                    </button>
+                </div>
+
+                <div class="flex items-center gap-2 justify-end w-full">
+                    ${manageProfilesBtnHtml}
+                    <button
+                        class="edit-account-btn p-2 bg-indigo-50 text-indigo-600 hover:bg-indigo-100 rounded-lg transition"
+                        data-id="${account.id}" title="Editar Cuenta">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L16.732 3.732z">
+                            </path>
+                        </svg>
+                    </button>
+                    ${enlaceBtnHtml}
+                    <button
+                        class="delete-account-btn p-2 bg-red-50 text-red-600 hover:bg-red-100 rounded-lg transition"
+                        data-id="${account.id}" title="Eliminar">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
+                            </path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </li>`;
                     }).join('');
 
-                    accountsList.innerHTML = cardsHtml;
-
-                    // Add Event Listeners for Copy Buttons (Specific to Grid View)
-                    const handleCopyBtn = (btn) => {
-                        const text = btn.dataset.text;
-                        navigator.clipboard.writeText(text).then(() => {
-                            const icon = btn.querySelector('svg');
-                            // Hardcoded original path for restore
-                            const originalPath = btn.classList.contains('copy-account-email-btn')
-                                ? '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path>'
-                                : '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path>';
-
-                            icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>';
-
-                            // Visual feedback
-                            if (btn.classList.contains('copy-account-password-btn')) {
-                                btn.classList.add('text-green-600');
-                                setTimeout(() => {
-                                    icon.innerHTML = originalPath;
-                                    btn.classList.remove('text-green-600');
-                                }, 2000);
-                            } else {
-                                // For email button (in header), might be white or black text.
-                                // Changing text color might be invisible if background is green.
-                                // Let's just change icon.
-                                setTimeout(() => {
-                                    icon.innerHTML = originalPath;
-                                }, 2000);
-                            }
-                        });
-                    };
-
-                    accountsList.querySelectorAll('.copy-account-email-btn').forEach(btn => btn.addEventListener('click', (e) => handleCopyBtn(e.currentTarget)));
-                    accountsList.querySelectorAll('.copy-account-password-btn').forEach(btn => btn.addEventListener('click', (e) => handleCopyBtn(e.currentTarget)));
-
-                } else {
-                    // MASONRY LAYOUT FOR 'TODOS' VIEW (Existing Logic)
-                    accountsList.removeAttribute('style'); // Reset inline styles
-                    accountsList.className = 'max-w-7xl mx-auto'; // Reset classes to default
-
-                    if (accountsToRender.length === 0) {
-                        accountsList.innerHTML = '<p class="text-sm text-gray-400">No hay cuentas de plataforma registradas.</p>';
-                        return;
-                    }
-
-                    // 1. Group accounts by platform
-                    const groupedAccounts = accountsToRender.reduce((acc, account) => {
-                        const { platform } = account;
-                        if (!acc[platform]) {
-                            acc[platform] = [];
-                        }
-                        acc[platform].push(account);
-                        return acc;
-                    }, {});
-
-                    // 2. Sort and Render
-                    let sortedAccounts = Object.keys(groupedAccounts).sort();
-
-                    if (platformOrder.length > 0) {
-                        sortedAccounts = sortedAccounts.sort((a, b) => {
-                            const indexA = platformOrder.indexOf(a);
-                            const indexB = platformOrder.indexOf(b);
-
-                            if (indexA !== -1 && indexB !== -1) return indexA - indexB;
-                            if (indexA !== -1) return -1;
-                            if (indexB !== -1) return 1;
-                            return 0; // Keep alphabetical for those not in order list
-                        });
-                    }
-
-                    for (const platform of sortedAccounts) {
-                        const accounts = groupedAccounts[platform];
-                        const platformStyle = platformStyles[platform] || platformStyles['Otro'];
-
-                        const listItems = accounts.map(account => {
-                            let fechaPagoHtml = '';
-                            if (account.fechaPago) {
-                                const fechaPago = dayjs(account.fechaPago);
-                                const hoy = dayjs().startOf('day');
-                                const diffDays = fechaPago.diff(hoy, 'day');
-
-                                const statusClasses = diffDays <= 5 ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800';
-                                fechaPagoHtml = `<div class="mt-1"><span class="px-2 py-1 text-xs font-semibold rounded-lg ${statusClasses}">Próx. Pago: ${fechaPago.format('DD/MM/YYYY')}</span></div>`;
-                            }
-
-                            const enlaceBtnHtml = account.enlace
-                                ? `<a href="${account.enlace}" target="_blank"
-                class="p-1 text-blue-600 hover:text-blue-800 hover:bg-blue-100 rounded-full transition"
-                title="Abrir enlace">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1">
-                    </path>
-                </svg>
-            </a>`
-                                : `<span class="p-1 text-gray-400 cursor-not-allowed rounded-full" title="No hay enlace">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1">
-                    </path>
-                </svg>
-            </span>`;
-
-                            const userIconSvg = `<svg class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
-            </svg>`;
-                            let profilesIndicatorHtml = '';
-
-                            if (account.platform !== 'Canva') {
-                                profilesIndicatorHtml = '<div class="flex flex-wrap items-center gap-1.5 mt-2">';
-                                if (account.profiles && account.profiles.length > 0) {
-                                    const sortedProfiles = account.profiles.sort((a, b) => a.nombre.localeCompare(b.nombre));
-                                    sortedProfiles.forEach(profile => {
-                                        const color = profile.estado === 'Disponible' ? 'text-green-500' : 'text-red-500';
-                                        profilesIndicatorHtml += `<span class="${color}"
-                    title="${profile.nombre}: ${profile.estado}">${userIconSvg}</span>`;
-                                    });
-                                } else {
-                                    for (let i = 0; i < 5; i++) {
-                                        profilesIndicatorHtml += `<span class="text-gray-300"
-                    title="Perfil no configurado">${userIconSvg}</span>`;
-                                    }
-                                }
-                                profilesIndicatorHtml += '</div>';
-                            }
-
-                            const manageProfilesBtnHtml = account.platform !== 'Canva'
-                                ? `<button
-                class="manage-profiles-btn p-1 text-teal-600 hover:text-teal-800 hover:bg-teal-100 rounded-full transition"
-                data-id="${account.id}" title="Gestionar Perfiles">
-                <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
-                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-                    <circle cx="9" cy="7" r="4" />
-                    <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
-                    <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-                </svg>
-            </button>`
-                                : '';
-
-                            return `
-            <li class="list-group-item flex flex-col justify-between items-start py-4 px-4 border-b last:border-b-0 border-gray-100">
-                <div class="w-full mb-4">
-                    <div class="flex flex-col">
-                        <span class="font-semibold text-gray-800 break-all text-base">${account.email}</span>
-                        ${profilesIndicatorHtml}
-                        ${fechaPagoHtml}
-                    </div>
-                </div>
-                <div class="w-full flex flex-col gap-3">
-                    <div class="flex items-center w-full">
-                        <input type="password" value="${account.password}"
-                            class="w-full bg-gray-100 border-gray-200 text-sm rounded-l-md px-3 py-2 focus:outline-none" readonly>
-                        <button
-                            class="toggle-password-btn bg-gray-200 hover:bg-gray-300 text-gray-600 p-2 rounded-r-md transition h-[38px]"
-                            title="Mostrar/Ocultar contraseña">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z">
-                                </path>
-                            </svg>
-                        </button>
-                    </div>
-
-                    <div class="flex items-center gap-2 justify-end w-full">
-                        ${manageProfilesBtnHtml}
-                        <button
-                            class="edit-account-btn p-2 bg-indigo-50 text-indigo-600 hover:bg-indigo-100 rounded-lg transition"
-                            data-id="${account.id}" title="Editar Cuenta">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                                xmlns="http://www.w3.org/2000/svg">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L16.732 3.732z">
-                                </path>
-                            </svg>
-                        </button>
-                        ${enlaceBtnHtml}
-                        <button
-                            class="delete-account-btn p-2 bg-red-50 text-red-600 hover:bg-red-100 rounded-lg transition"
-                            data-id="${account.id}" title="Eliminar">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
-                                </path>
-                            </svg>
-                        </button>
-                    </div>
-                </div>
-            </li>`;
-                        }).join('');
-
-                        const cardHtml = `
-            <div class="bg-white rounded-2xl shadow-lg mb-6 overflow-hidden border border-gray-200 platform-card-container transition-transform duration-200 break-inside-avoid"
-                data-platform="${platform}">
-                <div class="px-4 py-3 border-b border-gray-200 cursor-move platform-card-header" draggable="true" style="${platformStyle.bgGradient ? `background: ${platformStyle.bgGradient};` : `background-color: ${platformStyle.bg};`}">
-                    <h3 class="text-lg font-semibold text-white pointer-events-none select-none">${platform}</h3>
-                </div>
-                <ul class="divide-y divide-gray-200">
-                    ${listItems}
-                </ul>
+                    const cardHtml = `
+        <div class="bg-white rounded-2xl shadow-lg mb-6 overflow-hidden border border-gray-200 platform-card-container transition-transform duration-200 break-inside-avoid"
+             data-platform="${platform}">
+            <div class="px-4 py-3 border-b border-gray-200 cursor-move platform-card-header" draggable="true" style="background-color: ${platformStyle.bg};">
+                <h3 class="text-lg font-semibold text-white pointer-events-none select-none">${platform}</h3>
             </div>
-            `;
-                        accountsList.innerHTML += cardHtml;
-                    }
+            <ul class="divide-y divide-gray-200">
+                ${listItems}
+            </ul>
+        </div>
+        `;
+                    accountsList.innerHTML += cardHtml;
                 }
 
-                // 3. Add Event Listeners (Common logic remains mostly the same, re-attaching to new elements)
+                // 3. Add Event Listeners after rendering
                 accountsList.querySelectorAll('.delete-account-btn').forEach(btn => {
                     btn.addEventListener('click', e => handleDeleteAccount(e.currentTarget.dataset.id));
                 });
@@ -2770,73 +2396,73 @@
                             if (passwordInput.type === 'password') {
                                 passwordInput.type = 'text';
                                 icon.innerHTML = `
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7 .946-3.11 3.563-5.522 6.837-6.141M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M17.581 10.41A7.48 7.48 0 0119.542 12c-1.274 4.057-5.064 7-9.542 7a10.046 10.046 0 01-3.132-.475M2.458 12c.946-3.11 3.563-5.522 6.837-6.141m1.581 2.318A4.5 4.5 0 0115 12a4.5 4.5 0 01-1.07 2.828M5 5l14 14" />
-            `;
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7 .946-3.11 3.563-5.522 6.837-6.141M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M17.581 10.41A7.48 7.48 0 0119.542 12c-1.274 4.057-5.064 7-9.542 7a10.046 10.046 0 01-3.132-.475M2.458 12c.946-3.11 3.563-5.522 6.837-6.141m1.581 2.318A4.5 4.5 0 0115 12a4.5 4.5 0 01-1.07 2.828M5 5l14 14" />
+        `;
                             } else {
                                 passwordInput.type = 'password';
                                 icon.innerHTML = `
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-            `;
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+        `;
                             }
                         }
                     });
                 });
 
-                // Attach Drag and Drop Event Listeners ONLY for 'Todos'
-                if (activeAccountViewFilter === 'Todos') {
-                    let draggedItem = null;
-                    const platformCards = accountsList.querySelectorAll('.platform-card-container');
+                // Attach Drag and Drop Event Listeners
+                let draggedItem = null;
+                const platformCards = accountsList.querySelectorAll('.platform-card-container');
 
-                    platformCards.forEach(card => {
-                        const header = card.querySelector('.platform-card-header');
+                platformCards.forEach(card => {
+                    const header = card.querySelector('.platform-card-header');
 
-                        header.addEventListener('dragstart', (e) => {
-                            draggedItem = card;
-                            e.dataTransfer.effectAllowed = 'move';
-                            e.dataTransfer.setData('text/plain', card.dataset.platform);
-                            setTimeout(() => card.style.opacity = '0.5', 0);
-                        });
-
-                        header.addEventListener('dragend', () => {
-                            draggedItem = null;
-                            card.style.opacity = '1';
-                            platformCards.forEach(c => c.style.borderTop = '');
-                        });
-
-                        card.addEventListener('dragover', (e) => {
-                            e.preventDefault();
-                            e.dataTransfer.dropEffect = 'move';
-
-                            const bounding = card.getBoundingClientRect();
-                            const offset = e.clientY - bounding.top + (e.clientX - bounding.left)/2;
-
-                            // We are keeping it simple for vertical list
-                        });
-
-                        card.addEventListener('drop', async (e) => {
-                            e.preventDefault();
-                            if (draggedItem && draggedItem !== card) {
-                                // Find position
-                                const bounding = card.getBoundingClientRect();
-                                const offset = e.clientY - bounding.top;
-
-                                if (offset > bounding.height / 2) {
-                                    card.after(draggedItem);
-                                } else {
-                                    card.before(draggedItem);
-                                }
-
-                                // Save new order
-                                savePlatformOrder();
-                            }
-                        });
+                    header.addEventListener('dragstart', (e) => {
+                        draggedItem = card;
+                        e.dataTransfer.effectAllowed = 'move';
+                        e.dataTransfer.setData('text/plain', card.dataset.platform);
+                        setTimeout(() => card.style.opacity = '0.5', 0);
                     });
-                }
+
+                    header.addEventListener('dragend', () => {
+                        draggedItem = null;
+                        card.style.opacity = '1';
+                        platformCards.forEach(c => c.style.borderTop = '');
+                    });
+
+                    card.addEventListener('dragover', (e) => {
+                        e.preventDefault();
+                        e.dataTransfer.dropEffect = 'move';
+
+                        const bounding = card.getBoundingClientRect();
+                        const offset = e.clientY - bounding.top + (e.clientX - bounding.left)/2; // Simple heuristic
+
+                        // We are keeping it simple for vertical list
+                        // Determine if we are dropping above or below
+                        // Actually, just preventing default is enough to allow drop
+                    });
+
+                    card.addEventListener('drop', async (e) => {
+                        e.preventDefault();
+                        if (draggedItem && draggedItem !== card) {
+                            // Find position
+                            const bounding = card.getBoundingClientRect();
+                            const offset = e.clientY - bounding.top;
+
+                            if (offset > bounding.height / 2) {
+                                card.after(draggedItem);
+                            } else {
+                                card.before(draggedItem);
+                            }
+
+                            // Save new order
+                            savePlatformOrder();
+                        }
+                    });
+                });
             };
 
             const savePlatformOrder = async () => {
@@ -2958,9 +2584,6 @@
                 f['edit-pin'].value = sale.pin || '';
                 f['edit-notas'].value = sale.notas || '';
                 f['edit-metodoPago'].value = sale.metodoPago || '';
-
-                // Reset status flag (default to current status or ignore if not restoring)
-                if (selectors.editSaleStatus) selectors.editSaleStatus.value = '';
 
                 // Platform and Account Logic
                 const standardPlatforms = Array.from(f['edit-plataforma'].options).map(o => o.value);
@@ -3112,25 +2735,6 @@
 
                 const form = selectors.editAccountForm;
                 form['edit-account-id'].value = account.id;
-
-                // Populate platform select
-                const platformSelect = document.getElementById('edit-account-platform');
-                platformSelect.innerHTML = '';
-                const sortedPlatforms = allServices.map(s => s.name).sort();
-                if (!sortedPlatforms.includes('Otro')) sortedPlatforms.push('Otro');
-
-                // If current platform is custom/not in list, add it temporarily
-                if (!sortedPlatforms.includes(account.platform)) {
-                    sortedPlatforms.push(account.platform);
-                }
-
-                sortedPlatforms.forEach(p => {
-                    const option = document.createElement('option');
-                    option.value = p;
-                    option.textContent = p;
-                    platformSelect.appendChild(option);
-                });
-
                 form['edit-account-platform'].value = account.platform;
                 form['edit-account-email'].value = account.email;
                 form['edit-account-enlace'].value = account.enlace || '';
@@ -3245,12 +2849,7 @@
                 <li class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                     <div class="flex flex-col">
                         <span class="font-semibold text-gray-700">${profile.nombre}</span>
-                        <div class="flex items-center gap-2 mt-0.5">
-                            <span class="text-xs text-gray-500 font-mono">PIN: ${profile.pin || '<span class="italic text-gray-400">Sin PIN</span>'}</span>
-                            <button class="edit-pin-btn p-1 text-blue-500 hover:text-blue-700 bg-blue-50 hover:bg-blue-100 rounded-full transition border border-blue-100 shadow-sm" data-profile-id="${profile.id}" data-current-pin="${profile.pin || ''}" title="Editar PIN">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L16.732 3.732z"></path></svg>
-                            </button>
-                        </div>
+                        ${profile.pin ? `<span class="text-xs text-gray-500 font-mono mt-0.5">PIN: ${profile.pin}</span>` : ''}
                     </div>
                     <span class="px-3 py-1 text-xs font-bold rounded-full ${statusColor} flex items-center gap-1">
                         ${statusIcon}
@@ -3261,45 +2860,9 @@
                     });
                     profilesHtml += '</ul>';
                     selectors.profilesContentArea.innerHTML = profilesHtml;
-
-                    // Add Event Listeners for Edit PIN buttons
-                    selectors.profilesContentArea.querySelectorAll('.edit-pin-btn').forEach(btn => {
-                        btn.addEventListener('click', (e) => {
-                            const profileId = e.currentTarget.dataset.profileId;
-                            const currentPin = e.currentTarget.dataset.currentPin;
-                            const newPin = prompt("Ingrese el nuevo PIN para este perfil:", currentPin);
-
-                            if (newPin !== null) {
-                                handleEditProfilePin(accountId, profileId, newPin);
-                            }
-                        });
-                    });
                 }
 
                 openProfilesModal();
-            };
-
-            const handleEditProfilePin = async (accountId, profileId, newPin) => {
-                try {
-                    const profileRef = doc(db, "platformAccounts", accountId, "Perfiles", profileId);
-                    await updateDoc(profileRef, { pin: newPin });
-
-                    // Update local state immediately
-                    const account = allPlatformAccounts.find(a => a.id === accountId);
-                    if (account && account.profiles) {
-                        const profile = account.profiles.find(p => p.id === profileId);
-                        if (profile) {
-                            profile.pin = newPin;
-                        }
-                    }
-
-                    // Re-render
-                    handleManageProfiles(accountId);
-
-                } catch (error) {
-                    console.error("Error updating PIN:", error);
-                    alert("Error al actualizar el PIN.");
-                }
             };
 
         const createInitialProfiles = async (accountId, count = 5) => {
@@ -3332,157 +2895,8 @@
                 const docRef = await addDoc(profilesRef, profileDoc);
                 createdProfiles.push({ id: docRef.id, ...profileDoc });
             } return createdProfiles;
-        };
-
-        const handleDeleteSale = (id) => showArchiveDeleteModal(id);
-
-        const toggleMaintenanceModal = () => {
-            const modal = selectors.maintenanceModal;
-            if (modal.classList.contains('hidden')) {
-                renderMaintenanceSales();
-                modal.classList.remove('hidden');
-                setTimeout(() => {
-                    modal.classList.remove('opacity-0');
-                    modal.querySelector('.modal-content').classList.remove('scale-95');
-                }, 10);
-            } else {
-                modal.classList.add('opacity-0');
-                modal.querySelector('.modal-content').classList.add('scale-95');
-                setTimeout(() => modal.classList.add('hidden'), 300);
-            }
-        };
-
-        const renderMaintenanceSales = () => {
-            const maintenanceSales = allSales.filter(s => s.estado === 'EN_MANTENIMIENTO')
-                .sort((a, b) => a.cliente.localeCompare(b.cliente)); // Sorted by Name
-
-            selectors.maintenanceList.innerHTML = '';
-            // Change container layout from grid to stack
-            selectors.maintenanceList.className = 'space-y-3';
-
-            if (maintenanceSales.length === 0) {
-                selectors.maintenanceList.innerHTML = '<p class="text-gray-500 text-center py-8">No hay clientes en mantenimiento.</p>';
-                return;
-            }
-
-            maintenanceSales.forEach(sale => {
-                const row = document.createElement('div');
-                row.className = 'bg-gray-50 p-4 rounded-xl border border-gray-200 flex flex-col md:flex-row md:items-center justify-between gap-4 transition-all hover:shadow-md';
-
-                const remainingDays = sale.diasRestantes !== undefined ? sale.diasRestantes : 0;
-                const platformHtml = getPlatformHtml(sale.plataforma);
-
-                row.innerHTML = `
-                    <div class="flex-grow grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
-                        <div>
-                             <h3 class="font-bold text-gray-800 text-lg">${sale.cliente}</h3>
-                             <div class="text-sm mt-1">${platformHtml}</div>
-                        </div>
-                        <div class="flex flex-col">
-                             <span class="text-xs text-gray-500 uppercase font-semibold">Días Guardados</span>
-                             <span class="font-bold text-gray-800 text-xl">${remainingDays} días</span>
-                        </div>
-                        <div class="flex flex-col gap-1 min-w-0">
-                             <div class="text-sm text-gray-800 font-medium truncate" title="Correo">📧 ${sale.correo || 'N/A'}</div>
-                             <div class="text-sm text-gray-600 font-mono" title="Contraseña">🔑 ${sale.contrasena || '********'}</div>
-                             ${sale.notas ? `<p class="text-xs text-gray-400 italic mt-1 truncate">"${sale.notas}"</p>` : ''}
-                        </div>
-                    </div>
-                    <div class="flex-shrink-0 w-full md:w-auto pt-4 md:pt-0 border-t md:border-t-0 border-gray-200">
-                        <button class="restore-sale-btn w-full md:w-auto px-6 bg-indigo-600 text-white font-semibold py-2.5 rounded-lg hover:bg-indigo-700 transition flex items-center justify-center gap-2 shadow-sm" data-id="${sale.id}">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
-                            Restaurar
-                        </button>
-                    </div>
-                `;
-                selectors.maintenanceList.appendChild(row);
-            });
-
-            selectors.maintenanceList.querySelectorAll('.restore-sale-btn').forEach(btn => {
-                btn.addEventListener('click', (e) => handleRestoreSale(e.currentTarget.dataset.id));
-            });
-        };
-
-        const handleRestoreSale = (id) => {
-            const sale = allSales.find(s => s.id === id);
-            if (!sale) return;
-
-            toggleMaintenanceModal(); // Close maintenance list
-            handleEdit(id); // Open edit modal with data
-
-            // Override dates
-            const today = dayjs().format('YYYY-MM-DD');
-            const remainingDays = sale.diasRestantes !== undefined ? sale.diasRestantes : 0;
-            const newEndDate = dayjs().add(remainingDays, 'day').format('YYYY-MM-DD');
-
-            document.getElementById('edit-inicioPlan').value = today;
-            document.getElementById('edit-finPlan').value = newEndDate;
-
-            // Reset Profile Selection to force new assignment
-            const accountSelect = document.getElementById('edit-platform-account');
-            const profileSelect = document.getElementById('edit-profile-select');
-
-            accountSelect.value = "";
-            profileSelect.innerHTML = '<option value="">Seleccione cuenta y perfil</option>';
-            profileSelect.disabled = true;
-            profileSelect.classList.add('bg-gray-200');
-
-            // Set restoration flag
-            if (selectors.editSaleStatus) selectors.editSaleStatus.value = 'ACTIVO';
-
-            alert(`Reactivando cliente. Días restantes: ${remainingDays}. \nPor favor asigne una nueva cuenta y perfil.`);
-        };
-
-        selectors.closeMaintenanceModalBtn.addEventListener('click', toggleMaintenanceModal);
-
-        const handleMoveToMaintenance = (id) => {
-            const sale = allSales.find(s => s.id === id);
-            if (!sale) return;
-
-            showConfirmationModal(
-                'Mover a Mantenimiento',
-                '¿Estás seguro de mover esta venta a mantenimiento? El perfil asociado se liberará y se guardarán los días restantes.',
-                async () => {
-                    try {
-                        // 1. Release profile if exists
-                        if (sale.accountId && sale.profileId) {
-                            const account = allPlatformAccounts.find(a => a.id === sale.accountId);
-                            if (account && account.platform !== 'Canva') {
-                                const profileRef = doc(db, "platformAccounts", sale.accountId, "Perfiles", sale.profileId);
-                                await updateDoc(profileRef, { estado: 'Disponible', fechaVencimiento: null, clienteId: null });
-
-                                // Update local state for immediate feedback
-                                if (account.profiles) {
-                                    const profile = account.profiles.find(p => p.id === sale.profileId);
-                                    if (profile) {
-                                        profile.estado = 'Disponible';
-                                        profile.fechaVencimiento = null;
-                                        profile.clienteId = null;
-                                    }
-                                }
-                                renderPlatformAccounts();
-                            }
-                        }
-
-                        // 2. Calculate remaining days
-                        const today = dayjs().startOf('day');
-                        const end = dayjs(sale.finPlan).startOf('day');
-                        const remainingDays = end.diff(today, 'day');
-
-                        // 3. Update sale
-                        await updateDoc(doc(db, "sales", id), {
-                            estado: 'EN_MANTENIMIENTO',
-                            diasRestantes: remainingDays,
-                            profileId: null
-                        });
-
-                    } catch (error) {
-                        console.error("Error al mover a mantenimiento:", error);
-                        alert("Error al mover a mantenimiento.");
-                    }
-                }
-            );
-        };
+        }; const
+            handleDeleteSale = (id) => showArchiveDeleteModal(id);
 
         const handleDeleteExpense = (id) => {
             showConfirmationModal(
@@ -3539,65 +2953,39 @@
             );
         };
 
-        onSnapshot(collection(db, "sales"), (snapshot) => {
-            allSales = snapshot.docs.map(d => ({
-                id: d.id,
-                ...d.data()
-            }));
+        // MOCK DATA INJECTION
+        const today = dayjs();
 
-            const activeSales = allSales.filter(sale => sale.estado !== 'ARCHIVADO');
+        // Mock Sales
+        allSales = [
+            { id: '1', cliente: 'Expired', plataforma: 'Netflix', finPlan: today.subtract(1, 'day').format('YYYY-MM-DD'), estado: 'ACTIVO', precio: 10, metodoPago: 'BCP' },
+            { id: '2', cliente: 'Today', plataforma: 'Disney+', finPlan: today.format('YYYY-MM-DD'), estado: 'ACTIVO', precio: 10, metodoPago: 'BCP' },
+            { id: '3', cliente: 'Tomorrow', plataforma: 'HBO Max', finPlan: today.add(1, 'day').format('YYYY-MM-DD'), estado: 'ACTIVO', precio: 10, metodoPago: 'BCP' },
+            { id: '4', cliente: 'In 2 Days', plataforma: 'Spotify', finPlan: today.add(2, 'day').format('YYYY-MM-DD'), estado: 'ACTIVO', precio: 10, metodoPago: 'BCP' },
+            { id: '5', cliente: 'In 3 Days (Should Hide)', plataforma: 'Prime', finPlan: today.add(3, 'day').format('YYYY-MM-DD'), estado: 'ACTIVO', precio: 10, metodoPago: 'BCP' },
+        ];
 
-            if (activeSales.length === 0) {
-                selectors.emptyState.classList.remove('hidden');
-            } else {
-                selectors.emptyState.classList.add('hidden');
-            }
-            renderPlatformFilters();
-            renderAccountPlatformButtons();
-            applyFiltersAndRender(activeSales);
-            updateFinancialSummary();
-            loadDashboardData();
-            renderRecentIncome();
-            selectors.loadingState.classList.add('hidden');
-        }, (e) => {
-            console.error("Error al cargar ventas:", e);
-            selectors.loadingState.classList.add('hidden');
-        });
-        onSnapshot(collection(db, "expenses"), (snapshot) => {
-            allExpenses = snapshot.docs.map(d => ({
-                id: d.id,
-                ...d.data()
-            })); allExpenses.sort((a, b) => new Date(b.date) - new Date(a.date)); renderExpenses();
-            updateFinancialSummary(); loadDashboardData();
-        }, (e) => {
-            console.error("Error al cargar egresos:", e);
-        });
+        // Mock Accounts
+        allPlatformAccounts = [
+            { id: 'acc1', platform: 'Netflix', email: 'expired@test.com', fechaPago: today.subtract(1, 'day').format('YYYY-MM-DD'), profiles: [] },
+            { id: 'acc2', platform: 'Disney+', email: 'today@test.com', fechaPago: today.format('YYYY-MM-DD'), profiles: [] },
+            { id: 'acc3', platform: 'HBO Max', email: 'tomorrow@test.com', fechaPago: today.add(1, 'day').format('YYYY-MM-DD'), profiles: [] },
+            { id: 'acc4', platform: 'Spotify', email: 'in2days@test.com', fechaPago: today.add(2, 'day').format('YYYY-MM-DD'), profiles: [] },
+            { id: 'acc5', platform: 'Prime', email: 'in3days@test.com', fechaPago: today.add(3, 'day').format('YYYY-MM-DD'), profiles: [] },
+        ];
 
-        onSnapshot(doc(db, "config", "platform_order"), (doc) => {
-            if (doc.exists()) {
-                platformOrder = doc.data().order || [];
-                renderPlatformAccounts();
-            }
-        });
+        // Trigger Renders
+        renderPlatformFilters();
+        renderAccountPlatformButtons();
+        applyFiltersAndRender(allSales);
+        updateFinancialSummary();
+        renderPlatformAccounts();
+        renderAvailableAccounts();
 
-        onSnapshot(collection(db, "platformAccounts"), async (snapshot) => {
-            const accountsPromises = snapshot.docs.map(async (accountDoc) => {
-                const accountData = { id: accountDoc.id, ...accountDoc.data() };
-                const profilesRef = collection(db, "platformAccounts", accountDoc.id, "Perfiles");
-                const profilesSnapshot = await getDocs(profilesRef);
-                accountData.profiles = profilesSnapshot.docs.map(d => ({ id: d.id, ...d.data() }));
-                return accountData;
-            });
+        // IMPORTANT: Load Dashboard Data to trigger alerts
+        loadDashboardData();
 
-            allPlatformAccounts = await Promise.all(accountsPromises);
-
-            renderPlatformAccounts();
-            renderAccountViewFilters();
-            renderAvailableAccounts();
-            populatePlatformAccountsDropdowns(selectors.plataformaSelect.value, selectors.platformAccountSelect);
-            populateAccountFilterDropdown();
-            loadDashboardData();
-        }, (e) => { console.error("Error al cargar cuentas:", e); });
+        selectors.loadingState.classList.add('hidden');
         const handleSaveSale = async (e, keepClientData = false) => {
             e.preventDefault();
             const f = selectors.addSaleForm;
@@ -3748,12 +3136,6 @@
                 profileId: newProfileId
             };
 
-            // Apply status update if flag is set (e.g. Restore)
-            if (selectors.editSaleStatus && selectors.editSaleStatus.value === 'ACTIVO') {
-                updatedSale.estado = 'ACTIVO';
-                updatedSale.diasRestantes = deleteField(); // Remove stored days
-            }
-
             try {
                 await updateDoc(doc(db, "sales", saleId), updatedSale);
 
@@ -3792,10 +3174,7 @@
                         || isNaN(amount) || amount <= 0) return; try {
                             await addDoc(collection(db, "expenses"), {
                                 description,
-                                amount,
-                                date,
-                                createdBy: currentSeller || 'Desconocido',
-                                createdAt: new Date().toISOString()
+                                amount, date
                             }); f.reset(); f['expense-date'].value = dayjs().format('YYYY-MM-DD');
                         } catch (err) {
                             console.error("Error al añadir egreso:", err);
@@ -3949,9 +3328,7 @@
             const account = allPlatformAccounts.find(acc => acc.id === id);
             if (!account) return;
 
-            const newPlatform = form['edit-account-platform'].value;
             const updatedData = {
-                platform: newPlatform,
                 email: form['edit-account-email'].value,
                 enlace: form['edit-account-enlace'].value,
                 fechaPago: form['edit-account-fechaPago'].value,
@@ -3964,16 +3341,6 @@
 
             try {
                 await updateDoc(doc(db, "platformAccounts", id), updatedData);
-
-                // Cascade update if platform changed
-                if (newPlatform !== account.platform) {
-                    const salesToUpdate = allSales.filter(s => s.accountId === id);
-                    const updatePromises = salesToUpdate.map(sale =>
-                        updateDoc(doc(db, "sales", sale.id), { plataforma: newPlatform })
-                    );
-                    await Promise.all(updatePromises);
-                }
-
                 closeEditAccountModal();
             } catch (err) {
                 console.error("Error al actualizar la cuenta:", err);
@@ -4094,16 +3461,7 @@
                 const price = service.price * selectedMonths;
                 const labelHtml = service.label ? `<span class="absolute top-3 left-3 bg-blue-500 text-white text-xs font-bold px-2 py-1 rounded-full z-20 shadow-sm">${service.label}</span>` : '';
 
-                let cardBgStyle = '';
-                if (isSelected) {
-                    if (service.bgGradient) {
-                        cardBgStyle = `background: ${service.bgGradient};`;
-                    } else {
-                        cardBgStyle = `background-color: ${service.color};`;
-                    }
-                }
-
-                const cardStyle = isSelected ? `${cardBgStyle} color: ${getContrastYIQ(service.color)}` : '';
+                const cardStyle = isSelected ? `background-color: ${service.color}; color: ${getContrastYIQ(service.color)}` : '';
                 const textColor = isSelected ? getContrastYIQ(service.color) : '';
                 const titleColor = isSelected ? 'inherit' : 'text-gray-800';
                 const priceColor = isSelected ? 'inherit' : 'text-indigo-600';
@@ -4609,21 +3967,27 @@
     }
 
 
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                const email = user.email;
-                if (email === 'renzosamanamud@gmail.com') {
-                    currentSeller = 'Renzo';
-                } else if (email === 'chariph1007@gmail.com') {
-                    currentSeller = 'Charitsa';
+        const checkAndReleaseExpiredProfiles = async () => {
+            const today = dayjs().startOf('day');
+            const accountsSnapshot = await getDocs(collection(db, "platformAccounts"));
+            for (const accountDoc of accountsSnapshot.docs) {
+                const profilesRef = collection(db, "platformAccounts", accountDoc.id, "Perfiles");
+                const profilesSnapshot = await getDocs(profilesRef);
+                for (const profileDoc of profilesSnapshot.docs) {
+                    const profile = profileDoc.data();
+                    if (profile.estado === 'Ocupado' && profile.fechaVencimiento) {
+                        if (today.isAfter(dayjs(profile.fechaVencimiento))) {
+                            console.log(`Liberando perfil ${ profile.nombre } de la cuenta ${ accountDoc.data().email } por vencimiento.`);
+                            const profileRef = doc(db, "platformAccounts", accountDoc.id, "Perfiles", profileDoc.id);
+                            await updateDoc(profileRef, { estado: 'Disponible', fechaVencimiento: null, clienteId: null });
+                        }
+                    }
                 }
-
-                // Start the app immediately to show the UI with skeleton loaders
-                startApp();
-            } else {
-                window.location.href = 'login.html';
             }
-        });
+        };
+
+        // Initialize App directly
+        startApp();
 
         // 3D Tilt Effect Initialization
         function init3DTilt() {
@@ -4653,16 +4017,6 @@
 
         // Initialize tilt effect after DOM load (or immediately if inside module and DOM is ready)
         init3DTilt();
-
-        window.handleToggleTransfer = async (saleId, currentStatus) => {
-            try {
-                const saleRef = doc(db, "sales", saleId);
-                await updateDoc(saleRef, { transferida: !currentStatus });
-            } catch (error) {
-                console.error("Error updating transfer status:", error);
-                alert("Error al actualizar el estado.");
-            }
-        };
 
         window.startApp = startApp;
 
