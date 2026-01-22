@@ -1981,7 +1981,18 @@
                 };
                 const alerts = allPlatformAccounts.filter(acc => {
                     const status = getPlatformAccountStatus(acc.fechaPago);
-                    return status === 'Vencido' || status === 'Vence hoy' || status === 'Próximo a Vencer';
+                    if (status === 'Vencido' || status === 'Vence hoy') return true;
+                    if (status === 'Próximo a Vencer') {
+                        // Check exact diff for filtering alerts to show only next 2 days (Today + Tomorrow)
+                        // 'Vence hoy' is diffDays === 0
+                        // 'Próximo a Vencer' logic in getPlatformAccountStatus was <= 5
+                        // We need to enforce <= 1 here for the ALERT list specifically,
+                        // effectively showing Today(0) and Tomorrow(1).
+                        const expirationDate = dayjs(acc.fechaPago).startOf('day');
+                        const diffDays = expirationDate.diff(today, 'day');
+                        return diffDays <= 1;
+                    }
+                    return false;
                 }).sort((a, b) => new Date(a.fechaPago) - new Date(b.fechaPago));
                 selectors.platformAccountAlertsSection.innerHTML = '';
                 if (alerts.length > 0) {
@@ -2022,7 +2033,7 @@
                 }).filter(sale => {
                     const expirationDate = dayjs(sale.finPlan).startOf('day');
                     const diffDays = expirationDate.diff(today, 'day');
-                    return diffDays <= 3;
+                    return diffDays <= 1;
                 }).sort((a, b) => new Date(a.finPlan) - new Date(b.finPlan));
                 selectors.alertsSection.innerHTML = '';
                 if (expirationAlerts.length > 0) {
