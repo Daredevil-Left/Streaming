@@ -2480,7 +2480,7 @@
                         let profilesHtml = '<div class="flex flex-wrap gap-1 mb-4">';
                         if (account.platform !== 'Canva') {
                              if (account.profiles && account.profiles.length > 0) {
-                                const sortedProfiles = account.profiles.sort((a, b) => a.nombre.localeCompare(b.nombre));
+                                const sortedProfiles = account.profiles.sort((a, b) => (a.nombre || '').localeCompare(b.nombre || ''));
                                 sortedProfiles.forEach(profile => {
                                     const color = profile.estado === 'Disponible' ? 'text-green-500' : 'text-red-500';
                                     const title = `${profile.nombre}: ${profile.estado}`;
@@ -2652,7 +2652,7 @@
                             if (account.platform !== 'Canva') {
                                 profilesIndicatorHtml = '<div class="flex flex-wrap items-center gap-1.5 mt-2">';
                                 if (account.profiles && account.profiles.length > 0) {
-                                    const sortedProfiles = account.profiles.sort((a, b) => a.nombre.localeCompare(b.nombre));
+                                    const sortedProfiles = account.profiles.sort((a, b) => (a.nombre || '').localeCompare(b.nombre || ''));
                                     sortedProfiles.forEach(profile => {
                                         const color = profile.estado === 'Disponible' ? 'text-green-500' : 'text-red-500';
                                         profilesIndicatorHtml += `<span class="${color}"
@@ -3219,7 +3219,7 @@
                 } else {
                     let profilesHtml = '<ul class="space-y-3">';
                     const profiles = profilesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })).sort((a, b) =>
-                        a.nombre.localeCompare(b.nombre));
+                        (a.nombre || '').localeCompare(b.nombre || ''));
 
                     profiles.forEach(profile => {
                         const isAvailable = profile.estado === 'Disponible';
@@ -3354,7 +3354,7 @@
 
         const renderMaintenanceSales = () => {
             const maintenanceSales = allSales.filter(s => s.estado === 'EN_MANTENIMIENTO')
-                .sort((a, b) => a.cliente.localeCompare(b.cliente)); // Sorted by Name
+                .sort((a, b) => (a.cliente || '').localeCompare(b.cliente || '')); // Sorted by Name
 
             selectors.maintenanceList.innerHTML = '';
             // Change container layout from grid to stack
