@@ -1980,8 +1980,10 @@
                     return 'Activo';
                 };
                 const alerts = allPlatformAccounts.filter(acc => {
-                    const status = getPlatformAccountStatus(acc.fechaPago);
-                    return status === 'Vencido' || status === 'Vence hoy' || status === 'Próximo a Vencer';
+                    if (!acc.fechaPago) return false;
+                    const expirationDate = dayjs(acc.fechaPago).startOf('day');
+                    const diffDays = expirationDate.diff(today, 'day');
+                    return diffDays >= 0 && diffDays <= 2;
                 }).sort((a, b) => new Date(a.fechaPago) - new Date(b.fechaPago));
                 selectors.platformAccountAlertsSection.innerHTML = '';
                 if (alerts.length > 0) {
@@ -2017,12 +2019,11 @@
                 selectors.kpiActiveClients.classList.remove('skeleton');
 
                 const expirationAlerts = activeSales.filter(sale => {
-                    const status = getSaleStatus(sale.finPlan, sale.estado);
-                    return status === 'Vencido' || status === 'Vence hoy' || status === 'Próximo a Vencer';
-                }).filter(sale => {
+                    if (sale.estado === 'EN_MANTENIMIENTO') return false;
+                    if (!sale.finPlan) return false;
                     const expirationDate = dayjs(sale.finPlan).startOf('day');
                     const diffDays = expirationDate.diff(today, 'day');
-                    return diffDays <= 3;
+                    return diffDays >= 0 && diffDays <= 2;
                 }).sort((a, b) => new Date(a.finPlan) - new Date(b.finPlan));
                 selectors.alertsSection.innerHTML = '';
                 if (expirationAlerts.length > 0) {
