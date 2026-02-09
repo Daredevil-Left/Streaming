@@ -1782,8 +1782,8 @@
                 if (saleData.correo) message += `📧 Correo: ${saleData.correo}\n`;
                 if (saleData.contrasena) message += `🔑 Contraseña: ${saleData.contrasena}\n`;
                 if (saleData.plataforma !== 'Canva') {
-                const displayProfile = profileName || saleData.cliente;
-                message += `👤 Perfil: ${displayProfile}\n`;
+                    const displayProfile = profileName || saleData.cliente;
+                    message += `👤 Perfil: ${displayProfile}\n`;
                 }
                 if (saleData.pin) message += `🔒 PIN: ${saleData.pin}\n`;
 
@@ -1792,7 +1792,15 @@
                     message += `📅 Vigencia: ${vigencia}\n`;
                 }
 
-                message += `\n⚠️ Advertencia: La cuenta es solo para un dispositivo, en caso se use en más dispositivos se dará de baja a la cuenta`;
+                if (saleData.pin) {
+                    message += `\n⚠️ *NORMAS DE USO*
+📱 Perfil para 1 SOLO dispositivo.
+🚫 Prohibido ingresar en más equipos.
+🔒 No cambiar PIN ni nombre.
+⚠️ Sin 2da advertencia: Se eliminará la cuenta sin reclamo.`;
+                } else {
+                    message += `\n⚠️ Advertencia: La cuenta es solo para un dispositivo, en caso se use en más dispositivos se dará de baja a la cuenta`;
+                }
 
                 return message;
             };
