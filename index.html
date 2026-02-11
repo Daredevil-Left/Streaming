@@ -423,7 +423,7 @@
                 <!-- Ventas View -->
                 <div id="ventas-view" class="view hidden">
                     <h1 class="text-2xl md:text-3xl font-bold text-gray-800 mb-6 md:mb-8 px-2 md:px-0">Ventas</h1>
-                    <div class="bg-white p-3 md:p-6 rounded-2xl shadow-lg mb-8 max-w-5xl mx-auto">
+                    <div class="relative bg-gradient-to-br from-white to-slate-50 p-3 md:p-6 rounded-2xl shadow-xl border border-gray-100 mb-8 max-w-5xl mx-auto">
                         <h2 class="text-xl md:text-2xl font-semibold text-gray-700 mb-4 md:mb-6">Añadir Nueva Venta</h2>
                         <form id="add-sale-form"
                             class="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6 lg:grid-cols-3 xl:grid-cols-4">
@@ -450,21 +450,22 @@
                                     class="w-full px-4 py-2 border border-gray-300 rounded-lg" required></div>
                             <div><label for="inicioPlan" class="block text-sm font-medium text-gray-600 mb-2">Inicio del
                                     Plan</label><input type="date" id="inicioPlan" name="inicioPlan"
-                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg" required></div>
+                                    class="w-full px-4 py-1 h-9 border border-gray-300 rounded-lg" required></div>
                             <div><label for="diasPlan" class="block text-sm font-medium text-gray-600 mb-2">Nº
                                     Días</label><input type="number" id="diasPlan" name="diasPlan"
                                     class="w-full px-4 py-2 border border-gray-300 rounded-lg"></div>
                             <div><label for="finPlan" class="block text-sm font-medium text-gray-600 mb-2">Fin del
                                     Plan</label><input type="date" id="finPlan" name="finPlan"
-                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100" readonly>
+                                    class="w-full px-4 py-1 h-9 border border-gray-300 rounded-lg bg-gray-100" readonly>
                             </div>
-                            <div>
+                            <div id="mother-account-wrapper" class="relative">
                                 <label for="platform-account"
                                     class="block text-sm font-medium text-gray-600 mb-2">Cuenta Madre</label>
                                 <select id="platform-account" name="platform-account"
                                     class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white" required>
                                     <option value="">Seleccione una cuenta madre</option>
                                 </select>
+                                <div id="account-credentials-bubble" class="hidden absolute z-50 transition-all duration-300 ease-out transform translate-y-0 opacity-0"></div>
                             </div>
                             <div>
                                 <label for="profile-select"
@@ -475,23 +476,13 @@
                                     <option value="">Selecciona una cuenta madre primero</option>
                                 </select>
                             </div>
-                            <div><label for="pin" class="block text-sm font-medium text-gray-600 mb-2">PIN</label><input
+                            <div><label for="pin" class="block text-sm font-medium text-gray-600 mb-2">PIN</label>
+                                <div class="max-w-[8rem]"><input
                                     type="text" id="pin" name="pin"
-                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg"></div>
+                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg"></div></div>
                             <div><label for="notas" class="block text-sm font-medium text-gray-600 mb-2">Notas
                                     Adicionales</label><input type="text" id="notas" name="notas"
                                     class="w-full px-4 py-2 border border-gray-300 rounded-lg"></div>
-                            <div>
-                                <label for="metodoPago" class="block text-sm font-medium text-gray-600 mb-2">Método de
-                                    Pago</label>
-                                <select id="metodoPago" name="metodoPago"
-                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white" required>
-                                    <option value="" disabled selected>Seleccione un método</option>
-                                    <option value="BCP">BCP</option>
-                                    <option value="Falta pagar">Falta pagar</option>
-                                    <option value="Gratis">Gratis</option>
-                                </select>
-                            </div>
                             <div class="md:col-span-2 lg:col-span-3 xl:col-span-4 text-right self-end flex flex-col md:flex-row gap-4 justify-end">
                                 <button type="button" id="save-and-add-btn"
                                     style="background: linear-gradient(to right, #f97316, #dc2626);"
@@ -1149,6 +1140,29 @@
         </div>
     </div>
 
+    <!-- Payment Method Modal -->
+    <div id="payment-method-modal" class="modal fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 z-50 hidden opacity-0">
+        <div class="modal-content bg-white w-full max-w-md rounded-2xl shadow-2xl p-6 transform scale-95 transition-all">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">¿Cómo pagó el cliente?</h2>
+            <div class="grid grid-cols-1 gap-4">
+                <button class="payment-option-btn bg-orange-500 hover:bg-orange-600 text-white font-bold py-4 rounded-xl shadow-md flex items-center justify-center gap-3 transition-transform transform hover:scale-[1.02]" data-method="BCP">
+                    <span class="text-xl">BCP</span>
+                </button>
+                <button class="payment-option-btn bg-red-500 hover:bg-red-600 text-white font-bold py-4 rounded-xl shadow-md flex items-center justify-center gap-3 transition-transform transform hover:scale-[1.02]" data-method="Falta pagar">
+                    <span class="text-xl">Falta pagar</span>
+                </button>
+                <button class="payment-option-btn bg-green-500 hover:bg-green-600 text-white font-bold py-4 rounded-xl shadow-md flex items-center justify-center gap-3 transition-transform transform hover:scale-[1.02]" data-method="Gratis">
+                    <span class="text-xl">Gratis</span>
+                </button>
+            </div>
+            <div class="mt-6 text-center">
+                <button id="cancel-payment-modal-btn" class="text-gray-500 hover:text-gray-700 font-medium px-4 py-2 rounded-lg hover:bg-gray-100 transition">
+                    Cancelar
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Success Sale Modal -->
     <div id="daily-closure-modal"
         class="modal fixed inset-0 bg-gray-900 bg-opacity-95 flex items-center justify-center p-4 z-[60] hidden">
@@ -1267,6 +1281,7 @@
         import { db, auth } from "./firebase-config.js";
 
         let currentSeller = '';
+        let pendingSaleKeepData = false;
 
         async function startApp() {
             document.getElementById('app').classList.remove('hidden');
@@ -1445,6 +1460,8 @@
                     document.getElementById('edit-sale-form').appendChild(input);
                     return input;
                 })(), // Ensure hidden input exists
+                paymentMethodModal: document.getElementById('payment-method-modal'),
+                cancelPaymentModalBtn: document.getElementById('cancel-payment-modal-btn'),
             };
 
             const checkDailyClosure = async () => {
@@ -2904,10 +2921,114 @@
                  selectors.accountFilter.innerHTML = `<option value="">Filtrar por cuenta...</option>${options}`;
             };
 
+            const renderAccountCredentials = (accountId) => {
+                const container = document.getElementById('account-credentials-bubble');
+                container.innerHTML = '';
+
+                if (!accountId) {
+                    container.classList.add('hidden', 'opacity-0', 'translate-y-2');
+                    container.classList.remove('opacity-100', 'translate-y-0');
+                    return;
+                }
+
+                const account = allPlatformAccounts.find(a => a.id === accountId);
+                if (!account) {
+                    container.classList.add('hidden', 'opacity-0', 'translate-y-2');
+                    container.classList.remove('opacity-100', 'translate-y-0');
+                    return;
+                }
+
+                container.classList.remove('hidden', 'opacity-0', 'translate-y-2');
+                container.classList.add('opacity-100', 'translate-y-0');
+
+                // Responsive positioning classes:
+                // Mobile: below input (top-full left-0 w-full mt-2)
+                // Desktop: right of input (md:left-full md:top-0 md:ml-4 md:w-72 md:mt-0)
+                container.className = "absolute z-50 transition-all duration-300 ease-out transform opacity-100 translate-y-0 top-full left-0 w-full mt-2 md:left-full md:top-0 md:ml-4 md:w-72 md:mt-0";
+
+                const maskedPassword = '••••••••';
+                const hasPassword = !!account.password;
+
+                const card = document.createElement('div');
+                // Red Theme: White bg, Red border, Shadow
+                card.className = "bg-white text-gray-700 p-3 rounded-xl shadow-xl border border-red-200 flex flex-col gap-2 relative";
+
+                card.innerHTML = `
+                    <div class="absolute -left-2 top-4 w-4 h-4 bg-white border-b border-l border-red-200 transform rotate-45 hidden md:block"></div>
+                    <div class="absolute -top-2 left-6 w-4 h-4 bg-white border-t border-l border-red-200 transform rotate-45 md:hidden"></div>
+
+                    <div class="flex flex-col gap-2 relative z-10">
+                        <div class="flex items-center justify-between gap-3 bg-red-50 p-2 rounded-lg border border-red-100">
+                            <span class="text-xs font-mono font-medium truncate select-all text-red-900">${account.email}</span>
+                            <button type="button" id="copy-email-${accountId}" class="p-1 hover:bg-red-100 rounded transition-colors text-red-500" title="Copiar Correo">
+                                <svg class="w-4 h-4" style="width: 16px; height: 16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
+                            </button>
+                        </div>
+                        ${hasPassword ? `
+                        <div class="flex items-center justify-between gap-3 bg-white p-2 rounded-lg border border-gray-100">
+                            <span class="text-xs font-mono text-gray-500 truncate" id="card-pass-text-${accountId}">${maskedPassword}</span>
+                            <div class="flex gap-1">
+                                <button type="button" id="toggle-pass-${accountId}" class="p-1 hover:bg-gray-100 rounded transition-colors text-gray-400 hover:text-gray-600" title="Ver/Ocultar">
+                                    <svg class="w-4 h-4" style="width: 16px; height: 16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+                                </button>
+                                <button type="button" id="copy-pass-${accountId}" class="p-1 hover:bg-red-50 rounded transition-colors text-red-500" title="Copiar Contraseña">
+                                    <svg class="w-4 h-4" style="width: 16px; height: 16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
+                                </button>
+                            </div>
+                        </div>` : ''}
+                    </div>
+                `;
+
+                // Logic Events
+                const copyIconHtml = `<svg class="w-4 h-4" style="width: 16px; height: 16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>`;
+                const checkIconHtml = `<svg class="w-4 h-4" style="width: 16px; height: 16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>`;
+
+                const handleCopy = (text, btnId) => {
+                    navigator.clipboard.writeText(text).then(() => {
+                        const btn = document.getElementById(btnId);
+                        if(btn) {
+                            btn.innerHTML = checkIconHtml;
+                            setTimeout(() => { if(btn) btn.innerHTML = copyIconHtml; }, 2000);
+                        }
+                    });
+                };
+
+                card.querySelector(`#copy-email-${accountId}`).addEventListener('click', () => handleCopy(account.email, `copy-email-${accountId}`));
+
+                if (hasPassword) {
+                    let isVisible = false;
+                    const toggleBtn = card.querySelector(`#toggle-pass-${accountId}`);
+                    const textSpan = card.querySelector(`#card-pass-text-${accountId}`);
+
+                    toggleBtn.addEventListener('click', () => {
+                        isVisible = !isVisible;
+                        const eyeOpen = `<svg class="w-4 h-4" style="width: 16px; height: 16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>`;
+                        const eyeClosed = `<svg class="w-4 h-4" style="width: 16px; height: 16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7 .946-3.11 3.563-5.522 6.837-6.141M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.581 10.41A7.48 7.48 0 0119.542 12c-1.274 4.057-5.064 7-9.542 7a10.046 10.046 0 01-3.132-.475M2.458 12c.946-3.11 3.563-5.522 6.837-6.141m1.581 2.318A4.5 4.5 0 0115 12a4.5 4.5 0 01-1.07 2.828M5 5l14 14" /></svg>`;
+
+                        if (isVisible) {
+                            textSpan.textContent = account.password;
+                            toggleBtn.innerHTML = eyeClosed;
+                        } else {
+                            textSpan.textContent = maskedPassword;
+                            toggleBtn.innerHTML = eyeOpen;
+                        }
+                    });
+
+                    card.querySelector(`#copy-pass-${accountId}`).addEventListener('click', () => handleCopy(account.password, `copy-pass-${accountId}`));
+                }
+
+                container.appendChild(card);
+            };
+
             const handlePlatformAccountChange = (select, profileSelect) => {
                 const accountId = select.value;
                 const account = allPlatformAccounts.find(a => a.id === accountId);
                 const profileContainer = profileSelect.parentElement;
+
+                // Render Credentials Chips (Only for main sales form, detect via ID check)
+                if (select.id === 'platform-account') {
+                    renderAccountCredentials(accountId);
+                }
 
                 // Reset profile dropdown
                 profileSelect.innerHTML = '<option value="">Selecciona una cuenta madre primero</option>';
@@ -3606,22 +3727,60 @@
             populateAccountFilterDropdown();
             loadDashboardData();
         }, (e) => { console.error("Error al cargar cuentas:", e); });
-        const handleSaveSale = async (e, keepClientData = false) => {
+
+        const openPaymentMethodModal = () => {
+            selectors.paymentMethodModal.classList.remove('hidden');
+            setTimeout(() => {
+                selectors.paymentMethodModal.classList.remove('opacity-0');
+                selectors.paymentMethodModal.querySelector('.modal-content').classList.remove('scale-95');
+            }, 10);
+        };
+
+        const closePaymentMethodModal = () => {
+            selectors.paymentMethodModal.classList.add('opacity-0');
+            selectors.paymentMethodModal.querySelector('.modal-content').classList.add('scale-95');
+            setTimeout(() => selectors.paymentMethodModal.classList.add('hidden'), 300);
+        };
+
+        selectors.cancelPaymentModalBtn.addEventListener('click', closePaymentMethodModal);
+
+        document.querySelectorAll('.payment-option-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const method = e.currentTarget.getAttribute('data-method');
+                finalizeSale(method);
+                closePaymentMethodModal();
+            });
+        });
+
+        const handleSaveSale = (e, keepClientData = false) => {
             e.preventDefault();
+            if (selectors.addSaleForm.checkValidity()) {
+                const f = selectors.addSaleForm;
+                const accountId = f['platform-account'].value;
+                const profileId = f['profile-select'].value;
+                const plataforma = f.plataforma.value;
+
+                if (plataforma !== 'Canva' && accountId && !profileId) {
+                    alert('Por favor, selecciona un perfil para esta cuenta.');
+                    return;
+                }
+
+                pendingSaleKeepData = keepClientData;
+                openPaymentMethodModal();
+            } else {
+                selectors.addSaleForm.reportValidity();
+            }
+        };
+
+        const finalizeSale = async (paymentMethod) => {
             const f = selectors.addSaleForm;
             const accountId = f['platform-account'].value;
             const profileId = f['profile-select'].value;
-            const plataforma = f.plataforma.value;
 
             // Capture profile name text before it gets reset
             let profileName = '';
             if (f['profile-select'].selectedIndex !== -1) {
                 profileName = f['profile-select'].options[f['profile-select'].selectedIndex].text;
-            }
-
-            if (plataforma !== 'Canva' && accountId && !profileId) {
-                alert('Por favor, selecciona un perfil para esta cuenta.');
-                return;
             }
 
             // Get account details
@@ -3647,7 +3806,7 @@
                 contrasena: contrasena,
                 pin: f.pin.value,
                 notas: f.notas.value,
-                metodoPago: f.metodoPago.value,
+                metodoPago: paymentMethod,
                 vendedor: currentSeller,
                 accountId,
                 profileId,
@@ -3675,13 +3834,14 @@
                 // Generate message and open modal
                 openSuccessSaleModal(newSale, profileName);
 
-                if (keepClientData) {
-                    // Keep: cliente, celular, metodoPago, pin, inicioPlan, diasPlan, finPlan
+                if (pendingSaleKeepData) {
+                    // Keep: cliente, celular, pin, inicioPlan, diasPlan, finPlan
                     // Clear: plataforma, precio, platform-account, profile-select, notas
                     f.plataforma.value = "";
                     selectors.otroPlataformaInput.value = "";
                     f.precio.value = "";
                     f['platform-account'].value = "";
+                    renderAccountCredentials(''); // Clear chips
                     f['profile-select'].innerHTML = '<option value="">Selecciona una cuenta madre primero</option>';
                     f['profile-select'].disabled = true;
                     f['profile-select'].classList.add('bg-gray-200');
@@ -3691,7 +3851,7 @@
                     handlePlatformChange(selectors.plataformaSelect, selectors.otroPlataformaContainer, selectors.otroPlataformaInput);
                 } else {
                     f.reset();
-                    f.metodoPago.value = ""; // Reiniciar el select
+                    renderAccountCredentials(''); // Clear chips
                     handlePlatformChange(selectors.plataformaSelect, selectors.otroPlataformaContainer,
                         selectors.otroPlataformaInput);
                 }
@@ -3704,9 +3864,10 @@
 
         selectors.addSaleForm.addEventListener('submit', (e) => handleSaveSale(e, false));
         document.getElementById('save-and-add-btn').addEventListener('click', (e) => {
-            if (selectors.addSaleForm.reportValidity()) {
-                handleSaveSale(e, true);
-            }
+            // Note: reportValidity is handled inside handleSaveSale for 'submit' event,
+            // but for a button click we should check it before calling.
+            // However, since handleSaveSale now calls checkValidity(), we can just call it.
+            handleSaveSale(e, true);
         });
 
         selectors.editForm.addEventListener('submit', async (e) => {
