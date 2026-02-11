@@ -2348,13 +2348,19 @@
                     handleDeleteSale(e.currentTarget.dataset.id)));
                 selectors.salesList.querySelectorAll('.renew-btn').forEach(b => b.addEventListener('click', e =>
                     openRenewalModal(e.currentTarget.dataset.id)));
-                selectors.salesList.querySelectorAll('.maintenance-btn').forEach(b => b.addEventListener('click', e =>
-                    handleMoveToMaintenance(e.currentTarget.dataset.id)));
                 selectors.salesList.querySelectorAll('.copy-details-btn').forEach(b => b.addEventListener('click', e =>
                     handleCopySaleDetails(e.currentTarget.dataset.id, e.currentTarget)));
                 selectors.salesList.querySelectorAll('.whatsapp-btn').forEach(b => b.addEventListener('click', e =>
                     handleWhatsAppClick(e.currentTarget.dataset.id)));
             };
+
+            // Event Delegation for Maintenance Button (Attached only once)
+            selectors.salesList.addEventListener('click', (e) => {
+                const maintenanceBtn = e.target.closest('.maintenance-btn');
+                if (maintenanceBtn) {
+                    handleMoveToMaintenance(maintenanceBtn.dataset.id);
+                }
+            });
 
             const handleWhatsAppClick = (saleId) => {
                 const sale = allSales.find(s => s.id === saleId);
