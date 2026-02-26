@@ -408,6 +408,24 @@
                                             class="w-full px-4 py-2 border border-gray-300 rounded-lg">
                                     </div>
                                 </div>
+                                <div id="add-bank-details-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-6 hidden">
+                                    <div>
+                                        <label for="account-bank" class="block text-sm font-medium text-gray-600 mb-2">Banco</label>
+                                        <select id="account-bank" name="account-bank" class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white">
+                                            <option value="">Seleccionar Banco...</option>
+                                            <option value="BCP">BCP</option>
+                                            <option value="BBVA">BBVA</option>
+                                            <option value="INTERBANK">INTERBANK</option>
+                                            <option value="IO">IO</option>
+                                            <option value="AGORA">AGORA</option>
+                                            <option value="OTROS">OTROS</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label for="account-card" class="block text-sm font-medium text-gray-600 mb-2">Nº Tarjeta</label>
+                                        <input type="text" id="account-card" name="account-card" class="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="0000 0000 0000 0000">
+                                    </div>
+                                </div>
                                 <div class="text-right">
                                     <button type="submit"
                                         class="bg-blue-600 w-full md:w-auto text-white font-semibold px-6 py-3 rounded-lg hover:bg-blue-700 transition">Añadir
@@ -967,6 +985,53 @@
             </div>
         </div>
     </div>
+    <!-- Transfer Profiles Modal -->
+    <div id="transfer-profiles-modal"
+        class="modal fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 z-50 hidden opacity-0">
+        <div class="modal-content bg-white w-full max-w-lg rounded-2xl shadow-2xl p-6 transform scale-95">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-semibold text-gray-700">Transferir Perfiles</h2>
+                <button id="close-transfer-modal" class="text-gray-400 hover:text-gray-600">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                        </path>
+                    </svg>
+                </button>
+            </div>
+            <div class="space-y-4">
+                <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                    <p class="text-sm text-gray-500 uppercase font-bold mb-1">Origen</p>
+                    <p id="transfer-source-email" class="font-bold text-gray-800 break-all"></p>
+                    <p class="text-sm text-gray-600 mt-1"><span id="transfer-source-count" class="font-bold">0</span> perfiles ocupados a mover.</p>
+                </div>
+
+                <div class="flex justify-center py-2">
+                    <svg class="w-8 h-8 text-indigo-500 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-600 mb-2">Cuenta Destino</label>
+                    <select id="transfer-destination-select" class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white">
+                        <option value="">Seleccione cuenta destino...</option>
+                    </select>
+                    <p id="transfer-destination-info" class="text-sm text-indigo-600 mt-2 hidden"></p>
+                </div>
+
+                <div id="transfer-selection-container" class="hidden border-t border-gray-200 pt-4">
+                    <p class="text-sm text-amber-600 font-semibold mb-2">⚠️ Espacio insuficiente en destino. Selecciona los perfiles prioritarios:</p>
+                    <div id="transfer-profile-list" class="max-h-48 overflow-y-auto space-y-2 pr-2">
+                        <!-- Checkboxes injected here -->
+                    </div>
+                </div>
+
+                <div class="flex justify-end gap-4 mt-6">
+                    <button id="cancel-transfer-btn" class="bg-gray-200 text-gray-700 font-semibold px-4 py-2 rounded-lg hover:bg-gray-300 transition">Cancelar</button>
+                    <button id="confirm-transfer-btn" class="bg-indigo-600 text-white font-semibold px-4 py-2 rounded-lg hover:bg-indigo-700 transition disabled:opacity-50 disabled:cursor-not-allowed" disabled>Confirmar Transferencia</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Edit Account Modal -->
     <div id="edit-account-modal"
         class="modal fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 z-50 hidden opacity-0">
@@ -1025,6 +1090,24 @@
                             de pago</label>
                         <input type="date" id="edit-account-fechaPago"
                             class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+                    </div>
+                </div>
+                <div id="edit-bank-details-container" class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6 hidden">
+                    <div>
+                        <label for="edit-account-bank" class="block text-sm font-medium text-gray-600 mb-2">Banco</label>
+                        <select id="edit-account-bank" name="edit-account-bank" class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white">
+                            <option value="">Seleccionar Banco...</option>
+                            <option value="BCP">BCP</option>
+                            <option value="BBVA">BBVA</option>
+                            <option value="INTERBANK">INTERBANK</option>
+                            <option value="IO">IO</option>
+                            <option value="AGORA">AGORA</option>
+                            <option value="OTROS">OTROS</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="edit-account-card" class="block text-sm font-medium text-gray-600 mb-2">Nº Tarjeta</label>
+                        <input type="text" id="edit-account-card" name="edit-account-card" class="w-full px-4 py-2 border border-gray-300 rounded-lg">
                     </div>
                 </div>
                 <div class="flex justify-end gap-4 mt-4">
@@ -2192,6 +2275,16 @@
                         btn.style.backgroundColor = platformStyle.bg;
                         btn.style.color = 'white';
                         btn.classList.add('scale-110', 'shadow-md');
+
+                        // Toggle Bank Details
+                        const bankContainer = document.getElementById('add-bank-details-container');
+                        if (name === 'Netflix') {
+                            bankContainer.classList.remove('hidden');
+                        } else {
+                            bankContainer.classList.add('hidden');
+                            document.getElementById('account-bank').value = '';
+                            document.getElementById('account-card').value = '';
+                        }
                     });
                     selectors.accountPlatformButtons.appendChild(btn);
                 });
@@ -2513,6 +2606,10 @@
                             ? `<button class="manage-profiles-btn p-2 text-teal-600 hover:bg-teal-50 rounded-lg transition" data-id="${account.id}" title="Gestionar Perfiles"><svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M22 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" /></svg></button>`
                             : '';
 
+                        const transferBtnHtml = account.platform !== 'Canva'
+                            ? `<button class="transfer-btn p-2 text-orange-600 hover:bg-orange-50 rounded-lg transition" data-id="${account.id}" title="Transferir Perfiles"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path></svg></button>`
+                            : '';
+
                         return `
                         <div class="bg-white rounded-2xl shadow-md overflow-hidden border border-gray-200 hover:shadow-xl transition-shadow duration-300 flex flex-col h-full">
                             <div class="px-4 py-3 flex justify-between items-center" style="${headerBgStyle}">
@@ -2537,9 +2634,16 @@
                                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
                                          </button>
                                     </div>
+                                    </div>
+                                    ${account.platform === 'Netflix' ? `
+                                    <div class="mt-2 text-sm text-gray-600 space-y-1">
+                                        <p class="flex items-center gap-2"><span class="font-semibold text-gray-700 w-16">Banco:</span> <span class="font-normal bg-gray-50 px-2 py-0.5 rounded border border-gray-200">${account.bankName || '-'}</span></p>
+                                        <p class="flex items-center gap-2"><span class="font-semibold text-gray-700 w-16">Tarjeta:</span> <span class="font-normal select-all font-mono bg-gray-50 px-2 py-0.5 rounded border border-gray-200">${account.cardNumber || '-'}</span></p>
+                                    </div>` : ''}
                                 </div>
                                 <div class="flex justify-end gap-2 pt-3 border-t border-gray-100 mt-2">
                                     ${manageProfilesBtnHtml}
+                                    ${transferBtnHtml}
                                     <button class="edit-account-btn p-2 text-indigo-600 hover:bg-indigo-50 rounded-lg transition" data-id="${account.id}" title="Editar"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L16.732 3.732z"></path></svg></button>
                                     <button class="delete-account-btn p-2 text-red-600 hover:bg-red-50 rounded-lg transition" data-id="${account.id}" title="Eliminar"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button>
                                 </div>
@@ -2689,6 +2793,14 @@
             </button>`
                                 : '';
 
+                            const transferBtnHtml = account.platform !== 'Canva'
+                                ? `<button
+                class="transfer-btn p-1 text-orange-600 hover:text-orange-800 hover:bg-orange-100 rounded-full transition"
+                data-id="${account.id}" title="Transferir Perfiles">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path></svg>
+            </button>`
+                                : '';
+
                             return `
             <li class="list-group-item flex flex-col justify-between items-start py-4 px-4 border-b last:border-b-0 border-gray-100">
                 <div class="w-full mb-4">
@@ -2715,8 +2827,15 @@
                         </button>
                     </div>
 
-                    <div class="flex items-center gap-2 justify-end w-full">
+                    ${account.platform === 'Netflix' ? `
+                    <div class="mt-2 text-sm text-gray-600 space-y-1">
+                        <p class="flex items-center gap-2"><span class="font-semibold text-gray-700 w-16">Banco:</span> <span class="font-normal bg-white px-2 py-0.5 rounded border border-gray-200">${account.bankName || '-'}</span></p>
+                        <p class="flex items-center gap-2"><span class="font-semibold text-gray-700 w-16">Tarjeta:</span> <span class="font-normal select-all font-mono bg-white px-2 py-0.5 rounded border border-gray-200">${account.cardNumber || '-'}</span></p>
+                    </div>` : ''}
+
+                    <div class="flex items-center gap-2 justify-end w-full pt-3 mt-1 border-t border-gray-100">
                         ${manageProfilesBtnHtml}
+                        ${transferBtnHtml}
                         <button
                             class="edit-account-btn p-2 bg-indigo-50 text-indigo-600 hover:bg-indigo-100 rounded-lg transition"
                             data-id="${account.id}" title="Editar Cuenta">
@@ -2766,6 +2885,9 @@
                 });
                 accountsList.querySelectorAll('.manage-profiles-btn').forEach(btn => {
                     btn.addEventListener('click', e => handleManageProfiles(e.currentTarget.dataset.id));
+                });
+                accountsList.querySelectorAll('.transfer-btn').forEach(btn => {
+                    btn.addEventListener('click', e => handleTransferProfiles(e.currentTarget.dataset.id));
                 });
 
                 accountsList.querySelectorAll('.toggle-password-btn').forEach(btn => {
@@ -3143,10 +3265,28 @@
                 form['edit-account-email'].value = account.email;
                 form['edit-account-enlace'].value = account.enlace || '';
                 form['edit-account-fechaPago'].value = account.fechaPago || '';
+                form['edit-account-bank'].value = account.bankName || '';
+                form['edit-account-card'].value = account.cardNumber || '';
                 form['edit-account-password'].value = ''; // Clear password field for security
+
+                const bankContainer = document.getElementById('edit-bank-details-container');
+                if (account.platform === 'Netflix') {
+                    bankContainer.classList.remove('hidden');
+                } else {
+                    bankContainer.classList.add('hidden');
+                }
 
                 openEditAccountModal();
             };
+
+            document.getElementById('edit-account-platform').addEventListener('change', (e) => {
+                const bankContainer = document.getElementById('edit-bank-details-container');
+                if (e.target.value === 'Netflix') {
+                    bankContainer.classList.remove('hidden');
+                } else {
+                    bankContainer.classList.add('hidden');
+                }
+            });
 
             const handleManageProfiles = async (accountId) => {
                 const account = allPlatformAccounts.find(acc => acc.id === accountId);
@@ -3570,6 +3710,222 @@
             );
         };
 
+            // Transfer Logic Variables
+            let currentTransferSourceId = null;
+
+            const toggleTransferModal = (show) => {
+                const modal = document.getElementById('transfer-profiles-modal');
+                if (show) {
+                    modal.classList.remove('hidden');
+                    setTimeout(() => {
+                        modal.classList.remove('opacity-0');
+                        modal.querySelector('.modal-content').classList.remove('scale-95');
+                    }, 10);
+                } else {
+                    modal.classList.add('opacity-0');
+                    modal.querySelector('.modal-content').classList.add('scale-95');
+                    setTimeout(() => modal.classList.add('hidden'), 300);
+                    // Reset
+                    currentTransferSourceId = null;
+                    document.getElementById('transfer-destination-select').innerHTML = '<option value="">Seleccione cuenta destino...</option>';
+                    document.getElementById('transfer-selection-container').classList.add('hidden');
+                    document.getElementById('transfer-profile-list').innerHTML = '';
+                    document.getElementById('transfer-destination-info').classList.add('hidden');
+                    document.getElementById('confirm-transfer-btn').disabled = true;
+                }
+            };
+
+            document.getElementById('close-transfer-modal').addEventListener('click', () => toggleTransferModal(false));
+            document.getElementById('cancel-transfer-btn').addEventListener('click', () => toggleTransferModal(false));
+
+            const handleTransferProfiles = (accountId) => {
+                const sourceAccount = allPlatformAccounts.find(acc => acc.id === accountId);
+                if (!sourceAccount || !sourceAccount.profiles) return;
+
+                const occupiedProfiles = sourceAccount.profiles.filter(p => p.estado === 'Ocupado');
+
+                if (occupiedProfiles.length === 0) {
+                    alert('Esta cuenta no tiene perfiles ocupados para transferir.');
+                    return;
+                }
+
+                currentTransferSourceId = accountId;
+                document.getElementById('transfer-source-email').textContent = sourceAccount.email;
+                document.getElementById('transfer-source-count').textContent = occupiedProfiles.length;
+
+                populateTransferDestinations(sourceAccount);
+                toggleTransferModal(true);
+            };
+
+            const populateTransferDestinations = (sourceAccount) => {
+                const select = document.getElementById('transfer-destination-select');
+                select.innerHTML = '<option value="">Seleccione cuenta destino...</option>';
+
+                const validDestinations = allPlatformAccounts.filter(acc =>
+                    acc.id !== sourceAccount.id &&
+                    acc.platform === sourceAccount.platform &&
+                    acc.profiles &&
+                    acc.profiles.some(p => p.estado === 'Disponible')
+                );
+
+                if (validDestinations.length === 0) {
+                    select.innerHTML = '<option value="" disabled>No hay cuentas con espacio disponible</option>';
+                    return;
+                }
+
+                validDestinations.forEach(acc => {
+                    const availableCount = acc.profiles.filter(p => p.estado === 'Disponible').length;
+                    const option = document.createElement('option');
+                    option.value = acc.id;
+                    option.textContent = `${acc.email} (${availableCount} disp.)`;
+                    option.dataset.available = availableCount;
+                    select.appendChild(option);
+                });
+            };
+
+            document.getElementById('transfer-destination-select').addEventListener('change', (e) => {
+                const destId = e.target.value;
+                const sourceAccount = allPlatformAccounts.find(a => a.id === currentTransferSourceId);
+                const destAccount = allPlatformAccounts.find(a => a.id === destId);
+                const infoText = document.getElementById('transfer-destination-info');
+                const selectionContainer = document.getElementById('transfer-selection-container');
+                const confirmBtn = document.getElementById('confirm-transfer-btn');
+                const list = document.getElementById('transfer-profile-list');
+
+                if (!sourceAccount || !destAccount) {
+                    infoText.classList.add('hidden');
+                    selectionContainer.classList.add('hidden');
+                    confirmBtn.disabled = true;
+                    return;
+                }
+
+                const occupiedSource = sourceAccount.profiles.filter(p => p.estado === 'Ocupado');
+                const availableDest = destAccount.profiles.filter(p => p.estado === 'Disponible');
+
+                infoText.textContent = `Capacidad destino: ${availableDest.length} espacios. Necesarios: ${occupiedSource.length}.`;
+                infoText.classList.remove('hidden');
+
+                list.innerHTML = '';
+                if (occupiedSource.length > availableDest.length) {
+                    // Manual Selection Required
+                    selectionContainer.classList.remove('hidden');
+                    confirmBtn.disabled = true; // Enabled only when selection matches limit
+
+                    occupiedSource.forEach(p => {
+                        const sale = allSales.find(s => s.id === p.clienteId);
+                        const clientName = sale ? sale.cliente : 'Desconocido';
+
+                        const div = document.createElement('div');
+                        div.className = 'flex items-center gap-2 p-2 bg-gray-50 rounded border border-gray-200';
+                        div.innerHTML = `
+                            <input type="checkbox" class="transfer-checkbox h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded" value="${p.id}">
+                            <div class="flex-grow text-sm">
+                                <span class="font-bold text-gray-700">${clientName}</span>
+                                <span class="text-xs text-gray-500 block">${p.nombre}</span>
+                            </div>
+                        `;
+                        list.appendChild(div);
+                    });
+
+                    // Add listener to checkboxes to limit selection
+                    const max = availableDest.length;
+                    const checkboxes = list.querySelectorAll('.transfer-checkbox');
+                    checkboxes.forEach(cb => {
+                        cb.addEventListener('change', () => {
+                            const checkedCount = list.querySelectorAll('.transfer-checkbox:checked').length;
+
+                            if (checkedCount > max) {
+                                cb.checked = false;
+                                alert(`Solo puedes seleccionar hasta ${max} perfiles.`);
+                            } else {
+                                confirmBtn.disabled = checkedCount === 0;
+                            }
+                        });
+                    });
+
+                } else {
+                    // Auto-transfer all
+                    selectionContainer.classList.add('hidden');
+                    confirmBtn.disabled = false;
+                }
+            });
+
+            document.getElementById('confirm-transfer-btn').addEventListener('click', async () => {
+                const btn = document.getElementById('confirm-transfer-btn');
+                btn.disabled = true;
+                btn.textContent = 'Procesando...';
+
+                try {
+                    const sourceId = currentTransferSourceId;
+                    const destId = document.getElementById('transfer-destination-select').value;
+
+                    const sourceAccount = allPlatformAccounts.find(a => a.id === sourceId);
+                    const destAccount = allPlatformAccounts.find(a => a.id === destId);
+
+                    let profilesToMove = [];
+                    const occupiedSource = sourceAccount.profiles.filter(p => p.estado === 'Ocupado');
+                    const availableDest = destAccount.profiles.filter(p => p.estado === 'Disponible');
+
+                    // Determine which profiles to move
+                    const selectionContainer = document.getElementById('transfer-selection-container');
+                    if (!selectionContainer.classList.contains('hidden')) {
+                        // User selected specific profiles
+                        const checkboxes = document.querySelectorAll('.transfer-checkbox:checked');
+                        checkboxes.forEach(cb => {
+                            const profile = occupiedSource.find(p => p.id === cb.value);
+                            if (profile) profilesToMove.push(profile);
+                        });
+                    } else {
+                        // Move all (limit to available space just in case logic drifted, but UI prevents this)
+                        profilesToMove = occupiedSource.slice(0, availableDest.length);
+                    }
+
+                    // Execute Transfer
+                    const promises = profilesToMove.map(async (srcProfile, index) => {
+                        const destProfile = availableDest[index]; // Map 1-to-1 to available slots
+                        const saleId = srcProfile.clienteId;
+
+                        if (!destProfile) return; // Should not happen
+
+                        // 1. Update Destination Profile
+                        const destProfileRef = doc(db, "platformAccounts", destId, "Perfiles", destProfile.id);
+                        await updateDoc(destProfileRef, {
+                            estado: 'Ocupado',
+                            clienteId: saleId,
+                            fechaVencimiento: srcProfile.fechaVencimiento
+                        });
+
+                        // 2. Update Sale Record
+                        const saleRef = doc(db, "sales", saleId);
+                        await updateDoc(saleRef, {
+                            accountId: destId,
+                            profileId: destProfile.id,
+                            pin: destProfile.pin // Update sale with new PIN from destination
+                        });
+
+                        // 3. Clear Source Profile
+                        const srcProfileRef = doc(db, "platformAccounts", sourceId, "Perfiles", srcProfile.id);
+                        await updateDoc(srcProfileRef, {
+                            estado: 'Disponible',
+                            clienteId: null,
+                            fechaVencimiento: null
+                        });
+                    });
+
+                    await Promise.all(promises);
+
+                    alert('Transferencia completada con éxito.');
+                    toggleTransferModal(false);
+
+                } catch (error) {
+                    console.error("Error transferring profiles:", error);
+                    alert("Ocurrió un error durante la transferencia.");
+                } finally {
+                    btn.disabled = false;
+                    btn.textContent = 'Confirmar Transferencia';
+                }
+            });
+
         const handleDeleteExpense = (id) => {
             showConfirmationModal(
                 'Eliminar Gasto',
@@ -3593,19 +3949,35 @@
                 return;
             }
 
-            // Check if any profile is 'Ocupado'
-            if (account.profiles && account.profiles.some(p => p.estado === 'Ocupado')) {
-                alert("No se puede eliminar la cuenta porque tiene perfiles en uso. Por favor, finalice o mueva las ventas asociadas antes de continuar.");
-                return;
+            // Warning message based on occupancy
+            const occupiedCount = account.profiles ? account.profiles.filter(p => p.estado === 'Ocupado').length : 0;
+            let message = '¿Estás seguro de que deseas eliminar esta cuenta? Todos sus perfiles serán borrados y esta acción es irreversible.';
+
+            if (occupiedCount > 0) {
+                message = `⚠️ ADVERTENCIA: Esta cuenta tiene ${occupiedCount} perfiles en uso. Al eliminarla, los clientes asociados perderán su asignación de cuenta (quedarán "Sin cuenta"). ¿Estás seguro de continuar?`;
             }
 
-            // If all profiles are available, show confirmation modal
             showConfirmationModal(
                 'Eliminar Cuenta',
-                '¿Estás seguro de que deseas eliminar esta cuenta? Todos sus perfiles serán borrados y esta acción es irreversible.',
+                message,
                 async () => {
                     try {
-                        // 1. Delete all profiles in the subcollection
+                        // 1. Unlink Sales from Occupied Profiles
+                        if (account.profiles) {
+                            const unlinkPromises = account.profiles
+                                .filter(p => p.estado === 'Ocupado' && p.clienteId)
+                                .map(p => {
+                                    const saleRef = doc(db, "sales", p.clienteId);
+                                    // Remove account/profile linkage but keep sale active
+                                    return updateDoc(saleRef, {
+                                        accountId: deleteField(),
+                                        profileId: deleteField()
+                                    }).catch(err => console.warn("Could not unlink sale:", p.clienteId, err));
+                                });
+                            await Promise.all(unlinkPromises);
+                        }
+
+                        // 2. Delete all profiles in the subcollection
                         const profilesRef = collection(db, "platformAccounts", accountId, "Perfiles");
                         const profilesSnapshot = await getDocs(profilesRef);
                         const deletePromises = [];
@@ -3614,7 +3986,7 @@
                         });
                         await Promise.all(deletePromises);
 
-                        // 2. Delete the main account document
+                        // 3. Delete the main account document
                         await deleteDoc(doc(db, "platformAccounts", accountId));
 
                     } catch (error) {
@@ -3892,7 +4264,9 @@
                 selectors.addAccountForm; const newAccount = {
                     platform: f['account-platform'].value, email:
                         f['account-email'].value, password: f['account-password'].value, enlace: f.enlace.value, fechaPago:
-                        f.fechaPago.value
+                        f.fechaPago.value,
+                    bankName: f['account-bank'].value,
+                    cardNumber: f['account-card'].value
                 }; try {
                     await addDoc(collection(db, "platformAccounts"), newAccount); f.reset();
                     document.querySelectorAll('#account-platform-buttons button').forEach(b =>
@@ -4041,6 +4415,8 @@
                 email: form['edit-account-email'].value,
                 enlace: form['edit-account-enlace'].value,
                 fechaPago: form['edit-account-fechaPago'].value,
+                bankName: form['edit-account-bank'].value,
+                cardNumber: form['edit-account-card'].value
             };
 
             const newPassword = form['edit-account-password'].value;
