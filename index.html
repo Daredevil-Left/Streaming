@@ -407,6 +407,8 @@
                                         <input type="date" id="fechaPago" name="fechaPago"
                                             class="w-full px-4 py-2 border border-gray-300 rounded-lg">
                                     </div>
+                                </div>
+                                <div id="add-bank-details-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-6 hidden">
                                     <div>
                                         <label for="account-bank" class="block text-sm font-medium text-gray-600 mb-2">Banco</label>
                                         <select id="account-bank" name="account-bank" class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white">
@@ -1090,7 +1092,7 @@
                             class="w-full px-4 py-2 border border-gray-300 rounded-lg">
                     </div>
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                <div id="edit-bank-details-container" class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6 hidden">
                     <div>
                         <label for="edit-account-bank" class="block text-sm font-medium text-gray-600 mb-2">Banco</label>
                         <select id="edit-account-bank" name="edit-account-bank" class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white">
@@ -2273,6 +2275,16 @@
                         btn.style.backgroundColor = platformStyle.bg;
                         btn.style.color = 'white';
                         btn.classList.add('scale-110', 'shadow-md');
+
+                        // Toggle Bank Details
+                        const bankContainer = document.getElementById('add-bank-details-container');
+                        if (name === 'Netflix') {
+                            bankContainer.classList.remove('hidden');
+                        } else {
+                            bankContainer.classList.add('hidden');
+                            document.getElementById('account-bank').value = '';
+                            document.getElementById('account-card').value = '';
+                        }
                     });
                     selectors.accountPlatformButtons.appendChild(btn);
                 });
@@ -2622,10 +2634,12 @@
                                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
                                          </button>
                                     </div>
+                                    </div>
+                                    ${account.platform === 'Netflix' ? `
                                     <div class="mt-2 text-sm text-gray-600 space-y-1">
                                         <p class="flex items-center gap-2"><span class="font-semibold text-gray-700 w-16">Banco:</span> <span class="font-normal bg-gray-50 px-2 py-0.5 rounded border border-gray-200">${account.bankName || '-'}</span></p>
                                         <p class="flex items-center gap-2"><span class="font-semibold text-gray-700 w-16">Tarjeta:</span> <span class="font-normal select-all font-mono bg-gray-50 px-2 py-0.5 rounded border border-gray-200">${account.cardNumber || '-'}</span></p>
-                                    </div>
+                                    </div>` : ''}
                                 </div>
                                 <div class="flex justify-end gap-2 pt-3 border-t border-gray-100 mt-2">
                                     ${manageProfilesBtnHtml}
@@ -2813,10 +2827,11 @@
                         </button>
                     </div>
 
+                    ${account.platform === 'Netflix' ? `
                     <div class="mt-2 text-sm text-gray-600 space-y-1">
                         <p class="flex items-center gap-2"><span class="font-semibold text-gray-700 w-16">Banco:</span> <span class="font-normal bg-white px-2 py-0.5 rounded border border-gray-200">${account.bankName || '-'}</span></p>
                         <p class="flex items-center gap-2"><span class="font-semibold text-gray-700 w-16">Tarjeta:</span> <span class="font-normal select-all font-mono bg-white px-2 py-0.5 rounded border border-gray-200">${account.cardNumber || '-'}</span></p>
-                    </div>
+                    </div>` : ''}
 
                     <div class="flex items-center gap-2 justify-end w-full pt-3 mt-1 border-t border-gray-100">
                         ${manageProfilesBtnHtml}
@@ -3254,8 +3269,24 @@
                 form['edit-account-card'].value = account.cardNumber || '';
                 form['edit-account-password'].value = ''; // Clear password field for security
 
+                const bankContainer = document.getElementById('edit-bank-details-container');
+                if (account.platform === 'Netflix') {
+                    bankContainer.classList.remove('hidden');
+                } else {
+                    bankContainer.classList.add('hidden');
+                }
+
                 openEditAccountModal();
             };
+
+            document.getElementById('edit-account-platform').addEventListener('change', (e) => {
+                const bankContainer = document.getElementById('edit-bank-details-container');
+                if (e.target.value === 'Netflix') {
+                    bankContainer.classList.remove('hidden');
+                } else {
+                    bankContainer.classList.add('hidden');
+                }
+            });
 
             const handleManageProfiles = async (accountId) => {
                 const account = allPlatformAccounts.find(acc => acc.id === accountId);
