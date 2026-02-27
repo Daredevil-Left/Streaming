@@ -3900,7 +3900,10 @@
                         await updateDoc(saleRef, {
                             accountId: destId,
                             profileId: destProfile.id,
-                            pin: destProfile.pin // Update sale with new PIN from destination
+                            pin: destProfile.pin, // Update sale with new PIN from destination
+                            plataforma: destAccount.platform,
+                            correo: destAccount.email,
+                            contrasena: destAccount.password
                         });
 
                         // 3. Clear Source Profile
