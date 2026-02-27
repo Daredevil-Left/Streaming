@@ -4427,14 +4427,20 @@
             try {
                 await updateDoc(doc(db, "platformAccounts", id), updatedData);
 
-                // Cascade update if platform changed
-                if (newPlatform !== account.platform) {
-                    const salesToUpdate = allSales.filter(s => s.accountId === id);
-                    const updatePromises = salesToUpdate.map(sale =>
-                        updateDoc(doc(db, "sales", sale.id), { plataforma: newPlatform })
-                    );
-                    await Promise.all(updatePromises);
-                }
+                // Cascade update to ALL linked sales (Platform, Email, Password)
+                const salesToUpdate = allSales.filter(s => s.accountId === id);
+
+                // Determine the password to save in sales (new if changed, or keep existing)
+                const finalPassword = newPassword || account.password;
+
+                const updatePromises = salesToUpdate.map(sale =>
+                    updateDoc(doc(db, "sales", sale.id), {
+                        plataforma: newPlatform,
+                        correo: updatedData.email,
+                        contrasena: finalPassword
+                    })
+                );
+                await Promise.all(updatePromises);
 
                 closeEditAccountModal();
             } catch (err) {
