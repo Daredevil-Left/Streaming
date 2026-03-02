@@ -1391,19 +1391,6 @@
 
             let allServices = [...defaultServices];
             let allSales = [], allExpenses = [], allPlatformAccounts = [], activePlatformFilter = 'Todos', currentSearchTerm = '', activeAccountFilter = '', activeStatusFilter = '';
-
-            const getProfileOccupancy = (accountId, profileId) => {
-                const account = allPlatformAccounts.find(a => a.id === accountId);
-                const maxClients = (account && account.platform === 'Crunchyroll') ? 2 : 1;
-                const activeSalesForProfile = allSales.filter(sale => sale.accountId === accountId && sale.profileId === profileId && sale.estado !== 'ARCHIVADO');
-                return {
-                    count: activeSalesForProfile.length,
-                    max: maxClients,
-                    isAvailable: activeSalesForProfile.length < maxClients,
-                    sales: activeSalesForProfile
-                };
-            };
-
             let activeAccountViewFilter = 'Todos';
             let selectedServices = new Map(), selectedMonths = 1;
             let platformOrder = [];
@@ -1681,7 +1668,7 @@
                 const availableAccount = allPlatformAccounts.find(acc =>
                     (acc.platform === platformName) &&
                     acc.profiles &&
-                    acc.profiles.some(p => getProfileOccupancy(acc.id, p.id).isAvailable)
+                    acc.profiles.some(p => p.estado === 'Disponible')
                 );
 
                 if (availableAccount) {
@@ -1691,7 +1678,7 @@
                     handlePlatformAccountChange(selectors.platformAccountSelect, selectors.profileSelect);
 
                     // 6. Find first available profile
-                    const availableProfile = availableAccount.profiles.find(p => getProfileOccupancy(availableAccount.id, p.id).isAvailable);
+                    const availableProfile = availableAccount.profiles.find(p => p.estado === 'Disponible');
                     if (availableProfile) {
                         selectors.profileSelect.value = availableProfile.id;
                         selectors.profileSelect.dispatchEvent(new Event('change'));
@@ -1711,7 +1698,7 @@
                     if (account.platform === 'Canva') return; // Skip Canva as it doesn't have standard profile management
 
                     if (account.profiles && Array.isArray(account.profiles)) {
-                        const availableCount = account.profiles.filter(p => getProfileOccupancy(account.id, p.id).isAvailable).length;
+                        const availableCount = account.profiles.filter(p => p.estado === 'Disponible').length;
                         const platform = account.platform || 'Otro';
                         availability[platform] = (availability[platform] || 0) + availableCount;
                     }
@@ -2779,11 +2766,9 @@
                                 if (account.profiles && account.profiles.length > 0) {
                                     const sortedProfiles = account.profiles.sort((a, b) => a.nombre.localeCompare(b.nombre));
                                     sortedProfiles.forEach(profile => {
-                                        const occupancy = getProfileOccupancy(account.id, profile.id);
-                                        const color = occupancy.isAvailable ? 'text-green-500' : 'text-red-500';
-                                        const statusText = occupancy.max > 1 ? `(${occupancy.count}/${occupancy.max})` : (occupancy.isAvailable ? 'Disponible' : 'Ocupado');
+                                        const color = profile.estado === 'Disponible' ? 'text-green-500' : 'text-red-500';
                                         profilesIndicatorHtml += `<span class="${color}"
-                    title="${profile.nombre}: ${statusText}">${userIconSvg}</span>`;
+                    title="${profile.nombre}: ${profile.estado}">${userIconSvg}</span>`;
                                     });
                                 } else {
                                     for (let i = 0; i < 5; i++) {
@@ -3061,16 +3046,11 @@
                         profileContainer.classList.remove('hidden');
                         profileSelect.required = true;
                         if (account.profiles && account.profiles.length > 0) {
-                            const availableProfiles = account.profiles.filter(p => getProfileOccupancy(account.id, p.id).isAvailable);
+                            const availableProfiles = account.profiles.filter(p => p.estado === 'Disponible');
                             if (availableProfiles.length > 0) {
                                 profileSelect.innerHTML = '<option value="">Selecciona un perfil</option>';
                                 availableProfiles.forEach(p => {
-                                    const occupancy = getProfileOccupancy(account.id, p.id);
-                                    let label = p.nombre;
-                                    if (occupancy.max > 1 && occupancy.count > 0) {
-                                        label += ` (Disponible ${occupancy.max - occupancy.count}/${occupancy.max})`;
-                                    }
-                                    profileSelect.innerHTML += `<option value="${p.id}" data-pin="${p.pin || ''}">${label}</option>`;
+                                    profileSelect.innerHTML += `<option value="${p.id}" data-pin="${p.pin || ''}">${p.nombre}</option>`;
                                 });
                                 profileSelect.disabled = false;
                                 profileSelect.classList.remove('bg-gray-200');
@@ -3131,22 +3111,17 @@
                 selectors.editProfileSelect.innerHTML = '<option value="">Selecciona un perfil</option>';
                 if (account && account.profiles) {
                     const currentProfile = account.profiles.find(p => p.id === sale.profileId);
-                    const availableProfiles = account.profiles.filter(p => getProfileOccupancy(account.id, p.id).isAvailable);
+                    const availableProfiles = account.profiles.filter(p => p.estado === 'Disponible');
 
                     // Add available profiles first
                     availableProfiles.forEach(p => {
-                        const occupancy = getProfileOccupancy(account.id, p.id);
-                        let label = p.nombre;
-                        if (occupancy.max > 1 && occupancy.count > 0) {
-                            label += ` (Disponible ${occupancy.max - occupancy.count}/${occupancy.max})`;
-                        }
-                        selectors.editProfileSelect.innerHTML += `<option value="${p.id}" data-pin="${p.pin || ''}">${label}</option>`;
+                        selectors.editProfileSelect.innerHTML += `<option value="${p.id}" data-pin="${p.pin || ''}">${p.nombre}</option>`;
                     });
 
                     // Add the currently assigned profile if it's not already in the list (i.e., it's 'Ocupado')
                     if (currentProfile && !availableProfiles.some(p => p.id === currentProfile.id)) {
                         selectors.editProfileSelect.innerHTML += `<option value="${currentProfile.id}" data-pin="${currentProfile.pin || ''}">${currentProfile.nombre}
-            (Actual)</option>`;
+            (Ocupado)</option>`;
                     }
                     selectors.editProfileSelect.disabled = false;
                     selectors.editProfileSelect.classList.remove('bg-gray-200');
@@ -3192,26 +3167,12 @@
                 if (!sale) return;
 
                 try {
-                    // Update sale first so dynamic calculation works
-                    await updateDoc(doc(db, "sales", id), { estado: 'ARCHIVADO' });
-
                     // Release profile if it exists
                     if (sale.accountId && sale.profileId) {
-                        // Temporarily update sale locally for occupancy calculation
-                        const localSaleIndex = allSales.findIndex(s => s.id === id);
-                        if(localSaleIndex > -1) allSales[localSaleIndex].estado = 'ARCHIVADO';
-
-                        const occupancy = getProfileOccupancy(sale.accountId, sale.profileId);
-
                         const account = allPlatformAccounts.find(a => a.id === sale.accountId);
                         if (account && account.platform !== 'Canva') {
                             const profileRef = doc(db, "platformAccounts", sale.accountId, "Perfiles", sale.profileId);
-                            const updateData = { estado: 'Disponible' };
-                            if(occupancy.count === 0) {
-                                updateData.fechaVencimiento = null;
-                                updateData.clienteId = null;
-                            }
-                            await updateDoc(profileRef, updateData);
+                            await updateDoc(profileRef, { estado: 'Disponible', fechaVencimiento: null, clienteId: null });
 
                             // Update local state for immediate feedback
                             if (account.profiles) {
@@ -3224,6 +3185,7 @@
                         }
                     }
 
+                    await updateDoc(doc(db, "sales", id), { estado: 'ARCHIVADO' });
                     hideArchiveDeleteModal();
                 } catch (e) {
                     console.error("Error archiving sale: ", e);
@@ -3236,23 +3198,12 @@
                 if (!sale) return;
 
                 try {
-                    await deleteDoc(doc(db, "sales", id));
-
                     // Release profile if it exists
                     if (sale.accountId && sale.profileId) {
-                        // Remove from allSales locally for occupancy calc
-                        allSales = allSales.filter(s => s.id !== id);
-                        const occupancy = getProfileOccupancy(sale.accountId, sale.profileId);
-
                         const account = allPlatformAccounts.find(a => a.id === sale.accountId);
                         if (account && account.platform !== 'Canva') {
                             const profileRef = doc(db, "platformAccounts", sale.accountId, "Perfiles", sale.profileId);
-                            const updateData = { estado: 'Disponible' };
-                            if(occupancy.count === 0) {
-                                updateData.fechaVencimiento = null;
-                                updateData.clienteId = null;
-                            }
-                            await updateDoc(profileRef, updateData);
+                            await updateDoc(profileRef, { estado: 'Disponible', fechaVencimiento: null, clienteId: null });
 
                             // Update local state
                             if (account.profiles) {
@@ -3265,6 +3216,7 @@
                         }
                     }
 
+                    await deleteDoc(doc(db, "sales", id));
                     hideArchiveDeleteModal();
                 } catch (e) {
                     console.error("Error deleting sale: ", e);
@@ -3419,15 +3371,8 @@
                         a.nombre.localeCompare(b.nombre));
 
                     profiles.forEach(profile => {
-                        const occupancy = getProfileOccupancy(accountId, profile.id);
-                        const isAvailable = occupancy.isAvailable;
-
-                        let statusColor = isAvailable ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800';
-                        if (occupancy.max > 1 && occupancy.count > 0 && occupancy.isAvailable) {
-                            // Parcialmente ocupado
-                            statusColor = 'bg-yellow-100 text-yellow-800';
-                        }
-
+                        const isAvailable = profile.estado === 'Disponible';
+                        const statusColor = isAvailable ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800';
                         const statusIcon = isAvailable
                             ? `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
@@ -3438,11 +3383,11 @@
                 </svg>`;
 
                         let statusText = profile.estado;
-                        if (occupancy.count > 0) {
-                            const clientsText = occupancy.sales.map(s => s.cliente).join(', ');
-                            statusText = occupancy.isAvailable ? `Compartido (${clientsText})` : `Ocupado (${clientsText})`;
-                        } else {
-                            statusText = 'Disponible';
+                        if (!isAvailable) {
+                            const sale = allSales.find(s => s.id === profile.clienteId);
+                            if (sale) {
+                                statusText = `Ocupado (${sale.cliente})`;
+                            }
                         }
 
                         profilesHtml += `
@@ -3725,33 +3670,20 @@
                 '¿Estás seguro de mover esta venta a mantenimiento? El perfil asociado se liberará y se guardarán los días restantes.',
                 async () => {
                     try {
-                        // Temporarily update sale locally for occupancy calc
-                        const localSaleIndex = allSales.findIndex(s => s.id === id);
-                        if(localSaleIndex > -1) allSales[localSaleIndex].estado = 'EN_MANTENIMIENTO';
-
                         // 1. Release profile if exists
                         if (sale.accountId && sale.profileId) {
-                            const occupancy = getProfileOccupancy(sale.accountId, sale.profileId);
-
                             const account = allPlatformAccounts.find(a => a.id === sale.accountId);
                             if (account && account.platform !== 'Canva') {
                                 const profileRef = doc(db, "platformAccounts", sale.accountId, "Perfiles", sale.profileId);
-                                const updateData = { estado: 'Disponible' };
-                                if (occupancy.count === 0) {
-                                    updateData.fechaVencimiento = null;
-                                    updateData.clienteId = null;
-                                }
-                                await updateDoc(profileRef, updateData);
+                                await updateDoc(profileRef, { estado: 'Disponible', fechaVencimiento: null, clienteId: null });
 
                                 // Update local state for immediate feedback
                                 if (account.profiles) {
                                     const profile = account.profiles.find(p => p.id === sale.profileId);
                                     if (profile) {
                                         profile.estado = 'Disponible';
-                                        if (occupancy.count === 0) {
-                                            profile.fechaVencimiento = null;
-                                            profile.clienteId = null;
-                                        }
+                                        profile.fechaVencimiento = null;
+                                        profile.clienteId = null;
                                     }
                                 }
                                 renderPlatformAccounts();
@@ -3810,8 +3742,7 @@
                 const sourceAccount = allPlatformAccounts.find(acc => acc.id === accountId);
                 if (!sourceAccount || !sourceAccount.profiles) return;
 
-                // For simplicity, we define "occupied" for transfers as profiles that have at least 1 client.
-                const occupiedProfiles = sourceAccount.profiles.filter(p => getProfileOccupancy(accountId, p.id).count > 0);
+                const occupiedProfiles = sourceAccount.profiles.filter(p => p.estado === 'Ocupado');
 
                 if (occupiedProfiles.length === 0) {
                     alert('Esta cuenta no tiene perfiles ocupados para transferir.');
@@ -3834,7 +3765,7 @@
                     acc.id !== sourceAccount.id &&
                     acc.platform === sourceAccount.platform &&
                     acc.profiles &&
-                    acc.profiles.some(p => getProfileOccupancy(acc.id, p.id).isAvailable)
+                    acc.profiles.some(p => p.estado === 'Disponible')
                 );
 
                 if (validDestinations.length === 0) {
@@ -3843,7 +3774,7 @@
                 }
 
                 validDestinations.forEach(acc => {
-                    const availableCount = acc.profiles.filter(p => getProfileOccupancy(acc.id, p.id).isAvailable).length;
+                    const availableCount = acc.profiles.filter(p => p.estado === 'Disponible').length;
                     const option = document.createElement('option');
                     option.value = acc.id;
                     option.textContent = `${acc.email} (${availableCount} disp.)`;
@@ -3868,8 +3799,8 @@
                     return;
                 }
 
-                const occupiedSource = sourceAccount.profiles.filter(p => getProfileOccupancy(sourceAccount.id, p.id).count > 0);
-                const availableDest = destAccount.profiles.filter(p => getProfileOccupancy(destAccount.id, p.id).isAvailable);
+                const occupiedSource = sourceAccount.profiles.filter(p => p.estado === 'Ocupado');
+                const availableDest = destAccount.profiles.filter(p => p.estado === 'Disponible');
 
                 infoText.textContent = `Capacidad destino: ${availableDest.length} espacios. Necesarios: ${occupiedSource.length}.`;
                 infoText.classList.remove('hidden');
@@ -3881,8 +3812,8 @@
                     confirmBtn.disabled = true; // Enabled only when selection matches limit
 
                     occupiedSource.forEach(p => {
-                        const occupancy = getProfileOccupancy(sourceAccount.id, p.id);
-                        const clientName = occupancy.count > 0 ? occupancy.sales.map(s => s.cliente).join(', ') : 'Desconocido';
+                        const sale = allSales.find(s => s.id === p.clienteId);
+                        const clientName = sale ? sale.cliente : 'Desconocido';
 
                         const div = document.createElement('div');
                         div.className = 'flex items-center gap-2 p-2 bg-gray-50 rounded border border-gray-200';
@@ -3932,8 +3863,8 @@
                     const destAccount = allPlatformAccounts.find(a => a.id === destId);
 
                     let profilesToMove = [];
-                    const occupiedSource = sourceAccount.profiles.filter(p => getProfileOccupancy(sourceId, p.id).count > 0);
-                    const availableDest = destAccount.profiles.filter(p => getProfileOccupancy(destId, p.id).isAvailable);
+                    const occupiedSource = sourceAccount.profiles.filter(p => p.estado === 'Ocupado');
+                    const availableDest = destAccount.profiles.filter(p => p.estado === 'Disponible');
 
                     // Determine which profiles to move
                     const selectionContainer = document.getElementById('transfer-selection-container');
@@ -3952,46 +3883,28 @@
                     // Execute Transfer
                     const promises = profilesToMove.map(async (srcProfile, index) => {
                         const destProfile = availableDest[index]; // Map 1-to-1 to available slots
+                        const saleId = srcProfile.clienteId;
+
                         if (!destProfile) return; // Should not happen
-
-                        const sourceOccupancy = getProfileOccupancy(sourceId, srcProfile.id);
-
-                        // If shared, transfer ALL associated sales together to the SAME destination profile
-                        for (const sale of sourceOccupancy.sales) {
-                            // 2. Update Sale Record
-                            const saleRef = doc(db, "sales", sale.id);
-
-                            // Immediately simulate change for getProfileOccupancy to work
-                            sale.accountId = destId;
-                            sale.profileId = destProfile.id;
-
-                            await updateDoc(saleRef, {
-                                accountId: destId,
-                                profileId: destProfile.id,
-                                pin: destProfile.pin, // Update sale with new PIN from destination
-                                plataforma: destAccount.platform,
-                                correo: destAccount.email,
-                                contrasena: destAccount.password
-                            });
-                        }
-
-                        const destOccupancy = getProfileOccupancy(destId, destProfile.id);
 
                         // 1. Update Destination Profile
                         const destProfileRef = doc(db, "platformAccounts", destId, "Perfiles", destProfile.id);
-
-                        const updateDest = {
-                            clienteId: sourceOccupancy.sales[0].id, // keep at least 1 legacy string
+                        await updateDoc(destProfileRef, {
+                            estado: 'Ocupado',
+                            clienteId: saleId,
                             fechaVencimiento: srcProfile.fechaVencimiento
-                        };
+                        });
 
-                        if (!destOccupancy.isAvailable) {
-                            updateDest.estado = 'Ocupado';
-                        } else {
-                            updateDest.estado = 'Disponible';
-                        }
-
-                        await updateDoc(destProfileRef, updateDest);
+                        // 2. Update Sale Record
+                        const saleRef = doc(db, "sales", saleId);
+                        await updateDoc(saleRef, {
+                            accountId: destId,
+                            profileId: destProfile.id,
+                            pin: destProfile.pin, // Update sale with new PIN from destination
+                            plataforma: destAccount.platform,
+                            correo: destAccount.email,
+                            contrasena: destAccount.password
+                        });
 
                         // 3. Clear Source Profile
                         const srcProfileRef = doc(db, "platformAccounts", sourceId, "Perfiles", srcProfile.id);
@@ -4040,7 +3953,7 @@
             }
 
             // Warning message based on occupancy
-            const occupiedCount = account.profiles ? account.profiles.filter(p => getProfileOccupancy(accountId, p.id).count > 0).length : 0;
+            const occupiedCount = account.profiles ? account.profiles.filter(p => p.estado === 'Ocupado').length : 0;
             let message = '¿Estás seguro de que deseas eliminar esta cuenta? Todos sus perfiles serán borrados y esta acción es irreversible.';
 
             if (occupiedCount > 0) {
@@ -4054,20 +3967,16 @@
                     try {
                         // 1. Unlink Sales from Occupied Profiles
                         if (account.profiles) {
-                            const unlinkPromises = [];
-                            account.profiles.forEach(p => {
-                                const occupancy = getProfileOccupancy(accountId, p.id);
-                                if (occupancy.count > 0) {
-                                    occupancy.sales.forEach(sale => {
-                                        const saleRef = doc(db, "sales", sale.id);
-                                        // Remove account/profile linkage but keep sale active
-                                        unlinkPromises.push(updateDoc(saleRef, {
-                                            accountId: deleteField(),
-                                            profileId: deleteField()
-                                        }).catch(err => console.warn("Could not unlink sale:", sale.id, err)));
-                                    });
-                                }
-                            });
+                            const unlinkPromises = account.profiles
+                                .filter(p => p.estado === 'Ocupado' && p.clienteId)
+                                .map(p => {
+                                    const saleRef = doc(db, "sales", p.clienteId);
+                                    // Remove account/profile linkage but keep sale active
+                                    return updateDoc(saleRef, {
+                                        accountId: deleteField(),
+                                        profileId: deleteField()
+                                    }).catch(err => console.warn("Could not unlink sale:", p.clienteId, err));
+                                });
                             await Promise.all(unlinkPromises);
                         }
 
@@ -4203,31 +4112,16 @@
                 const docRef = await addDoc(collection(db, "sales"), newSale);
 
                 if (accountId && profileId) {
-                    // Temporarily add new sale to allSales to get new occupancy correctly
-                    allSales.push({...newSale, id: docRef.id});
-                    const occupancy = getProfileOccupancy(accountId, profileId);
-
                     const profileRef = doc(db, "platformAccounts", accountId, "Perfiles", profileId);
-
-                    const updateData = {
+                    await updateDoc(profileRef, {
+                        estado: 'Ocupado',
                         fechaVencimiento: f.finPlan.value,
                         clienteId: docRef.id
-                    };
-
-                    if (!occupancy.isAvailable) {
-                        updateData.estado = 'Ocupado';
-                    } else {
-                        updateData.estado = 'Disponible';
-                    }
-
-                    await updateDoc(profileRef, updateData);
+                    });
 
                     const account = allPlatformAccounts.find(a => a.id === accountId);
                     const profile = account.profiles.find(p => p.id === profileId);
-                    if (profile) {
-                        profile.estado = updateData.estado;
-                        // Important: pin was copied correctly above in newSale
-                    }
+                    if (profile) profile.estado = 'Ocupado';
                     renderPlatformAccounts();
                 }
 
@@ -4280,25 +4174,10 @@
             // Check if profile has changed
             if (originalSale.accountId && originalSale.profileId && (originalSale.accountId !== newAccountId ||
                 originalSale.profileId !== newProfileId)) {
-
-                // Simulate removal from old profile
-                const oldSaleLocalIndex = allSales.findIndex(s => s.id === saleId);
-                if (oldSaleLocalIndex > -1) {
-                    allSales[oldSaleLocalIndex].accountId = newAccountId;
-                    allSales[oldSaleLocalIndex].profileId = newProfileId;
-                }
-
                 // Free up the old profile
-                const oldOccupancy = getProfileOccupancy(originalSale.accountId, originalSale.profileId);
                 const oldProfileRef = doc(db, "platformAccounts", originalSale.accountId, "Perfiles",
                     originalSale.profileId);
-
-                const updateOld = { estado: 'Disponible' };
-                if (oldOccupancy.count === 0) {
-                    updateOld.fechaVencimiento = null;
-                    updateOld.clienteId = null;
-                }
-                await updateDoc(oldProfileRef, updateOld);
+                await updateDoc(oldProfileRef, { estado: 'Disponible', fechaVencimiento: null, clienteId: null });
             }
 
             // Construct full phone number for edit
@@ -4341,18 +4220,12 @@
 
                 // Occupy the new profile
                 if (newAccountId && newProfileId) {
-                    const newOccupancy = getProfileOccupancy(newAccountId, newProfileId);
                     const newProfileRef = doc(db, "platformAccounts", newAccountId, "Perfiles", newProfileId);
-                    const updateNew = {
+                    await updateDoc(newProfileRef, {
+                        estado: 'Ocupado',
                         fechaVencimiento: updatedSale.finPlan,
                         clienteId: saleId
-                    };
-                    if (!newOccupancy.isAvailable) {
-                        updateNew.estado = 'Ocupado';
-                    } else {
-                        updateNew.estado = 'Disponible';
-                    }
-                    await updateDoc(newProfileRef, updateNew);
+                    });
                 }
 
                 // Manually trigger a re-render
