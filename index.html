@@ -3446,9 +3446,9 @@
                         }
 
                         profilesHtml += `
-                <li class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                    <div class="flex flex-col">
-                        <span class="font-semibold text-gray-700">${profile.nombre}</span>
+                <li class="flex flex-wrap items-center justify-between p-3 bg-gray-50 rounded-lg gap-2">
+                    <div class="flex flex-col min-w-0">
+                        <span class="font-semibold text-gray-700 truncate">${profile.nombre}</span>
                         <div class="flex items-center gap-2 mt-0.5">
                             <span class="text-xs text-gray-500 font-mono">PIN: ${profile.pin || '<span class="italic text-gray-400">Sin PIN</span>'}</span>
                             <button class="edit-pin-btn p-1 text-blue-500 hover:text-blue-700 bg-blue-50 hover:bg-blue-100 rounded-full transition border border-blue-100 shadow-sm" data-profile-id="${profile.id}" data-current-pin="${profile.pin || ''}" title="Editar PIN">
@@ -3456,10 +3456,15 @@
                             </button>
                         </div>
                     </div>
-                    <span class="px-3 py-1 text-xs font-bold rounded-full ${statusColor} flex items-center gap-1">
-                        ${statusIcon}
-                        ${statusText}
-                    </span>
+                    <div class="flex items-center gap-2 flex-shrink-0">
+                        <span class="px-3 py-1 text-xs font-bold rounded-full ${statusColor} flex items-center gap-1">
+                            ${statusIcon}
+                            ${statusText}
+                        </span>
+                        <button class="delete-profile-btn p-1.5 text-red-500 hover:text-red-700 bg-red-50 hover:bg-red-100 rounded-full transition border border-red-100 shadow-sm" data-profile-id="${profile.id}" title="Eliminar Perfil">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                        </button>
+                    </div>
                 </li>
                 `;
                     });
@@ -3540,9 +3545,71 @@
                             }
                         });
                     });
+
+                    // Add Event Listeners for Delete Profile buttons
+                    selectors.profilesContentArea.querySelectorAll('.delete-profile-btn').forEach(btn => {
+                        btn.addEventListener('click', (e) => {
+                            const profileId = e.currentTarget.dataset.profileId;
+                            handleDeleteProfile(accountId, profileId);
+                        });
+                    });
                 }
 
                 openProfilesModal();
+            };
+
+            const handleDeleteProfile = (accountId, profileId) => {
+                const account = allPlatformAccounts.find(a => a.id === accountId);
+                if (!account || !account.profiles) return;
+
+                const profile = account.profiles.find(p => p.id === profileId);
+                if (!profile) return;
+
+                const occupancy = getProfileOccupancy(accountId, profileId);
+                const isOccupied = occupancy.count > 0;
+
+                let message = '¿Estás seguro de que deseas eliminar este perfil?';
+                if (isOccupied) {
+                    message = `⚠️ ADVERTENCIA: Este perfil tiene clientes asignados (${occupancy.sales.map(s => s.cliente).join(', ')}). Al eliminarlo, estas ventas quedarán "Sin cuenta" y pasarán a ser perfiles manuales (perderán su correo y contraseña). ¿Estás seguro de continuar?`;
+                }
+
+                showConfirmationModal(
+                    'Eliminar Perfil',
+                    message,
+                    async () => {
+                        try {
+                            // 1. If occupied, unlink sales
+                            if (isOccupied) {
+                                const unlinkPromises = occupancy.sales.map(sale => {
+                                    const saleRef = doc(db, "sales", sale.id);
+                                    // Make it a "manual profile" by removing accountId, profileId, and credentials
+                                    return updateDoc(saleRef, {
+                                        accountId: null,
+                                        profileId: null,
+                                        correo: null,
+                                        contrasena: null
+                                    }).catch(err => console.warn("Could not unlink sale:", sale.id, err));
+                                });
+                                await Promise.all(unlinkPromises);
+                            }
+
+                            // 2. Delete profile from Firestore
+                            const profileRef = doc(db, "platformAccounts", accountId, "Perfiles", profileId);
+                            await deleteDoc(profileRef);
+
+                            // 3. Update local state
+                            account.profiles = account.profiles.filter(p => p.id !== profileId);
+
+                            // 4. Re-render UI
+                            renderPlatformAccounts();
+                            await handleManageProfiles(accountId); // Refresh modal content
+
+                        } catch (error) {
+                            console.error("Error al eliminar el perfil:", error);
+                            alert("Error al eliminar el perfil. Revisa la consola para más detalles.");
+                        }
+                    }
+                );
             };
 
             const handleEditProfilePin = async (accountId, profileId, newPin) => {
