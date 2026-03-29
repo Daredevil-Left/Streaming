@@ -451,7 +451,13 @@
                             </form>
                         </div>
                     </div>
-                    <div id="account-view-filters" class="max-w-7xl mx-auto mb-6 flex flex-wrap gap-2 justify-center md:justify-start"></div>
+                    <div class="max-w-7xl mx-auto mb-6 flex flex-col md:flex-row justify-between items-center gap-4">
+                        <div id="account-view-filters" class="flex flex-wrap gap-2 justify-center md:justify-start"></div>
+                        <div id="account-status-filters" class="flex bg-gray-100 p-1 rounded-lg">
+                            <button id="filter-status-activas" class="px-4 py-2 rounded-md text-sm font-medium transition-colors bg-white shadow text-gray-800">Activas</button>
+                            <button id="filter-status-suspendidas" class="px-4 py-2 rounded-md text-sm font-medium transition-colors text-gray-500 hover:text-gray-700">En suspensión</button>
+                        </div>
+                    </div>
                     <div id="contenedor-cuentas-agrupadas" class="max-w-7xl mx-auto"></div>
                 </div>
 
@@ -1437,6 +1443,7 @@
             };
 
             let activeAccountViewFilter = 'Todos';
+            let activeAccountStatusFilter = 'Activas';
             let selectedServices = new Map(), selectedMonths = 1;
             let platformOrder = [];
 
@@ -1558,6 +1565,8 @@
                 pinSearchResult: document.getElementById('pin-search-result'),
                 availableAccountsGrid: document.getElementById('available-accounts-grid'),
                 accountViewFilters: document.getElementById('account-view-filters'),
+                filterStatusActivas: document.getElementById('filter-status-activas'),
+                filterStatusSuspendidas: document.getElementById('filter-status-suspendidas'),
                 toggleAddAccountBtn: document.getElementById('toggle-add-account-btn'),
                 collapsibleAccountsContent: document.getElementById('collapsible-accounts-content'),
                 maintenanceModal: document.getElementById('maintenance-modal'),
@@ -1574,6 +1583,25 @@
                     return input;
                 })(), // Ensure hidden input exists
             };
+
+            // Add event listeners for status filters
+            selectors.filterStatusActivas.addEventListener('click', () => {
+                activeAccountStatusFilter = 'Activas';
+                selectors.filterStatusActivas.classList.add('bg-white', 'shadow', 'text-gray-800');
+                selectors.filterStatusActivas.classList.remove('text-gray-500', 'hover:text-gray-700');
+                selectors.filterStatusSuspendidas.classList.remove('bg-white', 'shadow', 'text-gray-800');
+                selectors.filterStatusSuspendidas.classList.add('text-gray-500', 'hover:text-gray-700');
+                renderPlatformAccounts();
+            });
+
+            selectors.filterStatusSuspendidas.addEventListener('click', () => {
+                activeAccountStatusFilter = 'Suspendidas';
+                selectors.filterStatusSuspendidas.classList.add('bg-white', 'shadow', 'text-gray-800');
+                selectors.filterStatusSuspendidas.classList.remove('text-gray-500', 'hover:text-gray-700');
+                selectors.filterStatusActivas.classList.remove('bg-white', 'shadow', 'text-gray-800');
+                selectors.filterStatusActivas.classList.add('text-gray-500', 'hover:text-gray-700');
+                renderPlatformAccounts();
+            });
 
             const checkDailyClosure = async () => {
                 if (currentSeller === 'Renzo') return;
@@ -2588,7 +2616,13 @@
                 const { accountsList } = selectors;
                 accountsList.innerHTML = '';
 
-                let accountsToRender = allPlatformAccounts;
+                let accountsToRender = allPlatformAccounts.filter(acc => {
+                    if (activeAccountStatusFilter === 'Activas') {
+                        return !acc.isSuspended;
+                    } else {
+                        return acc.isSuspended;
+                    }
+                });
 
                 // Filter based on selected view filter
                 if (activeAccountViewFilter !== 'Todos') {
@@ -2655,6 +2689,10 @@
                             ? `<button class="transfer-btn p-2 text-orange-600 hover:bg-orange-50 rounded-lg transition" data-id="${account.id}" title="Transferir Perfiles"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path></svg></button>`
                             : '';
 
+                        const suspendBtnHtml = account.isSuspended
+                            ? `<button class="reactivate-account-btn p-2 text-green-600 hover:bg-green-50 rounded-lg transition" data-id="${account.id}" title="Reactivar"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></button>`
+                            : `<button class="suspend-account-btn p-2 text-yellow-600 hover:bg-yellow-50 rounded-lg transition" data-id="${account.id}" title="Mandar a suspensión"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></button>`;
+
                         return `
                         <div class="bg-white rounded-2xl shadow-md overflow-hidden border border-gray-200 hover:shadow-xl transition-shadow duration-300 flex flex-col h-full">
                             <div class="px-4 py-3 flex justify-between items-center" style="${headerBgStyle}">
@@ -2689,6 +2727,7 @@
                                 <div class="flex justify-end gap-2 pt-3 border-t border-gray-100 mt-2">
                                     ${manageProfilesBtnHtml}
                                     ${transferBtnHtml}
+                                    ${suspendBtnHtml}
                                     <button class="edit-account-btn p-2 text-indigo-600 hover:bg-indigo-50 rounded-lg transition" data-id="${account.id}" title="Editar"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L16.732 3.732z"></path></svg></button>
                                     <button class="delete-account-btn p-2 text-red-600 hover:bg-red-50 rounded-lg transition" data-id="${account.id}" title="Eliminar"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button>
                                 </div>
@@ -2697,6 +2736,19 @@
                     }).join('');
 
                     accountsList.innerHTML = cardsHtml;
+
+                    accountsList.querySelectorAll('.delete-account-btn').forEach(btn => {
+                        btn.addEventListener('click', e => handleDeleteAccount(e.currentTarget.dataset.id));
+                    });
+                    accountsList.querySelectorAll('.suspend-account-btn').forEach(btn => {
+                        btn.addEventListener('click', e => handleSuspendAccount(e.currentTarget.dataset.id));
+                    });
+                    accountsList.querySelectorAll('.reactivate-account-btn').forEach(btn => {
+                        btn.addEventListener('click', e => handleReactivateAccount(e.currentTarget.dataset.id));
+                    });
+                    accountsList.querySelectorAll('.edit-account-btn').forEach(btn => {
+                        btn.addEventListener('click', e => handleEditAccount(e.currentTarget.dataset.id));
+                    });
 
                     // Add Event Listeners for Copy Buttons (Specific to Grid View)
                     const handleCopyBtn = (btn) => {
@@ -2848,6 +2900,10 @@
             </button>`
                                 : '';
 
+                            const suspendBtnHtml = account.isSuspended
+                                ? `<button class="reactivate-account-btn p-2 bg-green-50 text-green-600 hover:bg-green-100 rounded-lg transition" data-id="${account.id}" title="Reactivar"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></button>`
+                                : `<button class="suspend-account-btn p-2 bg-yellow-50 text-yellow-600 hover:bg-yellow-100 rounded-lg transition" data-id="${account.id}" title="Mandar a suspensión"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></button>`;
+
                             return `
             <li class="list-group-item flex flex-col justify-between items-start py-4 px-4 border-b last:border-b-0 border-gray-100">
                 <div class="w-full mb-4">
@@ -2883,6 +2939,7 @@
                     <div class="flex items-center gap-2 justify-end w-full pt-3 mt-1 border-t border-gray-100">
                         ${manageProfilesBtnHtml}
                         ${transferBtnHtml}
+                        ${suspendBtnHtml}
                         <button
                             class="edit-account-btn p-2 bg-indigo-50 text-indigo-600 hover:bg-indigo-100 rounded-lg transition"
                             data-id="${account.id}" title="Editar Cuenta">
@@ -2926,6 +2983,12 @@
                 // 3. Add Event Listeners (Common logic remains mostly the same, re-attaching to new elements)
                 accountsList.querySelectorAll('.delete-account-btn').forEach(btn => {
                     btn.addEventListener('click', e => handleDeleteAccount(e.currentTarget.dataset.id));
+                });
+                accountsList.querySelectorAll('.suspend-account-btn').forEach(btn => {
+                    btn.addEventListener('click', e => handleSuspendAccount(e.currentTarget.dataset.id));
+                });
+                accountsList.querySelectorAll('.reactivate-account-btn').forEach(btn => {
+                    btn.addEventListener('click', e => handleReactivateAccount(e.currentTarget.dataset.id));
                 });
                 accountsList.querySelectorAll('.edit-account-btn').forEach(btn => {
                     btn.addEventListener('click', e => handleEditAccount(e.currentTarget.dataset.id));
@@ -4130,6 +4193,60 @@
             );
         };
 
+        window.handleSuspendAccount = async (accountId) => {
+            const account = allPlatformAccounts.find(acc => acc.id === accountId);
+            if (!account) return;
+
+            showConfirmationModal(
+                'Mandar cuenta a suspensión',
+                '¿Estás seguro de mandar esta cuenta a suspensión? Todas las personas en esta cuenta pasarán a estado "EN_MANTENIMIENTO".',
+                async () => {
+                    try {
+                        const accountRef = doc(db, "platformAccounts", accountId);
+                        await updateDoc(accountRef, { isSuspended: true });
+
+                        const updatePromises = [];
+                        if (account.profiles) {
+                            account.profiles.forEach(p => {
+                                const occupancy = getProfileOccupancy(accountId, p.id);
+                                occupancy.sales.forEach(sale => {
+                                    if (sale.estado !== 'ARCHIVADO' && sale.estado !== 'EN_MANTENIMIENTO') {
+                                        const saleRef = doc(db, "sales", sale.id);
+                                        updatePromises.push(updateDoc(saleRef, { estado: 'EN_MANTENIMIENTO' }));
+                                    }
+                                });
+                            });
+                        }
+                        await Promise.all(updatePromises);
+                        renderPlatformAccounts();
+                    } catch (error) {
+                        console.error("Error al suspender la cuenta:", error);
+                        alert("Hubo un error al suspender la cuenta.");
+                    }
+                }
+            );
+        };
+
+        window.handleReactivateAccount = async (accountId) => {
+            const account = allPlatformAccounts.find(acc => acc.id === accountId);
+            if (!account) return;
+
+            showConfirmationModal(
+                'Reactivar cuenta',
+                '¿Estás seguro de reactivar esta cuenta? Recuerda que las personas asociadas seguirán en Mantenimiento y deberás sacarlas manualmente.',
+                async () => {
+                    try {
+                        const accountRef = doc(db, "platformAccounts", accountId);
+                        await updateDoc(accountRef, { isSuspended: false });
+                        renderPlatformAccounts();
+                    } catch (error) {
+                        console.error("Error al reactivar la cuenta:", error);
+                        alert("Hubo un error al reactivar la cuenta.");
+                    }
+                }
+            );
+        };
+
         window.handleDeleteAccount = async (accountId) => {
             const account = allPlatformAccounts.find(acc => acc.id === accountId);
             if (!account) {
@@ -4495,7 +4612,8 @@
                         f['account-email'].value, password: f['account-password'].value, enlace: f.enlace.value, fechaPago:
                         f.fechaPago.value,
                     bankName: f['account-bank'].value,
-                    cardNumber: f['account-card'].value
+                    cardNumber: f['account-card'].value,
+                    isSuspended: false
                 }; try {
                     await addDoc(collection(db, "platformAccounts"), newAccount); f.reset();
                     document.querySelectorAll('#account-platform-buttons button').forEach(b =>
