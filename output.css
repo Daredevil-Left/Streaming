@@ -108,7 +108,7 @@
   --tw-contain-style:  ;
 }
 
-/* ! tailwindcss v3.4.17 | MIT License | https://tailwindcss.com */
+/* ! tailwindcss v3.4.19 | MIT License | https://tailwindcss.com */
 
 /*
 1. Prevent padding and border from affecting element width. (https://github.com/mozdevs/cssremedy/issues/4)
@@ -588,6 +588,18 @@ video {
   }
 }
 
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
 .pointer-events-none {
   pointer-events: none;
 }
@@ -629,12 +641,32 @@ video {
   bottom: 0px;
 }
 
+.-top-10 {
+  top: -2.5rem;
+}
+
+.bottom-20 {
+  bottom: 5rem;
+}
+
 .bottom-3 {
   bottom: 0.75rem;
 }
 
+.bottom-4 {
+  bottom: 1rem;
+}
+
+.bottom-6 {
+  bottom: 1.5rem;
+}
+
 .left-0 {
   left: 0px;
+}
+
+.left-1\/2 {
+  left: 50%;
 }
 
 .left-3 {
@@ -649,8 +681,16 @@ video {
   right: 0.75rem;
 }
 
+.right-4 {
+  right: 1rem;
+}
+
 .right-5 {
   right: 1.25rem;
+}
+
+.right-6 {
+  right: 1.5rem;
 }
 
 .top-1\/2 {
@@ -1002,6 +1042,11 @@ video {
 
 .flex-grow {
   flex-grow: 1;
+}
+
+.-translate-x-1\/2 {
+  --tw-translate-x: -50%;
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
 }
 
 .-translate-y-1\/2 {
@@ -1426,6 +1471,16 @@ video {
 .border-yellow-500 {
   --tw-border-opacity: 1;
   border-color: rgb(234 179 8 / var(--tw-border-opacity, 1));
+}
+
+.bg-\[\#6f00a5\] {
+  --tw-bg-opacity: 1;
+  background-color: rgb(111 0 165 / var(--tw-bg-opacity, 1));
+}
+
+.bg-\[\#7408b5\] {
+  --tw-bg-opacity: 1;
+  background-color: rgb(116 8 181 / var(--tw-bg-opacity, 1));
 }
 
 .bg-black {
@@ -2225,9 +2280,25 @@ video {
   transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
 }
 
+.hover\:scale-110:hover {
+  --tw-scale-x: 1.1;
+  --tw-scale-y: 1.1;
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+}
+
 .hover\:border-gray-600:hover {
   --tw-border-opacity: 1;
   border-color: rgb(75 85 99 / var(--tw-border-opacity, 1));
+}
+
+.hover\:bg-\[\#5a0085\]:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgb(90 0 133 / var(--tw-bg-opacity, 1));
+}
+
+.hover\:bg-\[\#5a068c\]:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgb(90 6 140 / var(--tw-bg-opacity, 1));
 }
 
 .hover\:bg-blue-100:hover {
@@ -2541,6 +2612,10 @@ video {
   color: rgb(99 102 241 / var(--tw-text-opacity, 1));
 }
 
+.group:hover .group-hover\:opacity-100 {
+  opacity: 1;
+}
+
 .group:hover .group-hover\:opacity-20 {
   opacity: 0.2;
 }
@@ -2565,6 +2640,14 @@ video {
 }
 
 @media (min-width: 768px) {
+  .md\:bottom-10 {
+    bottom: 2.5rem;
+  }
+
+  .md\:right-10 {
+    right: 2.5rem;
+  }
+
   .md\:col-span-1 {
     grid-column: span 1 / span 1;
   }

@@ -354,6 +354,22 @@
                             </div>
                         </div>
                     </div>
+
+                    <!-- Botón Flotante Yape (Solo en Dashboard) -->
+                    <button onclick="copyYapeInfo()"
+                            class="fixed bottom-6 right-6 md:bottom-10 md:right-10 w-16 h-16 bg-[#7408b5] hover:bg-[#5a068c] rounded-full shadow-2xl flex items-center justify-center transition-transform hover:scale-110 z-50 group"
+                            title="Copiar datos de Yape">
+                        <svg class="w-10 h-10 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 2v20"></path>
+                            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                        </svg>
+                        <span class="absolute -top-10 bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">Copiar Yape</span>
+                    </button>
+                </div>
+
+                <!-- Toast Notification for Yape -->
+                <div id="yape-toast" class="fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-green-500 text-white px-6 py-3 rounded-full shadow-lg opacity-0 transition-opacity duration-300 pointer-events-none z-50 font-medium">
+                    ¡Datos de Yape copiados!
                 </div>
 
                 <!-- Cuentas View -->
@@ -1352,6 +1368,21 @@
         import { collection, addDoc, onSnapshot, doc, updateDoc, deleteDoc, getDocs, setDoc, getDoc, deleteField } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
         import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { db, auth } from "./firebase-config.js";
+
+        // Yape Copy Info Logic
+        window.copyYapeInfo = () => {
+            const textToCopy = `YAPE: 933622323\nNombre: Chartisa P.`;
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                const toast = document.getElementById('yape-toast');
+                toast.classList.remove('opacity-0');
+                setTimeout(() => {
+                    toast.classList.add('opacity-0');
+                }, 3000);
+            }).catch(err => {
+                console.error('Error al copiar: ', err);
+                alert('Error al copiar los datos de Yape');
+            });
+        };
 
         let currentSeller = '';
 
