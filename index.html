@@ -1769,6 +1769,7 @@
 
                 allPlatformAccounts.forEach(account => {
                     if (account.platform === 'Canva') return; // Skip Canva as it doesn't have standard profile management
+                    if (account.isSuspended) return; // Skip suspended accounts
 
                     if (account.profiles && Array.isArray(account.profiles)) {
                         const availableCount = account.profiles.filter(p => getProfileOccupancy(account.id, p.id).isAvailable).length;
