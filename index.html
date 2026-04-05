@@ -944,6 +944,14 @@
                         <option value="Gratis">Gratis</option>
                     </select>
                 </div>
+                <div class="col-span-1 md:col-span-2">
+                    <label for="edit-estado-manual" class="block text-sm font-medium text-gray-600 mb-2">Estado de la Venta</label>
+                    <select id="edit-estado-manual" name="edit-estado-manual" class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white">
+                        <option value="ACTIVO">Activo</option>
+                        <option value="EN_MANTENIMIENTO">En Mantenimiento</option>
+                        <option value="ARCHIVADO">Archivado</option>
+                    </select>
+                </div>
                 <div class="lg:col-span-1 md:col-span-1"><label for="edit-notas"
                         class="block text-sm font-medium text-gray-600 mb-2">Notas Adicionales</label><input type="text"
                         id="edit-notas" name="edit-notas" class="w-full px-4 py-2 border border-gray-300 rounded-lg">
@@ -3205,6 +3213,10 @@
                 f['edit-notas'].value = sale.notas || '';
                 f['edit-metodoPago'].value = sale.metodoPago || '';
 
+                if (f['edit-estado-manual']) {
+                    f['edit-estado-manual'].value = sale.estado || 'ACTIVO';
+                }
+
                 // Reset status flag (default to current status or ignore if not restoring)
                 if (selectors.editSaleStatus) selectors.editSaleStatus.value = '';
 
@@ -3873,6 +3885,11 @@
 
             // Set restoration flag
             if (selectors.editSaleStatus) selectors.editSaleStatus.value = 'ACTIVO';
+
+            const editEstadoManual = document.getElementById('edit-estado-manual');
+            if (editEstadoManual) {
+                editEstadoManual.value = 'ACTIVO';
+            }
 
             alert(`Reactivando cliente. Días restantes: ${remainingDays}. \nPor favor asigne una nueva cuenta y perfil.`);
         };
@@ -4547,8 +4564,16 @@
                 profileId: newProfileId
             };
 
-            // Apply status update if flag is set (e.g. Restore)
-            if (selectors.editSaleStatus && selectors.editSaleStatus.value === 'ACTIVO') {
+            const manualStatus = f['edit-estado-manual'] ? f['edit-estado-manual'].value : null;
+
+            // Apply explicit manual status if provided
+            if (manualStatus) {
+                updatedSale.estado = manualStatus;
+                if (manualStatus === 'ACTIVO' && originalSale.estado === 'EN_MANTENIMIENTO') {
+                    updatedSale.diasRestantes = deleteField();
+                }
+            } else if (selectors.editSaleStatus && selectors.editSaleStatus.value === 'ACTIVO') {
+                // Fallback to legacy flag just in case
                 updatedSale.estado = 'ACTIVO';
                 updatedSale.diasRestantes = deleteField(); // Remove stored days
             }
