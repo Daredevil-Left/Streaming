@@ -4711,7 +4711,7 @@
                     finPlan: newEndDate,
                     createdAt: new Date().toISOString(),
                     estado: 'ACTIVO',
-                    metodoPago: 'Falta pagar', // Reset payment status or ask user (assuming 'Falta pagar' for safety)
+                    metodoPago: 'BCP', // Default payment status for renewal
                     notas: `Renovación de venta anterior. ${sale.notas || ''}`
                 };
                 delete newSale.id; // Firestore will assign new ID
