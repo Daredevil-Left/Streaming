@@ -982,6 +982,90 @@
         </div>
     </div>
 
+    <!-- Modal for PIN Change Alert -->
+    <div id="pin-change-alert-modal"
+        class="modal fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 z-[70] hidden opacity-0">
+        <div class="modal-content bg-white w-full max-w-md rounded-2xl shadow-2xl overflow-hidden transform scale-95 transition-all relative">
+            <div class="bg-yellow-500 p-4 text-center">
+                <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-white bg-opacity-20 mb-2">
+                    <svg class="h-8 w-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                    </svg>
+                </div>
+                <h2 class="text-xl font-bold text-white">¡Actualización de PIN Requerida!</h2>
+                <p class="text-yellow-100 text-sm mt-1">El perfil ha sido liberado en el sistema.</p>
+            </div>
+
+            <div class="p-6 space-y-4">
+                <!-- Info del Cliente y Perfil -->
+                <div class="bg-gray-50 rounded-xl p-3 border border-gray-200">
+                    <div class="grid grid-cols-2 gap-2 text-sm">
+                        <div>
+                            <p class="text-gray-500 text-xs font-bold uppercase">Cliente Eliminado</p>
+                            <p id="pin-alert-client" class="font-semibold text-gray-800 truncate"></p>
+                        </div>
+                        <div>
+                            <p class="text-gray-500 text-xs font-bold uppercase">Perfil</p>
+                            <p id="pin-alert-profile" class="font-semibold text-gray-800 truncate"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Credenciales con Copy -->
+                <div class="space-y-3">
+                    <div class="flex items-center justify-between bg-gray-50 rounded-lg p-2 border border-gray-200">
+                        <div class="min-w-0 flex-1">
+                            <span class="text-xs text-gray-500 uppercase font-bold block">Correo Cuenta Madre</span>
+                            <span id="pin-alert-email" class="text-gray-800 font-medium truncate block"></span>
+                        </div>
+                        <button class="copy-field-btn ml-2 p-2 rounded hover:bg-gray-200 text-gray-600 transition" data-target="pin-alert-email" title="Copiar Correo">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
+                        </button>
+                    </div>
+
+                    <div class="flex items-center justify-between bg-gray-50 rounded-lg p-2 border border-gray-200">
+                        <div class="min-w-0 flex-1">
+                            <span class="text-xs text-gray-500 uppercase font-bold block">Contraseña Cuenta Madre</span>
+                            <span id="pin-alert-password" class="text-gray-800 font-medium truncate block"></span>
+                        </div>
+                        <button class="copy-field-btn ml-2 p-2 rounded hover:bg-gray-200 text-gray-600 transition" data-target="pin-alert-password" title="Copiar Contraseña">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- PIN Changes -->
+                <div class="flex items-center justify-center gap-4 py-2">
+                    <div class="text-center">
+                        <span class="text-xs text-gray-400 uppercase font-bold block">PIN Anterior</span>
+                        <span id="pin-alert-old-pin" class="text-gray-500 font-bold text-lg line-through"></span>
+                    </div>
+                    <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                    <div class="text-center">
+                        <span class="text-xs text-green-600 uppercase font-bold block">NUEVO PIN</span>
+                        <span id="pin-alert-new-pin" class="text-green-600 font-black text-2xl"></span>
+                    </div>
+                </div>
+
+                <!-- Crunchyroll / Shared Profile Warning -->
+                <div id="pin-alert-crunchy-warning" class="hidden bg-orange-100 border-l-4 border-orange-500 text-orange-700 p-3 rounded text-sm">
+                    <p class="font-bold flex items-center mb-1">
+                        <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>
+                        ¡Perfil Compartido!
+                    </p>
+                    <p>Queda otro usuario en este perfil. <br>El PIN ha sido actualizado para él también. <b>Asegúrate de enviarle el nuevo PIN.</b></p>
+                </div>
+
+            </div>
+
+            <div class="p-4 bg-gray-50 border-t border-gray-100">
+                <button id="close-pin-alert-btn" class="w-full py-3 bg-gray-800 text-white font-bold rounded-xl hover:bg-gray-900 shadow-md transition">
+                    Entendido
+                </button>
+            </div>
+        </div>
+    </div>
+
     <div id="archive-delete-modal"
         class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden opacity-0">
         <div class="modal-content bg-white w-full max-w-lg rounded-2xl shadow-2xl p-8 transform scale-95 text-center">
@@ -1582,6 +1666,8 @@
                 maintenanceList: document.getElementById('maintenance-list'),
                 dailyClosureModal: document.getElementById('daily-closure-modal'),
                 confirmDailyDepositBtn: document.getElementById('confirm-daily-deposit-btn'),
+                pinChangeAlertModal: document.getElementById('pin-change-alert-modal'),
+                closePinAlertBtn: document.getElementById('close-pin-alert-btn'),
                 editSaleStatus: document.getElementById('edit-sale-status') || (() => {
                     const input = document.createElement('input');
                     input.type = 'hidden';
@@ -3295,11 +3381,65 @@
                 }, 300);
             };
 
+
+            const generateNewPin = (platform) => {
+                const isAmazon = (platform && platform.toLowerCase().includes('amazon'));
+                const length = isAmazon ? 5 : 4;
+                let pin = '';
+                for (let i = 0; i < length; i++) {
+                    pin += Math.floor(Math.random() * 10).toString();
+                }
+                return pin;
+            };
+
+            window.showPinChangeAlertModal = window.showPinChangeAlertModal = (saleData, profileData, accountData, oldPin, newPin, isShared) => {
+                const modal = selectors.pinChangeAlertModal;
+
+                document.getElementById('pin-alert-client').textContent = saleData.cliente || 'Desconocido';
+                document.getElementById('pin-alert-profile').textContent = profileData ? profileData.nombre : 'Desconocido';
+
+                document.getElementById('pin-alert-email').textContent = accountData ? accountData.email : 'N/A';
+                document.getElementById('pin-alert-password').textContent = accountData ? accountData.password : 'N/A';
+
+                document.getElementById('pin-alert-old-pin').textContent = oldPin || 'Ninguno';
+                document.getElementById('pin-alert-new-pin').textContent = newPin;
+
+                const warningEl = document.getElementById('pin-alert-crunchy-warning');
+                if (isShared) {
+                    warningEl.classList.remove('hidden');
+                } else {
+                    warningEl.classList.add('hidden');
+                }
+
+                modal.classList.remove('hidden');
+                setTimeout(() => {
+                    modal.classList.remove('opacity-0');
+                    modal.querySelector('.modal-content').classList.remove('scale-95');
+                }, 10);
+            };
+
+            const closePinChangeAlertModal = () => {
+                const modal = selectors.pinChangeAlertModal;
+                modal.classList.add('opacity-0');
+                modal.querySelector('.modal-content').classList.add('scale-95');
+                setTimeout(() => {
+                    modal.classList.add('hidden');
+                }, 300);
+            };
+
             const handleArchiveAction = async (id) => {
                 const sale = allSales.find(s => s.id === id);
                 if (!sale) return;
 
                 try {
+                    // Variables for PIN Change logic
+                    let needsPinChange = false;
+                    let oldPin = null;
+                    let newPin = null;
+                    let isShared = false;
+                    let accountData = null;
+                    let profileData = null;
+
                     // Update sale first so dynamic calculation works
                     await updateDoc(doc(db, "sales", id), { estado: 'ARCHIVADO' });
 
@@ -3313,19 +3453,42 @@
 
                         const account = allPlatformAccounts.find(a => a.id === sale.accountId);
                         if (account && account.platform !== 'Canva') {
+                            accountData = account;
+                            profileData = account.profiles.find(p => p.id === sale.profileId);
+
+                            needsPinChange = true;
+                            oldPin = profileData ? profileData.pin : sale.pin;
+                            newPin = generateNewPin(account.platform);
+                            isShared = occupancy.count > 0; // If there are still active sales on this profile, it's shared
+
                             const profileRef = doc(db, "platformAccounts", sale.accountId, "Perfiles", sale.profileId);
-                            const updateData = { estado: 'Disponible' };
+                            const updateData = { estado: 'Disponible', pin: newPin };
                             if(occupancy.count === 0) {
                                 updateData.fechaVencimiento = null;
                                 updateData.clienteId = null;
+                            } else {
+                                updateData.estado = 'Ocupado'; // Keep occupied if shared
                             }
                             await updateDoc(profileRef, updateData);
+
+                            // If shared, update the other sales' pin
+                            if (isShared) {
+                                for (const otherSale of occupancy.sales) {
+                                    if (otherSale.id !== id) {
+                                        await updateDoc(doc(db, "sales", otherSale.id), { pin: newPin });
+                                        // Update local state
+                                        const otherSaleLocal = allSales.find(s => s.id === otherSale.id);
+                                        if (otherSaleLocal) otherSaleLocal.pin = newPin;
+                                    }
+                                }
+                            }
 
                             // Update local state for immediate feedback
                             if (account.profiles) {
                                 const profile = account.profiles.find(p => p.id === sale.profileId);
                                 if (profile) {
-                                    profile.estado = 'Disponible';
+                                    profile.estado = updateData.estado;
+                                    profile.pin = newPin;
                                 }
                             }
                             renderPlatformAccounts();
@@ -3333,6 +3496,11 @@
                     }
 
                     hideArchiveDeleteModal();
+
+                    if (needsPinChange) {
+                        showPinChangeAlertModal(sale, profileData, accountData, oldPin, newPin, isShared);
+                    }
+
                 } catch (e) {
                     console.error("Error archiving sale: ", e);
                     alert('Error al archivar la venta.');
@@ -3344,6 +3512,13 @@
                 if (!sale) return;
 
                 try {
+                    let needsPinChange = false;
+                    let oldPin = null;
+                    let newPin = null;
+                    let isShared = false;
+                    let accountData = null;
+                    let profileData = null;
+
                     await deleteDoc(doc(db, "sales", id));
 
                     // Release profile if it exists
@@ -3354,19 +3529,42 @@
 
                         const account = allPlatformAccounts.find(a => a.id === sale.accountId);
                         if (account && account.platform !== 'Canva') {
+                            accountData = account;
+                            profileData = account.profiles.find(p => p.id === sale.profileId);
+
+                            needsPinChange = true;
+                            oldPin = profileData ? profileData.pin : sale.pin;
+                            newPin = generateNewPin(account.platform);
+                            isShared = occupancy.count > 0;
+
                             const profileRef = doc(db, "platformAccounts", sale.accountId, "Perfiles", sale.profileId);
-                            const updateData = { estado: 'Disponible' };
+                            const updateData = { estado: 'Disponible', pin: newPin };
                             if(occupancy.count === 0) {
                                 updateData.fechaVencimiento = null;
                                 updateData.clienteId = null;
+                            } else {
+                                updateData.estado = 'Ocupado';
                             }
                             await updateDoc(profileRef, updateData);
+
+                            // If shared, update the other sales' pin
+                            if (isShared) {
+                                for (const otherSale of occupancy.sales) {
+                                    if (otherSale.id !== id) {
+                                        await updateDoc(doc(db, "sales", otherSale.id), { pin: newPin });
+                                        // Update local state
+                                        const otherSaleLocal = allSales.find(s => s.id === otherSale.id);
+                                        if (otherSaleLocal) otherSaleLocal.pin = newPin;
+                                    }
+                                }
+                            }
 
                             // Update local state
                             if (account.profiles) {
                                 const profile = account.profiles.find(p => p.id === sale.profileId);
                                 if (profile) {
-                                    profile.estado = 'Disponible';
+                                    profile.estado = updateData.estado;
+                                    profile.pin = newPin;
                                 }
                             }
                             renderPlatformAccounts();
@@ -3374,6 +3572,11 @@
                     }
 
                     hideArchiveDeleteModal();
+
+                    if (needsPinChange) {
+                        showPinChangeAlertModal(sale, profileData, accountData, oldPin, newPin, isShared);
+                    }
+
                 } catch (e) {
                     console.error("Error deleting sale: ", e);
                     alert('Error al eliminar la venta.');
@@ -3895,6 +4098,7 @@
         };
 
         selectors.closeMaintenanceModalBtn.addEventListener('click', toggleMaintenanceModal);
+        selectors.closePinAlertBtn.addEventListener('click', closePinChangeAlertModal);
 
         const handleMoveToMaintenance = (id) => {
             const sale = allSales.find(s => s.id === id);
