@@ -224,6 +224,15 @@
                     </svg>
                     <span class="ml-4 sidebar-text">Precios</span>
                 </a>
+                <a href="#" id="nav-reportes" class="flex items-center py-2.5 px-2 rounded-md hover:bg-gray-700">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                        </path>
+                    </svg>
+                    <span class="ml-4 sidebar-text">Reportes</span>
+                </a>
             </nav>
             <div class="px-2 py-4">
                 <button id="logout-btn"
@@ -384,11 +393,49 @@
                         </div>
                         <div id="collapsible-accounts-content" class="mt-6 hidden transition-all duration-300 ease-in-out">
                             <form id="add-account-form" class="space-y-6 mb-6">
-                                <div>
+                                <div class="flex items-center mb-4">
+                                    <input id="is-combo-checkbox" type="checkbox" class="w-4 h-4 text-indigo-600 bg-gray-100 border-gray-300 rounded focus:ring-indigo-500">
+                                    <label for="is-combo-checkbox" class="ml-2 text-sm font-medium text-gray-900">Es un paquete/combo (Ej. DGO + Disney + Amazon)</label>
+                                </div>
+
+                                <div id="single-account-platform-container">
                                     <label class="block text-sm font-medium text-gray-600 mb-2">Plataforma</label>
                                     <div id="account-platform-buttons" class="flex flex-wrap gap-2"></div>
                                     <input type="hidden" id="account-platform" name="account-platform" required>
                                 </div>
+
+                                <div id="combo-platforms-container" class="hidden bg-gray-50 p-4 rounded-xl border border-gray-200 mb-6 space-y-4">
+                                    <h4 class="text-sm font-bold text-gray-700">Sub-cuentas del Combo</h4>
+                                    <div id="combo-platforms-list" class="space-y-3">
+                                        <!-- Default Combo Items -->
+                                        <div class="flex items-center gap-3 combo-item">
+                                            <input type="text" value="DGO" class="combo-platform-name w-1/2 px-3 py-2 border border-gray-300 rounded-lg text-sm bg-gray-100" readonly>
+                                            <div class="flex items-center w-1/2 gap-2">
+                                                <input type="number" value="4" min="1" class="combo-profile-qty w-full px-3 py-2 border border-gray-300 rounded-lg text-sm" placeholder="Perfiles">
+                                                <span class="text-xs text-gray-500">Perfiles</span>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center gap-3 combo-item">
+                                            <input type="text" value="Disney+" class="combo-platform-name w-1/2 px-3 py-2 border border-gray-300 rounded-lg text-sm bg-gray-100" readonly>
+                                            <div class="flex items-center w-1/2 gap-2">
+                                                <input type="number" value="7" min="1" class="combo-profile-qty w-full px-3 py-2 border border-gray-300 rounded-lg text-sm" placeholder="Perfiles">
+                                                <span class="text-xs text-gray-500">Perfiles</span>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center gap-3 combo-item">
+                                            <input type="text" value="Amazon Prime Video" class="combo-platform-name w-1/2 px-3 py-2 border border-gray-300 rounded-lg text-sm bg-gray-100" readonly>
+                                            <div class="flex items-center w-1/2 gap-2">
+                                                <input type="number" value="5" min="1" class="combo-profile-qty w-full px-3 py-2 border border-gray-300 rounded-lg text-sm" placeholder="Perfiles">
+                                                <span class="text-xs text-gray-500">Perfiles</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <button type="button" id="add-combo-platform-btn" class="text-indigo-600 hover:text-indigo-800 text-sm font-medium flex items-center mt-2">
+                                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                                        Agregar otra plataforma
+                                    </button>
+                                </div>
+
                                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                                     <div>
                                         <label for="account-email"
@@ -423,6 +470,10 @@
                                             class="block text-sm font-medium text-gray-600 mb-2">Fecha de pago</label>
                                         <input type="date" id="fechaPago" name="fechaPago"
                                             class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+                                    </div>
+                                    <div>
+                                        <label for="account-cost" class="block text-sm font-medium text-gray-600 mb-2">Costo (S/)</label>
+                                        <input type="number" id="account-cost" name="account-cost" step="0.01" min="0" class="w-full px-4 py-2 border border-gray-300 rounded-lg" required>
                                     </div>
                                 </div>
                                 <div id="add-bank-details-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-6 hidden">
@@ -725,6 +776,46 @@
                                         Gasto</button>
                                 </form>
                             </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Reportes View -->
+                <div id="reportes-view" class="view hidden max-w-7xl mx-auto">
+                    <h1 class="text-2xl md:text-3xl font-bold text-gray-800 mb-6 md:mb-8 px-2 md:px-0">Reportes Mensuales</h1>
+
+                    <div class="bg-white p-6 rounded-2xl shadow-lg mb-8 border border-gray-200">
+                        <div class="flex flex-col md:flex-row justify-between items-center mb-6">
+                            <h3 class="text-lg font-semibold text-gray-700">Ganancias y Pérdidas por Cuenta</h3>
+                            <div class="flex gap-4 mt-4 md:mt-0">
+                                <input type="month" id="report-month-filter" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500">
+                            </div>
+                        </div>
+
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th scope="col" class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Cuenta / Combo</th>
+                                        <th scope="col" class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Costo Mensual</th>
+                                        <th scope="col" class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Ingresos del Mes</th>
+                                        <th scope="col" class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Balance</th>
+                                        <th scope="col" class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Estado</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="reports-grid" class="bg-white divide-y divide-gray-200">
+                                    <!-- Rows injected via JS -->
+                                </tbody>
+                                <tfoot class="bg-gray-50 font-bold" id="reports-footer">
+                                    <tr>
+                                        <td class="px-4 py-3 text-right">TOTALES:</td>
+                                        <td class="px-4 py-3" id="report-total-cost">S/0.00</td>
+                                        <td class="px-4 py-3" id="report-total-income">S/0.00</td>
+                                        <td class="px-4 py-3" id="report-total-balance">S/0.00</td>
+                                        <td class="px-4 py-3"></td>
+                                    </tr>
+                                </tfoot>
+                            </table>
                         </div>
                     </div>
                 </div>
@@ -1206,6 +1297,10 @@
                         <input type="date" id="edit-account-fechaPago"
                             class="w-full px-4 py-2 border border-gray-300 rounded-lg">
                     </div>
+                    <div>
+                        <label for="edit-account-cost" class="block text-sm font-medium text-gray-600 mb-2">Costo (S/)</label>
+                        <input type="number" id="edit-account-cost" name="edit-account-cost" step="0.01" min="0" class="w-full px-4 py-2 border border-gray-300 rounded-lg" required>
+                    </div>
                 </div>
                 <div id="edit-bank-details-container" class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6 hidden">
                     <div>
@@ -1501,6 +1596,7 @@
                 'IPTV Premium': { color: 'text-teal-500', bg: '#00AEEF', logo: 'https://cdn-icons-png.flaticon.com/512/2989/2989835.png' },
                 'Vix+': { color: 'text-yellow-400', bg: '#F8C100', logo: 'https://logo.clearbit.com/vix.com' },
                 'Paramount+': { color: 'text-blue-800', bg: '#0064FF', logo: 'https://logo.clearbit.com/paramountplus.com' },
+                'DGO': { color: 'text-blue-600', bg: '#0055A5', logo: 'https://logo.clearbit.com/directvgo.com' },
                 'Otro': { color: 'text-gray-500', bg: '#6B7280', logo: '' }
             };
             platformStyles['HBO Max'] = platformStyles['HBO Max Estándar'];
@@ -1516,7 +1612,8 @@
                 { id: 'crunchy', name: 'Crunchyroll', cost: 7.50, price: 5.00, type: 'monthly', divider: 5, logo: 'https://upload.wikimedia.org/wikipedia/commons/0/08/Crunchyroll_Logo.png', color: '#F47521' },
                 { id: 'vix', name: 'Vix+', cost: 8.20, price: 6.00, type: 'monthly', divider: 5, logo: 'https://upload.wikimedia.org/wikipedia/commons/b/b6/ViX_logo_2022.svg', color: '#F8C100' },
                 { id: 'universal', name: 'Universal+', cost: 7.50, price: 6.00, type: 'monthly', divider: 5, logo: 'https://upload.wikimedia.org/wikipedia/commons/2/2d/Universal_Pictures_Logo.svg', color: '#000000' },
-                { id: 'canva', name: 'Canva Pro', cost: 8.00, price: 8.00, type: 'annual', divider: 1, logo: 'https://upload.wikimedia.org/wikipedia/commons/0/08/Canva_icon_2021.svg', color: '#8D44AD' }
+                { id: 'canva', name: 'Canva Pro', cost: 8.00, price: 8.00, type: 'annual', divider: 1, logo: 'https://upload.wikimedia.org/wikipedia/commons/0/08/Canva_icon_2021.svg', color: '#8D44AD' },
+                { id: 'dgo', name: 'DGO', cost: 20.00, price: 10.00, type: 'monthly', divider: 4, logo: 'https://logo.clearbit.com/directvgo.com', color: '#0055A5' }
             ];
 
             let allServices = [...defaultServices];
@@ -3624,6 +3721,7 @@
                 form['edit-account-email'].value = account.email;
                 form['edit-account-enlace'].value = account.enlace || '';
                 form['edit-account-fechaPago'].value = account.fechaPago || '';
+                form['edit-account-cost'].value = account.cost || 0;
                 form['edit-account-bank'].value = account.bankName || '';
                 form['edit-account-card'].value = account.cardNumber || '';
                 form['edit-account-password'].value = ''; // Clear password field for security
@@ -4548,6 +4646,7 @@
             updateFinancialSummary();
             loadDashboardData();
             renderRecentIncome();
+            if (typeof renderReports === 'function') renderReports();
             selectors.loadingState.classList.add('hidden');
         }, (e) => {
             console.error("Error al cargar ventas:", e);
@@ -4587,6 +4686,7 @@
             populatePlatformAccountsDropdowns(selectors.plataformaSelect.value, selectors.platformAccountSelect);
             populateAccountFilterDropdown();
             loadDashboardData();
+            if (typeof renderReports === 'function') renderReports();
         }, (e) => { console.error("Error al cargar cuentas:", e); });
         const handleSaveSale = async (e, keepClientData = false) => {
             e.preventDefault();
@@ -4836,22 +4936,136 @@
                         }
         });
         selectors.addAccountForm.addEventListener('submit', async (e) => {
-            e.preventDefault(); const f =
-                selectors.addAccountForm; const newAccount = {
-                    platform: f['account-platform'].value, email:
-                        f['account-email'].value, password: f['account-password'].value, enlace: f.enlace.value, fechaPago:
-                        f.fechaPago.value,
+            e.preventDefault();
+            const f = selectors.addAccountForm;
+            const isCombo = document.getElementById('is-combo-checkbox').checked;
+
+            const submitBtn = f.querySelector('button[type="submit"]');
+            const originalBtnText = submitBtn.textContent;
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Guardando...';
+
+            try {
+                const baseAccountData = {
+                    email: f['account-email'].value,
+                    password: f['account-password'].value,
+                    enlace: f.enlace.value,
+                    fechaPago: f.fechaPago.value,
+                    cost: parseFloat(f['account-cost'].value) || 0,
                     bankName: f['account-bank'].value,
                     cardNumber: f['account-card'].value,
                     isSuspended: false
-                }; try {
-                    await addDoc(collection(db, "platformAccounts"), newAccount); f.reset();
-                    document.querySelectorAll('#account-platform-buttons button').forEach(b =>
-                        b.classList.remove('bg-indigo-600', 'text-white', 'border-indigo-600'));
-                } catch (err) {
-                    console.error("Error al guardar cuenta:", err);
+                };
+
+                if (isCombo) {
+                    // Create Combo
+                    const comboId = 'combo_' + Date.now();
+                    const comboItems = document.querySelectorAll('.combo-item');
+
+                    for (const item of comboItems) {
+                        const platName = item.querySelector('.combo-platform-name').value;
+                        const qty = parseInt(item.querySelector('.combo-profile-qty').value);
+
+                        if (!platName || isNaN(qty) || qty < 1) continue;
+
+                        const comboAccount = {
+                            ...baseAccountData,
+                            platform: platName,
+                            isCombo: true,
+                            comboId: comboId,
+                            comboCost: baseAccountData.cost // store total cost on each for reference, but we will group by comboId
+                        };
+
+                        // Divide the total cost by the number of platforms in the combo to assign a rough cost per account,
+                        // or just leave cost=0 and rely on comboCost/comboId. We'll set cost=0 and keep comboCost.
+                        comboAccount.cost = 0;
+
+                        const docRef = await addDoc(collection(db, "platformAccounts"), comboAccount);
+
+                        // Automatically generate profiles
+                        await createProfilesBatch(docRef.id, qty, 1);
+                    }
+                    alert("Combo de cuentas creado exitosamente con sus perfiles.");
+                } else {
+                    // Single Account
+                    const newAccount = {
+                        ...baseAccountData,
+                        platform: f['account-platform'].value,
+                        isCombo: false
+                    };
+                    await addDoc(collection(db, "platformAccounts"), newAccount);
                 }
+
+                f.reset();
+
+                // Reset UI
+                document.querySelectorAll('#account-platform-buttons button').forEach(b =>
+                    b.classList.remove('bg-indigo-600', 'text-white', 'border-indigo-600'));
+
+                document.getElementById('is-combo-checkbox').checked = false;
+                document.getElementById('single-account-platform-container').classList.remove('hidden');
+                document.getElementById('combo-platforms-container').classList.add('hidden');
+                f['account-platform'].required = true;
+
+            } catch (err) {
+                console.error("Error al guardar cuenta:", err);
+                alert("Error al guardar la cuenta. Revisa la consola.");
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = originalBtnText;
+            }
         });
+
+        // Combo Checkbox Logic
+        document.getElementById('is-combo-checkbox').addEventListener('change', (e) => {
+            const isCombo = e.target.checked;
+            const singleContainer = document.getElementById('single-account-platform-container');
+            const comboContainer = document.getElementById('combo-platforms-container');
+            const platformInput = document.getElementById('account-platform');
+
+            if (isCombo) {
+                singleContainer.classList.add('hidden');
+                comboContainer.classList.remove('hidden');
+                platformInput.required = false; // Not required for combo
+            } else {
+                singleContainer.classList.remove('hidden');
+                comboContainer.classList.add('hidden');
+                platformInput.required = true;
+            }
+        });
+
+        // Add Custom Combo Platform
+        document.getElementById('add-combo-platform-btn').addEventListener('click', () => {
+            const list = document.getElementById('combo-platforms-list');
+
+            // Build options from allServices
+            let optionsHtml = '<option value="">Seleccione...</option>';
+            const sortedPlatforms = allServices.map(s => s.name).sort();
+            sortedPlatforms.forEach(p => {
+                optionsHtml += `<option value="${p}">${p}</option>`;
+            });
+
+            const div = document.createElement('div');
+            div.className = 'flex items-center gap-3 combo-item mt-3';
+            div.innerHTML = `
+                <select class="combo-platform-name w-1/2 px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white" required>
+                    ${optionsHtml}
+                </select>
+                <div class="flex items-center w-1/2 gap-2">
+                    <input type="number" value="1" min="1" class="combo-profile-qty w-full px-3 py-2 border border-gray-300 rounded-lg text-sm" placeholder="Perfiles" required>
+                    <button type="button" class="text-red-500 hover:text-red-700 p-1 remove-combo-btn" title="Quitar">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    </button>
+                </div>
+            `;
+
+            div.querySelector('.remove-combo-btn').addEventListener('click', () => {
+                div.remove();
+            });
+
+            list.appendChild(div);
+        });
+
         selectors.searchInput.addEventListener('input', e => {
             currentSearchTerm = e.target.value;
             const activeSales = allSales.filter(sale => sale.estado !== 'ARCHIVADO');
@@ -4992,6 +5206,7 @@
                 email: form['edit-account-email'].value,
                 enlace: form['edit-account-enlace'].value,
                 fechaPago: form['edit-account-fechaPago'].value,
+                cost: parseFloat(form['edit-account-cost'].value) || 0,
                 bankName: form['edit-account-bank'].value,
                 cardNumber: form['edit-account-card'].value
             };
@@ -5055,7 +5270,8 @@
             'nav-cuentas': 'Cuentas',
             'nav-ventas': 'Ventas',
             'nav-finanzas': 'Finanzas',
-            'nav-precios': 'Precios'
+            'nav-precios': 'Precios',
+            'nav-reportes': 'Reportes'
         };
         const views = document.querySelectorAll('.view');
 
@@ -5483,6 +5699,110 @@
         selectors.toggleConfigBtn.addEventListener('click', toggleConfig);
         selectors.saveCostsBtn.addEventListener('click', saveCosts);
         selectors.copyPromoBtn.addEventListener('click', copyPromo);
+
+        // --- Reportes View Logic ---
+        const reportMonthFilter = document.getElementById('report-month-filter');
+        // Set default month to current
+        reportMonthFilter.value = dayjs().format('YYYY-MM');
+
+        const renderReports = () => {
+            const selectedMonthStr = reportMonthFilter.value;
+            if (!selectedMonthStr) return;
+
+            const targetMonth = dayjs(selectedMonthStr, 'YYYY-MM');
+            const reportsGrid = document.getElementById('reports-grid');
+            reportsGrid.innerHTML = '';
+
+            let totalCostOverall = 0;
+            let totalIncomeOverall = 0;
+
+            // Group accounts. Combos share a comboId.
+            const groups = new Map(); // key: accountId or comboId, value: { isCombo, email, platforms, cost, accountIds }
+
+            allPlatformAccounts.forEach(acc => {
+                if (acc.isCombo && acc.comboId) {
+                    if (!groups.has(acc.comboId)) {
+                        groups.set(acc.comboId, {
+                            id: acc.comboId,
+                            isCombo: true,
+                            email: acc.email,
+                            platforms: new Set([acc.platform]),
+                            cost: acc.comboCost || 0,
+                            accountIds: [acc.id]
+                        });
+                    } else {
+                        const group = groups.get(acc.comboId);
+                        group.platforms.add(acc.platform);
+                        group.accountIds.push(acc.id);
+                    }
+                } else {
+                    groups.set(acc.id, {
+                        id: acc.id,
+                        isCombo: false,
+                        email: acc.email,
+                        platforms: new Set([acc.platform]),
+                        cost: acc.cost || 0,
+                        accountIds: [acc.id]
+                    });
+                }
+            });
+
+            // Calculate income for each group for the selected month
+            // We consider a sale "belongs" to a month if its `inicioPlan` falls in that month
+            Array.from(groups.values()).forEach(group => {
+                let groupIncome = 0;
+
+                allSales.forEach(sale => {
+                    if (sale.estado !== 'ARCHIVADO' && group.accountIds.includes(sale.accountId)) {
+                        const saleDate = dayjs(sale.inicioPlan);
+                        if (saleDate.isSame(targetMonth, 'month')) {
+                            groupIncome += (sale.precio || 0);
+                        }
+                    }
+                });
+
+                group.income = groupIncome;
+                group.balance = group.income - group.cost;
+
+                totalCostOverall += group.cost;
+                totalIncomeOverall += group.income;
+
+                const balanceColor = group.balance >= 0 ? 'text-green-600' : 'text-red-600';
+                const platformsStr = Array.from(group.platforms).join(' + ');
+
+                const row = document.createElement('tr');
+                row.className = 'hover:bg-gray-50';
+                row.innerHTML = `
+                    <td class="px-4 py-3">
+                        <div class="font-medium text-gray-800">${group.isCombo ? 'Combo' : 'Cuenta'}: ${platformsStr}</div>
+                        <div class="text-xs text-gray-500">${group.email}</div>
+                    </td>
+                    <td class="px-4 py-3 text-sm text-gray-600">S/${group.cost.toFixed(2)}</td>
+                    <td class="px-4 py-3 text-sm text-gray-600">S/${group.income.toFixed(2)}</td>
+                    <td class="px-4 py-3 text-sm font-bold ${balanceColor}">S/${group.balance.toFixed(2)}</td>
+                    <td class="px-4 py-3 text-sm">
+                        <span class="px-2 py-1 rounded-full text-xs font-semibold ${group.balance >= 0 ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">
+                            ${group.balance >= 0 ? 'Ganancia' : 'Pérdida'}
+                        </span>
+                    </td>
+                `;
+                reportsGrid.appendChild(row);
+            });
+
+            if (groups.size === 0) {
+                reportsGrid.innerHTML = '<tr><td colspan="5" class="text-center py-8 text-gray-500">No hay cuentas registradas.</td></tr>';
+            }
+
+            const totalBalanceOverall = totalIncomeOverall - totalCostOverall;
+            document.getElementById('report-total-cost').textContent = `S/${totalCostOverall.toFixed(2)}`;
+            document.getElementById('report-total-income').textContent = `S/${totalIncomeOverall.toFixed(2)}`;
+            const balanceEl = document.getElementById('report-total-balance');
+            balanceEl.textContent = `S/${totalBalanceOverall.toFixed(2)}`;
+            balanceEl.className = `px-4 py-3 ${totalBalanceOverall >= 0 ? 'text-green-600' : 'text-red-600'}`;
+        };
+
+        reportMonthFilter.addEventListener('change', renderReports);
+
 
         // --- Custom Services Logic ---
         const toggleAddServiceModal = () => {
