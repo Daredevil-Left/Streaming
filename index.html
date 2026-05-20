@@ -2128,7 +2128,12 @@
             const generateSaleMessage = (saleData, profileName) => {
                 let message = `📺 Plataforma: ${saleData.plataforma}\n`;
                 if (saleData.correo) message += `📧 Correo: ${saleData.correo}\n`;
-                if (saleData.contrasena) message += `🔑 Contraseña: ${saleData.contrasena}\n`;
+
+                // Only show password if platform is not Netflix
+                if (saleData.contrasena && saleData.plataforma !== 'Netflix') {
+                    message += `🔑 Contraseña: ${saleData.contrasena}\n`;
+                }
+
                 if (saleData.plataforma !== 'Canva') {
                     const displayProfile = profileName || saleData.cliente;
                     message += `👤 Perfil: ${displayProfile}\n`;
@@ -2140,14 +2145,18 @@
                     message += `📅 Vigencia: ${vigencia}\n`;
                 }
 
-                if (saleData.pin) {
-                    message += `\n⚠️ *NORMAS DE USO*
+                if (saleData.plataforma === 'Netflix') {
+                    message += `\n🔒 No cambiar PIN ni nombre.\n\n✨ Maneras de entrar a la cuenta:\n📱💻 Si ingresarás en un Celular, Laptop, Computadora o tablet, escribe el correo y te enviaremos el código.\n📺 Si ingresas en un TV, envíame el código que aparece en el aplicativo Netflix.`;
+                } else {
+                    if (saleData.pin) {
+                        message += `\n⚠️ *NORMAS DE USO*
 📱 Perfil para 1 SOLO dispositivo.
 🚫 Prohibido ingresar en más equipos.
 🔒 No cambiar PIN ni nombre.
 ⚠️ Sin 2da advertencia: Se eliminará la cuenta sin reclamo.`;
-                } else {
-                    message += `\n⚠️ Advertencia: La cuenta es solo para un dispositivo, en caso se use en más dispositivos se dará de baja a la cuenta`;
+                    } else {
+                        message += `\n⚠️ Advertencia: La cuenta es solo para un dispositivo, en caso se use en más dispositivos se dará de baja a la cuenta`;
+                    }
                 }
 
                 return message;
