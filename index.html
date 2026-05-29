@@ -1626,7 +1626,7 @@
                 return {
                     count: activeSalesForProfile.length,
                     max: maxClients,
-                    isAvailable: activeSalesForProfile.length < maxClients,
+                    isAvailable: (!account || !account.isSuspended) && (activeSalesForProfile.length < maxClients),
                     sales: activeSalesForProfile
                 };
             };
@@ -2345,6 +2345,7 @@
                     return 'Activo';
                 };
                 const alerts = allPlatformAccounts.filter(acc => {
+                    if (acc.isSuspended) return false;
                     const status = getPlatformAccountStatus(acc.fechaPago);
                     return status === 'Vencido' || status === 'Vence hoy' || status === 'Próximo a Vencer';
                 }).sort((a, b) => new Date(a.fechaPago) - new Date(b.fechaPago));
