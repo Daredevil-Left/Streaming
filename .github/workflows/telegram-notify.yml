@@ -1,4 +1,4 @@
-name: WhatsApp Daily Notifier
+name: Telegram Daily Notifier
 
 on:
   # Schedule it to run every day at 13:00 UTC (8:00 AM Lima/Peru Time)
@@ -27,6 +27,6 @@ jobs:
       - name: Run notifier script
         env:
           FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
-          CALLMEBOT_PHONE: ${{ secrets.CALLMEBOT_PHONE }}
-          CALLMEBOT_API_KEY: ${{ secrets.CALLMEBOT_API_KEY }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: node notifier.js

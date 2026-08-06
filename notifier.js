@@ -22,12 +22,12 @@ async function run() {
 
     const db = admin.firestore();
 
-    // 2. Setup CallMeBot credentials
-    const callMeBotPhone = process.env.CALLMEBOT_PHONE;
-    const callMeBotApiKey = process.env.CALLMEBOT_API_KEY;
+    // 2. Setup Telegram credentials
+    const telegramBotToken = process.env.TELEGRAM_BOT_TOKEN;
+    const telegramChatId = process.env.TELEGRAM_CHAT_ID;
 
-    if (!callMeBotPhone || !callMeBotApiKey) {
-      throw new Error("Missing CallMeBot credentials (CALLMEBOT_PHONE or CALLMEBOT_API_KEY).");
+    if (!telegramBotToken || !telegramChatId) {
+      throw new Error("Missing Telegram credentials (TELEGRAM_BOT_TOKEN or TELEGRAM_CHAT_ID).");
     }
 
     // 3. Fetch sales from Firestore
@@ -81,7 +81,7 @@ async function run() {
     // Sort by diffDays ascending (most overdue first)
     expiringSales.sort((a, b) => a.diffDays - b.diffDays);
 
-    // 4. Construct WhatsApp Message
+    // 4. Construct Telegram Message
     let message = `*🔔 ALERTAS DE VENCIMIENTO*\n`;
     message += `Fecha: ${today.format('DD/MM/YYYY')}\n\n`;
 
@@ -100,12 +100,14 @@ async function run() {
     console.log("Constructed message:");
     console.log(message);
 
-    // URL encode the message for CallMeBot
-    const encodedMessage = encodeURIComponent(message);
-    const apiUrl = `https://api.callmebot.com/whatsapp.php?phone=${callMeBotPhone}&text=${encodedMessage}&apikey=${callMeBotApiKey}`;
+    const apiUrl = `https://api.telegram.org/bot${telegramBotToken}/sendMessage`;
 
-    console.log("Sending WhatsApp message via CallMeBot...");
-    const response = await axios.get(apiUrl);
+    console.log("Sending Telegram message...");
+    const response = await axios.post(apiUrl, {
+      chat_id: telegramChatId,
+      text: message,
+      parse_mode: 'Markdown'
+    });
 
     if (response.status === 200) {
       console.log("Message sent successfully!");
