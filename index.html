@@ -4701,6 +4701,21 @@
         const handleSaveSale = async (e, keepClientData = false) => {
             e.preventDefault();
             const f = selectors.addSaleForm;
+
+            // Prevent double submission
+            const submitBtn = f.querySelector('button[type="submit"]');
+            const saveAddBtn = document.getElementById('save-and-add-btn');
+            const originalSubmitText = submitBtn ? submitBtn.textContent : '';
+            const originalSaveAddText = saveAddBtn ? saveAddBtn.textContent : '';
+
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Guardando...';
+            }
+            if (saveAddBtn) {
+                saveAddBtn.disabled = true;
+                saveAddBtn.textContent = 'Guardando...';
+            }
             const accountId = f['platform-account'].value;
             const profileId = f['profile-select'].value;
             const plataforma = f.plataforma.value;
@@ -4720,6 +4735,19 @@
             const account = allPlatformAccounts.find(a => a.id === accountId);
             const correo = account ? account.email : '';
             const contrasena = account ? account.password : '';
+
+            // Validacion estricta de ocupacion antes de guardar
+            if (plataforma !== 'Canva' && accountId && profileId) {
+                const occupancy = getProfileOccupancy(accountId, profileId);
+                if (!occupancy.isAvailable) {
+                    alert('Error: El perfil seleccionado ya está lleno. Por favor, selecciona otro perfil.');
+                    const submitBtn = f.querySelector('button[type="submit"]');
+                    const saveAddBtn = document.getElementById('save-and-add-btn');
+                    if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = 'Guardar Venta'; }
+                    if (saveAddBtn) { saveAddBtn.disabled = false; saveAddBtn.textContent = 'Guardar y Agregar Otra'; }
+                    return;
+                }
+            }
 
             // Construct full phone number
             let phoneNumber = f.celular.value.trim();
@@ -4796,6 +4824,8 @@
 
                     // Reset platform change logic (hides Other input if visible)
                     handlePlatformChange(selectors.plataformaSelect, selectors.otroPlataformaContainer, selectors.otroPlataformaInput);
+                    // Force account/profile dropdowns to refresh based on current platform
+                    populatePlatformAccountsDropdowns(f.plataforma.value, selectors.platformAccountSelect);
                 } else {
                     f.reset();
                     f.metodoPago.value = ""; // Reiniciar el select
@@ -4806,6 +4836,19 @@
             } catch (err) {
                 console.error("Error al guardar venta:", err);
                 alert("Error al guardar la venta. Revisa la consola (F12).");
+            } finally {
+                const submitBtn = f.querySelector('button[type="submit"]');
+                const saveAddBtn = document.getElementById('save-and-add-btn');
+
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    // Note: original text is in outer scope of function
+                    submitBtn.textContent = 'Guardar Venta';
+                }
+                if (saveAddBtn) {
+                    saveAddBtn.disabled = false;
+                    saveAddBtn.textContent = 'Guardar y Agregar Otra';
+                }
             }
         };
 
@@ -4819,11 +4862,32 @@
         selectors.editForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const f = selectors.editForm;
+
+            const submitBtn = f.querySelector('button[type="submit"]');
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Guardando...';
+            }
+
             const saleId = f['edit-sale-id'].value;
             const originalSale = allSales.find(s => s.id === saleId);
 
             const newAccountId = f['edit-platform-account'].value;
             const newProfileId = f['edit-profile-select'].value;
+
+            // Validacion estricta de ocupacion si cambia a un nuevo perfil
+            if (newAccountId && newProfileId && (originalSale.accountId !== newAccountId || originalSale.profileId !== newProfileId)) {
+                const account = allPlatformAccounts.find(a => a.id === newAccountId);
+                if (account && account.platform !== 'Canva') {
+                    const occupancy = getProfileOccupancy(newAccountId, newProfileId);
+                    if (!occupancy.isAvailable) {
+                        alert('Error: El nuevo perfil seleccionado ya está lleno. Por favor, selecciona otro perfil.');
+                        const submitBtn = f.querySelector('button[type="submit"]');
+                        if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = 'Guardar Cambios'; }
+                        return;
+                    }
+                }
+            }
 
             // Check if profile has changed
             if (originalSale.accountId && originalSale.profileId && (originalSale.accountId !== newAccountId ||
@@ -4927,6 +4991,12 @@
             } catch (err) {
                 console.error("Error al actualizar la venta:", err);
                 alert("Error al actualizar la venta. Revisa la consola (F12).");
+            } finally {
+                const submitBtn = f.querySelector('button[type="submit"]');
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Guardar Cambios';
+                }
             }
         });
         selectors.addExpenseForm.addEventListener('submit', async (e) => {
