@@ -45,7 +45,8 @@ async function run() {
         return;
       }
 
-      const finPlanDate = dayjs(sale.finPlan).tz('America/Lima').startOf('day');
+      // Correctly parse the date directly into the target timezone to prevent UTC shift offsets
+      const finPlanDate = dayjs.tz(sale.finPlan, 'America/Lima').startOf('day');
       const diffDays = finPlanDate.diff(today, 'day');
 
       // We want to alert for:
@@ -81,19 +82,28 @@ async function run() {
     // Sort by diffDays ascending (most overdue first)
     expiringSales.sort((a, b) => a.diffDays - b.diffDays);
 
-    // 4. Construct Telegram Message
-    let message = `*🔔 ALERTAS DE VENCIMIENTO*\n`;
+    // 4. Construct Telegram Message (Using HTML to avoid markdown parsing errors)
+    let message = `<b>🔔 ALERTAS DE VENCIMIENTO</b>\n`;
     message += `Fecha: ${today.format('DD/MM/YYYY')}\n\n`;
 
+    // Function to safely escape HTML special characters
+    const escapeHTML = (str) => {
+      if (!str) return '';
+      return str.toString()
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+    };
+
     expiringSales.forEach(s => {
-      message += `${s.statusText}\n`;
-      message += `👤 Cliente: ${s.cliente}\n`;
-      message += `📺 Plataforma: ${s.plataforma}\n`;
+      message += `<b>${s.statusText}</b>\n`;
+      message += `👤 Cliente: ${escapeHTML(s.cliente)}\n`;
+      message += `📺 Plataforma: ${escapeHTML(s.plataforma)}\n`;
       message += `📅 Fin del plan: ${dayjs(s.finPlan).format('DD/MM/YYYY')}\n`;
       message += `----------------------\n`;
     });
 
-    message += `\n*Datos para renovaciones (Yape):*\n`;
+    message += `\n<b>Datos para renovaciones (Yape):</b>\n`;
     message += `📱 YAPE: 933622323\n`;
     message += `👤 Nombre: Chartisa P.`;
 
@@ -106,7 +116,7 @@ async function run() {
     const response = await axios.post(apiUrl, {
       chat_id: telegramChatId,
       text: message,
-      parse_mode: 'Markdown'
+      parse_mode: 'HTML'
     });
 
     if (response.status === 200) {
@@ -116,7 +126,10 @@ async function run() {
     }
 
   } catch (error) {
-    console.error("Error running notifier script:", error);
+    console.error("Error running notifier script:", error.message);
+    if (error.response && error.response.data) {
+       console.error("Telegram API Error Details:", error.response.data);
+    }
     process.exit(1);
   }
 }
