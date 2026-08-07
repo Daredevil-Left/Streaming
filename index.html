@@ -3793,7 +3793,7 @@
                         btn.textContent = 'Creando...';
 
                         // Default startIndex to 1 for initial creation
-                        const newProfiles = await createProfilesBatch(accountId, qty, 1);
+                        const newProfiles = await createProfilesBatch(accountId, qty, 1, account.platform);
 
                         // Manually update the in-memory state
                         const accountIndex = allPlatformAccounts.findIndex(acc => acc.id === accountId);
@@ -3936,7 +3936,7 @@
                         confirmBtn.textContent = '...';
 
                         const nextIndex = getNextProfileIndex(profiles);
-                        const newProfiles = await createProfilesBatch(accountId, qty, nextIndex);
+                        const newProfiles = await createProfilesBatch(accountId, qty, nextIndex, account.platform);
 
                         // Update local state
                         const accountIndex = allPlatformAccounts.findIndex(acc => acc.id === accountId);
@@ -4067,7 +4067,7 @@
             return maxIndex + 1;
         };
 
-        const createProfilesBatch = async (accountId, count = 5, startIndex = 1) => {
+        const createProfilesBatch = async (accountId, count = 5, startIndex = 1, platformName = "") => {
             const profilesRef = collection(db, "platformAccounts", accountId, "Perfiles");
             const createdProfiles = [];
             const generatedPins = new Set();
@@ -4084,8 +4084,13 @@
                 }
 
                 let pin;
+                const isAmazon = (platformName && platformName.toLowerCase().includes('amazon'));
                 do {
-                    pin = Math.floor(1000 + Math.random() * 9000).toString();
+                    if (isAmazon) {
+                        pin = Math.floor(10000 + Math.random() * 90000).toString();
+                    } else {
+                        pin = Math.floor(1000 + Math.random() * 9000).toString();
+                    }
                 } while (generatedPins.has(pin));
                 generatedPins.add(pin);
 
@@ -5063,7 +5068,7 @@
                         const docRef = await addDoc(collection(db, "platformAccounts"), comboAccount);
 
                         // Automatically generate profiles
-                        await createProfilesBatch(docRef.id, qty, 1);
+                        await createProfilesBatch(docRef.id, qty, 1, platName);
                     }
                     alert("Combo de cuentas creado exitosamente con sus perfiles.");
                 } else {
