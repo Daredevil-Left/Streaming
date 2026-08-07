@@ -1,4 +1,5 @@
-const admin = require('firebase-admin');
+const { initializeApp, cert } = require('firebase-admin/app');
+const { getFirestore } = require('firebase-admin/firestore');
 const axios = require('axios');
 const dayjs = require('dayjs');
 const utc = require('dayjs/plugin/utc');
@@ -16,11 +17,12 @@ async function run() {
       throw new Error("Missing FIREBASE_SERVICE_ACCOUNT environment variable.");
     }
     const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
-    admin.initializeApp({
-      credential: admin.credential.cert(serviceAccount)
+
+    initializeApp({
+      credential: cert(serviceAccount)
     });
 
-    const db = admin.firestore();
+    const db = getFirestore();
 
     // 2. Setup Telegram credentials
     const telegramBotToken = process.env.TELEGRAM_BOT_TOKEN;
