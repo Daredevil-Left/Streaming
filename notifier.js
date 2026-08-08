@@ -51,16 +51,13 @@ async function run() {
       const finPlanDate = dayjs.tz(sale.finPlan, 'America/Lima').startOf('day');
       const diffDays = finPlanDate.diff(today, 'day');
 
-      // We want to alert for:
+      // We want to alert ONLY for upcoming expirations to avoid exceeding Telegram's 4096 character limit
       // - diffDays === 1 (expires tomorrow)
       // - diffDays === 0 (expires today)
-      // - diffDays < 0 (already expired)
 
-      if (diffDays <= 1) {
+      if (diffDays === 0 || diffDays === 1) {
         let statusText = '';
-        if (diffDays < 0) {
-          statusText = '🔴 VENCIDO';
-        } else if (diffDays === 0) {
+        if (diffDays === 0) {
           statusText = '🟠 VENCE HOY';
         } else if (diffDays === 1) {
           statusText = '🟡 VENCE MAÑANA';
