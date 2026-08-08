@@ -81,10 +81,7 @@ async function run() {
     // Sort by diffDays ascending (most overdue first)
     expiringSales.sort((a, b) => a.diffDays - b.diffDays);
 
-    // 4. Construct Telegram Message (Using HTML to avoid markdown parsing errors)
-    let message = `<b>🔔 ALERTAS DE VENCIMIENTO</b>\n`;
-    message += `Fecha: ${today.format('DD/MM/YYYY')}\n\n`;
-
+    // 4. Send Individual Telegram Messages (Using HTML to avoid markdown parsing errors)
     // Function to safely escape HTML special characters
     const escapeHTML = (str) => {
       if (!str) return '';
@@ -94,35 +91,47 @@ async function run() {
         .replace(/>/g, "&gt;");
     };
 
-    expiringSales.forEach(s => {
+    const apiUrl = `https://api.telegram.org/bot${telegramBotToken}/sendMessage`;
+
+    console.log(`Sending ${expiringSales.length} individual Telegram messages...`);
+
+    for (let i = 0; i < expiringSales.length; i++) {
+      const s = expiringSales[i];
+      let message = `<b>🔔 ALERTA DE VENCIMIENTO</b>\n`;
+      message += `Fecha: ${today.format('DD/MM/YYYY')}\n\n`;
       message += `<b>${s.statusText}</b>\n`;
       message += `👤 Cliente: ${escapeHTML(s.cliente)}\n`;
       message += `📺 Plataforma: ${escapeHTML(s.plataforma)}\n`;
-      message += `📅 Fin del plan: ${dayjs(s.finPlan).format('DD/MM/YYYY')}\n`;
-      message += `----------------------\n`;
-    });
+      message += `📅 Fin del plan: ${dayjs(s.finPlan).format('DD/MM/YYYY')}\n\n`;
 
-    message += `\n<b>Datos para renovaciones (Yape):</b>\n`;
-    message += `📱 YAPE: 933622323\n`;
-    message += `👤 Nombre: Chartisa P.`;
+      message += `Para poder renovar puede yapear al siguiente número:\n`;
+      message += `📱 YAPE: 933622323\n`;
+      message += `👤 Nombre: Chartisa P.`;
 
-    console.log("Constructed message:");
-    console.log(message);
+      try {
+        const response = await axios.post(apiUrl, {
+          chat_id: telegramChatId,
+          text: message,
+          parse_mode: 'HTML'
+        });
 
-    const apiUrl = `https://api.telegram.org/bot${telegramBotToken}/sendMessage`;
+        if (response.status === 200) {
+          console.log(`Message sent successfully for client: ${s.cliente}`);
+        } else {
+          console.error(`Failed to send message for ${s.cliente}. Status: ${response.status}`);
+        }
+      } catch (err) {
+        console.error(`Error sending message for ${s.cliente}:`, err.message);
+        if (err.response && err.response.data) {
+           console.error("Telegram API Error Details:", err.response.data);
+        }
+      }
 
-    console.log("Sending Telegram message...");
-    const response = await axios.post(apiUrl, {
-      chat_id: telegramChatId,
-      text: message,
-      parse_mode: 'HTML'
-    });
-
-    if (response.status === 200) {
-      console.log("Message sent successfully!");
-    } else {
-      console.error(`Failed to send message. Status: ${response.status}`, response.data);
+      // Add a small delay between requests to avoid hitting Telegram rate limits (approx 30 msgs/sec limit)
+      await new Promise(resolve => setTimeout(resolve, 200));
     }
+
+    console.log("Finished sending all notifications.");
 
   } catch (error) {
     console.error("Error running notifier script:", error.message);
