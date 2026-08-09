@@ -64,6 +64,7 @@ async function run() {
         }
 
         expiringSales.push({
+          id: doc.id,
           cliente: sale.cliente || 'Desconocido',
           plataforma: sale.plataforma || 'Desconocida',
           finPlan: sale.finPlan,
@@ -112,7 +113,17 @@ async function run() {
         const response = await axios.post(apiUrl, {
           chat_id: telegramChatId,
           text: message,
-          parse_mode: 'HTML'
+          parse_mode: 'HTML',
+          reply_markup: {
+            inline_keyboard: [
+              [
+                {
+                  text: '🔄 Renovar 1 mes',
+                  callback_data: `renew_${s.id}`
+                }
+              ]
+            ]
+          }
         });
 
         if (response.status === 200) {
