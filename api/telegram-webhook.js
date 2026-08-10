@@ -89,29 +89,53 @@ module.exports = async (req, res) => {
       const text = update.message.text.trim();
       const chatId = update.message.chat.id;
 
+      // SECURITY: Check if the request comes from the authorized Chat ID
+      // You must add TELEGRAM_CHAT_ID to your Vercel Environment Variables
+      const authorizedChatId = process.env.TELEGRAM_CHAT_ID;
+      if (authorizedChatId && String(chatId) !== String(authorizedChatId)) {
+          console.warn(`Unauthorized access attempt from Chat ID: ${chatId}`);
+          return res.status(403).send('Forbidden');
+      }
+
       // Handle /buscar command
       if (text.toLowerCase().startsWith('/buscar ')) {
         const query = text.substring(8).trim().toLowerCase();
 
         if (!query) {
-          await sendTelegramMessage(chatId, '⚠️ Debes escribir un nombre. Ejemplo: `/buscar Juan`');
+          await sendTelegramMessage(chatId, '⚠️ Debes escribir un nombre. Ejemplo: `/buscar Juan` o `/buscar Sergio Netflix`');
           return res.status(200).send('OK');
         }
 
+        const searchTerms = query.split(/\s+/); // Split by one or more spaces
         const salesSnapshot = await db.collection('sales').get();
         const results = [];
 
         salesSnapshot.forEach(doc => {
           const data = doc.data();
-          const cliente = (data.cliente || '').toLowerCase();
 
-          if (cliente.includes(query) && data.estado !== 'EN_MANTENIMIENTO') {
+          // Skip if missing accountId (deleted/manual profiles) unless explicitly maintained
+          if (!data.accountId) {
+             return;
+          }
+          // Skip if EN_MANTENIMIENTO
+          if (data.estado === 'EN_MANTENIMIENTO') {
+             return;
+          }
+
+          const cliente = (data.cliente || '').toLowerCase();
+          const plataforma = (data.plataforma || '').toLowerCase();
+          const searchableText = `${cliente} ${plataforma}`;
+
+          // Check if ALL search terms are found in either cliente or plataforma
+          const matchesAllTerms = searchTerms.every(term => searchableText.includes(term));
+
+          if (matchesAllTerms) {
             results.push(data);
           }
         });
 
         if (results.length === 0) {
-          await sendTelegramMessage(chatId, `❌ No se encontraron ventas activas para: <b>${escapeHTML(query)}</b>`);
+          await sendTelegramMessage(chatId, `❌ No se encontraron ventas para: <b>${escapeHTML(query)}</b>`);
           return res.status(200).send('OK');
         }
 
@@ -137,6 +161,13 @@ module.exports = async (req, res) => {
       const chatId = update.callback_query.message.chat.id;
       const messageId = update.callback_query.message.message_id;
       const callbackQueryId = update.callback_query.id;
+
+      // SECURITY: Check if the callback comes from the authorized Chat ID
+      const authorizedChatId = process.env.TELEGRAM_CHAT_ID;
+      if (authorizedChatId && String(chatId) !== String(authorizedChatId)) {
+          console.warn(`Unauthorized callback access attempt from Chat ID: ${chatId}`);
+          return res.status(403).send('Forbidden');
+      }
 
       if (callbackData.startsWith('renew_')) {
         const saleId = callbackData.split('_')[1];
