@@ -117,8 +117,8 @@ module.exports = async (req, res) => {
           if (!data.accountId) {
              return;
           }
-          // Skip if EN_MANTENIMIENTO
-          if (data.estado === 'EN_MANTENIMIENTO') {
+          // Skip if EN_MANTENIMIENTO or ARCHIVADO (deleted/archived past sales)
+          if (data.estado === 'EN_MANTENIMIENTO' || data.estado === 'ARCHIVADO') {
              return;
           }
 
