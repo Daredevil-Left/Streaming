@@ -2443,7 +2443,7 @@
                         selectors.alertsSection.appendChild(card);
                     });
                 } else { selectors.alertsSection.className = 'space-y-3'; selectors.alertsSection.innerHTML = '<p class="text-gray-500">No hay alertas de vencimiento.</p>'; }
-                selectors.alertsSection.querySelectorAll('.whatsapp-alert-btn').forEach(btn => { btn.addEventListener('click', e => handleWhatsAppClick(e.currentTarget.dataset.saleId)); });
+                selectors.alertsSection.querySelectorAll('.whatsapp-alert-btn').forEach(btn => { btn.addEventListener('click', e => handleAlertWhatsAppClick(e.currentTarget.dataset.saleId)); });
                 renderPlatformAccountAlerts();
             };
 
@@ -2714,6 +2714,30 @@
             };
 
             const handleWhatsAppClick = (saleId) => {
+                const sale = allSales.find(s => s.id === saleId);
+                if (!sale || !sale.celular) return;
+
+                const now = dayjs();
+                const end = dayjs(sale.finPlan);
+                const daysDiff = end.diff(now, 'day');
+
+                let message = "";
+                if (daysDiff > 0) {
+                    message = `Hola, le informamos que su cuenta de *${sale.plataforma}* está por vencer en *${daysDiff} días*.`;
+                } else if (daysDiff === 0) {
+                    message = `Hola, le informamos que su cuenta de *${sale.plataforma}* vence *hoy*.`;
+                } else {
+                    message = `Hola, le informamos que su cuenta de *${sale.plataforma}* ya ha vencido.`;
+                }
+
+                // Append renewal text (optional but helpful)
+                // message += " Si desea renovar, por favor avíseme.";
+
+                const url = `https://wa.me/${sale.celular}?text=${encodeURIComponent(message)}`;
+                window.open(url, '_blank');
+            };
+
+            const handleAlertWhatsAppClick = (saleId) => {
                 const sale = allSales.find(s => s.id === saleId);
                 if (!sale || !sale.celular) return;
 
