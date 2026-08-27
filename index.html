@@ -2388,7 +2388,7 @@
                 }).filter(sale => {
                     const expirationDate = dayjs(sale.finPlan).startOf('day');
                     const diffDays = expirationDate.diff(today, 'day');
-                    return diffDays <= 3;
+                    return diffDays <= 1; // Solo mostrar los que vencen máximo mañana (diffDays <= 1) o vencidos (< 0)
                 }).sort((a, b) => new Date(a.finPlan) - new Date(b.finPlan));
                 selectors.alertsSection.innerHTML = '';
                 if (expirationAlerts.length > 0) {
@@ -2728,21 +2728,24 @@
                 const sale = allSales.find(s => s.id === saleId);
                 if (!sale || !sale.celular) return;
 
-                const now = dayjs();
-                const end = dayjs(sale.finPlan);
-                const daysDiff = end.diff(now, 'day');
+                const today = dayjs().startOf('day');
+                const expirationDate = dayjs(sale.finPlan).startOf('day');
+                const daysDiff = expirationDate.diff(today, 'day');
 
-                let message = "";
+                const clientName = sale.cliente ? sale.cliente.split(' ')[0] : 'Cliente';
+                const formattedPrice = sale.precio ? `S/ ${sale.precio.toFixed(2)}` : 'el monto correspondiente';
+
+                let expirationText = "";
                 if (daysDiff > 0) {
-                    message = `Hola, le informamos que su cuenta de *${sale.plataforma}* está por vencer en *${daysDiff} días*.`;
+                    expirationText = `vence en ${daysDiff} ${daysDiff === 1 ? 'día' : 'días'} ⏳`;
                 } else if (daysDiff === 0) {
-                    message = `Hola, le informamos que su cuenta de *${sale.plataforma}* vence *hoy*.`;
+                    expirationText = `vence *hoy* ⚠️`;
                 } else {
-                    message = `Hola, le informamos que su cuenta de *${sale.plataforma}* ya ha vencido.`;
+                    const overdueDays = Math.abs(daysDiff);
+                    expirationText = `venció hace ${overdueDays} ${overdueDays === 1 ? 'día' : 'días'} 🚨`;
                 }
 
-                // Append renewal text (optional but helpful)
-                // message += " Si desea renovar, por favor avíseme.";
+                const message = `¡Hola ${clientName}! 👋\n\nTe escribo para recordarte que tu cuenta de *${sale.plataforma}* ${expirationText}.\n\n💰 El precio de renovación es de: *${formattedPrice}*\n\n📲 Puedes yapear al:\n*967 545 5558* - Charitsa Pagador\n\n📸 *Por favor, enviar captura del pago para actualizar tu cuenta.*\n\n¡Gracias! ✨`;
 
                 const url = `https://wa.me/${sale.celular}?text=${encodeURIComponent(message)}`;
                 window.open(url, '_blank');
