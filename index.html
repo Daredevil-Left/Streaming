@@ -224,14 +224,15 @@
                     </svg>
                     <span class="ml-4 sidebar-text">Precios</span>
                 </a>
-                <a href="#" id="nav-reportes" class="flex items-center py-2.5 px-2 rounded-md hover:bg-gray-700">
+
+                <a href="#" id="nav-planner" class="flex items-center py-2.5 px-2 rounded-md hover:bg-gray-700">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
                         xmlns="http://www.w3.org/2000/svg">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                            d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z">
                         </path>
                     </svg>
-                    <span class="ml-4 sidebar-text">Reportes</span>
+                    <span class="ml-4 sidebar-text">Planificador</span>
                 </a>
             </nav>
             <div class="px-2 py-4">
@@ -4656,7 +4657,7 @@
             updateFinancialSummary();
             loadDashboardData();
             renderRecentIncome();
-            if (typeof renderReports === 'function') renderReports();
+
             selectors.loadingState.classList.add('hidden');
         }, (e) => {
             console.error("Error al cargar ventas:", e);
@@ -4696,7 +4697,7 @@
             populatePlatformAccountsDropdowns(selectors.plataformaSelect.value, selectors.platformAccountSelect);
             populateAccountFilterDropdown();
             loadDashboardData();
-            if (typeof renderReports === 'function') renderReports();
+
         }, (e) => { console.error("Error al cargar cuentas:", e); });
         const handleSaveSale = async (e, keepClientData = false) => {
             e.preventDefault();
@@ -5351,7 +5352,7 @@
             'nav-ventas': 'Ventas',
             'nav-finanzas': 'Finanzas',
             'nav-precios': 'Precios',
-            'nav-reportes': 'Reportes'
+            'nav-planner': 'Planner'
         };
         const views = document.querySelectorAll('.view');
 
@@ -5780,109 +5781,260 @@
         selectors.saveCostsBtn.addEventListener('click', saveCosts);
         selectors.copyPromoBtn.addEventListener('click', copyPromo);
 
-        // --- Reportes View Logic ---
-        const reportMonthFilter = document.getElementById('report-month-filter');
-        // Set default month to current
-        reportMonthFilter.value = dayjs().format('YYYY-MM');
 
-        const renderReports = () => {
-            const selectedMonthStr = reportMonthFilter.value;
-            if (!selectedMonthStr) return;
+        // --- Planner Logic ---
+        let currentBudgetTotal = 0;
+        let plannerExpenses = [];
+        let plannerBudgets = [];
 
-            const targetMonth = dayjs(selectedMonthStr, 'YYYY-MM');
-            const reportsGrid = document.getElementById('reports-grid');
-            reportsGrid.innerHTML = '';
+        const plannerMonthFilter = document.getElementById('planner-month-filter');
+        plannerMonthFilter.value = dayjs().format('YYYY-MM');
 
-            let totalCostOverall = 0;
-            let totalIncomeOverall = 0;
+        const categorySelect = document.getElementById('expense-category');
+        document.getElementById('add-category-btn').addEventListener('click', () => {
+            const newCategory = prompt("Ingresa el nombre de la nueva categoría:");
+            if (newCategory && newCategory.trim() !== '') {
+                const opt = document.createElement('option');
+                opt.value = newCategory.trim();
+                opt.textContent = newCategory.trim();
+                categorySelect.appendChild(opt);
+                categorySelect.value = newCategory.trim();
+            }
+        });
 
-            // Group accounts. Combos share a comboId.
-            const groups = new Map(); // key: accountId or comboId, value: { isCombo, email, platforms, cost, accountIds }
+        const budgetModal = document.getElementById('set-budget-modal');
+        const budgetAmountInput = document.getElementById('budget-amount-input');
+        const budgetMonthInput = document.getElementById('budget-month-input');
 
-            allPlatformAccounts.forEach(acc => {
-                if (acc.isCombo && acc.comboId) {
-                    if (!groups.has(acc.comboId)) {
-                        groups.set(acc.comboId, {
-                            id: acc.comboId,
-                            isCombo: true,
-                            email: acc.email,
-                            platforms: new Set([acc.platform]),
-                            cost: acc.comboCost || 0,
-                            accountIds: [acc.id]
-                        });
-                    } else {
-                        const group = groups.get(acc.comboId);
-                        group.platforms.add(acc.platform);
-                        group.accountIds.push(acc.id);
-                    }
+        document.getElementById('set-budget-btn').addEventListener('click', () => {
+            budgetMonthInput.value = plannerMonthFilter.value;
+            const existing = plannerBudgets.find(b => b.month === plannerMonthFilter.value);
+            if (existing) {
+                budgetAmountInput.value = existing.total;
+            } else {
+                budgetAmountInput.value = '';
+            }
+            budgetModal.classList.remove('hidden');
+            setTimeout(() => {
+                budgetModal.classList.remove('opacity-0');
+                budgetModal.querySelector('.modal-content').classList.remove('scale-95');
+            }, 10);
+        });
+
+        const closeBudgetModal = () => {
+            budgetModal.classList.add('opacity-0');
+            budgetModal.querySelector('.modal-content').classList.add('scale-95');
+            setTimeout(() => {
+                budgetModal.classList.add('hidden');
+            }, 300);
+        };
+        document.getElementById('cancel-budget-btn').addEventListener('click', closeBudgetModal);
+
+        document.getElementById('set-budget-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = e.target.querySelector('button[type="submit"]');
+            const originalText = btn.textContent;
+            btn.disabled = true;
+            btn.textContent = 'Guardando...';
+
+            const month = budgetMonthInput.value;
+            const amount = parseFloat(budgetAmountInput.value);
+
+            try {
+                const existing = plannerBudgets.find(b => b.month === month);
+                if (existing) {
+                    await updateDoc(doc(db, "budgets", existing.id), { total: amount });
                 } else {
-                    groups.set(acc.id, {
-                        id: acc.id,
-                        isCombo: false,
-                        email: acc.email,
-                        platforms: new Set([acc.platform]),
-                        cost: acc.cost || 0,
-                        accountIds: [acc.id]
-                    });
+                    await addDoc(collection(db, "budgets"), { month: month, total: amount });
                 }
-            });
+                closeBudgetModal();
+            } catch (err) {
+                console.error("Error saving budget", err);
+                alert("Error al guardar presupuesto");
+            } finally {
+                btn.disabled = false;
+                btn.textContent = originalText;
+            }
+        });
 
-            // Calculate income for each group for the selected month
-            // We consider a sale "belongs" to a month if its `inicioPlan` falls in that month
-            Array.from(groups.values()).forEach(group => {
-                let groupIncome = 0;
+        const initPlannerListeners = () => {
+            onSnapshot(collection(db, "budgets"), (snapshot) => {
+                plannerBudgets = [];
+                snapshot.forEach(doc => plannerBudgets.push({ id: doc.id, ...doc.data() }));
+                renderPlanner();
+            }, err => console.error("Budgets listener err", err));
 
-                allSales.forEach(sale => {
-                    if (sale.estado !== 'ARCHIVADO' && group.accountIds.includes(sale.accountId)) {
-                        const saleDate = dayjs(sale.inicioPlan);
-                        if (saleDate.isSame(targetMonth, 'month')) {
-                            groupIncome += (sale.precio || 0);
-                        }
-                    }
+            onSnapshot(collection(db, "expenses"), (snapshot) => {
+                plannerExpenses = [];
+                snapshot.forEach(doc => plannerExpenses.push({ id: doc.id, ...doc.data() }));
+                renderPlanner();
+            }, err => console.error("Expenses listener err", err));
+        };
+        initPlannerListeners();
+
+        const getWeeksOfMonth = (monthStr) => {
+            const start = dayjs(monthStr, 'YYYY-MM').startOf('month');
+            const end = dayjs(monthStr, 'YYYY-MM').endOf('month');
+            const weeks = [];
+            let current = start;
+            let weekNum = 1;
+            while (current.isBefore(end) || current.isSame(end, 'day')) {
+                let weekEnd = current.endOf('week');
+                if (weekEnd.isAfter(end)) weekEnd = end;
+
+                weeks.push({
+                    label: `Sem ${weekNum}`,
+                    start: current,
+                    end: weekEnd,
+                    total: 0
                 });
 
-                group.income = groupIncome;
-                group.balance = group.income - group.cost;
-
-                totalCostOverall += group.cost;
-                totalIncomeOverall += group.income;
-
-                const balanceColor = group.balance >= 0 ? 'text-green-600' : 'text-red-600';
-                const platformsStr = Array.from(group.platforms).join(' + ');
-
-                const row = document.createElement('tr');
-                row.className = 'hover:bg-gray-50';
-                row.innerHTML = `
-                    <td class="px-4 py-3">
-                        <div class="font-medium text-gray-800">${group.isCombo ? 'Combo' : 'Cuenta'}: ${platformsStr}</div>
-                        <div class="text-xs text-gray-500">${group.email}</div>
-                    </td>
-                    <td class="px-4 py-3 text-sm text-gray-600">S/${group.cost.toFixed(2)}</td>
-                    <td class="px-4 py-3 text-sm text-gray-600">S/${group.income.toFixed(2)}</td>
-                    <td class="px-4 py-3 text-sm font-bold ${balanceColor}">S/${group.balance.toFixed(2)}</td>
-                    <td class="px-4 py-3 text-sm">
-                        <span class="px-2 py-1 rounded-full text-xs font-semibold ${group.balance >= 0 ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">
-                            ${group.balance >= 0 ? 'Ganancia' : 'Pérdida'}
-                        </span>
-                    </td>
-                `;
-                reportsGrid.appendChild(row);
-            });
-
-            if (groups.size === 0) {
-                reportsGrid.innerHTML = '<tr><td colspan="5" class="text-center py-8 text-gray-500">No hay cuentas registradas.</td></tr>';
+                current = weekEnd.add(1, 'day');
+                weekNum++;
             }
-
-            const totalBalanceOverall = totalIncomeOverall - totalCostOverall;
-            document.getElementById('report-total-cost').textContent = `S/${totalCostOverall.toFixed(2)}`;
-            document.getElementById('report-total-income').textContent = `S/${totalIncomeOverall.toFixed(2)}`;
-            const balanceEl = document.getElementById('report-total-balance');
-            balanceEl.textContent = `S/${totalBalanceOverall.toFixed(2)}`;
-            balanceEl.className = `px-4 py-3 ${totalBalanceOverall >= 0 ? 'text-green-600' : 'text-red-600'}`;
+            return weeks;
         };
 
-        reportMonthFilter.addEventListener('change', renderReports);
+        const renderPlanner = () => {
+            const targetMonth = plannerMonthFilter.value;
+            if (!targetMonth) return;
 
+            const monthBudget = plannerBudgets.find(b => b.month === targetMonth);
+            currentBudgetTotal = monthBudget ? monthBudget.total : 0;
+            document.getElementById('planner-budget-total').textContent = `S/${currentBudgetTotal.toFixed(2)}`;
+
+            const expensesThisMonth = plannerExpenses.filter(e => dayjs(e.date).format('YYYY-MM') === targetMonth);
+            expensesThisMonth.sort((a, b) => dayjs(b.date).unix() - dayjs(a.date).unix());
+
+            let totalSpent = 0;
+            const weeks = getWeeksOfMonth(targetMonth);
+
+            const tbody = document.getElementById('planner-expenses-list');
+            tbody.innerHTML = '';
+
+            expensesThisMonth.forEach(exp => {
+                totalSpent += exp.amount;
+                const expDate = dayjs(exp.date);
+                const w = weeks.find(wk => expDate.isSame(wk.start, 'day') || expDate.isSame(wk.end, 'day') || (expDate.isAfter(wk.start) && expDate.isBefore(wk.end)));
+                if (w) w.total += exp.amount;
+
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-gray-50 transition';
+                tr.innerHTML = `
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${dayjs(exp.date).format('DD/MM/YYYY')}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm font-medium text-gray-900">${exp.category}</div>
+                        <div class="text-xs text-gray-500">${exp.description || '-'}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        <span class="px-2 py-1 rounded-full text-xs font-medium ${
+                            exp.assignedTo === 'Compartido' ? 'bg-purple-100 text-purple-800' :
+                            exp.assignedTo === 'Renzo' ? 'bg-blue-100 text-blue-800' :
+                            'bg-pink-100 text-pink-800'
+                        }">${exp.assignedTo}</span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-right font-medium text-red-600">-S/${exp.amount.toFixed(2)}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium text-center">
+                        <button onclick="deletePlannerExpense('${exp.id}')" class="text-red-500 hover:text-red-700 transition">
+                            <svg class="w-5 h-5 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            if (expensesThisMonth.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" class="px-6 py-8 text-center text-gray-500 text-sm">No hay gastos en este mes.</td></tr>';
+            }
+
+            const balance = currentBudgetTotal - totalSpent;
+            document.getElementById('planner-spent-total').textContent = `S/${totalSpent.toFixed(2)}`;
+            const balanceEl = document.getElementById('planner-balance-total');
+            balanceEl.textContent = `S/${balance.toFixed(2)}`;
+            balanceEl.className = `text-2xl font-bold ${balance >= 0 ? 'text-green-600' : 'text-red-600'}`;
+
+            renderPlannerChart(weeks);
+        };
+
+        const renderPlannerChart = (weeks) => {
+            const chartContainer = document.getElementById('planner-chart-container');
+            const chartLabels = document.getElementById('planner-chart-labels');
+            chartContainer.innerHTML = '';
+            chartLabels.innerHTML = '';
+
+            const maxVal = Math.max(...weeks.map(w => w.total), 1);
+
+            weeks.forEach(w => {
+                const heightPercent = (w.total / maxVal) * 100;
+
+                const barWrapper = document.createElement('div');
+                barWrapper.className = 'w-1/4 md:flex-1 flex flex-col justify-end items-center group relative h-full';
+
+                const tooltip = document.createElement('div');
+                tooltip.className = 'absolute -top-8 bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition pointer-events-none whitespace-nowrap z-10';
+                tooltip.textContent = `S/${w.total.toFixed(2)}`;
+
+                const bar = document.createElement('div');
+                bar.className = 'w-full max-w-[3rem] bg-indigo-500 hover:bg-indigo-400 transition-all duration-300 rounded-t-sm';
+                bar.style.height = `${Math.max(heightPercent, 2)}%`;
+
+                barWrapper.appendChild(tooltip);
+                barWrapper.appendChild(bar);
+                chartContainer.appendChild(barWrapper);
+
+                const label = document.createElement('div');
+                label.className = 'w-1/4 md:flex-1 text-center font-medium';
+                label.textContent = w.label;
+                chartLabels.appendChild(label);
+            });
+        };
+
+        plannerMonthFilter.addEventListener('change', renderPlanner);
+
+        document.getElementById('add-planner-expense-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = e.target.querySelector('button[type="submit"]');
+            const originalText = btn.textContent;
+            btn.disabled = true;
+            btn.textContent = 'Guardando...';
+
+            const category = document.getElementById('expense-category').value;
+            const desc = document.getElementById('expense-desc').value;
+            const assigned = document.getElementById('expense-assigned').value;
+            const amount = parseFloat(document.getElementById('expense-cost').value);
+            const date = document.getElementById('expense-date-input').value;
+
+            try {
+                await addDoc(collection(db, "expenses"), {
+                    category,
+                    description: desc,
+                    assignedTo: assigned,
+                    amount,
+                    date
+                });
+                e.target.reset();
+                document.getElementById('expense-date-input').value = dayjs().format('YYYY-MM-DD');
+            } catch (err) {
+                console.error("Error adding expense", err);
+                alert("Error al guardar el gasto");
+            } finally {
+                btn.disabled = false;
+                btn.textContent = originalText;
+            }
+        });
+
+        document.getElementById('expense-date-input').value = dayjs().format('YYYY-MM-DD');
+
+        window.deletePlannerExpense = async (id) => {
+            if (confirm("¿Seguro que deseas eliminar este gasto?")) {
+                try {
+                    await deleteDoc(doc(db, "expenses", id));
+                } catch (err) {
+                    console.error("Error deleting expense", err);
+                    alert("No se pudo eliminar");
+                }
+            }
+        };
 
         // --- Custom Services Logic ---
         const toggleAddServiceModal = () => {
