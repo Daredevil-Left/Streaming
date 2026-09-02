@@ -5789,7 +5789,7 @@
         let plannerBudgets = [];
 
         const plannerMonthFilter = document.getElementById('planner-month-filter');
-        if (plannerMonthFilter) plannerMonthFilter.value = dayjs().format('YYYY-MM');
+        if (plannerMonthFilter) { plannerMonthFilter.value = dayjs().format('YYYY-MM'); }
 
         const categorySelect = document.getElementById('expense-category');
         const addCatBtn = document.getElementById('add-category-btn');
