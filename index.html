@@ -5782,80 +5782,99 @@
         selectors.copyPromoBtn.addEventListener('click', copyPromo);
 
 
+
         // --- Planner Logic ---
         let currentBudgetTotal = 0;
         let plannerExpenses = [];
         let plannerBudgets = [];
 
         const plannerMonthFilter = document.getElementById('planner-month-filter');
-        plannerMonthFilter.value = dayjs().format('YYYY-MM');
+        if (plannerMonthFilter) plannerMonthFilter.value = dayjs().format('YYYY-MM');
 
         const categorySelect = document.getElementById('expense-category');
-        document.getElementById('add-category-btn').addEventListener('click', () => {
-            const newCategory = prompt("Ingresa el nombre de la nueva categoría:");
-            if (newCategory && newCategory.trim() !== '') {
-                const opt = document.createElement('option');
-                opt.value = newCategory.trim();
-                opt.textContent = newCategory.trim();
-                categorySelect.appendChild(opt);
-                categorySelect.value = newCategory.trim();
-            }
-        });
+        const addCatBtn = document.getElementById('add-category-btn');
+        if (addCatBtn) {
+            addCatBtn.addEventListener('click', () => {
+                const newCategory = prompt("Ingresa el nombre de la nueva categoría:");
+                if (newCategory && newCategory.trim() !== '') {
+                    const opt = document.createElement('option');
+                    opt.value = newCategory.trim();
+                    opt.textContent = newCategory.trim();
+                    if(categorySelect){
+                        categorySelect.appendChild(opt);
+                        categorySelect.value = newCategory.trim();
+                    }
+                }
+            });
+        }
 
         const budgetModal = document.getElementById('set-budget-modal');
         const budgetAmountInput = document.getElementById('budget-amount-input');
         const budgetMonthInput = document.getElementById('budget-month-input');
+        const setBudgetBtn = document.getElementById('set-budget-btn');
 
-        document.getElementById('set-budget-btn').addEventListener('click', () => {
-            budgetMonthInput.value = plannerMonthFilter.value;
-            const existing = plannerBudgets.find(b => b.month === plannerMonthFilter.value);
-            if (existing) {
-                budgetAmountInput.value = existing.total;
-            } else {
-                budgetAmountInput.value = '';
-            }
-            budgetModal.classList.remove('hidden');
-            setTimeout(() => {
-                budgetModal.classList.remove('opacity-0');
-                budgetModal.querySelector('.modal-content').classList.remove('scale-95');
-            }, 10);
-        });
+        if (setBudgetBtn) {
+            setBudgetBtn.addEventListener('click', () => {
+                if(budgetMonthInput && plannerMonthFilter) budgetMonthInput.value = plannerMonthFilter.value;
+                const existing = plannerBudgets.find(b => b.month === (plannerMonthFilter ? plannerMonthFilter.value : ''));
+                if (existing) {
+                    if(budgetAmountInput) budgetAmountInput.value = existing.total;
+                } else {
+                    if(budgetAmountInput) budgetAmountInput.value = '';
+                }
+                if(budgetModal){
+                    budgetModal.classList.remove('hidden');
+                    setTimeout(() => {
+                        budgetModal.classList.remove('opacity-0');
+                        const mc = budgetModal.querySelector('.modal-content');
+                        if(mc) mc.classList.remove('scale-95');
+                    }, 10);
+                }
+            });
+        }
 
         const closeBudgetModal = () => {
+            if(!budgetModal) return;
             budgetModal.classList.add('opacity-0');
-            budgetModal.querySelector('.modal-content').classList.add('scale-95');
+            const mc = budgetModal.querySelector('.modal-content');
+            if(mc) mc.classList.add('scale-95');
             setTimeout(() => {
                 budgetModal.classList.add('hidden');
             }, 300);
         };
-        document.getElementById('cancel-budget-btn').addEventListener('click', closeBudgetModal);
 
-        document.getElementById('set-budget-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const btn = e.target.querySelector('button[type="submit"]');
-            const originalText = btn.textContent;
-            btn.disabled = true;
-            btn.textContent = 'Guardando...';
+        const cancelBudgetBtn = document.getElementById('cancel-budget-btn');
+        if(cancelBudgetBtn) cancelBudgetBtn.addEventListener('click', closeBudgetModal);
 
-            const month = budgetMonthInput.value;
-            const amount = parseFloat(budgetAmountInput.value);
+        const setBudgetForm = document.getElementById('set-budget-form');
+        if(setBudgetForm) {
+            setBudgetForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const btn = e.target.querySelector('button[type="submit"]');
+                const originalText = btn.textContent;
+                btn.disabled = true;
+                btn.textContent = 'Guardando...';
 
-            try {
-                const existing = plannerBudgets.find(b => b.month === month);
-                if (existing) {
-                    await updateDoc(doc(db, "budgets", existing.id), { total: amount });
-                } else {
-                    await addDoc(collection(db, "budgets"), { month: month, total: amount });
+                const month = budgetMonthInput ? budgetMonthInput.value : '';
+                const amount = budgetAmountInput ? parseFloat(budgetAmountInput.value) : 0;
+
+                try {
+                    const existing = plannerBudgets.find(b => b.month === month);
+                    if (existing) {
+                        await updateDoc(doc(db, "budgets", existing.id), { total: amount });
+                    } else {
+                        await addDoc(collection(db, "budgets"), { month: month, total: amount });
+                    }
+                    closeBudgetModal();
+                } catch (err) {
+                    console.error("Error saving budget", err);
+                    alert("Error al guardar presupuesto");
+                } finally {
+                    btn.disabled = false;
+                    btn.textContent = originalText;
                 }
-                closeBudgetModal();
-            } catch (err) {
-                console.error("Error saving budget", err);
-                alert("Error al guardar presupuesto");
-            } finally {
-                btn.disabled = false;
-                btn.textContent = originalText;
-            }
-        });
+            });
+        }
 
         const initPlannerListeners = () => {
             onSnapshot(collection(db, "budgets"), (snapshot) => {
@@ -5870,7 +5889,6 @@
                 renderPlanner();
             }, err => console.error("Expenses listener err", err));
         };
-        initPlannerListeners();
 
         const getWeeksOfMonth = (monthStr) => {
             const start = dayjs(monthStr, 'YYYY-MM').startOf('month');
@@ -5896,12 +5914,14 @@
         };
 
         const renderPlanner = () => {
+            if (!plannerMonthFilter) return;
             const targetMonth = plannerMonthFilter.value;
             if (!targetMonth) return;
 
             const monthBudget = plannerBudgets.find(b => b.month === targetMonth);
             currentBudgetTotal = monthBudget ? monthBudget.total : 0;
-            document.getElementById('planner-budget-total').textContent = `S/${currentBudgetTotal.toFixed(2)}`;
+            const bTotal = document.getElementById('planner-budget-total');
+            if(bTotal) bTotal.textContent = `S/${currentBudgetTotal.toFixed(2)}`;
 
             const expensesThisMonth = plannerExpenses.filter(e => dayjs(e.date).format('YYYY-MM') === targetMonth);
             expensesThisMonth.sort((a, b) => dayjs(b.date).unix() - dayjs(a.date).unix());
@@ -5910,6 +5930,7 @@
             const weeks = getWeeksOfMonth(targetMonth);
 
             const tbody = document.getElementById('planner-expenses-list');
+            if(!tbody) return;
             tbody.innerHTML = '';
 
             expensesThisMonth.forEach(exp => {
@@ -5948,10 +5969,13 @@
             }
 
             const balance = currentBudgetTotal - totalSpent;
-            document.getElementById('planner-spent-total').textContent = `S/${totalSpent.toFixed(2)}`;
+            const spentTotal = document.getElementById('planner-spent-total');
+            if(spentTotal) spentTotal.textContent = `S/${totalSpent.toFixed(2)}`;
             const balanceEl = document.getElementById('planner-balance-total');
-            balanceEl.textContent = `S/${balance.toFixed(2)}`;
-            balanceEl.className = `text-2xl font-bold ${balance >= 0 ? 'text-green-600' : 'text-red-600'}`;
+            if(balanceEl){
+                balanceEl.textContent = `S/${balance.toFixed(2)}`;
+                balanceEl.className = `text-2xl font-bold ${balance >= 0 ? 'text-green-600' : 'text-red-600'}`;
+            }
 
             renderPlannerChart(weeks);
         };
@@ -5959,10 +5983,11 @@
         const renderPlannerChart = (weeks) => {
             const chartContainer = document.getElementById('planner-chart-container');
             const chartLabels = document.getElementById('planner-chart-labels');
+            if(!chartContainer || !chartLabels) return;
             chartContainer.innerHTML = '';
             chartLabels.innerHTML = '';
 
-            const maxVal = Math.max(...weeks.map(w => w.total), 1);
+            const maxVal = weeks && weeks.length ? Math.max(...weeks.map(w => w.total), 1) : 1;
 
             weeks.forEach(w => {
                 const heightPercent = (w.total / maxVal) * 100;
@@ -5989,41 +6014,46 @@
             });
         };
 
-        plannerMonthFilter.addEventListener('change', renderPlanner);
+        if(plannerMonthFilter) plannerMonthFilter.addEventListener('change', renderPlanner);
 
-        document.getElementById('add-planner-expense-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const btn = e.target.querySelector('button[type="submit"]');
-            const originalText = btn.textContent;
-            btn.disabled = true;
-            btn.textContent = 'Guardando...';
+        const addExpForm = document.getElementById('add-planner-expense-form');
+        if(addExpForm) {
+            addExpForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const btn = e.target.querySelector('button[type="submit"]');
+                const originalText = btn.textContent;
+                btn.disabled = true;
+                btn.textContent = 'Guardando...';
 
-            const category = document.getElementById('expense-category').value;
-            const desc = document.getElementById('expense-desc').value;
-            const assigned = document.getElementById('expense-assigned').value;
-            const amount = parseFloat(document.getElementById('expense-cost').value);
-            const date = document.getElementById('expense-date-input').value;
+                const category = document.getElementById('expense-category') ? document.getElementById('expense-category').value : '';
+                const desc = document.getElementById('expense-desc') ? document.getElementById('expense-desc').value : '';
+                const assigned = document.getElementById('expense-assigned') ? document.getElementById('expense-assigned').value : '';
+                const amount = document.getElementById('expense-cost') ? parseFloat(document.getElementById('expense-cost').value) : 0;
+                const date = document.getElementById('expense-date-input') ? document.getElementById('expense-date-input').value : '';
 
-            try {
-                await addDoc(collection(db, "expenses"), {
-                    category,
-                    description: desc,
-                    assignedTo: assigned,
-                    amount,
-                    date
-                });
-                e.target.reset();
-                document.getElementById('expense-date-input').value = dayjs().format('YYYY-MM-DD');
-            } catch (err) {
-                console.error("Error adding expense", err);
-                alert("Error al guardar el gasto");
-            } finally {
-                btn.disabled = false;
-                btn.textContent = originalText;
-            }
-        });
+                try {
+                    await addDoc(collection(db, "expenses"), {
+                        category,
+                        description: desc,
+                        assignedTo: assigned,
+                        amount,
+                        date
+                    });
+                    e.target.reset();
+                    const dInput = document.getElementById('expense-date-input');
+                    if(dInput) dInput.value = dayjs().format('YYYY-MM-DD');
+                } catch (err) {
+                    console.error("Error adding expense", err);
+                    alert("Error al guardar el gasto");
+                } finally {
+                    btn.disabled = false;
+                    btn.textContent = originalText;
+                }
+            });
+        }
 
-        document.getElementById('expense-date-input').value = dayjs().format('YYYY-MM-DD');
+        const expDateInput = document.getElementById('expense-date-input');
+        if(expDateInput) expDateInput.value = dayjs().format('YYYY-MM-DD');
 
         window.deletePlannerExpense = async (id) => {
             if (confirm("¿Seguro que deseas eliminar este gasto?")) {
@@ -6036,7 +6066,18 @@
             }
         };
 
+
+
+
+        // Ensure planner initializes on load if authenticated
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                initPlannerListeners();
+            }
+        });
+
         // --- Custom Services Logic ---
+
         const toggleAddServiceModal = () => {
             selectors.addCustomServiceModal.classList.toggle('hidden');
             selectors.addCustomServiceModal.classList.toggle('opacity-0');
