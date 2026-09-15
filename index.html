@@ -4141,6 +4141,11 @@
                         <button type="button" class="delete-profile-btn p-1.5 text-red-500 hover:text-red-700 bg-red-50 hover:bg-red-100 rounded-full transition border border-red-100 shadow-sm flex items-center justify-center flex-shrink-0 min-w-[32px] min-h-[32px] pointer-events-auto relative z-10" data-profile-id="${profile.id}" title="Eliminar Perfil">
                             <svg class="w-4 h-4 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                         </button>
+                        ${isAvailable ? `
+                        <button type="button" class="add-sale-from-profile-btn p-1.5 text-teal-600 hover:text-teal-800 bg-teal-50 hover:bg-teal-100 rounded-full transition border border-teal-100 shadow-sm flex items-center justify-center flex-shrink-0 min-w-[32px] min-h-[32px] pointer-events-auto relative z-10" data-account-id="${accountId}" data-profile-id="${profile.id}" data-platform="${account.platform}" title="Añadir Venta">
+                            <svg class="w-4 h-4 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                        </button>
+                        ` : ''}
                     </div>
                 </li>
                 `;
@@ -4228,6 +4233,32 @@
                         btn.addEventListener('click', (e) => {
                             const profileId = e.currentTarget.dataset.profileId;
                             handleDeleteProfile(accountId, profileId);
+                        });
+                    });
+
+                    // Add Event Listeners for Add Sale from Profile buttons
+                    selectors.profilesContentArea.querySelectorAll('.add-sale-from-profile-btn').forEach(btn => {
+                        btn.addEventListener('click', (e) => {
+                            const accId = e.currentTarget.getAttribute('data-account-id');
+                            const profId = e.currentTarget.getAttribute('data-profile-id');
+                            const platform = e.currentTarget.getAttribute('data-platform');
+
+                            // Close the modal
+                            closeProfilesModal();
+
+                            // Switch to Ventas view
+                            document.getElementById('nav-ventas').click();
+
+                            // Pre-fill the form
+                            selectors.plataformaSelect.value = platform;
+                            populatePlatformAccountsDropdowns(platform, selectors.platformAccountSelect);
+
+                            setTimeout(() => {
+                                selectors.platformAccountSelect.value = accId;
+                                populateProfilesDropdown(accId, selectors.profileSelect, null).then(() => {
+                                    selectors.profileSelect.value = profId;
+                                });
+                            }, 50); // slight delay to allow dropdown populations
                         });
                     });
                 }
