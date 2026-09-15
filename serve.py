@@ -1,11 +1,14 @@
 import http.server
 import socketserver
+import os
+import sys
 
 PORT = 8000
+
+web_dir = os.path.join(os.path.dirname(__file__))
+os.chdir(web_dir)
+
 Handler = http.server.SimpleHTTPRequestHandler
-Handler.extensions_map.update({
-    ".js": "application/javascript",
-});
 with socketserver.TCPServer(("", PORT), Handler) as httpd:
-    print("serving at port", PORT)
+    print(f"Serving at port {PORT}")
     httpd.serve_forever()

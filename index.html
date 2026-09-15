@@ -4254,14 +4254,13 @@
                             selectors.plataformaSelect.dispatchEvent(new Event('change'));
 
                             setTimeout(() => {
+                                // Select account and trigger its change event to populate profiles synchronously
                                 selectors.platformAccountSelect.value = accId;
-                                // We explicitly call populateProfilesDropdown and wait for it because
-                                // we need to set the value immediately after it's populated.
-                                // It is also triggered by the change event, but we want to ensure ordering here.
-                                populateProfilesDropdown(accId, selectors.profileSelect, null).then(() => {
-                                    selectors.profileSelect.value = profId;
-                                    selectors.profileSelect.dispatchEvent(new Event('change'));
-                                });
+                                selectors.platformAccountSelect.dispatchEvent(new Event('change'));
+
+                                // Now the profiles dropdown is populated, select the profile and trigger change for PIN
+                                selectors.profileSelect.value = profId;
+                                selectors.profileSelect.dispatchEvent(new Event('change'));
                             }, 100);
                         });
                     });
