@@ -4251,14 +4251,18 @@
 
                             // Pre-fill the form
                             selectors.plataformaSelect.value = platform;
-                            populatePlatformAccountsDropdowns(platform, selectors.platformAccountSelect);
+                            selectors.plataformaSelect.dispatchEvent(new Event('change'));
 
                             setTimeout(() => {
                                 selectors.platformAccountSelect.value = accId;
+                                // We explicitly call populateProfilesDropdown and wait for it because
+                                // we need to set the value immediately after it's populated.
+                                // It is also triggered by the change event, but we want to ensure ordering here.
                                 populateProfilesDropdown(accId, selectors.profileSelect, null).then(() => {
                                     selectors.profileSelect.value = profId;
+                                    selectors.profileSelect.dispatchEvent(new Event('change'));
                                 });
-                            }, 50); // slight delay to allow dropdown populations
+                            }, 100);
                         });
                     });
                 }
