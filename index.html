@@ -2559,8 +2559,12 @@
                 const sale = allSales.find(s => s.id === saleId);
                 if (!sale) return;
                 const status = getSaleStatus(sale.finPlan, sale.estado);
+                const price = sale.precio ? `S/${sale.precio.toFixed(2)}` : 'el monto correspondiente';
                 let message = '';
-                if (status === 'Vencido') { message = `Buenas tardes 👋🏻, se le informa que su cuenta de "${sale.plataforma}" ya venció. Si desea renovar me avisa, por favor, para evitar el corte del servicio. Gracias por su preferencia 💯`; } else if (status === 'Vence hoy') { message = `Buenas tardes 👋🏻, se le informa que su cuenta de "${sale.plataforma}" vence el día de hoy a la medianoche ‼. Si desea renovar me avisa, por favor. Gracias por su preferencia 💯`; } else { const daysLeft = dayjs(sale.finPlan).endOf('day').diff(dayjs(), 'day'); const dayText = daysLeft === 0 ? 'mañana' : `en ${daysLeft + 1} días`; message = `Buenas tardes 👋🏻, se le informa que su cuenta de "${sale.plataforma}" vence ${dayText}. Si desea renovar me avisa, por favor. Gracias por su preferencia 💯`; }
+                if (status === 'Vencido') { message = `Hola ${sale.cliente} 👋🏻, se le informa que su cuenta de *${sale.plataforma}* ya venció.`; } else if (status === 'Vence hoy') { message = `Hola ${sale.cliente} 👋🏻, se le informa que su cuenta de *${sale.plataforma}* vence el día de hoy a la medianoche ‼.`; } else { const daysLeft = dayjs(sale.finPlan).endOf('day').diff(dayjs(), 'day'); const dayText = daysLeft === 0 ? 'mañana' : `en ${daysLeft + 1} días`; message = `Hola ${sale.cliente} 👋🏻, se le informa que su cuenta de *${sale.plataforma}* vence ${dayText}.`; }
+
+                message += `\n\nPara renovar y evitar el corte del servicio, por favor envíe el monto de *${price}* al Yape:\n📱 *933622323* (Chartisa P.)\n\n📸 _No olvide enviar la captura del pago._ Gracias por su preferencia 💯`;
+
                 navigator.clipboard.writeText(message).then(() => { const originalText = button.textContent; button.textContent = '¡Copiado!'; button.classList.add('bg-green-500', 'text-white'); setTimeout(() => { button.textContent = originalText; button.classList.remove('bg-green-500', 'text-white'); }, 2000); }).catch(err => { console.error('Error al copiar texto: ', err); alert('No se pudo copiar el texto.'); });
             };
 
@@ -2986,18 +2990,18 @@
                 const now = dayjs();
                 const end = dayjs(sale.finPlan);
                 const daysDiff = end.diff(now, 'day');
+                const price = sale.precio ? `S/${sale.precio.toFixed(2)}` : 'el monto correspondiente';
 
-                let message = "";
+                let baseMessage = "";
                 if (daysDiff > 0) {
-                    message = `Hola, le informamos que su cuenta de *${sale.plataforma}* está por vencer en *${daysDiff} días*.`;
+                    baseMessage = `Hola ${sale.cliente}, le informamos que su cuenta de *${sale.plataforma}* está por vencer en *${daysDiff} días*.`;
                 } else if (daysDiff === 0) {
-                    message = `Hola, le informamos que su cuenta de *${sale.plataforma}* vence *hoy*.`;
+                    baseMessage = `Hola ${sale.cliente}, le informamos que su cuenta de *${sale.plataforma}* vence *hoy*.`;
                 } else {
-                    message = `Hola, le informamos que su cuenta de *${sale.plataforma}* ya ha vencido.`;
+                    baseMessage = `Hola ${sale.cliente}, le informamos que su cuenta de *${sale.plataforma}* ya ha vencido.`;
                 }
 
-                // Append renewal text (optional but helpful)
-                // message += " Si desea renovar, por favor avíseme.";
+                const message = `${baseMessage}\n\nPara renovar y evitar el corte del servicio, por favor envíe el monto de *${price}* al Yape:\n📱 *933622323* (Chartisa P.)\n\n📸 _No olvide enviar la captura del pago._`;
 
                 const url = `https://wa.me/${sale.celular}?text=${encodeURIComponent(message)}`;
                 window.open(url, '_blank');
