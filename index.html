@@ -233,6 +233,13 @@
                     </svg>
                     <span class="ml-4 sidebar-text">Reportes</span>
                 </a>
+                <a href="#" id="nav-papelera" class="flex items-center py-2.5 px-2 rounded-md hover:bg-gray-700">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                    </svg>
+                    <span class="ml-4 sidebar-text">Papelera</span>
+                </a>
             </nav>
             <div class="px-2 py-4">
                 <button id="logout-btn"
@@ -815,6 +822,85 @@
                                         <td class="px-4 py-3"></td>
                                     </tr>
                                 </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Papelera View -->
+                <div id="papelera-view" class="view hidden max-w-7xl mx-auto">
+                    <h1 class="text-2xl md:text-3xl font-bold text-gray-800 mb-6 md:mb-8 px-2 md:px-0">Papelera de Reciclaje</h1>
+
+                    <div class="bg-white p-6 rounded-2xl shadow-lg mb-8">
+                        <div class="flex flex-col md:flex-row gap-4 mb-6">
+                            <div class="flex-1">
+                                <label class="block text-sm font-medium text-gray-600 mb-2">Buscar</label>
+                                <input type="text" id="papelera-search" placeholder="Cliente, correo, plataforma..." class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+                            </div>
+                            <div class="w-full md:w-48">
+                                <label class="block text-sm font-medium text-gray-600 mb-2">Mes</label>
+                                <select id="papelera-month-filter" class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+                                    <option value="Todos">Todos</option>
+                                    <option value="0">Enero</option>
+                                    <option value="1">Febrero</option>
+                                    <option value="2">Marzo</option>
+                                    <option value="3">Abril</option>
+                                    <option value="4">Mayo</option>
+                                    <option value="5">Junio</option>
+                                    <option value="6">Julio</option>
+                                    <option value="7">Agosto</option>
+                                    <option value="8">Septiembre</option>
+                                    <option value="9">Octubre</option>
+                                    <option value="10">Noviembre</option>
+                                    <option value="11">Diciembre</option>
+                                </select>
+                            </div>
+                            <div class="w-full md:w-48">
+                                <label class="block text-sm font-medium text-gray-600 mb-2">Año</label>
+                                <select id="papelera-year-filter" class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+                                    <option value="Todos">Todos</option>
+                                </select>
+                            </div>
+                            <div class="w-full md:w-48">
+                                <label class="block text-sm font-medium text-gray-600 mb-2">Plataforma</label>
+                                <select id="papelera-platform-filter" class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+                                    <option value="Todos">Todas</option>
+                                </select>
+                            </div>
+                            <div class="w-full md:w-48">
+                                <label class="block text-sm font-medium text-gray-600 mb-2">Vendedor</label>
+                                <select id="papelera-vendedor-filter" class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+                                    <option value="Todos">Todos</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <button id="papelera-select-all-btn" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition font-medium">Seleccionar Todos</button>
+                            <button id="papelera-restore-btn" class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition font-medium disabled:opacity-50 disabled:cursor-not-allowed">Restaurar Seleccionados</button>
+                            <button id="papelera-delete-btn" class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition font-medium disabled:opacity-50 disabled:cursor-not-allowed">Eliminar Definitivo</button>
+                            <div class="flex-grow"></div>
+                            <button id="papelera-empty-btn" class="px-4 py-2 bg-red-100 text-red-600 rounded-lg hover:bg-red-200 transition font-medium">Vaciar Papelera</button>
+                        </div>
+
+                        <div class="overflow-x-auto rounded-lg border border-gray-200">
+                            <table class="min-w-full divide-y divide-gray-200 text-sm">
+                                <thead class="bg-gray-50 text-gray-700">
+                                    <tr>
+                                        <th class="px-4 py-3 text-left w-12"><input type="checkbox" id="papelera-master-checkbox" class="rounded border-gray-300"></th>
+                                        <th class="px-4 py-3 text-left font-semibold">Cliente</th>
+                                        <th class="px-4 py-3 text-left font-semibold">Plataforma</th>
+                                        <th class="px-4 py-3 text-left font-semibold">Vendedor</th>
+                                        <th class="px-4 py-3 text-left font-semibold">Inicio</th>
+                                        <th class="px-4 py-3 text-left font-semibold">Término</th>
+                                        <th class="px-4 py-3 text-left font-semibold">Eliminado</th>
+                                        <th class="px-4 py-3 text-left font-semibold">Días Vencido</th>
+                                        <th class="px-4 py-3 text-center font-semibold">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="papelera-list" class="divide-y divide-gray-200 bg-white">
+                                    <!-- Populated by JS -->
+                                </tbody>
                             </table>
                         </div>
                     </div>
@@ -1619,6 +1705,14 @@
             let allServices = [...defaultServices];
             let allSales = [], allExpenses = [], allPlatformAccounts = [], activePlatformFilter = 'Todos', currentSearchTerm = '', activeAccountFilter = '', activeStatusFilter = '';
 
+            // Papelera State
+            let papeleraSelectedIds = new Set();
+            let papeleraActiveMonth = 'Todos';
+            let papeleraActiveYear = 'Todos';
+            let papeleraActivePlatform = 'Todos';
+            let papeleraActiveVendedor = 'Todos';
+            let papeleraSearchTerm = '';
+
             const getProfileOccupancy = (accountId, profileId) => {
                 const account = allPlatformAccounts.find(a => a.id === accountId);
                 const maxClients = (account && account.platform === 'Crunchyroll') ? 2 : 1;
@@ -1725,6 +1819,18 @@
                 closeProfilesModalBtn: document.getElementById('close-profiles-modal'),
                 profilesContentArea: document.getElementById('profiles-content-area'),
                 profilesModalAccountEmail: document.getElementById('profiles-modal-account-email'),
+                // Papelera View Selectors
+                papeleraSearch: document.getElementById('papelera-search'),
+                papeleraMonthFilter: document.getElementById('papelera-month-filter'),
+                papeleraYearFilter: document.getElementById('papelera-year-filter'),
+                papeleraPlatformFilter: document.getElementById('papelera-platform-filter'),
+                papeleraVendedorFilter: document.getElementById('papelera-vendedor-filter'),
+                papeleraSelectAllBtn: document.getElementById('papelera-select-all-btn'),
+                papeleraRestoreBtn: document.getElementById('papelera-restore-btn'),
+                papeleraDeleteBtn: document.getElementById('papelera-delete-btn'),
+                papeleraEmptyBtn: document.getElementById('papelera-empty-btn'),
+                papeleraMasterCheckbox: document.getElementById('papelera-master-checkbox'),
+                papeleraList: document.getElementById('papelera-list'),
                 // Precios View Selectors
                 preciosView: document.getElementById('precios-view'),
                 toggleConfigBtn: document.getElementById('toggle-config-btn'),
@@ -2576,6 +2682,155 @@
                     toggleAddServiceModal();
                 });
                 selectors.accountPlatformButtons.appendChild(addPlatformBtn);
+            };
+
+            const renderPapelera = () => {
+                if (!selectors.papeleraList) return;
+
+                let archivedSales = allSales.filter(sale => sale.estado === 'ARCHIVADO');
+
+                if (selectors.papeleraYearFilter.options.length <= 1 && archivedSales.length > 0) {
+                    const years = new Set(archivedSales.map(s => s.fechaEliminacion ? dayjs(s.fechaEliminacion).year() : dayjs(s.finPlan).year()));
+                    Array.from(years).sort().reverse().forEach(year => {
+                        const option = document.createElement('option');
+                        option.value = year;
+                        option.textContent = year;
+                        selectors.papeleraYearFilter.appendChild(option);
+                    });
+                }
+
+                if (selectors.papeleraPlatformFilter.options.length <= 1) {
+                    const platforms = new Set(allSales.map(s => s.plataforma));
+                    Array.from(platforms).sort().forEach(platform => {
+                        if(platform) {
+                            const option = document.createElement('option');
+                            option.value = platform;
+                            option.textContent = platform;
+                            selectors.papeleraPlatformFilter.appendChild(option);
+                        }
+                    });
+                }
+
+                if (selectors.papeleraVendedorFilter.options.length <= 1) {
+                    const vendedores = new Set(archivedSales.map(s => s.vendedor || 'Desconocido'));
+                    Array.from(vendedores).sort().forEach(vendedor => {
+                        const option = document.createElement('option');
+                        option.value = vendedor;
+                        option.textContent = vendedor;
+                        selectors.papeleraVendedorFilter.appendChild(option);
+                    });
+                }
+
+                if (papeleraSearchTerm) {
+                    const term = papeleraSearchTerm.toLowerCase();
+                    archivedSales = archivedSales.filter(sale =>
+                        sale.cliente.toLowerCase().includes(term) ||
+                        sale.plataforma.toLowerCase().includes(term) ||
+                        (sale.correo && sale.correo.toLowerCase().includes(term))
+                    );
+                }
+                if (papeleraActiveMonth !== 'Todos') {
+                    archivedSales = archivedSales.filter(sale => {
+                        const d = sale.fechaEliminacion ? dayjs(sale.fechaEliminacion) : dayjs(sale.finPlan);
+                        return d.month() === parseInt(papeleraActiveMonth);
+                    });
+                }
+                if (papeleraActiveYear !== 'Todos') {
+                    archivedSales = archivedSales.filter(sale => {
+                        const d = sale.fechaEliminacion ? dayjs(sale.fechaEliminacion) : dayjs(sale.finPlan);
+                        return d.year() === parseInt(papeleraActiveYear);
+                    });
+                }
+                if (papeleraActivePlatform !== 'Todos') {
+                    archivedSales = archivedSales.filter(sale => sale.plataforma === papeleraActivePlatform);
+                }
+                if (papeleraActiveVendedor !== 'Todos') {
+                    archivedSales = archivedSales.filter(sale => (sale.vendedor || 'Desconocido') === papeleraActiveVendedor);
+                }
+
+                selectors.papeleraList.innerHTML = '';
+
+                if (archivedSales.length === 0) {
+                    selectors.papeleraList.innerHTML = '<tr><td colspan="9" class="px-4 py-8 text-center text-gray-500">No hay ventas eliminadas que coincidan.</td></tr>';
+                    return;
+                }
+
+                archivedSales.forEach(sale => {
+                    const tr = document.createElement('tr');
+                    tr.className = "hover:bg-gray-50 transition-colors border-b border-gray-100 last:border-0";
+
+                    const isChecked = papeleraSelectedIds.has(sale.id);
+                    const fechaInicio = dayjs(sale.inicioPlan).format('DD/MM/YYYY');
+                    const fechaTermino = dayjs(sale.finPlan).format('DD/MM/YYYY');
+                    const fechaEliminacionStr = sale.fechaEliminacion ? dayjs(sale.fechaEliminacion).format('DD/MM/YYYY HH:mm') : 'N/A';
+
+                    let diasVencidoStr = 'N/A';
+                    if (sale.fechaEliminacion) {
+                        const diff = dayjs(sale.fechaEliminacion).diff(dayjs(sale.finPlan), 'day');
+                        if (diff > 0) {
+                            diasVencidoStr = `<span class="text-red-600 font-medium">+${diff} días</span>`;
+                        } else if (diff === 0) {
+                             diasVencidoStr = `<span class="text-yellow-600 font-medium">0 días</span>`;
+                        } else {
+                             diasVencidoStr = `<span class="text-green-600 font-medium">${Math.abs(diff)} días a favor</span>`;
+                        }
+                    }
+
+                    tr.innerHTML = `
+                        <td class="px-4 py-3"><input type="checkbox" class="papelera-row-checkbox rounded border-gray-300" data-id="${sale.id}" ${isChecked ? 'checked' : ''}></td>
+                        <td class="px-4 py-3">
+                            <div class="font-medium text-gray-800">${sale.cliente}</div>
+                            ${sale.celular ? `<div class="text-xs text-gray-500">${sale.celular}</div>` : ''}
+                            ${sale.correo ? `<div class="text-xs text-blue-600 mt-1">${sale.correo}</div>` : ''}
+                        </td>
+                        <td class="px-4 py-3">
+                            ${getPlatformHtml(sale.plataforma)}
+                        </td>
+                        <td class="px-4 py-3 text-gray-600">${sale.vendedor || '-'}</td>
+                        <td class="px-4 py-3 text-gray-600 whitespace-nowrap">${fechaInicio}</td>
+                        <td class="px-4 py-3 text-gray-600 whitespace-nowrap">${fechaTermino}</td>
+                        <td class="px-4 py-3 text-gray-600 whitespace-nowrap">${fechaEliminacionStr}</td>
+                        <td class="px-4 py-3 whitespace-nowrap">${diasVencidoStr}</td>
+                        <td class="px-4 py-3 text-center">
+                            <div class="flex items-center justify-center space-x-2">
+                                <button class="papelera-restore-single-btn p-1.5 text-green-600 hover:bg-green-50 rounded-lg transition" data-id="${sale.id}" title="Restaurar">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"></path></svg>
+                                </button>
+                                <button class="papelera-delete-single-btn p-1.5 text-red-600 hover:bg-red-50 rounded-lg transition" data-id="${sale.id}" title="Eliminar Definitivo">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                </button>
+                            </div>
+                        </td>
+                    `;
+                    selectors.papeleraList.appendChild(tr);
+                });
+
+                selectors.papeleraList.querySelectorAll('.papelera-row-checkbox').forEach(cb => {
+                    cb.addEventListener('change', (e) => {
+                        if (e.target.checked) papeleraSelectedIds.add(e.target.dataset.id);
+                        else papeleraSelectedIds.delete(e.target.dataset.id);
+                        updatePapeleraButtons();
+                    });
+                });
+
+                selectors.papeleraList.querySelectorAll('.papelera-restore-single-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => handlePapeleraRestore([e.currentTarget.dataset.id]));
+                });
+
+                selectors.papeleraList.querySelectorAll('.papelera-delete-single-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => handlePapeleraDelete([e.currentTarget.dataset.id]));
+                });
+
+                updatePapeleraButtons();
+            };
+
+            const updatePapeleraButtons = () => {
+                const hasSelection = papeleraSelectedIds.size > 0;
+                selectors.papeleraRestoreBtn.disabled = !hasSelection;
+                selectors.papeleraDeleteBtn.disabled = !hasSelection;
+
+                const checkboxes = selectors.papeleraList.querySelectorAll('.papelera-row-checkbox');
+                selectors.papeleraMasterCheckbox.checked = checkboxes.length > 0 && checkboxes.length === papeleraSelectedIds.size;
             };
 
             const renderSales = (sales) => {
@@ -3548,7 +3803,10 @@
                     let profileData = null;
 
                     // Update sale first so dynamic calculation works
-                    await updateDoc(doc(db, "sales", id), { estado: 'ARCHIVADO' });
+                    await updateDoc(doc(db, "sales", id), {
+                        estado: 'ARCHIVADO',
+                        fechaEliminacion: new Date().toISOString()
+                    });
 
                     // Release profile if it exists
                     if (sale.accountId && sale.profileId) {
@@ -4657,6 +4915,7 @@
             loadDashboardData();
             renderRecentIncome();
             if (typeof renderReports === 'function') renderReports();
+            if (typeof renderPapelera === 'function') renderPapelera();
             selectors.loadingState.classList.add('hidden');
         }, (e) => {
             console.error("Error al cargar ventas:", e);
@@ -5151,6 +5410,36 @@
             const activeSales = allSales.filter(sale => sale.estado !== 'ARCHIVADO');
             applyFiltersAndRender(activeSales);
         });
+
+        // Papelera Event Listeners
+        selectors.papeleraSearch.addEventListener('input', e => { papeleraSearchTerm = e.target.value; renderPapelera(); });
+        selectors.papeleraMonthFilter.addEventListener('change', e => { papeleraActiveMonth = e.target.value; renderPapelera(); });
+        selectors.papeleraYearFilter.addEventListener('change', e => { papeleraActiveYear = e.target.value; renderPapelera(); });
+        selectors.papeleraPlatformFilter.addEventListener('change', e => { papeleraActivePlatform = e.target.value; renderPapelera(); });
+        selectors.papeleraVendedorFilter.addEventListener('change', e => { papeleraActiveVendedor = e.target.value; renderPapelera(); });
+
+        selectors.papeleraMasterCheckbox.addEventListener('change', e => {
+            const isChecked = e.target.checked;
+            selectors.papeleraList.querySelectorAll('.papelera-row-checkbox').forEach(cb => {
+                cb.checked = isChecked;
+                if (isChecked) papeleraSelectedIds.add(cb.dataset.id);
+                else papeleraSelectedIds.delete(cb.dataset.id);
+            });
+            updatePapeleraButtons();
+        });
+
+        selectors.papeleraSelectAllBtn.addEventListener('click', () => {
+            selectors.papeleraMasterCheckbox.checked = true;
+            selectors.papeleraMasterCheckbox.dispatchEvent(new Event('change'));
+        });
+
+        selectors.papeleraRestoreBtn.addEventListener('click', () => handlePapeleraRestore(Array.from(papeleraSelectedIds)));
+        selectors.papeleraDeleteBtn.addEventListener('click', () => handlePapeleraDelete(Array.from(papeleraSelectedIds)));
+        selectors.papeleraEmptyBtn.addEventListener('click', () => {
+            const archivedSales = allSales.filter(sale => sale.estado === 'ARCHIVADO');
+            const allIds = archivedSales.map(s => s.id);
+            if(allIds.length > 0) handlePapeleraDelete(allIds, true);
+        });
         selectors.accountFilter.addEventListener('change', e => {
             activeAccountFilter = e.target.value;
             const activeSales = allSales.filter(sale => sale.estado !== 'ARCHIVADO');
@@ -5175,6 +5464,45 @@
         selectors.cancelEditBtn.addEventListener('click', closeModal);
         selectors.closeProfilesModalBtn.addEventListener('click', closeProfilesModal);
 
+
+        const handlePapeleraRestore = async (ids) => {
+            if (!confirm(`¿Estás seguro de restaurar ${ids.length} venta(s)?`)) return;
+
+            const restorePromises = ids.map(id => {
+                const saleRef = doc(db, "sales", id);
+                return updateDoc(saleRef, {
+                    estado: 'ACTIVO',
+                    fechaEliminacion: deleteField()
+                });
+            });
+
+            try {
+                await Promise.all(restorePromises);
+                papeleraSelectedIds.clear();
+                alert(`Se restauraron ${ids.length} venta(s) exitosamente.`);
+            } catch (error) {
+                console.error("Error restoring sales:", error);
+                alert("Hubo un error al restaurar algunas ventas.");
+            }
+        };
+
+        const handlePapeleraDelete = async (ids, isEmpty = false) => {
+            const msg = isEmpty ? '¿Estás seguro de VACIAR la papelera? Esta acción no se puede deshacer.' : `¿Estás seguro de eliminar definitivamente ${ids.length} venta(s)? Esta acción no se puede deshacer.`;
+            if (!confirm(msg)) return;
+
+            const deletePromises = ids.map(id => {
+                return deleteDoc(doc(db, "sales", id));
+            });
+
+            try {
+                await Promise.all(deletePromises);
+                papeleraSelectedIds.clear();
+                alert(`Se eliminaron definitivamente ${ids.length} venta(s).`);
+            } catch (error) {
+                console.error("Error deleting sales:", error);
+                alert("Hubo un error al eliminar algunas ventas.");
+            }
+        };
 
         const handleRenew = async (saleId) => {
             const sale = allSales.find(s => s.id === saleId);
@@ -5217,7 +5545,10 @@
                 const docRef = await addDoc(collection(db, "sales"), newSale);
 
                 // 2. Archive old sale
-                await updateDoc(doc(db, "sales", saleId), { estado: 'ARCHIVADO' });
+                await updateDoc(doc(db, "sales", saleId), {
+                    estado: 'ARCHIVADO',
+                    fechaEliminacion: new Date().toISOString()
+                });
 
                 // 3. Update Profile Expiration (keep it 'Ocupado', but link to new sale)
                 if (sale.accountId && sale.profileId) {
@@ -5351,7 +5682,8 @@
             'nav-ventas': 'Ventas',
             'nav-finanzas': 'Finanzas',
             'nav-precios': 'Precios',
-            'nav-reportes': 'Reportes'
+            'nav-reportes': 'Reportes',
+            'nav-papelera': 'Papelera'
         };
         const views = document.querySelectorAll('.view');
 
