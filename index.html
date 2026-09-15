@@ -233,6 +233,12 @@
                     </svg>
                     <span class="ml-4 sidebar-text">Reportes</span>
                 </a>
+                <a href="#" id="nav-papelera" class="flex items-center py-2.5 px-2 rounded-md hover:bg-gray-700">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                    <span class="ml-4 sidebar-text">Papelera</span>
+                </a>
             </nav>
             <div class="px-2 py-4">
                 <button id="logout-btn"
@@ -780,6 +786,62 @@
                     </div>
                 </div>
 
+                <!-- Papelera View -->
+                <div id="papelera-view" class="view hidden">
+                    <h1 class="text-2xl md:text-3xl font-bold text-gray-800 mb-6 px-2 md:px-0">Papelera</h1>
+                    <div class="bg-white p-4 md:p-6 rounded-2xl shadow-lg mb-8 max-w-7xl mx-auto">
+                        <div class="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
+                            <div class="flex flex-wrap gap-2 w-full md:w-auto">
+                                <select id="papelera-mes-filter" class="px-4 py-2 border border-gray-300 rounded-lg">
+                                    <option value="">Mes</option>
+                                    <!-- Options populated by JS -->
+                                </select>
+                                <select id="papelera-anio-filter" class="px-4 py-2 border border-gray-300 rounded-lg">
+                                    <option value="">Año</option>
+                                    <!-- Options populated by JS -->
+                                </select>
+                                <select id="papelera-vendedor-filter" class="px-4 py-2 border border-gray-300 rounded-lg">
+                                    <option value="">Vendedor</option>
+                                    <!-- Options populated by JS -->
+                                </select>
+                                <select id="papelera-plataforma-filter" class="px-4 py-2 border border-gray-300 rounded-lg">
+                                    <option value="">Plataforma</option>
+                                    <!-- Options populated by JS -->
+                                </select>
+                            </div>
+                            <div class="flex gap-2 w-full md:w-auto">
+                                <button id="papelera-restore-selected-btn" class="flex-1 md:flex-none px-4 py-2 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition">
+                                    Restaurar
+                                </button>
+                                <button id="papelera-delete-selected-btn" class="flex-1 md:flex-none px-4 py-2 bg-red-600 text-white font-medium rounded-lg hover:bg-red-700 transition">
+                                    Eliminar
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            <input type="checkbox" id="papelera-select-all" class="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
+                                        </th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cliente</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Plataforma</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Inicio / Término</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">F. Eliminado</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tiempo Vencido</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="papelera-list" class="bg-white divide-y divide-gray-200">
+                                    <!-- Rows populated by JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Reportes View -->
                 <div id="reportes-view" class="view hidden max-w-7xl mx-auto">
                     <h1 class="text-2xl md:text-3xl font-bold text-gray-800 mb-6 md:mb-8 px-2 md:px-0">Reportes Mensuales</h1>
@@ -1191,13 +1253,13 @@
             </div>
         </div>
     </div>
-    <!-- Transfer Profiles Modal -->
-    <div id="transfer-profiles-modal"
+    <!-- Transfer Single Profile Modal -->
+    <div id="transfer-single-profile-modal"
         class="modal fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 z-50 hidden opacity-0">
         <div class="modal-content bg-white w-full max-w-lg rounded-2xl shadow-2xl p-6 transform scale-95">
             <div class="flex justify-between items-center mb-6">
-                <h2 class="text-2xl font-semibold text-gray-700">Transferir Perfiles</h2>
-                <button id="close-transfer-modal" class="text-gray-400 hover:text-gray-600">
+                <h2 class="text-2xl font-semibold text-gray-700">Transferir Perfil</h2>
+                <button id="close-single-transfer-modal" class="text-gray-400 hover:text-gray-600">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
                         </path>
@@ -1206,9 +1268,9 @@
             </div>
             <div class="space-y-4">
                 <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
-                    <p class="text-sm text-gray-500 uppercase font-bold mb-1">Origen</p>
-                    <p id="transfer-source-email" class="font-bold text-gray-800 break-all"></p>
-                    <p class="text-sm text-gray-600 mt-1"><span id="transfer-source-count" class="font-bold">0</span> perfiles ocupados a mover.</p>
+                    <p class="text-sm text-gray-500 uppercase font-bold mb-1">Cliente a Transferir</p>
+                    <p id="single-transfer-client" class="font-bold text-gray-800 break-all"></p>
+                    <p class="text-sm text-gray-500 mt-1">Perfil: <span id="single-transfer-profile-name" class="font-semibold text-gray-700"></span></p>
                 </div>
 
                 <div class="flex justify-center py-2">
@@ -1617,7 +1679,7 @@
             ];
 
             let allServices = [...defaultServices];
-            let allSales = [], allExpenses = [], allPlatformAccounts = [], activePlatformFilter = 'Todos', currentSearchTerm = '', activeAccountFilter = '', activeStatusFilter = '';
+            let allSales = [], allExpenses = [], allPlatformAccounts = [], allDeletedSales = [], activePlatformFilter = 'Todos', currentSearchTerm = '', activeAccountFilter = '', activeStatusFilter = '';
 
             const getProfileOccupancy = (accountId, profileId) => {
                 const account = allPlatformAccounts.find(a => a.id === accountId);
@@ -3626,6 +3688,1021 @@
                     let accountData = null;
                     let profileData = null;
 
+                    // Calculate deletion metrics for Papelera
+                    const today = dayjs();
+                    const deletedAt = today.format('YYYY-MM-DD HH:mm:ss');
+                    let daysDifferenceAtDeletion = 0;
+                    if (sale.finPlan) {
+                        const finDate = dayjs(sale.finPlan);
+                        daysDifferenceAtDeletion = today.diff(finDate, 'day'); // Positive means expired, negative means days remaining
+                    }
+
+                    const deletedSaleData = {
+                        ...sale,
+                        deletedAt,
+                        daysDifferenceAtDeletion
+                    };
+
+                    // Save to deleted_sales collection
+                    await setDoc(doc(db, "deleted_sales", id), deletedSaleData);
+
+                    // Remove from sales
+                    await deleteDoc(doc(db, "sales", id));
+
+                    // Release profile if it exists
+                    if (sale.accountId && sale.profileId) {
+                        // Remove from allSales locally for occupancy calc
+                        allSales = allSales.filter(s => s.id !== id);
+                        const occupancy = getProfileOccupancy(sale.accountId, sale.profileId);
+
+                        const account = allPlatformAccounts.find(a => a.id === sale.accountId);
+                        if (account && account.platform !== 'Canva') {
+                            accountData = account;
+                            profileData = account.profiles.find(p => p.id === sale.profileId);
+
+                            needsPinChange = true;
+                            oldPin = profileData ? profileData.pin : sale.pin;
+                            newPin = generateNewPin(account.platform);
+                            isShared = occupancy.count > 0;
+
+                            const profileRef = doc(db, "platformAccounts", sale.accountId, "Perfiles", sale.profileId);
+                            const updateData = { estado: 'Disponible', pin: newPin };
+                            if(occupancy.count === 0) {
+                                updateData.fechaVencimiento = null;
+                                updateData.clienteId = null;
+                            } else {
+                                updateData.estado = 'Ocupado';
+                            }
+                            await updateDoc(profileRef, updateData);
+
+                            // If shared, update the other sales' pin
+                            if (isShared) {
+                                for (const otherSale of occupancy.sales) {
+                                    if (otherSale.id !== id) {
+                                        await updateDoc(doc(db, "sales", otherSale.id), { pin: newPin });
+                                        // Update local state
+                                        const otherSaleLocal = allSales.find(s => s.id === otherSale.id);
+                                        if (otherSaleLocal) otherSaleLocal.pin = newPin;
+                                    }
+                                }
+                            }
+
+                            // Update local state
+                            if (account.profiles) {
+                                const profile = account.profiles.find(p => p.id === sale.profileId);
+                                if (profile) {
+                                    profile.estado = updateData.estado;
+                                    profile.pin = newPin;
+                                }
+                            }
+                            renderPlatformAccounts();
+                        }
+                    }
+
+                    hideArchiveDeleteModal();
+
+                    if (needsPinChange) {
+                        showPinChangeAlertModal(sale, profileData, accountData, oldPin, newPin, isShared);
+                    }
+
+                } catch (e) {
+                    console.error("Error deleting sale: ", e);
+                    alert('Error al eliminar la venta.');
+                }
+            };
+            const openEditAccountModal = () => {
+                selectors.editAccountModal.classList.remove('hidden');
+                setTimeout(() => {
+                    selectors.editAccountModal.classList.remove('opacity-0');
+                    selectors.editAccountModal.querySelector('.modal-content').classList.remove('scale-95');
+                }, 10);
+            };
+
+            const closeEditAccountModal = () => {
+                selectors.editAccountModal.classList.add('opacity-0');
+                selectors.editAccountModal.querySelector('.modal-content').classList.add('scale-95');
+                setTimeout(() => selectors.editAccountModal.classList.add('hidden'), 300);
+            };
+            const handleEditAccount = (id) => {
+                const account = allPlatformAccounts.find(acc => acc.id === id);
+                if (!account) return;
+
+                const form = selectors.editAccountForm;
+                form['edit-account-id'].value = account.id;
+
+                // Populate platform select
+                const platformSelect = document.getElementById('edit-account-platform');
+                platformSelect.innerHTML = '';
+                const sortedPlatforms = allServices.map(s => s.name).sort();
+                if (!sortedPlatforms.includes('Otro')) sortedPlatforms.push('Otro');
+
+                // If current platform is custom/not in list, add it temporarily
+                if (!sortedPlatforms.includes(account.platform)) {
+                    sortedPlatforms.push(account.platform);
+                }
+
+                sortedPlatforms.forEach(p => {
+                    const option = document.createElement('option');
+                    option.value = p;
+                    option.textContent = p;
+                    platformSelect.appendChild(option);
+                });
+
+                form['edit-account-platform'].value = account.platform;
+                form['edit-account-email'].value = account.email;
+                form['edit-account-enlace'].value = account.enlace || '';
+                form['edit-account-fechaPago'].value = account.fechaPago || '';
+                form['edit-account-cost'].value = account.cost || 0;
+                form['edit-account-bank'].value = account.bankName || '';
+                form['edit-account-card'].value = account.cardNumber || '';
+                form['edit-account-password'].value = ''; // Clear password field for security
+
+                const bankContainer = document.getElementById('edit-bank-details-container');
+                if (account.platform === 'Netflix') {
+                    bankContainer.classList.remove('hidden');
+                } else {
+                    bankContainer.classList.add('hidden');
+                }
+
+                openEditAccountModal();
+            };
+
+            document.getElementById('edit-account-platform').addEventListener('change', (e) => {
+                const bankContainer = document.getElementById('edit-bank-details-container');
+                if (e.target.value === 'Netflix') {
+                    bankContainer.classList.remove('hidden');
+                } else {
+                    bankContainer.classList.add('hidden');
+                }
+            });
+
+            const handleManageProfiles = async (accountId) => {
+                const account = allPlatformAccounts.find(acc => acc.id === accountId);
+                if (!account || account.platform === 'Canva') return;
+
+                selectors.profilesModalAccountEmail.textContent = account.email;
+                const profilesRef = collection(db, "platformAccounts", accountId, "Perfiles");
+                const profilesSnapshot = await getDocs(profilesRef);
+
+                if (profilesSnapshot.empty) {
+                    selectors.profilesContentArea.innerHTML = `
+            <div class="text-center p-8">
+                <p class="text-gray-600 mb-4">Esta cuenta aún no tiene perfiles configurados.</p>
+                <div id="initial-actions" class="flex flex-col gap-3 justify-center items-center">
+                    <button id="create-standard-profiles-btn" class="bg-teal-600 text-white font-semibold px-6 py-3 rounded-lg hover:bg-teal-700 transition w-full md:w-auto">
+                        Crear 5 Perfiles (Estándar)
+                    </button>
+                    <button id="show-custom-profiles-btn" class="text-teal-600 font-medium hover:text-teal-800 underline transition">
+                        Personalizar cantidad
+                    </button>
+                </div>
+                <div id="custom-profiles-form" class="hidden mt-4">
+                    <label class="block text-sm text-gray-600 mb-2">Cantidad de perfiles (Máx. 10):</label>
+                    <div class="flex gap-2 justify-center">
+                         <input type="number" id="custom-profile-qty" min="1" max="10" value="1" class="border border-gray-300 rounded-lg px-3 py-2 w-20 text-center">
+                         <button id="create-custom-profiles-btn" class="bg-teal-600 text-white font-semibold px-4 py-2 rounded-lg hover:bg-teal-700 transition">
+                            Crear
+                         </button>
+                    </div>
+                    <button id="cancel-custom-btn" class="text-sm text-gray-500 mt-2 hover:text-gray-700">Cancelar</button>
+                </div>
+            </div>
+            `;
+
+                    const createProfiles = async (qty, btn) => {
+                        btn.disabled = true;
+                        btn.textContent = 'Creando...';
+
+                        // Default startIndex to 1 for initial creation
+                        const newProfiles = await createProfilesBatch(accountId, qty, 1);
+
+                        // Manually update the in-memory state
+                        const accountIndex = allPlatformAccounts.findIndex(acc => acc.id === accountId);
+                        if (accountIndex !== -1) {
+                            allPlatformAccounts[accountIndex].profiles = newProfiles;
+                        }
+
+                        // Re-render the main accounts list to show new icons
+                        renderPlatformAccounts();
+
+                        // Refresh the modal content
+                        await handleManageProfiles(accountId);
+                    };
+
+                    document.getElementById('create-standard-profiles-btn').addEventListener('click', (e) => {
+                        createProfiles(5, e.currentTarget);
+                    });
+
+                    document.getElementById('show-custom-profiles-btn').addEventListener('click', () => {
+                        document.getElementById('initial-actions').classList.add('hidden');
+                        document.getElementById('custom-profiles-form').classList.remove('hidden');
+                    });
+
+                    document.getElementById('cancel-custom-btn').addEventListener('click', () => {
+                        document.getElementById('custom-profiles-form').classList.add('hidden');
+                        document.getElementById('initial-actions').classList.remove('hidden');
+                    });
+
+                    document.getElementById('create-custom-profiles-btn').addEventListener('click', (e) => {
+                        const qtyInput = document.getElementById('custom-profile-qty');
+                        const qty = parseInt(qtyInput.value);
+                        if (isNaN(qty) || qty < 1 || qty > 10) {
+                            alert('Por favor ingresa una cantidad válida (1-10).');
+                            return;
+                        }
+                        createProfiles(qty, e.currentTarget);
+                    });
+
+                } else {
+                    let profilesHtml = '<ul class="space-y-3">';
+                    const profiles = profilesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })).sort((a, b) =>
+                        a.nombre.localeCompare(b.nombre));
+
+                    profiles.forEach(profile => {
+                        const occupancy = getProfileOccupancy(accountId, profile.id);
+                        const isAvailable = occupancy.isAvailable;
+
+                        let statusColor = isAvailable ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800';
+                        if (occupancy.max > 1 && occupancy.count > 0 && occupancy.isAvailable) {
+                            // Parcialmente ocupado
+                            statusColor = 'bg-yellow-100 text-yellow-800';
+                        }
+
+                        const statusIcon = isAvailable
+                            ? `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>`
+                            : `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                    </path>
+                </svg>`;
+
+                        let statusText = profile.estado;
+                        if (occupancy.count > 0) {
+                            const clientsText = occupancy.sales.map(s => s.cliente).join(', ');
+                            statusText = occupancy.isAvailable ? `Compartido (${clientsText})` : `Ocupado (${clientsText})`;
+                        } else {
+                            statusText = 'Disponible';
+                        }
+
+                        profilesHtml += `
+                <li class="flex flex-wrap items-center justify-between p-3 bg-gray-50 rounded-lg gap-2">
+                    <div class="flex flex-col min-w-0">
+                        <span class="font-semibold text-gray-700 truncate">${profile.nombre}</span>
+                        <div class="flex items-center gap-2 mt-0.5">
+                            <span class="text-xs text-gray-500 font-mono">PIN: ${profile.pin || '<span class="italic text-gray-400">Sin PIN</span>'}</span>
+                            <button class="edit-pin-btn p-1 text-blue-500 hover:text-blue-700 bg-blue-50 hover:bg-blue-100 rounded-full transition border border-blue-100 shadow-sm" data-profile-id="${profile.id}" data-current-pin="${profile.pin || ''}" title="Editar PIN">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L16.732 3.732z"></path></svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2 flex-shrink-0 flex-nowrap min-w-max">
+                        <span class="px-3 py-1 text-xs font-bold rounded-full ${statusColor} flex items-center gap-1 whitespace-nowrap">
+                            ${statusIcon}
+                            ${statusText}
+                        </span>
+                        ${occupancy.count > 0 ? `<button type="button" class="transfer-single-btn p-1.5 text-orange-600 hover:text-orange-800 bg-orange-50 hover:bg-orange-100 rounded-full transition border border-orange-100 shadow-sm flex items-center justify-center flex-shrink-0 min-w-[32px] min-h-[32px] pointer-events-auto relative z-10" data-sale-id="${occupancy.sales[0].id}" data-account-id="${accountId}" data-profile-id="${profile.id}" title="Transferir Cliente">
+                            <svg class="w-4 h-4 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path></svg>
+                        </button>` : ''}
+                        <button type="button" class="delete-profile-btn p-1.5 text-red-500 hover:text-red-700 bg-red-50 hover:bg-red-100 rounded-full transition border border-red-100 shadow-sm flex items-center justify-center flex-shrink-0 min-w-[32px] min-h-[32px] pointer-events-auto relative z-10" data-profile-id="${profile.id}" title="Eliminar Perfil">
+                            <svg class="w-4 h-4 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                        </button>
+                    </div>
+                </li>
+                `;
+                    });
+                    profilesHtml += '</ul>';
+                    selectors.profilesContentArea.innerHTML = profilesHtml;
+
+                    // "Add More" UI Section
+                    const addMoreContainer = document.createElement('div');
+                    addMoreContainer.className = "mt-4 pt-4 border-t border-gray-100";
+                    addMoreContainer.innerHTML = `
+                        <div id="add-more-actions" class="flex justify-between items-center">
+                            <span class="text-sm text-gray-500">Total: ${profiles.length} perfiles</span>
+                            <button id="btn-show-add-more" class="text-teal-600 hover:text-teal-800 text-sm font-medium flex items-center gap-1 transition px-3 py-2 rounded-lg hover:bg-teal-50">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                                Agregar más
+                            </button>
+                        </div>
+                        <div id="add-more-form" class="hidden mt-3 flex items-center justify-end gap-2">
+                            <span class="text-sm text-gray-600">Cantidad:</span>
+                            <input type="number" id="add-more-qty" min="1" max="10" value="1" class="border border-gray-300 rounded-lg px-2 py-1 w-16 text-center text-sm">
+                            <button id="btn-confirm-add-more" class="bg-teal-600 text-white text-sm font-medium px-3 py-1.5 rounded-lg hover:bg-teal-700 transition">Crear</button>
+                            <button id="btn-cancel-add-more" class="text-gray-400 hover:text-gray-600 p-1"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
+                        </div>
+                    `;
+                    selectors.profilesContentArea.appendChild(addMoreContainer);
+
+                    // Add More Event Listeners
+                    const showBtn = addMoreContainer.querySelector('#btn-show-add-more');
+                    const formDiv = addMoreContainer.querySelector('#add-more-form');
+                    const actionsDiv = addMoreContainer.querySelector('#add-more-actions');
+                    const confirmBtn = addMoreContainer.querySelector('#btn-confirm-add-more');
+                    const cancelBtn = addMoreContainer.querySelector('#btn-cancel-add-more');
+                    const qtyInput = addMoreContainer.querySelector('#add-more-qty');
+
+                    showBtn.addEventListener('click', () => {
+                        actionsDiv.classList.add('hidden');
+                        formDiv.classList.remove('hidden');
+                    });
+
+                    cancelBtn.addEventListener('click', () => {
+                        formDiv.classList.add('hidden');
+                        actionsDiv.classList.remove('hidden');
+                    });
+
+                    confirmBtn.addEventListener('click', async () => {
+                        const qty = parseInt(qtyInput.value);
+                        if(isNaN(qty) || qty < 1) return;
+
+                        confirmBtn.disabled = true;
+                        confirmBtn.textContent = '...';
+
+                        const nextIndex = getNextProfileIndex(profiles);
+                        const newProfiles = await createProfilesBatch(accountId, qty, nextIndex);
+
+                        // Update local state
+                        const accountIndex = allPlatformAccounts.findIndex(acc => acc.id === accountId);
+                        if (accountIndex !== -1) {
+                            if (!allPlatformAccounts[accountIndex].profiles) {
+                                allPlatformAccounts[accountIndex].profiles = [];
+                            }
+                            allPlatformAccounts[accountIndex].profiles.push(...newProfiles);
+                        }
+
+                        // Refresh UI
+                        renderPlatformAccounts();
+                        await handleManageProfiles(accountId);
+                    });
+
+                    // Add Event Listeners for Edit PIN buttons
+                    selectors.profilesContentArea.querySelectorAll('.transfer-single-btn').forEach(btn => {
+                        btn.addEventListener('click', (e) => {
+                            const target = e.currentTarget;
+                            handleTransferSingleProfile(target.dataset.saleId, target.dataset.accountId, target.dataset.profileId);
+                        });
+                    });
+
+                    selectors.profilesContentArea.querySelectorAll('.edit-pin-btn').forEach(btn => {
+                        btn.addEventListener('click', (e) => {
+                            const profileId = e.currentTarget.dataset.profileId;
+                            const currentPin = e.currentTarget.dataset.currentPin;
+                            const newPin = prompt("Ingrese el nuevo PIN para este perfil:", currentPin);
+
+                            if (newPin !== null) {
+                                handleEditProfilePin(accountId, profileId, newPin);
+                            }
+                        });
+                    });
+
+                    // Add Event Listeners for Delete Profile buttons
+                    selectors.profilesContentArea.querySelectorAll('.delete-profile-btn').forEach(btn => {
+                        btn.addEventListener('click', (e) => {
+                            const profileId = e.currentTarget.dataset.profileId;
+                            handleDeleteProfile(accountId, profileId);
+                        });
+                    });
+                }
+
+                openProfilesModal();
+            };
+
+            const handleDeleteProfile = (accountId, profileId) => {
+                const account = allPlatformAccounts.find(a => a.id === accountId);
+                if (!account || !account.profiles) return;
+
+                const profile = account.profiles.find(p => p.id === profileId);
+                if (!profile) return;
+
+                const occupancy = getProfileOccupancy(accountId, profileId);
+                const isOccupied = occupancy.count > 0;
+
+                let message = '¿Estás seguro de que deseas eliminar este perfil?';
+                if (isOccupied) {
+                    message = `⚠️ ADVERTENCIA: Este perfil tiene clientes asignados (${occupancy.sales.map(s => s.cliente).join(', ')}). Al eliminarlo, estas ventas quedarán "Sin cuenta" y pasarán a ser perfiles manuales (perderán su correo y contraseña). ¿Estás seguro de continuar?`;
+                }
+
+                showConfirmationModal(
+                    'Eliminar Perfil',
+                    message,
+                    async () => {
+                        try {
+                            // 1. If occupied, unlink sales
+                            if (isOccupied) {
+                                const unlinkPromises = occupancy.sales.map(sale => {
+                                    const saleRef = doc(db, "sales", sale.id);
+                                    // Make it a "manual profile" by removing accountId, profileId, and credentials
+                                    return updateDoc(saleRef, {
+                                        accountId: null,
+                                        profileId: null,
+                                        correo: null,
+                                        contrasena: null
+                                    }).catch(err => console.warn("Could not unlink sale:", sale.id, err));
+                                });
+                                await Promise.all(unlinkPromises);
+                            }
+
+                            // 2. Delete profile from Firestore
+                            const profileRef = doc(db, "platformAccounts", accountId, "Perfiles", profileId);
+                            await deleteDoc(profileRef);
+
+                            // 3. Update local state
+                            account.profiles = account.profiles.filter(p => p.id !== profileId);
+
+                            // 4. Re-render UI
+                            renderPlatformAccounts();
+                            await handleManageProfiles(accountId); // Refresh modal content
+
+                        } catch (error) {
+                            console.error("Error al eliminar el perfil:", error);
+                            alert("Error al eliminar el perfil. Revisa la consola para más detalles.");
+                        }
+                    }
+                );
+            };
+
+            const handleEditProfilePin = async (accountId, profileId, newPin) => {
+                try {
+                    const profileRef = doc(db, "platformAccounts", accountId, "Perfiles", profileId);
+                    await updateDoc(profileRef, { pin: newPin });
+
+                    // Update local state immediately
+                    const account = allPlatformAccounts.find(a => a.id === accountId);
+                    if (account && account.profiles) {
+                        const profile = account.profiles.find(p => p.id === profileId);
+                        if (profile) {
+                            profile.pin = newPin;
+                        }
+                    }
+
+                    // Re-render
+                    handleManageProfiles(accountId);
+
+                } catch (error) {
+                    console.error("Error updating PIN:", error);
+                    alert("Error al actualizar el PIN.");
+                }
+            };
+
+        const getNextProfileIndex = (profiles) => {
+            let maxIndex = 0;
+            profiles.forEach(p => {
+                const match = p.nombre.match(/Perfil (\d+)/);
+                if (match) {
+                    maxIndex = Math.max(maxIndex, parseInt(match[1]));
+                } else if (p.nombre === 'Perfil Único') {
+                    maxIndex = Math.max(maxIndex, 1);
+                }
+            });
+            return maxIndex + 1;
+        };
+
+        const createProfilesBatch = async (accountId, count = 5, startIndex = 1) => {
+            const profilesRef = collection(db, "platformAccounts", accountId, "Perfiles");
+            const createdProfiles = [];
+            const generatedPins = new Set();
+
+            // Limit count to 10 max
+            const safeCount = Math.min(Math.max(1, count), 10);
+
+            for (let i = 0; i < safeCount; i++) {
+                const index = startIndex + i;
+                let name = `Perfil ${index}`;
+                // Special case: if it's the very first profile and only 1 is requested initially
+                if (count === 1 && startIndex === 1) {
+                    name = "Perfil Único";
+                }
+
+                let pin;
+                do {
+                    pin = Math.floor(1000 + Math.random() * 9000).toString();
+                } while (generatedPins.has(pin));
+                generatedPins.add(pin);
+
+                const profileDoc = {
+                    nombre: name,
+                    estado: 'Disponible',
+                    fechaVencimiento: null,
+                    clienteId: null,
+                    pin: pin
+                };
+                const docRef = await addDoc(profilesRef, profileDoc);
+                createdProfiles.push({ id: docRef.id, ...profileDoc });
+            } return createdProfiles;
+        };
+
+        const handleDeleteSale = (id) => showArchiveDeleteModal(id);
+
+        const toggleMaintenanceModal = () => {
+            const modal = selectors.maintenanceModal;
+            if (modal.classList.contains('hidden')) {
+                renderMaintenanceSales();
+                modal.classList.remove('hidden');
+                setTimeout(() => {
+                    modal.classList.remove('opacity-0');
+                    modal.querySelector('.modal-content').classList.remove('scale-95');
+                }, 10);
+            } else {
+                modal.classList.add('opacity-0');
+                modal.querySelector('.modal-content').classList.add('scale-95');
+                setTimeout(() => modal.classList.add('hidden'), 300);
+            }
+        };
+
+        const renderMaintenanceSales = () => {
+            const maintenanceSales = allSales.filter(s => s.estado === 'EN_MANTENIMIENTO')
+                .sort((a, b) => a.cliente.localeCompare(b.cliente)); // Sorted by Name
+
+            selectors.maintenanceList.innerHTML = '';
+            // Change container layout from grid to stack
+            selectors.maintenanceList.className = 'space-y-3';
+
+            if (maintenanceSales.length === 0) {
+                selectors.maintenanceList.innerHTML = '<p class="text-gray-500 text-center py-8">No hay clientes en mantenimiento.</p>';
+                return;
+            }
+
+            maintenanceSales.forEach(sale => {
+                const row = document.createElement('div');
+                row.className = 'bg-gray-50 p-4 rounded-xl border border-gray-200 flex flex-col md:flex-row md:items-center justify-between gap-4 transition-all hover:shadow-md';
+
+                const remainingDays = sale.diasRestantes !== undefined ? sale.diasRestantes : 0;
+                const platformHtml = getPlatformHtml(sale.plataforma);
+
+                row.innerHTML = `
+                    <div class="flex-grow grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
+                        <div>
+                             <h3 class="font-bold text-gray-800 text-lg">${sale.cliente}</h3>
+                             <div class="text-sm mt-1">${platformHtml}</div>
+                        </div>
+                        <div class="flex flex-col">
+                             <span class="text-xs text-gray-500 uppercase font-semibold">Días Guardados</span>
+                             <span class="font-bold text-gray-800 text-xl">${remainingDays} días</span>
+                        </div>
+                        <div class="flex flex-col gap-1 min-w-0">
+                             <div class="text-sm text-gray-800 font-medium truncate" title="Correo">📧 ${sale.correo || 'N/A'}</div>
+                             <div class="text-sm text-gray-600 font-mono" title="Contraseña">🔑 ${sale.contrasena || '********'}</div>
+                             ${sale.notas ? `<p class="text-xs text-gray-400 italic mt-1 truncate">"${sale.notas}"</p>` : ''}
+                        </div>
+                    </div>
+                    <div class="flex-shrink-0 w-full md:w-auto pt-4 md:pt-0 border-t md:border-t-0 border-gray-200">
+                        <button class="restore-sale-btn w-full md:w-auto px-6 bg-indigo-600 text-white font-semibold py-2.5 rounded-lg hover:bg-indigo-700 transition flex items-center justify-center gap-2 shadow-sm" data-id="${sale.id}">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                            Restaurar
+                        </button>
+                    </div>
+                `;
+                selectors.maintenanceList.appendChild(row);
+            });
+
+            selectors.maintenanceList.querySelectorAll('.restore-sale-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => handleRestoreSale(e.currentTarget.dataset.id));
+            });
+        };
+
+        const handleRestoreSale = (id) => {
+            const sale = allSales.find(s => s.id === id);
+            if (!sale) return;
+
+            toggleMaintenanceModal(); // Close maintenance list
+            handleEdit(id); // Open edit modal with data
+
+            // Override dates
+            const today = dayjs().format('YYYY-MM-DD');
+            const remainingDays = sale.diasRestantes !== undefined ? sale.diasRestantes : 0;
+            const newEndDate = dayjs().add(remainingDays, 'day').format('YYYY-MM-DD');
+
+            document.getElementById('edit-inicioPlan').value = today;
+            document.getElementById('edit-finPlan').value = newEndDate;
+
+            // Reset Profile Selection to force new assignment
+            const accountSelect = document.getElementById('edit-platform-account');
+            const profileSelect = document.getElementById('edit-profile-select');
+
+            accountSelect.value = "";
+            profileSelect.innerHTML = '<option value="">Seleccione cuenta y perfil</option>';
+            profileSelect.disabled = true;
+            profileSelect.classList.add('bg-gray-200');
+
+            // Set restoration flag
+            if (selectors.editSaleStatus) selectors.editSaleStatus.value = 'ACTIVO';
+
+            const editEstadoManual = document.getElementById('edit-estado-manual');
+            if (editEstadoManual) {
+                editEstadoManual.value = 'ACTIVO';
+            }
+
+            alert(`Reactivando cliente. Días restantes: ${remainingDays}. \nPor favor asigne una nueva cuenta y perfil.`);
+        };
+
+        selectors.closeMaintenanceModalBtn.addEventListener('click', toggleMaintenanceModal);
+        selectors.closePinAlertBtn.addEventListener('click', closePinChangeAlertModal);
+
+        const handleMoveToMaintenance = (id) => {
+            const sale = allSales.find(s => s.id === id);
+            if (!sale) return;
+
+            showConfirmationModal(
+                'Mover a Mantenimiento',
+                '¿Estás seguro de mover esta venta a mantenimiento? El perfil asociado se liberará y se guardarán los días restantes.',
+                async () => {
+                    try {
+                        // Temporarily update sale locally for occupancy calc
+                        const localSaleIndex = allSales.findIndex(s => s.id === id);
+                        if(localSaleIndex > -1) allSales[localSaleIndex].estado = 'EN_MANTENIMIENTO';
+
+                        // 1. Release profile if exists
+                        if (sale.accountId && sale.profileId) {
+                            const occupancy = getProfileOccupancy(sale.accountId, sale.profileId);
+
+                            const account = allPlatformAccounts.find(a => a.id === sale.accountId);
+                            if (account && account.platform !== 'Canva') {
+                                const profileRef = doc(db, "platformAccounts", sale.accountId, "Perfiles", sale.profileId);
+                                const updateData = { estado: 'Disponible' };
+                                if (occupancy.count === 0) {
+                                    updateData.fechaVencimiento = null;
+                                    updateData.clienteId = null;
+                                }
+                                await updateDoc(profileRef, updateData);
+
+                                // Update local state for immediate feedback
+                                if (account.profiles) {
+                                    const profile = account.profiles.find(p => p.id === sale.profileId);
+                                    if (profile) {
+                                        profile.estado = 'Disponible';
+                                        if (occupancy.count === 0) {
+                                            profile.fechaVencimiento = null;
+                                            profile.clienteId = null;
+                                        }
+                                    }
+                                }
+                                renderPlatformAccounts();
+                            }
+                        }
+
+                        // 2. Calculate remaining days
+                        const today = dayjs().startOf('day');
+                        const end = dayjs(sale.finPlan).startOf('day');
+                        const remainingDays = end.diff(today, 'day');
+
+                        // 3. Update sale
+                        await updateDoc(doc(db, "sales", id), {
+                            estado: 'EN_MANTENIMIENTO',
+                            diasRestantes: remainingDays,
+                            profileId: null
+                        });
+
+                    } catch (error) {
+                        console.error("Error al mover a mantenimiento:", error);
+                        alert("Error al mover a mantenimiento.");
+                    }
+                }
+            );
+        };
+
+                        // Single Profile Transfer Logic Variables
+            let currentTransferSaleId = null;
+            let currentTransferSourceAccountId = null;
+            let currentTransferSourceProfileId = null;
+
+            const toggleSingleTransferModal = (show) => {
+                const modal = document.getElementById('transfer-single-profile-modal');
+                if (show) {
+                    modal.classList.remove('hidden');
+                    setTimeout(() => {
+                        modal.classList.remove('opacity-0');
+                        modal.querySelector('.modal-content').classList.remove('scale-95');
+                    }, 10);
+                } else {
+                    modal.classList.add('opacity-0');
+                    modal.querySelector('.modal-content').classList.add('scale-95');
+                    setTimeout(() => modal.classList.add('hidden'), 300);
+                    document.getElementById('single-transfer-dest-account').value = '';
+                    document.getElementById('single-transfer-dest-profile').value = '';
+                    document.getElementById('single-transfer-dest-profile').disabled = true;
+                    document.getElementById('confirm-single-transfer-btn').disabled = true;
+                    currentTransferSaleId = null;
+                    currentTransferSourceAccountId = null;
+                    currentTransferSourceProfileId = null;
+                }
+            };
+
+            document.getElementById('close-single-transfer-modal').addEventListener('click', () => toggleSingleTransferModal(false));
+            document.getElementById('cancel-single-transfer-btn').addEventListener('click', () => toggleSingleTransferModal(false));
+
+            window.handleTransferSingleProfile = (saleId, accountId, profileId) => {
+                const sale = allSales.find(s => s.id === saleId);
+                const account = allPlatformAccounts.find(a => a.id === accountId);
+                const profile = account?.profiles?.find(p => p.id === profileId);
+                if (!sale || !account || !profile) return;
+
+                currentTransferSaleId = saleId;
+                currentTransferSourceAccountId = accountId;
+                currentTransferSourceProfileId = profileId;
+
+                document.getElementById('single-transfer-client').textContent = sale.cliente;
+                document.getElementById('single-transfer-profile-name').textContent = profile.name || profile.id;
+
+                populateSingleTransferDestinations(account);
+                toggleSingleTransferModal(true);
+
+                // close manage profiles modal if open to prevent stacking confusion
+                selectors.manageProfilesModal.classList.add('opacity-0');
+                selectors.manageProfilesModal.querySelector('.modal-content').classList.add('scale-95');
+                setTimeout(() => selectors.manageProfilesModal.classList.add('hidden'), 300);
+            };
+
+            const populateSingleTransferDestinations = (sourceAccount) => {
+                const select = document.getElementById('single-transfer-dest-account');
+                select.innerHTML = '<option value="">Seleccione cuenta destino...</option>';
+
+                const validDestinations = allPlatformAccounts.filter(acc =>
+                    acc.id !== sourceAccount.id &&
+                    acc.platform === sourceAccount.platform &&
+                    acc.profiles &&
+                    acc.profiles.some(p => getProfileOccupancy(acc.id, p.id).isAvailable)
+                );
+
+                if (validDestinations.length === 0) {
+                    select.innerHTML = '<option value="" disabled>No hay cuentas con espacio disponible</option>';
+                    return;
+                }
+
+                validDestinations.forEach(acc => {
+                    const availableCount = acc.profiles.filter(p => getProfileOccupancy(acc.id, p.id).isAvailable).length;
+                    const option = document.createElement('option');
+                    option.value = acc.id;
+                    option.textContent = acc.email + " (" + availableCount + " disp.)";
+                    select.appendChild(option);
+                });
+            };
+
+            document.getElementById('single-transfer-dest-account').addEventListener('change', (e) => {
+                const destId = e.target.value;
+                const profileSelect = document.getElementById('single-transfer-dest-profile');
+                const confirmBtn = document.getElementById('confirm-single-transfer-btn');
+                profileSelect.innerHTML = '<option value="">Seleccione perfil...</option>';
+
+                if (!destId) {
+                    profileSelect.disabled = true;
+                    confirmBtn.disabled = true;
+                    return;
+                }
+
+                const destAccount = allPlatformAccounts.find(a => a.id === destId);
+                if (!destAccount) return;
+
+                const availableProfiles = destAccount.profiles.filter(p => getProfileOccupancy(destId, p.id).isAvailable);
+                availableProfiles.forEach(p => {
+                    const option = document.createElement('option');
+                    option.value = p.id;
+                    option.textContent = p.name || p.id;
+                    profileSelect.appendChild(option);
+                });
+
+                profileSelect.disabled = false;
+            });
+
+            document.getElementById('single-transfer-dest-profile').addEventListener('change', (e) => {
+                document.getElementById('confirm-single-transfer-btn').disabled = !e.target.value;
+            });
+
+            document.getElementById('confirm-single-transfer-btn').addEventListener('click', async (e) => {
+                const btn = e.target;
+                btn.disabled = true;
+                btn.textContent = 'Transfiriendo...';
+
+                try {
+                    const destAccountId = document.getElementById('single-transfer-dest-account').value;
+                    const destProfileId = document.getElementById('single-transfer-dest-profile').value;
+
+                    const sourceAccountId = currentTransferSourceAccountId;
+                    const sourceProfileId = currentTransferSourceProfileId;
+                    const saleId = currentTransferSaleId;
+
+                    const destAccount = allPlatformAccounts.find(a => a.id === destAccountId);
+                    const destProfile = destAccount.profiles.find(p => p.id === destProfileId);
+                    const sale = allSales.find(s => s.id === saleId);
+
+                    if (!destAccount || !destProfile || !sale) throw new Error("Datos inválidos");
+
+                    // Determine new PIN (destination profile PIN if exists, else keep sale's current PIN)
+                    const newPin = destProfile.pin || sale.pin;
+
+                    // 1. Update Sale
+                    const saleRef = doc(db, "sales", saleId);
+                    await updateDoc(saleRef, {
+                        accountId: destAccountId,
+                        profileId: destProfileId,
+                        plataforma: destAccount.platform,
+                        correo: destAccount.email,
+                        contrasena: destAccount.password,
+                        pin: newPin
+                    });
+
+                    // Temporarily simulate change for occupancy checks below
+                    sale.accountId = destAccountId;
+                    sale.profileId = destProfileId;
+
+                    // 2. Update Destination Profile
+                    const destOccupancy = getProfileOccupancy(destAccountId, destProfileId);
+                    const destProfileRef = doc(db, "platformAccounts", destAccountId, "Perfiles", destProfileId);
+
+                    const updateDest = {
+                        clienteId: saleId,
+                        fechaVencimiento: sale.finPlan || null
+                    };
+                    if (!destOccupancy.isAvailable) {
+                        updateDest.estado = 'Ocupado';
+                    } else {
+                        updateDest.estado = 'Disponible';
+                    }
+                    await updateDoc(destProfileRef, updateDest);
+
+                    // 3. Update Source Profile
+                    const sourceOccupancy = getProfileOccupancy(sourceAccountId, sourceProfileId);
+                    const srcProfileRef = doc(db, "platformAccounts", sourceAccountId, "Perfiles", sourceProfileId);
+                    if (sourceOccupancy.count === 0) {
+                        await updateDoc(srcProfileRef, {
+                            estado: 'Disponible',
+                            clienteId: null,
+                            fechaVencimiento: null
+                        });
+                    } else {
+                        // Still shared by someone else (e.g. Crunchyroll)
+                        await updateDoc(srcProfileRef, { estado: 'Ocupado' });
+                    }
+
+                    alert('Transferencia completada con éxito.');
+                    toggleSingleTransferModal(false);
+                    renderPlatformAccounts();
+
+                } catch (error) {
+                    console.error("Error transferring profile:", error);
+                    alert("Ocurrió un error durante la transferencia.");
+                } finally {
+                    btn.disabled = false;
+                    btn.textContent = 'Confirmar Transferencia';
+                }
+            });
+
+        const generateNewPin = (platform) => {
+                const isAmazon = (platform && platform.toLowerCase().includes('amazon'));
+                const length = isAmazon ? 5 : 4;
+                let pin = '';
+                for (let i = 0; i < length; i++) {
+                    pin += Math.floor(Math.random() * 10).toString();
+                }
+                return pin;
+            };
+
+            window.showPinChangeAlertModal = window.showPinChangeAlertModal = (saleData, profileData, accountData, oldPin, newPin, isShared) => {
+                const modal = selectors.pinChangeAlertModal;
+
+                document.getElementById('pin-alert-client').textContent = saleData.cliente || 'Desconocido';
+                document.getElementById('pin-alert-profile').textContent = profileData ? profileData.nombre : 'Desconocido';
+
+                document.getElementById('pin-alert-email').textContent = accountData ? accountData.email : 'N/A';
+                document.getElementById('pin-alert-password').textContent = accountData ? accountData.password : 'N/A';
+
+                document.getElementById('pin-alert-old-pin').textContent = oldPin || 'Ninguno';
+                document.getElementById('pin-alert-new-pin').textContent = newPin;
+
+                const warningEl = document.getElementById('pin-alert-crunchy-warning');
+                if (isShared) {
+                    warningEl.classList.remove('hidden');
+                } else {
+                    warningEl.classList.add('hidden');
+                }
+
+                modal.classList.remove('hidden');
+                setTimeout(() => {
+                    modal.classList.remove('opacity-0');
+                    modal.querySelector('.modal-content').classList.remove('scale-95');
+                }, 10);
+            };
+
+            const closePinChangeAlertModal = () => {
+                const modal = selectors.pinChangeAlertModal;
+                modal.classList.add('opacity-0');
+                modal.querySelector('.modal-content').classList.add('scale-95');
+                setTimeout(() => {
+                    modal.classList.add('hidden');
+                }, 300);
+            };
+
+            const handleArchiveAction = async (id) => {
+                const sale = allSales.find(s => s.id === id);
+                if (!sale) return;
+
+                try {
+                    // Variables for PIN Change logic
+                    let needsPinChange = false;
+                    let oldPin = null;
+                    let newPin = null;
+                    let isShared = false;
+                    let accountData = null;
+                    let profileData = null;
+
+                    // Update sale first so dynamic calculation works
+                    await updateDoc(doc(db, "sales", id), { estado: 'ARCHIVADO' });
+
+                    // Release profile if it exists
+                    if (sale.accountId && sale.profileId) {
+                        // Temporarily update sale locally for occupancy calculation
+                        const localSaleIndex = allSales.findIndex(s => s.id === id);
+                        if(localSaleIndex > -1) allSales[localSaleIndex].estado = 'ARCHIVADO';
+
+                        const occupancy = getProfileOccupancy(sale.accountId, sale.profileId);
+
+                        const account = allPlatformAccounts.find(a => a.id === sale.accountId);
+                        if (account && account.platform !== 'Canva') {
+                            accountData = account;
+                            profileData = account.profiles.find(p => p.id === sale.profileId);
+
+                            needsPinChange = true;
+                            oldPin = profileData ? profileData.pin : sale.pin;
+                            newPin = generateNewPin(account.platform);
+                            isShared = occupancy.count > 0; // If there are still active sales on this profile, it's shared
+
+                            const profileRef = doc(db, "platformAccounts", sale.accountId, "Perfiles", sale.profileId);
+                            const updateData = { estado: 'Disponible', pin: newPin };
+                            if(occupancy.count === 0) {
+                                updateData.fechaVencimiento = null;
+                                updateData.clienteId = null;
+                            } else {
+                                updateData.estado = 'Ocupado'; // Keep occupied if shared
+                            }
+                            await updateDoc(profileRef, updateData);
+
+                            // If shared, update the other sales' pin
+                            if (isShared) {
+                                for (const otherSale of occupancy.sales) {
+                                    if (otherSale.id !== id) {
+                                        await updateDoc(doc(db, "sales", otherSale.id), { pin: newPin });
+                                        // Update local state
+                                        const otherSaleLocal = allSales.find(s => s.id === otherSale.id);
+                                        if (otherSaleLocal) otherSaleLocal.pin = newPin;
+                                    }
+                                }
+                            }
+
+                            // Update local state for immediate feedback
+                            if (account.profiles) {
+                                const profile = account.profiles.find(p => p.id === sale.profileId);
+                                if (profile) {
+                                    profile.estado = updateData.estado;
+                                    profile.pin = newPin;
+                                }
+                            }
+                            renderPlatformAccounts();
+                        }
+                    }
+
+                    hideArchiveDeleteModal();
+
+                    if (needsPinChange) {
+                        showPinChangeAlertModal(sale, profileData, accountData, oldPin, newPin, isShared);
+                    }
+
+                } catch (e) {
+                    console.error("Error archiving sale: ", e);
+                    alert('Error al archivar la venta.');
+                }
+            };
+
+            const handlePermanentDeleteAction = async (id) => {
+                const sale = allSales.find(s => s.id === id);
+                if (!sale) return;
+
+                try {
+                    let needsPinChange = false;
+                    let oldPin = null;
+                    let newPin = null;
+                    let isShared = false;
+                    let accountData = null;
+                    let profileData = null;
+
+                    // Calculate deletion metrics for Papelera
+                    const today = dayjs();
+                    const deletedAt = today.format('YYYY-MM-DD HH:mm:ss');
+                    let daysDifferenceAtDeletion = 0;
+                    if (sale.finPlan) {
+                        const finDate = dayjs(sale.finPlan);
+                        daysDifferenceAtDeletion = today.diff(finDate, 'day'); // Positive means expired, negative means days remaining
+                    }
+
+                    const deletedSaleData = {
+                        ...sale,
+                        deletedAt,
+                        daysDifferenceAtDeletion
+                    };
+
+                    // Save to deleted_sales collection
+                    await setDoc(doc(db, "deleted_sales", id), deletedSaleData);
+
+                    // Remove from sales
                     await deleteDoc(doc(db, "sales", id));
 
                     // Release profile if it exists
@@ -4662,6 +5739,168 @@
             console.error("Error al cargar ventas:", e);
             selectors.loadingState.classList.add('hidden');
         });
+
+        onSnapshot(collection(db, "deleted_sales"), (snapshot) => {
+            allDeletedSales = snapshot.docs.map(d => ({
+                id: d.id,
+                ...d.data()
+            }));
+            renderPapelera();
+        });
+
+        // Papelera Logic
+        const papeleraFilters = { mes: '', anio: '', vendedor: '', plataforma: '' };
+
+        const renderPapeleraFilters = () => {
+            const meses = [...new Set(allDeletedSales.map(s => s.deletedAt ? dayjs(s.deletedAt).format('MM') : '').filter(Boolean))].sort();
+            const anios = [...new Set(allDeletedSales.map(s => s.deletedAt ? dayjs(s.deletedAt).format('YYYY') : '').filter(Boolean))].sort((a,b)=>b-a);
+            const vendedores = [...new Set(allDeletedSales.map(s => s.vendedor).filter(Boolean))].sort();
+            const plataformas = [...new Set(allDeletedSales.map(s => s.plataforma).filter(Boolean))].sort();
+
+            const renderSelect = (id, options, defaultLabel) => {
+                const select = document.getElementById(id);
+                if(!select) return;
+                const currentValue = papeleraFilters[id.split('-')[1]];
+                select.innerHTML = `<option value="">${defaultLabel}</option>` +
+                    options.map(opt => `<option value="${opt}" ${opt === currentValue ? 'selected' : ''}>${opt}</option>`).join('');
+            };
+
+            renderSelect('papelera-mes-filter', meses, 'Mes');
+            renderSelect('papelera-anio-filter', anios, 'Año');
+            renderSelect('papelera-vendedor-filter', vendedores, 'Vendedor');
+            renderSelect('papelera-plataforma-filter', plataformas, 'Plataforma');
+        };
+
+        const renderPapelera = () => {
+            renderPapeleraFilters();
+            const tbody = document.getElementById('papelera-list');
+            if (!tbody) return;
+
+            let filtered = allDeletedSales;
+            if (papeleraFilters.mes) filtered = filtered.filter(s => s.deletedAt && dayjs(s.deletedAt).format('MM') === papeleraFilters.mes);
+            if (papeleraFilters.anio) filtered = filtered.filter(s => s.deletedAt && dayjs(s.deletedAt).format('YYYY') === papeleraFilters.anio);
+            if (papeleraFilters.vendedor) filtered = filtered.filter(s => s.vendedor === papeleraFilters.vendedor);
+            if (papeleraFilters.plataforma) filtered = filtered.filter(s => s.plataforma === papeleraFilters.plataforma);
+
+            tbody.innerHTML = '';
+            if (filtered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" class="px-6 py-4 text-center text-gray-500">No hay ventas eliminadas que coincidan con los filtros.</td></tr>`;
+                return;
+            }
+
+            filtered.sort((a, b) => dayjs(b.deletedAt).valueOf() - dayjs(a.deletedAt).valueOf()).forEach(sale => {
+                const tr = document.createElement('tr');
+                const diffLabel = sale.daysDifferenceAtDeletion > 0
+                    ? `<span class="text-red-600 font-medium">Vencido hace ${sale.daysDifferenceAtDeletion} días</span>`
+                    : `<span class="text-green-600 font-medium">Le faltaban ${Math.abs(sale.daysDifferenceAtDeletion)} días</span>`;
+
+                tr.innerHTML = `
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <input type="checkbox" class="papelera-row-checkbox rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" value="${sale.id}">
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">${sale.cliente || '-'}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${sale.plataforma || '-'}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        ${sale.inicioPlan ? dayjs(sale.inicioPlan).format('DD/MM/YYYY') : '-'} <br>
+                        ${sale.finPlan ? dayjs(sale.finPlan).format('DD/MM/YYYY') : '-'}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        ${sale.deletedAt ? dayjs(sale.deletedAt).format('DD/MM/YYYY HH:mm') : '-'}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        ${sale.finPlan ? diffLabel : '-'}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <button class="papelera-restore-btn text-green-600 hover:text-green-900 mr-3" data-id="${sale.id}">Restaurar</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            // Re-bind listeners for rows
+            tbody.querySelectorAll('.papelera-restore-btn').forEach(btn => {
+                btn.addEventListener('click', () => handlePapeleraRestore(btn.dataset.id));
+            });
+        };
+
+        // Event Listeners for Papelera filters
+        ['mes', 'anio', 'vendedor', 'plataforma'].forEach(filterKey => {
+            const select = document.getElementById(`papelera-${filterKey}-filter`);
+            if (select) {
+                select.addEventListener('change', (e) => {
+                    papeleraFilters[filterKey] = e.target.value;
+                    renderPapelera();
+                });
+            }
+        });
+
+        // Papelera Actions (Bulk)
+        const selectAllCheckbox = document.getElementById('papelera-select-all');
+        if (selectAllCheckbox) {
+            selectAllCheckbox.addEventListener('change', (e) => {
+                document.querySelectorAll('.papelera-row-checkbox').forEach(cb => cb.checked = e.target.checked);
+            });
+        }
+
+        const getSelectedPapeleraIds = () => {
+            return Array.from(document.querySelectorAll('.papelera-row-checkbox:checked')).map(cb => cb.value);
+        };
+
+        const handlePapeleraRestore = async (id) => {
+            if (!confirm("¿Seguro que deseas restaurar esta venta? Volverá a la lista activa.")) return;
+            try {
+                const sale = allDeletedSales.find(s => s.id === id);
+                if (!sale) return;
+
+                const restoreData = { ...sale };
+                delete restoreData.deletedAt;
+                delete restoreData.daysDifferenceAtDeletion;
+
+                await setDoc(doc(db, "sales", id), restoreData);
+                await deleteDoc(doc(db, "deleted_sales", id));
+            } catch(e) {
+                console.error("Error al restaurar: ", e);
+                alert("Error al restaurar");
+            }
+        };
+
+        window.handlePapeleraRestore = handlePapeleraRestore; // Ensure it is globally accessible if needed
+
+        document.getElementById('papelera-restore-selected-btn')?.addEventListener('click', async () => {
+            const ids = getSelectedPapeleraIds();
+            if (ids.length === 0) return alert("Selecciona al menos una venta para restaurar");
+            if (!confirm(`¿Seguro que deseas restaurar ${ids.length} ventas?`)) return;
+
+            for (const id of ids) {
+                try {
+                    const sale = allDeletedSales.find(s => s.id === id);
+                    if (!sale) continue;
+                    const restoreData = { ...sale };
+                    delete restoreData.deletedAt;
+                    delete restoreData.daysDifferenceAtDeletion;
+                    await setDoc(doc(db, "sales", id), restoreData);
+                    await deleteDoc(doc(db, "deleted_sales", id));
+                } catch(e) {
+                    console.error("Error al restaurar id", id, e);
+                }
+            }
+            if(selectAllCheckbox) selectAllCheckbox.checked = false;
+        });
+
+        document.getElementById('papelera-delete-selected-btn')?.addEventListener('click', async () => {
+            const ids = getSelectedPapeleraIds();
+            if (ids.length === 0) return alert("Selecciona al menos una venta para eliminar");
+            if (!confirm(`¿Seguro que deseas ELIMINAR PERMANENTEMENTE ${ids.length} ventas? Esta acción no se puede deshacer.`)) return;
+
+            for (const id of ids) {
+                try {
+                    await deleteDoc(doc(db, "deleted_sales", id));
+                } catch(e) {
+                    console.error("Error al eliminar id", id, e);
+                }
+            }
+            if(selectAllCheckbox) selectAllCheckbox.checked = false;
+        });
         onSnapshot(collection(db, "expenses"), (snapshot) => {
             allExpenses = snapshot.docs.map(d => ({
                 id: d.id,
@@ -5351,7 +6590,8 @@
             'nav-ventas': 'Ventas',
             'nav-finanzas': 'Finanzas',
             'nav-precios': 'Precios',
-            'nav-reportes': 'Reportes'
+            'nav-reportes': 'Reportes',
+            'nav-papelera': 'Papelera'
         };
         const views = document.querySelectorAll('.view');
 
